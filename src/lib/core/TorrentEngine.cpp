@@ -1,5 +1,4 @@
 #include "TorrentEngine.hpp"
-#include "Torrent.hpp"
 
 TorrentEngine::TorrentEngine()
 {
@@ -16,6 +15,11 @@ void TorrentEngine::addTorrent(std::string path)
 	libtorrent::torrent_info info = h.get_torrent_info();
 	libtorrent::file_storage fs = info.files();
 
+	t->setHandle(h);
+	m_torrents.push_back(t);
+
+	/* An Example For Fetching All Files From Torrent: */
+
 	unsigned int numFiles = fs.num_files();
 
 	printf("Total Files: %i\n", fs.num_files());
@@ -31,4 +35,25 @@ void TorrentEngine::addTorrent(std::string path)
 	}
 
 	printf("Total Size:\t%i\n", fs.total_size());
+}
+
+void TorrentEngine::queue()
+{
+	auto iter = std::begin(m_torrents);
+
+	while (iter != std::end(m_torrents))
+	{
+		auto &t = **iter;
+
+		/* TODO: Check for "finish" event and move out of downloading loop instead */
+
+		if (t.pollEvent())
+		{
+			iter = m_torrents.erase(iter);
+		}
+		else
+		{
+			++iter;
+		}
+	}
 }
