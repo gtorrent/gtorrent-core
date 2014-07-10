@@ -21,9 +21,10 @@ Compiling on Windows
 -------------
 Requires ~~CMake~~ and MinGW
 ```
-top kek no focken clue without cmake
+top kek no fucken clue without cmake
 gimme a sec
+```
+
 ~~> cmake -G "MinGW Makefiles" .~~
 ~~> mingw32-make~~
 ~~> gTorrent.exe~~
-```
