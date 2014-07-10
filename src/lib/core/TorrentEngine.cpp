@@ -25,8 +25,10 @@ void TorrentEngine::addTorrent(std::string path)
 	{
 		libtorrent::file_entry e = fs.at(i);
 
-		printf("Name:\t%s\n", e.path.c_str());
-		printf("Size:\t%i\n", e.size);
+		printf("Name:\t\t%s\n", e.path.c_str());
+		printf("Size:\t\t%i\n", e.size);
 		printf("-----------------------------------------\n");
 	}
+
+	printf("Total Size:\t%i\n", fs.total_size());
 }
