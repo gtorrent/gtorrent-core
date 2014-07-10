@@ -28,6 +28,7 @@ set (gTorrent_SRCS
 	src/Application.cpp
 	src/lib/core/Core.cpp
 	src/lib/core/TorrentEngine.cpp
+	src/lib/core/Torrent.cpp
 )
 
 set (gTorrent_LIBS

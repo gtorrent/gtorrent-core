@@ -1,4 +1,5 @@
 #include "TorrentEngine.hpp"
+#include "Torrent.hpp"
 
 TorrentEngine::TorrentEngine()
 {
@@ -7,11 +8,8 @@ TorrentEngine::TorrentEngine()
 
 void TorrentEngine::addTorrent(std::string path)
 {
-	printf("Downloading data from \"%s\"\n", path.c_str());
+	printf("Downloading data from \"%s\".\n", path.c_str());
 
-	libtorrent::add_torrent_params p;
-	p.save_path = "./";
-	p.ti = new libtorrent::torrent_info(path);
-
-	libtorrent::torrent_handle h = m_session.add_torrent(p);
+	std::shared_ptr<Torrent> t = std::shared_ptr<Torrent>(new Torrent(path));
+	libtorrent::torrent_handle h = m_session.add_torrent(t->getTorrentParams());
 }
