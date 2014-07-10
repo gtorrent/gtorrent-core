@@ -26,5 +26,7 @@ gimme a sec
 ```
 
 ~~> cmake -G "MinGW Makefiles" .~~
+
 ~~> mingw32-make~~
+
 ~~> gTorrent.exe~~
