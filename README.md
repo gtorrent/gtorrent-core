@@ -12,16 +12,18 @@ Goals
 Compiling on GNU/Linux or Mac OS X
 -------------
 ```
-$ cmake .
+$ ./configure
 $ make
-$ ./gTorrent
+$ cd bin && ./gTorrent
 ```
 
 Compiling on Windows
 -------------
-Requires CMake and MinGW
+Requires ~~CMake~~ and MinGW
 ```
-> cmake -G "MinGW Makefiles" .
-> mingw32-make
-> gTorrent.exe
+top kek no focken clue without cmake
+gimme a sec
+~~> cmake -G "MinGW Makefiles" .~~
+~~> mingw32-make~~
+~~> gTorrent.exe~~
 ```
