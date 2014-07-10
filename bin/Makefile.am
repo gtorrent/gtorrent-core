@@ -1,5 +1,5 @@
 AUTOMAKE_OPTIONS = subdir-objects
-AM_CXXFLAGS = -std=c++11 -g
+AM_CXXFLAGS = -std=c++11 -g -I../src/lib
 # LDFLOAGS = Extra local libs here
 
 VPATH = ../src
