@@ -16,6 +16,8 @@ app_ptr Application::getSingleton()
 
 int Application::run(int argc, char **argv)
 {
+	gt::Log::Debug("Starting up core...\n");
 	m_core = core_ptr(new GTorrent_Core());
+
 	return 0;
 }

@@ -91,7 +91,7 @@ PROGRAMS = $(bin_PROGRAMS)
 am__dirstamp = $(am__leading_dot)dirstamp
 am_gTorrent_OBJECTS = main.$(OBJEXT) Application.$(OBJEXT) \
 	lib/core/Core.$(OBJEXT) lib/core/TorrentEngine.$(OBJEXT) \
-	lib/core/Torrent.$(OBJEXT)
+	lib/core/Torrent.$(OBJEXT) lib/shared/Log.$(OBJEXT)
 gTorrent_OBJECTS = $(am_gTorrent_OBJECTS)
 gTorrent_LDADD = $(LDADD)
 AM_V_P = $(am__v_P_@AM_V@)
@@ -242,7 +242,7 @@ top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 AUTOMAKE_OPTIONS = subdir-objects
 AM_CXXFLAGS = -std=c++11 -g -I../src/lib
-gTorrent_SOURCES = main.cpp Application.cpp lib/core/Core.cpp lib/core/TorrentEngine.cpp lib/core/Torrent.cpp
+gTorrent_SOURCES = main.cpp Application.cpp lib/core/Core.cpp lib/core/TorrentEngine.cpp lib/core/Torrent.cpp lib/shared/Log.cpp
 all: all-am
 
 .SUFFIXES:
@@ -331,6 +331,14 @@ lib/core/TorrentEngine.$(OBJEXT): lib/core/$(am__dirstamp) \
 	lib/core/$(DEPDIR)/$(am__dirstamp)
 lib/core/Torrent.$(OBJEXT): lib/core/$(am__dirstamp) \
 	lib/core/$(DEPDIR)/$(am__dirstamp)
+lib/shared/$(am__dirstamp):
+	@$(MKDIR_P) lib/shared
+	@: > lib/shared/$(am__dirstamp)
+lib/shared/$(DEPDIR)/$(am__dirstamp):
+	@$(MKDIR_P) lib/shared/$(DEPDIR)
+	@: > lib/shared/$(DEPDIR)/$(am__dirstamp)
+lib/shared/Log.$(OBJEXT): lib/shared/$(am__dirstamp) \
+	lib/shared/$(DEPDIR)/$(am__dirstamp)
 
 gTorrent$(EXEEXT): $(gTorrent_OBJECTS) $(gTorrent_DEPENDENCIES) $(EXTRA_gTorrent_DEPENDENCIES) 
 	@rm -f gTorrent$(EXEEXT)
@@ -339,6 +347,7 @@ gTorrent$(EXEEXT): $(gTorrent_OBJECTS) $(gTorrent_DEPENDENCIES) $(EXTRA_gTorrent
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
 	-rm -f lib/core/*.$(OBJEXT)
+	-rm -f lib/shared/*.$(OBJEXT)
 
 distclean-compile:
 	-rm -f *.tab.c
@@ -348,6 +357,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@lib/core/$(DEPDIR)/Core.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@lib/core/$(DEPDIR)/Torrent.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@lib/core/$(DEPDIR)/TorrentEngine.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@lib/shared/$(DEPDIR)/Log.Po@am__quote@
 
 .cpp.o:
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)depbase=`echo $@ | sed 's|[^/]*$$|$(DEPDIR)/&|;s|\.o$$||'`;\
@@ -482,6 +492,8 @@ distclean-generic:
 	-test . = "$(srcdir)" || test -z "$(CONFIG_CLEAN_VPATH_FILES)" || rm -f $(CONFIG_CLEAN_VPATH_FILES)
 	-rm -f lib/core/$(DEPDIR)/$(am__dirstamp)
 	-rm -f lib/core/$(am__dirstamp)
+	-rm -f lib/shared/$(DEPDIR)/$(am__dirstamp)
+	-rm -f lib/shared/$(am__dirstamp)
 
 maintainer-clean-generic:
 	@echo "This command is intended for maintainers to use"
@@ -491,7 +503,7 @@ clean: clean-am
 clean-am: clean-binPROGRAMS clean-generic mostlyclean-am
 
 distclean: distclean-am
-	-rm -rf ./$(DEPDIR) lib/core/$(DEPDIR)
+	-rm -rf ./$(DEPDIR) lib/core/$(DEPDIR) lib/shared/$(DEPDIR)
 	-rm -f Makefile
 distclean-am: clean-am distclean-compile distclean-generic \
 	distclean-tags
@@ -537,7 +549,7 @@ install-ps-am:
 installcheck-am:
 
 maintainer-clean: maintainer-clean-am
-	-rm -rf ./$(DEPDIR) lib/core/$(DEPDIR)
+	-rm -rf ./$(DEPDIR) lib/core/$(DEPDIR) lib/shared/$(DEPDIR)
 	-rm -f Makefile
 maintainer-clean-am: distclean-am maintainer-clean-generic
 
