@@ -14,8 +14,21 @@ app_ptr Application::getSingleton()
 	return m_app;
 }
 
+core_ptr &Application::getCore()
+{
+	return m_core;
+}
+
 int Application::run(int argc, char **argv)
 {
 	m_core = core_ptr(new GTorrent_Core());
+	m_gui = gui_ptr(new GuiGtk(argc, argv));
+
+	while (m_core->isRunning())
+	{
+		m_core->update();
+		m_gui->update();
+	}
+
 	return 0;
 }
