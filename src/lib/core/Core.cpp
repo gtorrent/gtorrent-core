@@ -1,10 +1,10 @@
 #include "Core.hpp"
 #include <stdio.h>
 
-GTorrent_Core::GTorrent_Core()
+GTorrent_Core::GTorrent_Core() :
+	m_running(true)
 {
 	m_engine = te_ptr(new TorrentEngine());
-	m_engine->addTorrent("dsl.torrent");
 }
 
 te_ptr GTorrent_Core::getEngine()
@@ -14,7 +14,12 @@ te_ptr GTorrent_Core::getEngine()
 
 bool GTorrent_Core::isRunning()
 {
-	return true;
+	return m_running;
+}
+
+void GTorrent_Core::shutdown()
+{
+	m_running = false;
 }
 
 void GTorrent_Core::update()

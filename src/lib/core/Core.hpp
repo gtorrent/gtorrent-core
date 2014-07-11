@@ -9,10 +9,12 @@ class GTorrent_Core
 {
 private:
 	te_ptr m_engine;
+	bool m_running;
 public:
 	GTorrent_Core();
 
 	bool isRunning();
+	void shutdown();
 	void update();
 
 	/* Getters */
