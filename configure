@@ -3305,6 +3305,25 @@ fi
 
 
 # GTK Related GUI Files
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for src/lib/gui/core/Base.cpp" >&5
+$as_echo_n "checking for src/lib/gui/core/Base.cpp... " >&6; }
+if ${ac_cv_file_src_lib_gui_core_Base_cpp+:} false; then :
+  $as_echo_n "(cached) " >&6
+else
+  test "$cross_compiling" = yes &&
+  as_fn_error $? "cannot check for file existence when cross compiling" "$LINENO" 5
+if test -r "src/lib/gui/core/Base.cpp"; then
+  ac_cv_file_src_lib_gui_core_Base_cpp=yes
+else
+  ac_cv_file_src_lib_gui_core_Base_cpp=no
+fi
+fi
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_file_src_lib_gui_core_Base_cpp" >&5
+$as_echo "$ac_cv_file_src_lib_gui_core_Base_cpp" >&6; }
+if test "x$ac_cv_file_src_lib_gui_core_Base_cpp" = xyes; then :
+
+fi
+
 { $as_echo "$as_me:${as_lineno-$LINENO}: checking for src/lib/gui/gtk/Gtk.cpp" >&5
 $as_echo_n "checking for src/lib/gui/gtk/Gtk.cpp... " >&6; }
 if ${ac_cv_file_src_lib_gui_gtk_Gtk_cpp+:} false; then :
