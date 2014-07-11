@@ -5,7 +5,7 @@
 #include <memory>
 #include <vector>
 
-class TorrentEngine;	typedef std::unique_ptr<TorrentEngine> te_ptr;
+class TorrentEngine;	typedef std::shared_ptr<TorrentEngine> te_ptr;
 
 class TorrentEngine
 {
