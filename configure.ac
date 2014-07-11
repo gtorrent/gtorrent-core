@@ -3,6 +3,9 @@ AM_INIT_AUTOMAKE([-Wall -Werror foreign])
 AC_PROG_CXX(g++)
 
 AC_CHECK_FILE([src/main.cpp])
+
+# Core Library
+
 AC_CHECK_FILE([src/Application.cpp])
 AC_CHECK_FILE([src/lib/core/Core.cpp])
 AC_CHECK_FILE([src/lib/core/TorrentEngine.cpp])
@@ -12,6 +15,9 @@ AC_CHECK_FILE([src/lib/core/Torrent.cpp])
 AC_CHECK_FILE([src/lib/gui/core/Base.cpp])
 AC_CHECK_FILE([src/lib/gui/gtk/Gtk.cpp])
 AC_CHECK_FILE([src/lib/gui/gtk/GtkMainWindow.cpp])
+
+# Logging
+AC_CHECK_FILE([src/lib/core/Torrent.cpp])
 
 AC_CHECK_LIB([boost_system], [main])
 AC_CHECK_LIB([torrent-rasterbar], [main])

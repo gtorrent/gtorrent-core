@@ -1,4 +1,5 @@
 #include "Application.hpp"
+#include <shared/Log.hpp>
 
 app_ptr Application::m_app = nullptr;
 
@@ -21,7 +22,10 @@ core_ptr &Application::getCore()
 
 int Application::run(int argc, char **argv)
 {
+	gt::Log::Debug("Starting up core library...\n");
 	m_core = core_ptr(new GTorrent_Core());
+
+	gt::Log::Debug("Starting up GUI layer...\n");
 	m_gui = gui_ptr(new GuiGtk(argc, argv));
 
 	while (m_core->isRunning())
