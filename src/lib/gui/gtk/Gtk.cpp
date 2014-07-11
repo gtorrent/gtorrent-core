@@ -13,6 +13,8 @@ GuiGtk::GuiGtk(int argc, char **argv)
 
 	Glib::RefPtr<Gtk::Application> gapp = Gtk::Application::create(argc, argv, "org.gtorrent.gtorrent");
 	GtkMainWindow *wnd = new GtkMainWindow();
+
+	printf("\nFile #1 (Read From GUI) : %s\n", m_core->getEngine()->getTorrents()[0]->getPath().c_str());
 }
 
 void GuiGtk::update()
