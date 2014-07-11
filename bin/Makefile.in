@@ -91,7 +91,8 @@ PROGRAMS = $(bin_PROGRAMS)
 am__dirstamp = $(am__leading_dot)dirstamp
 am_gTorrent_OBJECTS = main.$(OBJEXT) Application.$(OBJEXT) \
 	lib/core/Core.$(OBJEXT) lib/core/TorrentEngine.$(OBJEXT) \
-	lib/core/Torrent.$(OBJEXT)
+	lib/core/Torrent.$(OBJEXT) lib/gui/gtk/Gtk.$(OBJEXT) \
+	lib/gui/gtk/GtkMainWindow.$(OBJEXT)
 gTorrent_OBJECTS = $(am_gTorrent_OBJECTS)
 gTorrent_LDADD = $(LDADD)
 AM_V_P = $(am__v_P_@AM_V@)
@@ -150,7 +151,6 @@ am__define_uniq_tagged_files = \
 ETAGS = etags
 CTAGS = ctags
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
-# LDFLOAGS = Extra local libs here
 VPATH = ../src
 ACLOCAL = @ACLOCAL@
 AMTAR = @AMTAR@
@@ -193,6 +193,9 @@ PACKAGE_TARNAME = @PACKAGE_TARNAME@
 PACKAGE_URL = @PACKAGE_URL@
 PACKAGE_VERSION = @PACKAGE_VERSION@
 PATH_SEPARATOR = @PATH_SEPARATOR@
+PKG_CONFIG = @PKG_CONFIG@
+PKG_CONFIG_LIBDIR = @PKG_CONFIG_LIBDIR@
+PKG_CONFIG_PATH = @PKG_CONFIG_PATH@
 SET_MAKE = @SET_MAKE@
 SHELL = @SHELL@
 STRIP = @STRIP@
@@ -223,6 +226,10 @@ infodir = @infodir@
 install_sh = @install_sh@
 libdir = @libdir@
 libexecdir = @libexecdir@
+libglibmm_CFLAGS = @libglibmm_CFLAGS@
+libglibmm_LIBS = @libglibmm_LIBS@
+libgtkmm_CFLAGS = @libgtkmm_CFLAGS@
+libgtkmm_LIBS = @libgtkmm_LIBS@
 localedir = @localedir@
 localstatedir = @localstatedir@
 mandir = @mandir@
@@ -241,8 +248,9 @@ top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 AUTOMAKE_OPTIONS = subdir-objects
-AM_CXXFLAGS = -std=c++11 -g -I../src/lib
-gTorrent_SOURCES = main.cpp Application.cpp lib/core/Core.cpp lib/core/TorrentEngine.cpp lib/core/Torrent.cpp
+AM_CXXFLAGS = -std=c++11 -g -I../src/lib $(libgtkmm_CFLAGS) $(libglibmm_CFLAGS)
+AM_LDFLAGS = $(libgtkmm_LIBS) $(libglibmm_LIBS)
+gTorrent_SOURCES = main.cpp Application.cpp lib/core/Core.cpp lib/core/TorrentEngine.cpp lib/core/Torrent.cpp lib/gui/gtk/Gtk.cpp lib/gui/gtk/GtkMainWindow.cpp
 all: all-am
 
 .SUFFIXES:
@@ -331,6 +339,16 @@ lib/core/TorrentEngine.$(OBJEXT): lib/core/$(am__dirstamp) \
 	lib/core/$(DEPDIR)/$(am__dirstamp)
 lib/core/Torrent.$(OBJEXT): lib/core/$(am__dirstamp) \
 	lib/core/$(DEPDIR)/$(am__dirstamp)
+lib/gui/gtk/$(am__dirstamp):
+	@$(MKDIR_P) lib/gui/gtk
+	@: > lib/gui/gtk/$(am__dirstamp)
+lib/gui/gtk/$(DEPDIR)/$(am__dirstamp):
+	@$(MKDIR_P) lib/gui/gtk/$(DEPDIR)
+	@: > lib/gui/gtk/$(DEPDIR)/$(am__dirstamp)
+lib/gui/gtk/Gtk.$(OBJEXT): lib/gui/gtk/$(am__dirstamp) \
+	lib/gui/gtk/$(DEPDIR)/$(am__dirstamp)
+lib/gui/gtk/GtkMainWindow.$(OBJEXT): lib/gui/gtk/$(am__dirstamp) \
+	lib/gui/gtk/$(DEPDIR)/$(am__dirstamp)
 
 gTorrent$(EXEEXT): $(gTorrent_OBJECTS) $(gTorrent_DEPENDENCIES) $(EXTRA_gTorrent_DEPENDENCIES) 
 	@rm -f gTorrent$(EXEEXT)
@@ -339,6 +357,7 @@ gTorrent$(EXEEXT): $(gTorrent_OBJECTS) $(gTorrent_DEPENDENCIES) $(EXTRA_gTorrent
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
 	-rm -f lib/core/*.$(OBJEXT)
+	-rm -f lib/gui/gtk/*.$(OBJEXT)
 
 distclean-compile:
 	-rm -f *.tab.c
@@ -348,6 +367,8 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@lib/core/$(DEPDIR)/Core.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@lib/core/$(DEPDIR)/Torrent.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@lib/core/$(DEPDIR)/TorrentEngine.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@lib/gui/gtk/$(DEPDIR)/Gtk.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@lib/gui/gtk/$(DEPDIR)/GtkMainWindow.Po@am__quote@
 
 .cpp.o:
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)depbase=`echo $@ | sed 's|[^/]*$$|$(DEPDIR)/&|;s|\.o$$||'`;\
@@ -482,6 +503,8 @@ distclean-generic:
 	-test . = "$(srcdir)" || test -z "$(CONFIG_CLEAN_VPATH_FILES)" || rm -f $(CONFIG_CLEAN_VPATH_FILES)
 	-rm -f lib/core/$(DEPDIR)/$(am__dirstamp)
 	-rm -f lib/core/$(am__dirstamp)
+	-rm -f lib/gui/gtk/$(DEPDIR)/$(am__dirstamp)
+	-rm -f lib/gui/gtk/$(am__dirstamp)
 
 maintainer-clean-generic:
 	@echo "This command is intended for maintainers to use"
@@ -491,7 +514,7 @@ clean: clean-am
 clean-am: clean-binPROGRAMS clean-generic mostlyclean-am
 
 distclean: distclean-am
-	-rm -rf ./$(DEPDIR) lib/core/$(DEPDIR)
+	-rm -rf ./$(DEPDIR) lib/core/$(DEPDIR) lib/gui/gtk/$(DEPDIR)
 	-rm -f Makefile
 distclean-am: clean-am distclean-compile distclean-generic \
 	distclean-tags
@@ -537,7 +560,7 @@ install-ps-am:
 installcheck-am:
 
 maintainer-clean: maintainer-clean-am
-	-rm -rf ./$(DEPDIR) lib/core/$(DEPDIR)
+	-rm -rf ./$(DEPDIR) lib/core/$(DEPDIR) lib/gui/gtk/$(DEPDIR)
 	-rm -f Makefile
 maintainer-clean-am: distclean-am maintainer-clean-generic
 
