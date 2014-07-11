@@ -9,6 +9,7 @@ class Torrent
 private:
 	libtorrent::add_torrent_params m_torrent_params;
 	libtorrent::torrent_handle m_handle;
+	std::string m_path;
 public:
 	Torrent(std::string path);
 
@@ -16,7 +17,8 @@ public:
 
 	/* Getters */
 	libtorrent::add_torrent_params getTorrentParams();
-
+	std::string getPath();
+	
 	/* Returns percentage of all files downloading */
 	unsigned int getTotalProgress();
 

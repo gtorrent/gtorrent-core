@@ -2,7 +2,8 @@
 
 #define T_PPM 1000000
 
-Torrent::Torrent(std::string path)
+Torrent::Torrent(std::string path) :
+	m_path(path)
 {
 	m_torrent_params.save_path = "./";
 	m_torrent_params.ti = new libtorrent::torrent_info(path);
@@ -22,6 +23,11 @@ bool Torrent::pollEvent(gt::Event &event)
 libtorrent::add_torrent_params Torrent::getTorrentParams()
 {
 	return m_torrent_params;
+}
+
+std::string Torrent::getPath()
+{
+	return m_path;
 }
 
 unsigned int Torrent::getTotalProgress()
