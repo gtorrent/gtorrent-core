@@ -7,6 +7,7 @@
 class Torrent
 {
 private:
+	unsigned int m_id;
 	libtorrent::add_torrent_params m_torrent_params;
 	libtorrent::torrent_handle m_handle;
 public:
