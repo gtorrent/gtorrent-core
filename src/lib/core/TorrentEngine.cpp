@@ -7,8 +7,6 @@ TorrentEngine::TorrentEngine()
 
 void TorrentEngine::addTorrent(std::string path)
 {
-	printf("Downloading data from \"%s\":\n\n", path.c_str());
-
 	std::shared_ptr<Torrent> t = std::shared_ptr<Torrent>(new Torrent(path));
 	libtorrent::torrent_handle h = m_session.add_torrent(t->getTorrentParams());
 
@@ -34,7 +32,9 @@ void TorrentEngine::addTorrent(std::string path)
 		printf("-----------------------------------------\n");
 	}
 
-	printf("Total Size:\t%i\n", fs.total_size());
+	printf("Total Size:\t%i\n\n", fs.total_size());
+
+	printf("Downloading data from \"%s\"...\n", path.c_str());
 }
 
 void TorrentEngine::queue()
@@ -45,11 +45,17 @@ void TorrentEngine::queue()
 	{
 		auto &t = **iter;
 
-		/* TODO: Check for "finish" event and move out of downloading loop instead */
+		gt::Event event;
 
-		if (t.pollEvent())
+		if (t.pollEvent(event))
 		{
-			iter = m_torrents.erase(iter);
+			switch (event.type)
+			{
+				case gt::Event::DownloadCompleted:
+					printf("Done!\n");
+					iter = m_torrents.erase(iter);
+				break;
+			}
 		}
 		else
 		{
