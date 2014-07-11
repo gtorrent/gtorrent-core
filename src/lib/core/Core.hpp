@@ -11,6 +11,12 @@ private:
 	te_ptr m_engine;
 public:
 	GTorrent_Core();
+
+	bool isRunning();
+	void update();
+
+	/* Getters */
+	te_ptr getEngine();
 };
 
 #endif
