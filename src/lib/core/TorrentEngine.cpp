@@ -5,6 +5,11 @@ TorrentEngine::TorrentEngine()
 	m_session.listen_on(std::make_pair(6881, 6889));
 }
 
+te_ptrc &TorrentEngine::getTorrents()
+{
+	return m_torrents;
+}
+
 void TorrentEngine::addTorrent(std::string path)
 {
 	std::shared_ptr<Torrent> t = std::shared_ptr<Torrent>(new Torrent(path));
