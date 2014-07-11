@@ -9,6 +9,7 @@ AC_CHECK_FILE([src/lib/core/TorrentEngine.cpp])
 AC_CHECK_FILE([src/lib/core/Torrent.cpp])
 
 # GTK Related GUI Files
+AC_CHECK_FILE([src/lib/gui/core/Base.cpp])
 AC_CHECK_FILE([src/lib/gui/gtk/Gtk.cpp])
 AC_CHECK_FILE([src/lib/gui/gtk/GtkMainWindow.cpp])
 
