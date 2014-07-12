@@ -13,23 +13,35 @@ GtkTorrentTreeView::GtkTorrentTreeView()
 
 void GtkTorrentTreeView::setupColumns()
 {
-	this->append_column("Name", m_cols.m_col_name);
-	this->append_column("Seeders", m_cols.m_col_seeders);
+	unsigned int cid = 0;
+	Gtk::TreeViewColumn *col = nullptr;
+
+	cid = this->append_column("Name", m_cols.m_col_name);
+	col = this->get_column(cid - 1);
+	col->set_fixed_width(250);
+
+	cid = this->append_column("Seeders", m_cols.m_col_seeders);
+	col = this->get_column(cid - 1);
+	col->set_alignment(0.5);
+	col->set_fixed_width(90);
 
 	Gtk::CellRendererProgress *cell = Gtk::manage(new Gtk::CellRendererProgress());
-	int c = this->append_column("Progress", *cell);
-	Gtk::TreeViewColumn *p_col = this->get_column(c - 1);
+	//cell->property_text() = "Checking...";
+	cid = this->append_column("Progress", *cell);
+	col = this->get_column(cid - 1);
 
-	if (p_col)
-		p_col->add_attribute(cell->property_value(), m_cols.m_col_percent);
-
-	for (unsigned int i = 0; i < 2; ++i)
+	if (col)
 	{
-		Gtk::TreeView::Column *tc = this->get_column(i);
-		tc->set_sizing(Gtk::TreeViewColumnSizing::TREE_VIEW_COLUMN_FIXED);
-		tc->set_fixed_width(200);
-		tc->set_resizable();
-		tc->set_reorderable();
+		col->add_attribute(cell->property_value(), m_cols.m_col_percent);
+		col->add_attribute(cell->property_text(), m_cols.m_col_percent_text);
+	}
+
+	for (auto &c : this->get_columns())
+	{
+		c->set_sizing(Gtk::TreeViewColumnSizing::TREE_VIEW_COLUMN_FIXED);
+		c->set_clickable();
+		c->set_resizable();
+		c->set_reorderable();
 	}
 }
 
@@ -38,6 +50,7 @@ void GtkTorrentTreeView::addCell(t_ptr &t)
 	Gtk::TreeModel::Row row = *(m_liststore->append());
 	row[m_cols.m_col_name] = t->getHandle().name();
 	row[m_cols.m_col_percent] = t->getTotalProgress();
+	row[m_cols.m_col_percent_text] = t->getTextState();
 	row[m_cols.m_col_seeders] = t->getTotalSeeders();
 }
 
@@ -51,6 +64,11 @@ void GtkTorrentTreeView::updateCells()
 
 		c[m_cols.m_col_percent] = t->getTotalProgress();
 		c[m_cols.m_col_seeders] = t->getTotalSeeders();
+		c[m_cols.m_col_percent_text] = t->getTextState();
+
+		/* TODO: Handle with events */
+
+		//m_cells[i]->property_text() = t->getTextState();
 
 		++i;
 	}
