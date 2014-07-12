@@ -18,7 +18,7 @@ public:
 
 	te_ptrc &getTorrents();
 
-	void addTorrent(std::string path);
+	t_ptr addTorrent(std::string path);
 	void queue();
 };
 #endif

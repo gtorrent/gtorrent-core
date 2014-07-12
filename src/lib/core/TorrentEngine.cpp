@@ -10,7 +10,7 @@ te_ptrc &TorrentEngine::getTorrents()
 	return m_torrents;
 }
 
-void TorrentEngine::addTorrent(std::string path)
+t_ptr TorrentEngine::addTorrent(std::string path)
 {
 	std::shared_ptr<Torrent> t = std::shared_ptr<Torrent>(new Torrent(path));
 	libtorrent::torrent_handle h = m_session.add_torrent(t->getTorrentParams());
@@ -40,11 +40,13 @@ void TorrentEngine::addTorrent(std::string path)
 	printf("Total Size:\t%i\n\n", fs.total_size());
 
 	printf("Downloading data from \"%s\"...\n", path.c_str());
+
+	return t;
 }
 
 void TorrentEngine::queue()
 {
-	auto iter = std::begin(m_torrents);
+	/*auto iter = std::begin(m_torrents);
 
 	while (iter != std::end(m_torrents))
 	{
@@ -66,5 +68,5 @@ void TorrentEngine::queue()
 		{
 			++iter;
 		}
-	}
+	}*/
 }
