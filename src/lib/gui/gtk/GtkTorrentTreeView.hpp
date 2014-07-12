@@ -1,6 +1,7 @@
 #ifndef GTKTORRENTTREEVIEW_HPP
 #define GTKTORRENTTREEVIEW_HPP
 
+#include <gtkmm/cellrendererprogress.h>
 #include "GtkTorrentColumns.hpp"
 #include <gtkmm/treeview.h>
 #include <gtkmm/liststore.h>
@@ -12,7 +13,6 @@ private:
 	GtkTorrentColumns m_cols;
 	Glib::RefPtr<Gtk::ListStore> m_liststore;
 	void setupColumns();
-
 public:
 	GtkTorrentTreeView();
 
