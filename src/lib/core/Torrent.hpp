@@ -36,6 +36,9 @@ public:
 	/* Returns the current number of peers attached to the file */
 	unsigned int getTotalPeers();
 
+	/* Returns the current number of leechers attached to the file */
+	unsigned int getTotalLeechers();
+
 	/* Setters */
 	void setHandle(libtorrent::torrent_handle &h);
 };

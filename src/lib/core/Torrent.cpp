@@ -59,6 +59,11 @@ unsigned int Torrent::getTotalPeers()
 	return m_handle.status().num_peers;
 }
 
+unsigned int Torrent::getTotalLeechers()
+{
+	return m_handle.status().num_incomplete;
+}
+
 void Torrent::setHandle(libtorrent::torrent_handle &h)
 {
 	m_handle = h;
