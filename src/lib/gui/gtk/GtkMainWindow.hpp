@@ -1,22 +1,23 @@
 #ifndef GTKMAINWINDOW_HPP
 #define GTKMAINWINDOW_HPP
 
+#include "GtkTorrentTreeView.hpp"
 #include <gtkmm/headerbar.h>
-#include <gtkmm/window.h>
 #include <core/Core.hpp>
+#include "GtkWindow.hpp"
 
-class GtkMainWindow : public Gtk::Window
+class GtkMainWindow : public gt::GtkWindow
 {
 private:
 	Gtk::HeaderBar *header;
-
-	core_ptr &m_core;
+	GtkTorrentTreeView *m_treeview;
 public:
 	GtkMainWindow();
 
 	/* Signal Responders */
 	void onAddBtnClicked();
 	bool onDestroy(GdkEventAny *event);
+	bool onSecTick();
 };
 
 #endif

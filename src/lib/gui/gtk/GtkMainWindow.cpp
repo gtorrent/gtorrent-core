@@ -1,10 +1,11 @@
+#include "GtkTorrentExplorerWindow.hpp"
 #include <gtkmm/filechooserdialog.h>
 #include "GtkMainWindow.hpp"
 #include <Application.hpp>
 #include <gtkmm/button.h>
+#include <glibmm.h>
 
-GtkMainWindow::GtkMainWindow() :
-	m_core(Application::getSingleton()->getCore())
+GtkMainWindow::GtkMainWindow()
 {
 	this->set_position(Gtk::WIN_POS_CENTER);
 	this->set_default_size(1280, 720);
@@ -20,9 +21,19 @@ GtkMainWindow::GtkMainWindow() :
 
 	this->set_titlebar(*header);
 
+	m_treeview = Gtk::manage(new GtkTorrentTreeView());
+	this->add(*m_treeview);
+
 	this->show_all();
 
+	Glib::signal_timeout().connect(sigc::mem_fun(*this, &GtkMainWindow::onSecTick), 10);
 	this->signal_delete_event().connect(sigc::mem_fun(*this, &GtkMainWindow::onDestroy));
+}
+
+bool GtkMainWindow::onSecTick()
+{
+	m_treeview->updateCells();
+	return true;
 }
 
 void GtkMainWindow::onAddBtnClicked()
@@ -42,7 +53,8 @@ void GtkMainWindow::onAddBtnClicked()
 	switch (result)
 	{
 		case Gtk::RESPONSE_OK:
-			m_core->getEngine()->addTorrent(fc.get_filename().c_str());
+			t_ptr t = m_core->getEngine()->addTorrent(fc.get_filename().c_str());
+			m_treeview->addCell(t);
 		break;
 	}
 }

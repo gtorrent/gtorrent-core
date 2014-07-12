@@ -7,6 +7,8 @@
 
 class GuiGtk : public GuiBase
 {
+private:
+	Gtk::Main *m_gtkmain;
 public:
 	GuiGtk(int argc, char **argv);
 	std::string getOpenFileDialog(){return"";}
