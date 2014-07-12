@@ -42,6 +42,11 @@ float Torrent::getTotalProgress()
 	return ((float) s.progress_ppm / (float) T_PPM) * 100;
 }
 
+unsigned int Torrent::getDownloadRate()
+{
+	return m_handle.status().download_rate;
+}
+
 unsigned int Torrent::getPPMProgress()
 {
 	libtorrent::torrent_status s = m_handle.status();
@@ -62,6 +67,30 @@ unsigned int Torrent::getTotalPeers()
 unsigned int Torrent::getTotalLeechers()
 {
 	return m_handle.status().num_incomplete;
+}
+
+libtorrent::torrent_status::state_t Torrent::getState()
+{
+	return m_handle.status().state;
+}
+
+std::string Torrent::getTextState()
+{
+	switch (getState())
+	{
+		case libtorrent::torrent_status::checking_files:
+			return "Checking";
+		break;
+		case libtorrent::torrent_status::seeding:
+			return "Seeding";
+		break;
+		case libtorrent::torrent_status::downloading:
+		default:
+			char p[5];
+			sprintf(p, "%.1f %%", getTotalProgress());
+			return p;
+		break;
+	}
 }
 
 void Torrent::setHandle(libtorrent::torrent_handle &h)
