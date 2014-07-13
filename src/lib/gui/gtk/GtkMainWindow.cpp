@@ -40,6 +40,7 @@ bool GtkMainWindow::onSecTick()
 void GtkMainWindow::onAddBtnClicked()
 {
 	Gtk::FileChooserDialog fc("Browse", Gtk::FILE_CHOOSER_ACTION_OPEN);
+	fc.set_select_multiple();
 	fc.set_transient_for(*this);
 	fc.add_button("_Cancel", Gtk::RESPONSE_CANCEL);
   	fc.add_button("Select", Gtk::RESPONSE_OK);
