@@ -1,3 +1,5 @@
+PULL REQUESTS ARE ENCOURAGED
+
 gTorrent
 =============
 
