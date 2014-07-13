@@ -10,8 +10,6 @@ class GuiBase
 {
 protected:
 	core_ptr &m_core;
-	virtual std::string getOpenFileDialog() = 0;
-	virtual std::string getSaveFileDialog() = 0;
 	
 public:
 	GuiBase();

@@ -94,7 +94,6 @@ am_gTorrent_OBJECTS = main.$(OBJEXT) Application.$(OBJEXT) \
 	lib/core/TorrentEngine.$(OBJEXT) lib/core/Torrent.$(OBJEXT) \
 	lib/shared/Log.$(OBJEXT) gui/core/Base.$(OBJEXT) \
 	gui/gtk/Gtk.$(OBJEXT) gui/gtk/GtkWindow.$(OBJEXT) \
-	gui/gtk/GtkTorrentColumns.$(OBJEXT) \
 	gui/gtk/GtkTreeTorrentView.$(OBJEXT) \
 	gui/gtk/GtkMainWindow.$(OBJEXT) \
 	gui/gtk/GtkTorrentExplorerWindow.$(OBJEXT)
@@ -267,7 +266,6 @@ gTorrent_SOURCES = main.cpp \
 	gui/core/Base.cpp \
 	gui/gtk/Gtk.cpp \
 	gui/gtk/GtkWindow.cpp \
-	gui/gtk/GtkTorrentColumns.cpp \
 	gui/gtk/GtkTreeTorrentView.cpp \
 	gui/gtk/GtkMainWindow.cpp \
 	gui/gtk/GtkTorrentExplorerWindow.cpp
@@ -388,8 +386,6 @@ gui/gtk/Gtk.$(OBJEXT): gui/gtk/$(am__dirstamp) \
 	gui/gtk/$(DEPDIR)/$(am__dirstamp)
 gui/gtk/GtkWindow.$(OBJEXT): gui/gtk/$(am__dirstamp) \
 	gui/gtk/$(DEPDIR)/$(am__dirstamp)
-gui/gtk/GtkTorrentColumns.$(OBJEXT): gui/gtk/$(am__dirstamp) \
-	gui/gtk/$(DEPDIR)/$(am__dirstamp)
 gui/gtk/GtkTreeTorrentView.$(OBJEXT): gui/gtk/$(am__dirstamp) \
 	gui/gtk/$(DEPDIR)/$(am__dirstamp)
 gui/gtk/GtkMainWindow.$(OBJEXT): gui/gtk/$(am__dirstamp) \
@@ -416,7 +412,6 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@gui/core/$(DEPDIR)/Base.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@gui/gtk/$(DEPDIR)/Gtk.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@gui/gtk/$(DEPDIR)/GtkMainWindow.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@gui/gtk/$(DEPDIR)/GtkTorrentColumns.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@gui/gtk/$(DEPDIR)/GtkTorrentExplorerWindow.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@gui/gtk/$(DEPDIR)/GtkTreeTorrentView.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@gui/gtk/$(DEPDIR)/GtkWindow.Po@am__quote@

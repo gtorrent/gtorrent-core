@@ -3392,25 +3392,6 @@ if test "x$ac_cv_file_src_gui_gtk_GtkWindow_cpp" = xyes; then :
 
 fi
 
-{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for src/gui/gtk/GtkTorrentColumns.cpp" >&5
-$as_echo_n "checking for src/gui/gtk/GtkTorrentColumns.cpp... " >&6; }
-if ${ac_cv_file_src_gui_gtk_GtkTorrentColumns_cpp+:} false; then :
-  $as_echo_n "(cached) " >&6
-else
-  test "$cross_compiling" = yes &&
-  as_fn_error $? "cannot check for file existence when cross compiling" "$LINENO" 5
-if test -r "src/gui/gtk/GtkTorrentColumns.cpp"; then
-  ac_cv_file_src_gui_gtk_GtkTorrentColumns_cpp=yes
-else
-  ac_cv_file_src_gui_gtk_GtkTorrentColumns_cpp=no
-fi
-fi
-{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_file_src_gui_gtk_GtkTorrentColumns_cpp" >&5
-$as_echo "$ac_cv_file_src_gui_gtk_GtkTorrentColumns_cpp" >&6; }
-if test "x$ac_cv_file_src_gui_gtk_GtkTorrentColumns_cpp" = xyes; then :
-
-fi
-
 { $as_echo "$as_me:${as_lineno-$LINENO}: checking for src/gui/gtk/GtkTreeTorrentView.cpp" >&5
 $as_echo_n "checking for src/gui/gtk/GtkTreeTorrentView.cpp... " >&6; }
 if ${ac_cv_file_src_gui_gtk_GtkTreeTorrentView_cpp+:} false; then :
