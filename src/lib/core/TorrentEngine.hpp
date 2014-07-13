@@ -19,7 +19,7 @@ public:
 	te_ptrc &getTorrents();
 
 	t_ptr addTorrent(std::string path);
-	t_ptr addMagnetURL(std::string path);
+	t_ptr addMagnetURL(std::string url);
 	void queue();
 };
 #endif

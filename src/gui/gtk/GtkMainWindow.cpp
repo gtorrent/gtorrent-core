@@ -41,20 +41,8 @@ GtkMainWindow::GtkMainWindow() :
 
 bool GtkMainWindow::isMagnetLink(std::string str)
 {
-	std::string buf;
-
-	for (auto &c : str)
-	{
-		if (c == ':')
-		{
-			if (buf == "magnet")
-				return true;
-		}
-
-		buf += c;
-	}
-
-	return false;
+	std::string prefix = "magnet:";
+	return str.substr(0, prefix.size()) == prefix;
 }
 
 bool GtkMainWindow::onSecTick()

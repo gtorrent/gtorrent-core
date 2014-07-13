@@ -46,7 +46,7 @@ t_ptr TorrentEngine::addTorrent(std::string path)
 
 t_ptr TorrentEngine::addMagnetURL(std::string url)
 {
-	std::shared_ptr<Torrent> t = std::shared_ptr<Torrent>(new Torrent(url, true));
+	std::shared_ptr<Torrent> t = std::shared_ptr<Torrent>(new Torrent(url));
 	libtorrent::torrent_handle h = m_session.add_torrent(t->getTorrentParams());
 
 	t->setHandle(h);
