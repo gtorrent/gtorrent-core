@@ -1,3 +1,4 @@
+#include <core/Core.hpp>
 #include "Torrent.hpp"
 
 #define T_PPM 1000000.f
@@ -7,8 +8,7 @@ Torrent::Torrent(std::string path) :
 {
 	m_torrent_params.save_path = "./";
 
-	std::string prefix = "magnet:";
-	if (path.substr(0, prefix.size()) == prefix)
+	if (GTorrent_Core::isMagnetLink(path))
 		m_torrent_params.url = path;
 	else
 		m_torrent_params.ti = new libtorrent::torrent_info(path);
