@@ -90,10 +90,10 @@ am__installdirs = "$(DESTDIR)$(bindir)"
 PROGRAMS = $(bin_PROGRAMS)
 am__dirstamp = $(am__leading_dot)dirstamp
 am_gTorrent_OBJECTS = main.$(OBJEXT) Application.$(OBJEXT) \
-	lib/core/Core.$(OBJEXT) lib/core/OSHelper.$(OBJEXT) \
-	lib/core/TorrentEngine.$(OBJEXT) lib/core/Torrent.$(OBJEXT) \
-	lib/shared/Log.$(OBJEXT) gui/core/Base.$(OBJEXT) \
-	gui/gtk/Gtk.$(OBJEXT) gui/gtk/GtkTreeTorrentView.$(OBJEXT) \
+	lib/core/Core.$(OBJEXT) lib/core/TorrentEngine.$(OBJEXT) \
+	lib/core/Torrent.$(OBJEXT) lib/shared/Log.$(OBJEXT) \
+	gui/core/Base.$(OBJEXT) gui/gtk/Gtk.$(OBJEXT) \
+	gui/gtk/GtkTreeTorrentView.$(OBJEXT) \
 	gui/gtk/GtkMainWindow.$(OBJEXT) \
 	gui/gtk/GtkAddMagnetLinkWindow.$(OBJEXT)
 gTorrent_OBJECTS = $(am_gTorrent_OBJECTS)
@@ -258,7 +258,6 @@ AM_LDFLAGS = $(libgtkmm_LIBS) $(libglibmm_LIBS) $(libtorrent_LIBS)
 gTorrent_SOURCES = main.cpp \
 	Application.cpp \
 	lib/core/Core.cpp \
-	lib/core/OSHelper.cpp \
 	lib/core/TorrentEngine.cpp \
 	lib/core/Torrent.cpp \
 	lib/shared/Log.cpp \
@@ -352,8 +351,6 @@ lib/core/$(DEPDIR)/$(am__dirstamp):
 	@: > lib/core/$(DEPDIR)/$(am__dirstamp)
 lib/core/Core.$(OBJEXT): lib/core/$(am__dirstamp) \
 	lib/core/$(DEPDIR)/$(am__dirstamp)
-lib/core/OSHelper.$(OBJEXT): lib/core/$(am__dirstamp) \
-	lib/core/$(DEPDIR)/$(am__dirstamp)
 lib/core/TorrentEngine.$(OBJEXT): lib/core/$(am__dirstamp) \
 	lib/core/$(DEPDIR)/$(am__dirstamp)
 lib/core/Torrent.$(OBJEXT): lib/core/$(am__dirstamp) \
@@ -411,7 +408,6 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@gui/gtk/$(DEPDIR)/GtkMainWindow.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@gui/gtk/$(DEPDIR)/GtkTreeTorrentView.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@lib/core/$(DEPDIR)/Core.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@lib/core/$(DEPDIR)/OSHelper.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@lib/core/$(DEPDIR)/Torrent.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@lib/core/$(DEPDIR)/TorrentEngine.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@lib/shared/$(DEPDIR)/Log.Po@am__quote@

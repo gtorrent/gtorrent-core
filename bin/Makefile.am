@@ -8,7 +8,6 @@ bin_PROGRAMS = gTorrent
 gTorrent_SOURCES = main.cpp \
 	Application.cpp \
 	lib/core/Core.cpp \
-	lib/core/OSHelper.cpp \
 	lib/core/TorrentEngine.cpp \
 	lib/core/Torrent.cpp \
 	lib/shared/Log.cpp \

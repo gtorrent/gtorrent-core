@@ -8,7 +8,6 @@ AC_CHECK_FILE([src/main.cpp])
 
 AC_CHECK_FILE([src/Application.cpp])
 AC_CHECK_FILE([src/lib/core/Core.cpp])
-AC_CHECK_FILE([src/lib/core/OSHelper.cpp])
 AC_CHECK_FILE([src/lib/core/TorrentEngine.cpp])
 AC_CHECK_FILE([src/lib/core/Torrent.cpp])
 

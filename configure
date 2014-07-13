@@ -3276,25 +3276,6 @@ if test "x$ac_cv_file_src_lib_core_Core_cpp" = xyes; then :
 
 fi
 
-{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for src/lib/core/OSHelper.cpp" >&5
-$as_echo_n "checking for src/lib/core/OSHelper.cpp... " >&6; }
-if ${ac_cv_file_src_lib_core_OSHelper_cpp+:} false; then :
-  $as_echo_n "(cached) " >&6
-else
-  test "$cross_compiling" = yes &&
-  as_fn_error $? "cannot check for file existence when cross compiling" "$LINENO" 5
-if test -r "src/lib/core/OSHelper.cpp"; then
-  ac_cv_file_src_lib_core_OSHelper_cpp=yes
-else
-  ac_cv_file_src_lib_core_OSHelper_cpp=no
-fi
-fi
-{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_file_src_lib_core_OSHelper_cpp" >&5
-$as_echo "$ac_cv_file_src_lib_core_OSHelper_cpp" >&6; }
-if test "x$ac_cv_file_src_lib_core_OSHelper_cpp" = xyes; then :
-
-fi
-
 { $as_echo "$as_me:${as_lineno-$LINENO}: checking for src/lib/core/TorrentEngine.cpp" >&5
 $as_echo_n "checking for src/lib/core/TorrentEngine.cpp... " >&6; }
 if ${ac_cv_file_src_lib_core_TorrentEngine_cpp+:} false; then :
