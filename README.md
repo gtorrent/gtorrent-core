@@ -1,7 +1,15 @@
-PULL REQUESTS ARE ENCOURAGED
-
 gTorrent
 =============
+
+PULL REQUESTS ARE ENCOURAGED
+
+\>absolutely no code
+
+\>yet another failed /g/ project
+
+see the branches
+
+
 
 Goals
 -------------
