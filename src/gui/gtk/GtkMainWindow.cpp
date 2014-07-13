@@ -24,7 +24,7 @@ GtkMainWindow::GtkMainWindow() :
 	header->add(*btn);
 
 	Gtk::Button *btn_m = Gtk::manage(new Gtk::Button());
-	btn_m->set_label("Add Magent");
+	btn_m->set_label("Add Link");
 	btn_m->signal_clicked().connect(sigc::mem_fun(*this, &GtkMainWindow::onAddMagnetBtnClicked));
 	header->add(*btn_m);
 
@@ -37,6 +37,24 @@ GtkMainWindow::GtkMainWindow() :
 	this->signal_delete_event().connect(sigc::mem_fun(*this, &GtkMainWindow::onDestroy));
 
 	this->show_all();
+}
+
+bool GtkMainWindow::isMagnetLink(std::string str)
+{
+	std::string buf;
+
+	for (auto &c : str)
+	{
+		if (c == ':')
+		{
+			if (buf == "magnet")
+				return true;
+		}
+
+		buf += c;
+	}
+
+	return false;
 }
 
 bool GtkMainWindow::onSecTick()
@@ -74,16 +92,36 @@ void GtkMainWindow::onAddBtnClicked()
 
 void GtkMainWindow::onAddMagnetBtnClicked()
 {
-	GtkAddMagnetLinkWindow d;
-	d.set_transient_for(*this);
-	int r = d.run();
+	Glib::RefPtr<Gtk::Clipboard> clip = Gtk::Clipboard::get();
+	clip->request_text(sigc::mem_fun(*this, &GtkMainWindow::onClipboardReady));
+}
 
-	switch (r)
+void GtkMainWindow::onClipboardReady(const Glib::ustring &text)
+{
+	std::string target;
+
+	if (isMagnetLink(text))
 	{
-		case Gtk::RESPONSE_OK:
-			t_ptr t = m_core->getEngine()->addMagnetURL(d.getMagnetURL());
-			m_treeview->addCell(t);
-		break;
+		target = text;
+	}
+	else
+	{
+		GtkAddMagnetLinkWindow d;
+		d.set_transient_for(*this);
+		int r = d.run();
+
+		switch (r)
+		{
+			case Gtk::RESPONSE_OK:
+				target = d.getMagnetURL();
+			break;
+		}
+	}
+
+	if (!target.empty())
+	{
+		t_ptr t = m_core->getEngine()->addMagnetURL(target);
+		m_treeview->addCell(t);
 	}
 }
 

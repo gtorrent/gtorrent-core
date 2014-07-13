@@ -12,10 +12,11 @@ class GtkAddMagnetLinkWindow : public Gtk::Dialog
 private:
 	Gtk::HeaderBar *m_header;
 	Gtk::TextView *m_textview; 
-	Gtk::VBox *m_vbox;
 
 	/* Signal Responders */
+
 	void onAddBtnClicked();
+
 public:
 	GtkAddMagnetLinkWindow();
 

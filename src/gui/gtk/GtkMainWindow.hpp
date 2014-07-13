@@ -14,12 +14,16 @@ private:
 
 	Gtk::HeaderBar *header;
 	GtkTorrentTreeView *m_treeview;
-public:
-	GtkMainWindow();
+
+	bool isMagnetLink(std::string str);
 
 	/* Signal Responders */
 	void onAddBtnClicked();
 	void onAddMagnetBtnClicked();
+	void onClipboardReady(const Glib::ustring &text);
+
+public:
+	GtkMainWindow();
 
 	bool onDestroy(GdkEventAny *event);
 	bool onSecTick();
