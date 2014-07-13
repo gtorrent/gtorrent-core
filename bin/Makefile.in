@@ -93,10 +93,9 @@ am_gTorrent_OBJECTS = main.$(OBJEXT) Application.$(OBJEXT) \
 	lib/core/Core.$(OBJEXT) lib/core/OSHelper.$(OBJEXT) \
 	lib/core/TorrentEngine.$(OBJEXT) lib/core/Torrent.$(OBJEXT) \
 	lib/shared/Log.$(OBJEXT) gui/core/Base.$(OBJEXT) \
-	gui/gtk/Gtk.$(OBJEXT) gui/gtk/GtkWindow.$(OBJEXT) \
-	gui/gtk/GtkTreeTorrentView.$(OBJEXT) \
+	gui/gtk/Gtk.$(OBJEXT) gui/gtk/GtkTreeTorrentView.$(OBJEXT) \
 	gui/gtk/GtkMainWindow.$(OBJEXT) \
-	gui/gtk/GtkTorrentExplorerWindow.$(OBJEXT)
+	gui/gtk/GtkAddMagnetLinkWindow.$(OBJEXT)
 gTorrent_OBJECTS = $(am_gTorrent_OBJECTS)
 gTorrent_LDADD = $(LDADD)
 AM_V_P = $(am__v_P_@AM_V@)
@@ -265,10 +264,9 @@ gTorrent_SOURCES = main.cpp \
 	lib/shared/Log.cpp \
 	gui/core/Base.cpp \
 	gui/gtk/Gtk.cpp \
-	gui/gtk/GtkWindow.cpp \
 	gui/gtk/GtkTreeTorrentView.cpp \
 	gui/gtk/GtkMainWindow.cpp \
-	gui/gtk/GtkTorrentExplorerWindow.cpp
+	gui/gtk/GtkAddMagnetLinkWindow.cpp
 
 all: all-am
 
@@ -384,13 +382,11 @@ gui/gtk/$(DEPDIR)/$(am__dirstamp):
 	@: > gui/gtk/$(DEPDIR)/$(am__dirstamp)
 gui/gtk/Gtk.$(OBJEXT): gui/gtk/$(am__dirstamp) \
 	gui/gtk/$(DEPDIR)/$(am__dirstamp)
-gui/gtk/GtkWindow.$(OBJEXT): gui/gtk/$(am__dirstamp) \
-	gui/gtk/$(DEPDIR)/$(am__dirstamp)
 gui/gtk/GtkTreeTorrentView.$(OBJEXT): gui/gtk/$(am__dirstamp) \
 	gui/gtk/$(DEPDIR)/$(am__dirstamp)
 gui/gtk/GtkMainWindow.$(OBJEXT): gui/gtk/$(am__dirstamp) \
 	gui/gtk/$(DEPDIR)/$(am__dirstamp)
-gui/gtk/GtkTorrentExplorerWindow.$(OBJEXT): gui/gtk/$(am__dirstamp) \
+gui/gtk/GtkAddMagnetLinkWindow.$(OBJEXT): gui/gtk/$(am__dirstamp) \
 	gui/gtk/$(DEPDIR)/$(am__dirstamp)
 
 gTorrent$(EXEEXT): $(gTorrent_OBJECTS) $(gTorrent_DEPENDENCIES) $(EXTRA_gTorrent_DEPENDENCIES) 
@@ -411,10 +407,9 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/main.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@gui/core/$(DEPDIR)/Base.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@gui/gtk/$(DEPDIR)/Gtk.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@gui/gtk/$(DEPDIR)/GtkAddMagnetLinkWindow.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@gui/gtk/$(DEPDIR)/GtkMainWindow.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@gui/gtk/$(DEPDIR)/GtkTorrentExplorerWindow.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@gui/gtk/$(DEPDIR)/GtkTreeTorrentView.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@gui/gtk/$(DEPDIR)/GtkWindow.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@lib/core/$(DEPDIR)/Core.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@lib/core/$(DEPDIR)/OSHelper.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@lib/core/$(DEPDIR)/Torrent.Po@am__quote@

@@ -3373,25 +3373,6 @@ if test "x$ac_cv_file_src_gui_gtk_Gtk_cpp" = xyes; then :
 
 fi
 
-{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for src/gui/gtk/GtkWindow.cpp" >&5
-$as_echo_n "checking for src/gui/gtk/GtkWindow.cpp... " >&6; }
-if ${ac_cv_file_src_gui_gtk_GtkWindow_cpp+:} false; then :
-  $as_echo_n "(cached) " >&6
-else
-  test "$cross_compiling" = yes &&
-  as_fn_error $? "cannot check for file existence when cross compiling" "$LINENO" 5
-if test -r "src/gui/gtk/GtkWindow.cpp"; then
-  ac_cv_file_src_gui_gtk_GtkWindow_cpp=yes
-else
-  ac_cv_file_src_gui_gtk_GtkWindow_cpp=no
-fi
-fi
-{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_file_src_gui_gtk_GtkWindow_cpp" >&5
-$as_echo "$ac_cv_file_src_gui_gtk_GtkWindow_cpp" >&6; }
-if test "x$ac_cv_file_src_gui_gtk_GtkWindow_cpp" = xyes; then :
-
-fi
-
 { $as_echo "$as_me:${as_lineno-$LINENO}: checking for src/gui/gtk/GtkTreeTorrentView.cpp" >&5
 $as_echo_n "checking for src/gui/gtk/GtkTreeTorrentView.cpp... " >&6; }
 if ${ac_cv_file_src_gui_gtk_GtkTreeTorrentView_cpp+:} false; then :
@@ -3430,22 +3411,22 @@ if test "x$ac_cv_file_src_gui_gtk_GtkMainWindow_cpp" = xyes; then :
 
 fi
 
-{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for src/gui/gtk/GtkTorrentExplorerWindow.cpp" >&5
-$as_echo_n "checking for src/gui/gtk/GtkTorrentExplorerWindow.cpp... " >&6; }
-if ${ac_cv_file_src_gui_gtk_GtkTorrentExplorerWindow_cpp+:} false; then :
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for src/gui/gtk/GtkAddMagnetLinkWindow.cpp" >&5
+$as_echo_n "checking for src/gui/gtk/GtkAddMagnetLinkWindow.cpp... " >&6; }
+if ${ac_cv_file_src_gui_gtk_GtkAddMagnetLinkWindow_cpp+:} false; then :
   $as_echo_n "(cached) " >&6
 else
   test "$cross_compiling" = yes &&
   as_fn_error $? "cannot check for file existence when cross compiling" "$LINENO" 5
-if test -r "src/gui/gtk/GtkTorrentExplorerWindow.cpp"; then
-  ac_cv_file_src_gui_gtk_GtkTorrentExplorerWindow_cpp=yes
+if test -r "src/gui/gtk/GtkAddMagnetLinkWindow.cpp"; then
+  ac_cv_file_src_gui_gtk_GtkAddMagnetLinkWindow_cpp=yes
 else
-  ac_cv_file_src_gui_gtk_GtkTorrentExplorerWindow_cpp=no
+  ac_cv_file_src_gui_gtk_GtkAddMagnetLinkWindow_cpp=no
 fi
 fi
-{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_file_src_gui_gtk_GtkTorrentExplorerWindow_cpp" >&5
-$as_echo "$ac_cv_file_src_gui_gtk_GtkTorrentExplorerWindow_cpp" >&6; }
-if test "x$ac_cv_file_src_gui_gtk_GtkTorrentExplorerWindow_cpp" = xyes; then :
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_file_src_gui_gtk_GtkAddMagnetLinkWindow_cpp" >&5
+$as_echo "$ac_cv_file_src_gui_gtk_GtkAddMagnetLinkWindow_cpp" >&6; }
+if test "x$ac_cv_file_src_gui_gtk_GtkAddMagnetLinkWindow_cpp" = xyes; then :
 
 fi
 

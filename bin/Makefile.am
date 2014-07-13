@@ -14,7 +14,6 @@ gTorrent_SOURCES = main.cpp \
 	lib/shared/Log.cpp \
 	gui/core/Base.cpp \
 	gui/gtk/Gtk.cpp \
-	gui/gtk/GtkWindow.cpp \
 	gui/gtk/GtkTreeTorrentView.cpp \
 	gui/gtk/GtkMainWindow.cpp \
-	gui/gtk/GtkTorrentExplorerWindow.cpp
+	gui/gtk/GtkAddMagnetLinkWindow.cpp
