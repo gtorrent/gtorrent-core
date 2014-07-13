@@ -30,6 +30,7 @@ AC_CHECK_LIB([torrent-rasterbar], [main])
 # GTK pkg-config
 PKG_CHECK_MODULES([libgtkmm], [gtkmm-3.0])
 PKG_CHECK_MODULES([libglibmm], [glibmm-2.4])
+PKG_CHECK_MODULES([libtorrent], [libtorrent-rasterbar])
 
 AC_CONFIG_FILES([Makefile] [bin/Makefile])
 AC_OUTPUT
