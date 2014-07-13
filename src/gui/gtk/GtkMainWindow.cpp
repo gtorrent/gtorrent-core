@@ -1,4 +1,3 @@
-#include "GtkTorrentExplorerWindow.hpp"
 #include "GtkAddMagnetLinkWindow.hpp"
 #include <gtkmm/filechooserdialog.h>
 #include "GtkMainWindow.hpp"
@@ -7,7 +6,8 @@
 #include <gtkmm/stock.h>
 #include <glibmm.h>
 
-GtkMainWindow::GtkMainWindow()
+GtkMainWindow::GtkMainWindow() :
+	m_core(Application::getSingleton()->getCore())
 {
 	this->set_position(Gtk::WIN_POS_CENTER);
 	this->set_default_size(1280, 720);
@@ -33,10 +33,10 @@ GtkMainWindow::GtkMainWindow()
 	m_treeview = Gtk::manage(new GtkTorrentTreeView());
 	this->add(*m_treeview);
 
-	this->show_all();
-
 	Glib::signal_timeout().connect(sigc::mem_fun(*this, &GtkMainWindow::onSecTick), 10);
 	this->signal_delete_event().connect(sigc::mem_fun(*this, &GtkMainWindow::onDestroy));
+
+	this->show_all();
 }
 
 bool GtkMainWindow::onSecTick()
@@ -74,6 +74,17 @@ void GtkMainWindow::onAddBtnClicked()
 
 void GtkMainWindow::onAddMagnetBtnClicked()
 {
+	GtkAddMagnetLinkWindow d;
+	d.set_transient_for(*this);
+	int r = d.run();
+
+	switch (r)
+	{
+		case Gtk::RESPONSE_OK:
+			t_ptr t = m_core->getEngine()->addMagnetURL(d.getMagnetURL());
+			m_treeview->addCell(t);
+		break;
+	}
 }
 
 bool GtkMainWindow::onDestroy(GdkEventAny *event)
