@@ -1,6 +1,17 @@
 gTorrent
 =============
 
+PULL REQUESTS ARE ENCOURAGED
+
+\>absolutely no code
+
+\>yet another failed /g/ project
+
+see the branches
+
+what we have so far: http://a.pomf.se/lkowau.webm
+
+
 Goals
 -------------
 1. Use native GUI toolkit on target platforms.
