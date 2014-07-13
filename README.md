@@ -9,6 +9,7 @@ PULL REQUESTS ARE ENCOURAGED
 
 see the branches
 
+what we have so far: http://a.pomf.se/lkowau.webm
 
 
 Goals
