@@ -55,8 +55,11 @@ void GtkMainWindow::onAddBtnClicked()
 	switch (result)
 	{
 		case Gtk::RESPONSE_OK:
-			t_ptr t = m_core->getEngine()->addTorrent(fc.get_filename().c_str());
-			m_treeview->addCell(t);
+			for (auto &f : fc.get_filenames())
+			{
+				t_ptr t = m_core->getEngine()->addTorrent(f.c_str());
+				m_treeview->addCell(t);
+			}
 		break;
 	}
 }
