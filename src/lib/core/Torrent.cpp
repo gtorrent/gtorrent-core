@@ -2,11 +2,15 @@
 
 #define T_PPM 1000000.f
 
-Torrent::Torrent(std::string path) :
+Torrent::Torrent(std::string path, bool isMagnet) :
 	m_path(path)
 {
 	m_torrent_params.save_path = "./";
-	m_torrent_params.ti = new libtorrent::torrent_info(path);
+
+	if (isMagnet)
+		m_torrent_params.url = path;
+	else
+		m_torrent_params.ti = new libtorrent::torrent_info(path);
 }
 
 bool Torrent::pollEvent(gt::Event &event)

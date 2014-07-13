@@ -15,7 +15,7 @@ private:
 	std::string m_path;
 	
 public:
-	Torrent(std::string path);
+	Torrent(std::string path, bool isMagnet = false);
 
 	bool pollEvent(gt::Event &event);
 
