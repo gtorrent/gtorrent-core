@@ -1,12 +1,26 @@
 #ifndef GTKADDMAGNETLINKWINDOW_HPP
 #define GTKADDMAGNETLINKWINDOW_HPP
 
-#include "GtkWindow.hpp"
+#include <gtkmm/headerbar.h>
+#include <gtkmm/textview.h>
+#include <gtkmm/dialog.h>
+#include <gtkmm/main.h>
+#include <gtkmm/box.h>
 
-class GtkAddMagnetLinkWindow : public GtkWindow
+class GtkAddMagnetLinkWindow : public Gtk::Dialog
 {
+private:
+	Gtk::HeaderBar *m_header;
+	Gtk::TextView *m_textview; 
+	Gtk::VBox *m_vbox;
+
+	/* Signal Responders */
+	void onAddBtnClicked();
 public:
 	GtkAddMagnetLinkWindow();
+
+	/* Getters */
+	std::string getMagnetURL();
 };
 
 #endif
