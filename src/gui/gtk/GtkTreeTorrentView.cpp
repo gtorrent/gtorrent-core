@@ -1,7 +1,6 @@
 #include <gtkmm/cellrendererprogress.h>
 #include <gtkmm/treeviewcolumn.h>
 #include "GtkTorrentTreeView.hpp"
-#include <core/OSHelper.hpp>
 #include <Application.hpp>
 
 GtkTorrentTreeView::GtkTorrentTreeView()
@@ -26,7 +25,6 @@ void GtkTorrentTreeView::setupColumns()
 	col->set_fixed_width(90);
 
 	Gtk::CellRendererProgress *cell = Gtk::manage(new Gtk::CellRendererProgress());
-	//cell->property_text() = "Checking...";
 	cid = this->append_column("Progress", *cell);
 	col = this->get_column(cid - 1);
 
