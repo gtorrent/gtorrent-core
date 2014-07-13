@@ -12,6 +12,12 @@ te_ptr GTorrent_Core::getEngine()
 	return m_engine;
 }
 
+bool GTorrent_Core::isMagnetLink(std::string url)
+{
+	std::string prefix = "magnet:";
+	return url.substr(0, prefix.size()) == prefix;
+}
+
 bool GTorrent_Core::isRunning()
 {
 	return m_running;

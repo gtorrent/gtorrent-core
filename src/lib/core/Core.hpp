@@ -19,6 +19,9 @@ public:
 
 	/* Getters */
 	te_ptr getEngine();
+
+	/* Useful function for determining if passed url is a magnet link */
+	static bool isMagnetLink(std::string url);
 };
 
 #endif
