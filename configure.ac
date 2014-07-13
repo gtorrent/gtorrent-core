@@ -13,13 +13,13 @@ AC_CHECK_FILE([src/lib/core/TorrentEngine.cpp])
 AC_CHECK_FILE([src/lib/core/Torrent.cpp])
 
 # GTK Related GUI Files
-AC_CHECK_FILE([src/lib/gui/core/Base.cpp])
-AC_CHECK_FILE([src/lib/gui/gtk/Gtk.cpp])
-AC_CHECK_FILE([src/lib/gui/gtk/GtkWindow.cpp])
-AC_CHECK_FILE([src/lib/gui/gtk/GtkTorrentColumns.cpp])
-AC_CHECK_FILE([src/lib/gui/gtk/GtkTreeTorrentView.cpp])
-AC_CHECK_FILE([src/lib/gui/gtk/GtkMainWindow.cpp])
-AC_CHECK_FILE([src/lib/gui/gtk/GtkTorrentExplorerWindow.cpp])
+AC_CHECK_FILE([src/gui/core/Base.cpp])
+AC_CHECK_FILE([src/gui/gtk/Gtk.cpp])
+AC_CHECK_FILE([src/gui/gtk/GtkWindow.cpp])
+AC_CHECK_FILE([src/gui/gtk/GtkTorrentColumns.cpp])
+AC_CHECK_FILE([src/gui/gtk/GtkTreeTorrentView.cpp])
+AC_CHECK_FILE([src/gui/gtk/GtkMainWindow.cpp])
+AC_CHECK_FILE([src/gui/gtk/GtkTorrentExplorerWindow.cpp])
 
 # Logging
 AC_CHECK_FILE([src/lib/core/Torrent.cpp])

@@ -92,12 +92,12 @@ am__dirstamp = $(am__leading_dot)dirstamp
 am_gTorrent_OBJECTS = main.$(OBJEXT) Application.$(OBJEXT) \
 	lib/core/Core.$(OBJEXT) lib/core/OSHelper.$(OBJEXT) \
 	lib/core/TorrentEngine.$(OBJEXT) lib/core/Torrent.$(OBJEXT) \
-	lib/shared/Log.$(OBJEXT) lib/gui/core/Base.$(OBJEXT) \
-	lib/gui/gtk/Gtk.$(OBJEXT) lib/gui/gtk/GtkWindow.$(OBJEXT) \
-	lib/gui/gtk/GtkTorrentColumns.$(OBJEXT) \
-	lib/gui/gtk/GtkTreeTorrentView.$(OBJEXT) \
-	lib/gui/gtk/GtkMainWindow.$(OBJEXT) \
-	lib/gui/gtk/GtkTorrentExplorerWindow.$(OBJEXT)
+	lib/shared/Log.$(OBJEXT) gui/core/Base.$(OBJEXT) \
+	gui/gtk/Gtk.$(OBJEXT) gui/gtk/GtkWindow.$(OBJEXT) \
+	gui/gtk/GtkTorrentColumns.$(OBJEXT) \
+	gui/gtk/GtkTreeTorrentView.$(OBJEXT) \
+	gui/gtk/GtkMainWindow.$(OBJEXT) \
+	gui/gtk/GtkTorrentExplorerWindow.$(OBJEXT)
 gTorrent_OBJECTS = $(am_gTorrent_OBJECTS)
 gTorrent_LDADD = $(LDADD)
 AM_V_P = $(am__v_P_@AM_V@)
@@ -257,7 +257,21 @@ top_srcdir = @top_srcdir@
 AUTOMAKE_OPTIONS = subdir-objects
 AM_CXXFLAGS = -std=c++11 -g -I../src/lib -I../src $(libgtkmm_CFLAGS) $(libglibmm_CFLAGS) $(libtorrent_CFLAGS)
 AM_LDFLAGS = $(libgtkmm_LIBS) $(libglibmm_LIBS) $(libtorrent_LIBS)
-gTorrent_SOURCES = main.cpp Application.cpp lib/core/Core.cpp lib/core/OSHelper.cpp lib/core/TorrentEngine.cpp lib/core/Torrent.cpp lib/shared/Log.cpp lib/gui/core/Base.cpp lib/gui/gtk/Gtk.cpp lib/gui/gtk/GtkWindow.cpp lib/gui/gtk/GtkTorrentColumns.cpp lib/gui/gtk/GtkTreeTorrentView.cpp lib/gui/gtk/GtkMainWindow.cpp lib/gui/gtk/GtkTorrentExplorerWindow.cpp
+gTorrent_SOURCES = main.cpp \
+	Application.cpp \
+	lib/core/Core.cpp \
+	lib/core/OSHelper.cpp \
+	lib/core/TorrentEngine.cpp \
+	lib/core/Torrent.cpp \
+	lib/shared/Log.cpp \
+	gui/core/Base.cpp \
+	gui/gtk/Gtk.cpp \
+	gui/gtk/GtkWindow.cpp \
+	gui/gtk/GtkTorrentColumns.cpp \
+	gui/gtk/GtkTreeTorrentView.cpp \
+	gui/gtk/GtkMainWindow.cpp \
+	gui/gtk/GtkTorrentExplorerWindow.cpp
+
 all: all-am
 
 .SUFFIXES:
@@ -356,33 +370,32 @@ lib/shared/$(DEPDIR)/$(am__dirstamp):
 	@: > lib/shared/$(DEPDIR)/$(am__dirstamp)
 lib/shared/Log.$(OBJEXT): lib/shared/$(am__dirstamp) \
 	lib/shared/$(DEPDIR)/$(am__dirstamp)
-lib/gui/core/$(am__dirstamp):
-	@$(MKDIR_P) lib/gui/core
-	@: > lib/gui/core/$(am__dirstamp)
-lib/gui/core/$(DEPDIR)/$(am__dirstamp):
-	@$(MKDIR_P) lib/gui/core/$(DEPDIR)
-	@: > lib/gui/core/$(DEPDIR)/$(am__dirstamp)
-lib/gui/core/Base.$(OBJEXT): lib/gui/core/$(am__dirstamp) \
-	lib/gui/core/$(DEPDIR)/$(am__dirstamp)
-lib/gui/gtk/$(am__dirstamp):
-	@$(MKDIR_P) lib/gui/gtk
-	@: > lib/gui/gtk/$(am__dirstamp)
-lib/gui/gtk/$(DEPDIR)/$(am__dirstamp):
-	@$(MKDIR_P) lib/gui/gtk/$(DEPDIR)
-	@: > lib/gui/gtk/$(DEPDIR)/$(am__dirstamp)
-lib/gui/gtk/Gtk.$(OBJEXT): lib/gui/gtk/$(am__dirstamp) \
-	lib/gui/gtk/$(DEPDIR)/$(am__dirstamp)
-lib/gui/gtk/GtkWindow.$(OBJEXT): lib/gui/gtk/$(am__dirstamp) \
-	lib/gui/gtk/$(DEPDIR)/$(am__dirstamp)
-lib/gui/gtk/GtkTorrentColumns.$(OBJEXT): lib/gui/gtk/$(am__dirstamp) \
-	lib/gui/gtk/$(DEPDIR)/$(am__dirstamp)
-lib/gui/gtk/GtkTreeTorrentView.$(OBJEXT): lib/gui/gtk/$(am__dirstamp) \
-	lib/gui/gtk/$(DEPDIR)/$(am__dirstamp)
-lib/gui/gtk/GtkMainWindow.$(OBJEXT): lib/gui/gtk/$(am__dirstamp) \
-	lib/gui/gtk/$(DEPDIR)/$(am__dirstamp)
-lib/gui/gtk/GtkTorrentExplorerWindow.$(OBJEXT):  \
-	lib/gui/gtk/$(am__dirstamp) \
-	lib/gui/gtk/$(DEPDIR)/$(am__dirstamp)
+gui/core/$(am__dirstamp):
+	@$(MKDIR_P) gui/core
+	@: > gui/core/$(am__dirstamp)
+gui/core/$(DEPDIR)/$(am__dirstamp):
+	@$(MKDIR_P) gui/core/$(DEPDIR)
+	@: > gui/core/$(DEPDIR)/$(am__dirstamp)
+gui/core/Base.$(OBJEXT): gui/core/$(am__dirstamp) \
+	gui/core/$(DEPDIR)/$(am__dirstamp)
+gui/gtk/$(am__dirstamp):
+	@$(MKDIR_P) gui/gtk
+	@: > gui/gtk/$(am__dirstamp)
+gui/gtk/$(DEPDIR)/$(am__dirstamp):
+	@$(MKDIR_P) gui/gtk/$(DEPDIR)
+	@: > gui/gtk/$(DEPDIR)/$(am__dirstamp)
+gui/gtk/Gtk.$(OBJEXT): gui/gtk/$(am__dirstamp) \
+	gui/gtk/$(DEPDIR)/$(am__dirstamp)
+gui/gtk/GtkWindow.$(OBJEXT): gui/gtk/$(am__dirstamp) \
+	gui/gtk/$(DEPDIR)/$(am__dirstamp)
+gui/gtk/GtkTorrentColumns.$(OBJEXT): gui/gtk/$(am__dirstamp) \
+	gui/gtk/$(DEPDIR)/$(am__dirstamp)
+gui/gtk/GtkTreeTorrentView.$(OBJEXT): gui/gtk/$(am__dirstamp) \
+	gui/gtk/$(DEPDIR)/$(am__dirstamp)
+gui/gtk/GtkMainWindow.$(OBJEXT): gui/gtk/$(am__dirstamp) \
+	gui/gtk/$(DEPDIR)/$(am__dirstamp)
+gui/gtk/GtkTorrentExplorerWindow.$(OBJEXT): gui/gtk/$(am__dirstamp) \
+	gui/gtk/$(DEPDIR)/$(am__dirstamp)
 
 gTorrent$(EXEEXT): $(gTorrent_OBJECTS) $(gTorrent_DEPENDENCIES) $(EXTRA_gTorrent_DEPENDENCIES) 
 	@rm -f gTorrent$(EXEEXT)
@@ -390,9 +403,9 @@ gTorrent$(EXEEXT): $(gTorrent_OBJECTS) $(gTorrent_DEPENDENCIES) $(EXTRA_gTorrent
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
+	-rm -f gui/core/*.$(OBJEXT)
+	-rm -f gui/gtk/*.$(OBJEXT)
 	-rm -f lib/core/*.$(OBJEXT)
-	-rm -f lib/gui/core/*.$(OBJEXT)
-	-rm -f lib/gui/gtk/*.$(OBJEXT)
 	-rm -f lib/shared/*.$(OBJEXT)
 
 distclean-compile:
@@ -400,17 +413,17 @@ distclean-compile:
 
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/Application.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/main.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@gui/core/$(DEPDIR)/Base.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@gui/gtk/$(DEPDIR)/Gtk.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@gui/gtk/$(DEPDIR)/GtkMainWindow.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@gui/gtk/$(DEPDIR)/GtkTorrentColumns.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@gui/gtk/$(DEPDIR)/GtkTorrentExplorerWindow.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@gui/gtk/$(DEPDIR)/GtkTreeTorrentView.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@gui/gtk/$(DEPDIR)/GtkWindow.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@lib/core/$(DEPDIR)/Core.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@lib/core/$(DEPDIR)/OSHelper.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@lib/core/$(DEPDIR)/Torrent.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@lib/core/$(DEPDIR)/TorrentEngine.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@lib/gui/core/$(DEPDIR)/Base.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@lib/gui/gtk/$(DEPDIR)/Gtk.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@lib/gui/gtk/$(DEPDIR)/GtkMainWindow.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@lib/gui/gtk/$(DEPDIR)/GtkTorrentColumns.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@lib/gui/gtk/$(DEPDIR)/GtkTorrentExplorerWindow.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@lib/gui/gtk/$(DEPDIR)/GtkTreeTorrentView.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@lib/gui/gtk/$(DEPDIR)/GtkWindow.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@lib/shared/$(DEPDIR)/Log.Po@am__quote@
 
 .cpp.o:
@@ -544,12 +557,12 @@ clean-generic:
 distclean-generic:
 	-test -z "$(CONFIG_CLEAN_FILES)" || rm -f $(CONFIG_CLEAN_FILES)
 	-test . = "$(srcdir)" || test -z "$(CONFIG_CLEAN_VPATH_FILES)" || rm -f $(CONFIG_CLEAN_VPATH_FILES)
+	-rm -f gui/core/$(DEPDIR)/$(am__dirstamp)
+	-rm -f gui/core/$(am__dirstamp)
+	-rm -f gui/gtk/$(DEPDIR)/$(am__dirstamp)
+	-rm -f gui/gtk/$(am__dirstamp)
 	-rm -f lib/core/$(DEPDIR)/$(am__dirstamp)
 	-rm -f lib/core/$(am__dirstamp)
-	-rm -f lib/gui/core/$(DEPDIR)/$(am__dirstamp)
-	-rm -f lib/gui/core/$(am__dirstamp)
-	-rm -f lib/gui/gtk/$(DEPDIR)/$(am__dirstamp)
-	-rm -f lib/gui/gtk/$(am__dirstamp)
 	-rm -f lib/shared/$(DEPDIR)/$(am__dirstamp)
 	-rm -f lib/shared/$(am__dirstamp)
 
@@ -561,7 +574,7 @@ clean: clean-am
 clean-am: clean-binPROGRAMS clean-generic mostlyclean-am
 
 distclean: distclean-am
-	-rm -rf ./$(DEPDIR) lib/core/$(DEPDIR) lib/gui/core/$(DEPDIR) lib/gui/gtk/$(DEPDIR) lib/shared/$(DEPDIR)
+	-rm -rf ./$(DEPDIR) gui/core/$(DEPDIR) gui/gtk/$(DEPDIR) lib/core/$(DEPDIR) lib/shared/$(DEPDIR)
 	-rm -f Makefile
 distclean-am: clean-am distclean-compile distclean-generic \
 	distclean-tags
@@ -607,7 +620,7 @@ install-ps-am:
 installcheck-am:
 
 maintainer-clean: maintainer-clean-am
-	-rm -rf ./$(DEPDIR) lib/core/$(DEPDIR) lib/gui/core/$(DEPDIR) lib/gui/gtk/$(DEPDIR) lib/shared/$(DEPDIR)
+	-rm -rf ./$(DEPDIR) gui/core/$(DEPDIR) gui/gtk/$(DEPDIR) lib/core/$(DEPDIR) lib/shared/$(DEPDIR)
 	-rm -f Makefile
 maintainer-clean-am: distclean-am maintainer-clean-generic
 
