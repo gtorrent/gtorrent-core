@@ -1,6 +1,6 @@
 AUTOMAKE_OPTIONS = subdir-objects
-AM_CXXFLAGS = -std=c++11 -g -I../src/lib -I../src $(libgtkmm_CFLAGS) $(libglibmm_CFLAGS)
-AM_LDFLAGS = $(libgtkmm_LIBS) $(libglibmm_LIBS)
+AM_CXXFLAGS = -std=c++11 -g -I../src/lib -I../src $(libgtkmm_CFLAGS) $(libglibmm_CFLAGS) $(libtorrent_CFLAGS)
+AM_LDFLAGS = $(libgtkmm_LIBS) $(libglibmm_LIBS) $(libtorrent_LIBS)
 
 VPATH = ../src
 bin_PROGRAMS = gTorrent

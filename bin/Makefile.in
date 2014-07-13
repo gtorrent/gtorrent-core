@@ -235,6 +235,8 @@ libglibmm_CFLAGS = @libglibmm_CFLAGS@
 libglibmm_LIBS = @libglibmm_LIBS@
 libgtkmm_CFLAGS = @libgtkmm_CFLAGS@
 libgtkmm_LIBS = @libgtkmm_LIBS@
+libtorrent_CFLAGS = @libtorrent_CFLAGS@
+libtorrent_LIBS = @libtorrent_LIBS@
 localedir = @localedir@
 localstatedir = @localstatedir@
 mandir = @mandir@
@@ -253,8 +255,8 @@ top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 AUTOMAKE_OPTIONS = subdir-objects
-AM_CXXFLAGS = -std=c++11 -g -I../src/lib -I../src $(libgtkmm_CFLAGS) $(libglibmm_CFLAGS)
-AM_LDFLAGS = $(libgtkmm_LIBS) $(libglibmm_LIBS)
+AM_CXXFLAGS = -std=c++11 -g -I../src/lib -I../src $(libgtkmm_CFLAGS) $(libglibmm_CFLAGS) $(libtorrent_CFLAGS)
+AM_LDFLAGS = $(libgtkmm_LIBS) $(libglibmm_LIBS) $(libtorrent_LIBS)
 gTorrent_SOURCES = main.cpp Application.cpp lib/core/Core.cpp lib/core/OSHelper.cpp lib/core/TorrentEngine.cpp lib/core/Torrent.cpp lib/shared/Log.cpp lib/gui/core/Base.cpp lib/gui/gtk/Gtk.cpp lib/gui/gtk/GtkWindow.cpp lib/gui/gtk/GtkTorrentColumns.cpp lib/gui/gtk/GtkTreeTorrentView.cpp lib/gui/gtk/GtkMainWindow.cpp lib/gui/gtk/GtkTorrentExplorerWindow.cpp
 all: all-am
 

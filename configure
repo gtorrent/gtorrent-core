@@ -585,6 +585,8 @@ ac_subst_vars='am__EXEEXT_FALSE
 am__EXEEXT_TRUE
 LTLIBOBJS
 LIBOBJS
+libtorrent_LIBS
+libtorrent_CFLAGS
 libglibmm_LIBS
 libglibmm_CFLAGS
 libgtkmm_LIBS
@@ -703,7 +705,9 @@ PKG_CONFIG_LIBDIR
 libgtkmm_CFLAGS
 libgtkmm_LIBS
 libglibmm_CFLAGS
-libglibmm_LIBS'
+libglibmm_LIBS
+libtorrent_CFLAGS
+libtorrent_LIBS'
 
 
 # Initialize some variables set by options.
@@ -1348,6 +1352,10 @@ Some influential environment variables:
               C compiler flags for libglibmm, overriding pkg-config
   libglibmm_LIBS
               linker flags for libglibmm, overriding pkg-config
+  libtorrent_CFLAGS
+              C compiler flags for libtorrent, overriding pkg-config
+  libtorrent_LIBS
+              linker flags for libtorrent, overriding pkg-config
 
 Use these variables to override the choices made by `configure' or to help
 it to find libraries and programs with nonstandard names/locations.
@@ -4587,6 +4595,97 @@ See \`config.log' for more details" "$LINENO" 5; }
 else
 	libglibmm_CFLAGS=$pkg_cv_libglibmm_CFLAGS
 	libglibmm_LIBS=$pkg_cv_libglibmm_LIBS
+        { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
+$as_echo "yes" >&6; }
+
+fi
+
+pkg_failed=no
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for libtorrent" >&5
+$as_echo_n "checking for libtorrent... " >&6; }
+
+if test -n "$libtorrent_CFLAGS"; then
+    pkg_cv_libtorrent_CFLAGS="$libtorrent_CFLAGS"
+ elif test -n "$PKG_CONFIG"; then
+    if test -n "$PKG_CONFIG" && \
+    { { $as_echo "$as_me:${as_lineno-$LINENO}: \$PKG_CONFIG --exists --print-errors \"libtorrent-rasterbar\""; } >&5
+  ($PKG_CONFIG --exists --print-errors "libtorrent-rasterbar") 2>&5
+  ac_status=$?
+  $as_echo "$as_me:${as_lineno-$LINENO}: \$? = $ac_status" >&5
+  test $ac_status = 0; }; then
+  pkg_cv_libtorrent_CFLAGS=`$PKG_CONFIG --cflags "libtorrent-rasterbar" 2>/dev/null`
+		      test "x$?" != "x0" && pkg_failed=yes
+else
+  pkg_failed=yes
+fi
+ else
+    pkg_failed=untried
+fi
+if test -n "$libtorrent_LIBS"; then
+    pkg_cv_libtorrent_LIBS="$libtorrent_LIBS"
+ elif test -n "$PKG_CONFIG"; then
+    if test -n "$PKG_CONFIG" && \
+    { { $as_echo "$as_me:${as_lineno-$LINENO}: \$PKG_CONFIG --exists --print-errors \"libtorrent-rasterbar\""; } >&5
+  ($PKG_CONFIG --exists --print-errors "libtorrent-rasterbar") 2>&5
+  ac_status=$?
+  $as_echo "$as_me:${as_lineno-$LINENO}: \$? = $ac_status" >&5
+  test $ac_status = 0; }; then
+  pkg_cv_libtorrent_LIBS=`$PKG_CONFIG --libs "libtorrent-rasterbar" 2>/dev/null`
+		      test "x$?" != "x0" && pkg_failed=yes
+else
+  pkg_failed=yes
+fi
+ else
+    pkg_failed=untried
+fi
+
+
+
+if test $pkg_failed = yes; then
+   	{ $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
+$as_echo "no" >&6; }
+
+if $PKG_CONFIG --atleast-pkgconfig-version 0.20; then
+        _pkg_short_errors_supported=yes
+else
+        _pkg_short_errors_supported=no
+fi
+        if test $_pkg_short_errors_supported = yes; then
+	        libtorrent_PKG_ERRORS=`$PKG_CONFIG --short-errors --print-errors --cflags --libs "libtorrent-rasterbar" 2>&1`
+        else
+	        libtorrent_PKG_ERRORS=`$PKG_CONFIG --print-errors --cflags --libs "libtorrent-rasterbar" 2>&1`
+        fi
+	# Put the nasty error message in config.log where it belongs
+	echo "$libtorrent_PKG_ERRORS" >&5
+
+	as_fn_error $? "Package requirements (libtorrent-rasterbar) were not met:
+
+$libtorrent_PKG_ERRORS
+
+Consider adjusting the PKG_CONFIG_PATH environment variable if you
+installed software in a non-standard prefix.
+
+Alternatively, you may set the environment variables libtorrent_CFLAGS
+and libtorrent_LIBS to avoid the need to call pkg-config.
+See the pkg-config man page for more details." "$LINENO" 5
+elif test $pkg_failed = untried; then
+     	{ $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
+$as_echo "no" >&6; }
+	{ { $as_echo "$as_me:${as_lineno-$LINENO}: error: in \`$ac_pwd':" >&5
+$as_echo "$as_me: error: in \`$ac_pwd':" >&2;}
+as_fn_error $? "The pkg-config script could not be found or is too old.  Make sure it
+is in your PATH or set the PKG_CONFIG environment variable to the full
+path to pkg-config.
+
+Alternatively, you may set the environment variables libtorrent_CFLAGS
+and libtorrent_LIBS to avoid the need to call pkg-config.
+See the pkg-config man page for more details.
+
+To get pkg-config, see <http://pkg-config.freedesktop.org/>.
+See \`config.log' for more details" "$LINENO" 5; }
+else
+	libtorrent_CFLAGS=$pkg_cv_libtorrent_CFLAGS
+	libtorrent_LIBS=$pkg_cv_libtorrent_LIBS
         { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
 $as_echo "yes" >&6; }
 
