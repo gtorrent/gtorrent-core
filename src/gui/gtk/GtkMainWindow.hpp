@@ -15,8 +15,6 @@ private:
 	Gtk::HeaderBar *header;
 	GtkTorrentTreeView *m_treeview;
 
-	bool isMagnetLink(std::string str);
-
 	/* Signal Responders */
 	void onAddBtnClicked();
 	void onAddMagnetBtnClicked();

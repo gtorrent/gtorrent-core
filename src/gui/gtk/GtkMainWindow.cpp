@@ -39,12 +39,6 @@ GtkMainWindow::GtkMainWindow() :
 	this->show_all();
 }
 
-bool GtkMainWindow::isMagnetLink(std::string str)
-{
-	std::string prefix = "magnet:";
-	return str.substr(0, prefix.size()) == prefix;
-}
-
 bool GtkMainWindow::onSecTick()
 {
 	m_treeview->updateCells();
@@ -88,7 +82,7 @@ void GtkMainWindow::onClipboardReady(const Glib::ustring &text)
 {
 	std::string target;
 
-	if (isMagnetLink(text))
+	if (GTorrent_Core::isMagnetLink(text))
 	{
 		target = text;
 	}
