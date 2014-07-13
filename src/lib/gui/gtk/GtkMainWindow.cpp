@@ -3,6 +3,7 @@
 #include "GtkMainWindow.hpp"
 #include <Application.hpp>
 #include <gtkmm/button.h>
+#include <gtkmm/stock.h>
 #include <glibmm.h>
 
 GtkMainWindow::GtkMainWindow()
