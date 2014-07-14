@@ -1,8 +1,9 @@
 before_install:
-        - sudo apt-add-repository -qqy ppa:ubuntu-toolchain-r/ppa
+        - sudo apt-add-repository -y ppa:ubuntu-toolchain-r/ppa
         - sudo apt-get update -qq
 install:
-        - sudo apt-get install -qqy cmake libgtkmm-3.0-dev libglibmm-2.4-dev libtorrent-rasterbar-dev libboost-dev g++
+        - sudo apt-get install -qqy cmake libgtkmm-3.0-dev libglibmm-2.4-dev libtorrent-rasterbar-dev libboost-dev g++-4.8 gcc-4.8
+        - sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-4.8 90
 language: cpp
 compiler:
         - gcc
