@@ -1,0 +1,14 @@
+# Dealing with fucking autoconf/automake here.
+config.log
+config.status
+Makefile
+
+aclocal.m4
+autom4te.cache/*
+
+# We don't want some nigger's compiled binaries.
+bin/*
+build/*
+
+# Ignore vim swp files
+*.swp
