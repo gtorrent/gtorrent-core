@@ -1,6 +1,6 @@
 #ifndef GUIBASE_HPP
 #define GUIBASE_HPP
-#include <core/Core.hpp>
+#include "core/Core.hpp"
 #include <memory>
 #include <string>
 
