@@ -12,3 +12,6 @@ build/*
 
 # Ignore vim swp files
 *.swp
+
+# ctag files
+tags
