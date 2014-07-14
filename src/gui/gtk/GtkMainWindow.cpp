@@ -74,36 +74,16 @@ void GtkMainWindow::onAddBtnClicked()
 
 void GtkMainWindow::onAddMagnetBtnClicked()
 {
-	Glib::RefPtr<Gtk::Clipboard> clip = Gtk::Clipboard::get();
-	clip->request_text(sigc::mem_fun(*this, &GtkMainWindow::onClipboardReady));
-}
+	GtkAddMagnetLinkWindow d;
+	d.set_transient_for(*this);
+	int r = d.run();
 
-void GtkMainWindow::onClipboardReady(const Glib::ustring &text)
-{
-	std::string target;
-
-	if (GTorrent_Core::isMagnetLink(text))
+	switch (r)
 	{
-		target = text;
-	}
-	else
-	{
-		GtkAddMagnetLinkWindow d;
-		d.set_transient_for(*this);
-		int r = d.run();
-
-		switch (r)
-		{
-			case Gtk::RESPONSE_OK:
-				target = d.getMagnetURL();
-			break;
-		}
-	}
-
-	if (!target.empty())
-	{
-		t_ptr t = m_core->getEngine()->addMagnetURL(target);
-		m_treeview->addCell(t);
+		case Gtk::RESPONSE_OK:
+			t_ptr t = m_core->getEngine()->addMagnetURL(d.getMagnetURL());
+			m_treeview->addCell(t);
+		break;
 	}
 }
 

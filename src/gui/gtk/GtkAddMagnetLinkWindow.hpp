@@ -16,6 +16,7 @@ private:
 	/* Signal Responders */
 
 	void onAddBtnClicked();
+	void onClipboardReady(const Glib::ustring &text);
 
 public:
 	GtkAddMagnetLinkWindow();
