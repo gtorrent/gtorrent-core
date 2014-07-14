@@ -1,5 +1,5 @@
 before_install:
-        - sudo apt-get install -y cmake
+        - sudo apt-get install -y cmake libgtkmm-3.0-dev libglibmm-2.4-dev libtorrent-rasterbar-dev libboost-dev
 language: cpp
 compiler:
         - gcc
