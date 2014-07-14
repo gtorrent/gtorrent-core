@@ -32,9 +32,9 @@ $ make
 
 Compiling on Windows
 -------------
-Requires CMakem, MinGW, msys and all dependencies. Note that since gtorrent uses gtkmm/headerbar.h you must use at least  gtkmm-3.9.16. (Note: I have not verified that gtkmm-3.9.16 is enough) This has dependencies
+Requires CMake, MinGW, msys and all dependencies. Note that since gtorrent uses gtkmm/headerbar.h you must use at least  gtkmm-3.9.16. (Note: I have not verified that gtkmm-3.9.16 is enough) This has dependencies
 `['giomm-2.4 >= 2.37.7 pangomm-1.4 >= 2.27.1 gtk+-3.0 >= 3.9.16 cairomm-1.0 >= 1.9.2 gdk-pixbuf-2.0 >= 2.22.1'`]
-Note that since the prebuilt gtk package for Windows is currently at 3.6.4, you must compile gtk yourself. This is a clusterfuck, good luck.
+Note that since the prebuilt gtk package for Windows is currently at 3.6.4, you must compile gtk yourself. This is a clusterfuck and is poorly supported but possible with enough hacking, good luck.
 
 In a bash shell:
 ```
