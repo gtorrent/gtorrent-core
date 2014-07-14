@@ -1,7 +1,7 @@
 #include "Log.hpp"
 #include <cstdio>
 
-void gt::Log::Debug(char *fmt, ...)
+void gt::Log::Debug(const char *fmt, ...)
 {
 	va_list args;
 

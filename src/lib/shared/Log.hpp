@@ -6,7 +6,7 @@ namespace gt
 	class Log
 	{
 	public:
-		static void Debug(char *fmt, ...);
+		static void Debug(const char *fmt, ...);
 	};
 };
 
