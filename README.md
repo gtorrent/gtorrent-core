@@ -38,6 +38,8 @@ Note that since the prebuilt gtk package for Windows is currently at 3.6.4, you 
 
 In a bash shell:
 ```
+mkdir -p build/ && cd build/
+
 cmake -G "MSYS Makefiles" ..
 
 make
