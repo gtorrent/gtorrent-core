@@ -24,20 +24,20 @@ Compiling on GNU/Linux or Mac OS X
 -------------
 ```
 $ mkdir -p build/ && cd build/
+
 $ cmake ..
+
 $ make
 ```
 
 Compiling on Windows
 -------------
-Requires ~~CMake~~ and MinGW
+Requires CMake and MinGW
+
 ```
-top kek no fucken clue without cmake
-gimme a sec
+cmake -G "MinGW Makefiles" .
+
+mingw32-make
+
+gTorrent.exe
 ```
-
-~~> cmake -G "MinGW Makefiles" .~~
-
-~~> mingw32-make~~
-
-~~> gTorrent.exe~~
