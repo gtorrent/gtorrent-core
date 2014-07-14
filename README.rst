@@ -1,5 +1,6 @@
 gTorrent
 =============
+.. _travis-build-status: https://travis-ci.org/gtorrent/gTorrent/
 
 PULL REQUESTS ARE ENCOURAGED
 
