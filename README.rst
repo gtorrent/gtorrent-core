@@ -1,8 +1,5 @@
 gTorrent
-.. image:: https://travis-ci.org/gtorrent/gTorrent.svg
-    :target: https://travis-ci.org/gtorrent/gTorrent
 =============
-.. _travis-build-status: https://travis-ci.org/gtorrent/gTorrent/
 
 PULL REQUESTS ARE ENCOURAGED
 
