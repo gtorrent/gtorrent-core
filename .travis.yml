@@ -1,6 +1,9 @@
+before_install:
+        - sudo apt-get install -y cmake
 language: cpp
 compiler:
         - gcc
         - clang
+
 # Change this to your needs
 script: mkdir -p build && cd build/ && cmake .. && make
