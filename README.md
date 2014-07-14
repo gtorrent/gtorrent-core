@@ -23,9 +23,9 @@ Goals
 Compiling on GNU/Linux or Mac OS X
 -------------
 ```
-$ ./configure
+$ mkdir -p build/ && cd build/
+$ cmake ..
 $ make
-$ cd bin && ./gTorrent
 ```
 
 Compiling on Windows
