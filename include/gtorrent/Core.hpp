@@ -1,5 +1,5 @@
-#ifndef GTCORE_HPP
-#define GTCORE_HPP
+#pragma once
+
 #include "libtorrent.hpp"
 #include "Torrent.hpp"
 #include <memory>
@@ -30,4 +30,3 @@ public:
 	
 };
 
-#endif

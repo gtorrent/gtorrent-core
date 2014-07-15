@@ -1,5 +1,4 @@
-#ifndef APPLICATION_HPP
-#define APPLICATION_HPP
+#pragma once
 
 #include <gui/core/Base.hpp>
 #include <gui/gtk/Gtk.hpp>
@@ -27,4 +26,4 @@ public:
 	/* Public Member Functions & Variables */
 	int run(int argc, char **argv);
 };
-#endif
+

@@ -1,5 +1,4 @@
-#ifndef GTKTORRENTTREEVIEW_HPP
-#define GTKTORRENTTREEVIEW_HPP
+#pragma once
 
 #include <gtkmm/cellrendererprogress.h>
 #include <gtkmm/treemodel.h>
@@ -45,4 +44,3 @@ public:
 
 };
 
-#endif

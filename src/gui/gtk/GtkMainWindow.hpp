@@ -1,5 +1,4 @@
-#ifndef GTKMAINWINDOW_HPP
-#define GTKMAINWINDOW_HPP
+#pragma once
 
 #include "GtkTorrentTreeView.hpp"
 #include <gtkmm/headerbar.h>
@@ -26,4 +25,3 @@ public:
 	bool onSecTick();
 };
 
-#endif

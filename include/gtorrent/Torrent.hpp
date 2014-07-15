@@ -1,5 +1,5 @@
-#ifndef TORRENT_HPP
-#define TORRENT_HPP
+#pragma once
+
 #include "libtorrent.hpp"
 #include "Event.hpp"
 #include <memory>
@@ -52,4 +52,3 @@ public:
 	void setHandle(libtorrent::torrent_handle &h);
 };
 
-#endif

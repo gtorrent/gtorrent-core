@@ -1,5 +1,5 @@
-#ifndef GTEVENT_HPP
-#define GTEVENT_HPP
+#pragma once
+
 namespace gt
 {
 	struct Event
@@ -12,4 +12,4 @@ namespace gt
 		Type type;
 	};
 }
-#endif
+

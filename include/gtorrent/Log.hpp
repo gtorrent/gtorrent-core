@@ -1,5 +1,4 @@
-#ifndef GTLOG_HPP
-#define GTLOG_HPP
+#pragma once
 
 namespace gt
 {
@@ -10,4 +9,3 @@ namespace gt
 	};
 };
 
-#endif

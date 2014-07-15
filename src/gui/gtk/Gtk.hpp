@@ -1,5 +1,4 @@
-#ifndef GUIGTK_HPP
-#define GUIGTK_HPP
+#pragma once
 
 #include <gui/core/Base.hpp>
 #include <gtkmm/settings.h>
@@ -19,4 +18,3 @@ public:
 	void update();
 };
 
-#endif
