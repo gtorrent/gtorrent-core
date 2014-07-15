@@ -3,7 +3,7 @@ notifications:
 
         irc:
                 channels:
-                        - "chat.freenode.net#tox-dev"
+                        - "irc.rizon.net#gtorrent"
                 on_success: always
                 on_failure: always
 
