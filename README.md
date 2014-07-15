@@ -1,5 +1,6 @@
-gTorrent [![Build Status](https://travis-ci.org/gtorrent/gTorrent.svg?branch=master)](https://travis-ci.org/gtorrent/gTorrent)
-=============
+#gTorrent
+[![Build Status](https://travis-ci.org/gtorrent/gTorrent.svg?branch=master)](https://travis-ci.org/gtorrent/gTorrent)
+---------
 
 PULL REQUESTS ARE ENCOURAGED
 
