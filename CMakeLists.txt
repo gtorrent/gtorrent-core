@@ -42,8 +42,7 @@ ADD_EXECUTABLE ( ${PROJECT_NAME}
         src/gui/gtk/GtkTreeTorrentView.cpp
         src/lib/core/Core.cpp
         src/lib/core/Torrent.cpp
-        src/lib/core/TorrentEngine.cpp
-        src/lib/shared/Log.cpp
+        src/lib/core/Log.cpp
         src/main.cpp
 )
 
