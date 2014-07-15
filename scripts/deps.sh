@@ -1,3 +1,4 @@
+sudo apt-add-repository -y ppa:ubuntu-toolchain-r/test
 sudo apt-add-repository -y ppa:gnome3-team/gnome3
 sudo apt-add-repository -y ppa:gnome3-team/gnome3-staging
 sudo apt-add-repository -y ppa:ricotz/testing
