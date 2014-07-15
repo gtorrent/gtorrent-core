@@ -11,7 +11,7 @@ Torrent::Torrent(string path) :
 	if (Core::isMagnetLink(path))
 		m_torrent_params.url = path;
 	else
-		m_torrent_params.ti = new libtorrent::torrent_info(path);
+		m_torrent_params.ti = boost::shared_ptr<libtorrent::torrent_info>(new libtorrent::torrent_info(path)); //Propery create shared_ptr with constructor instead of = operator.
 }
 
 bool Torrent::pollEvent(gt::Event &event)
