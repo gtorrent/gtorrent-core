@@ -12,7 +12,7 @@ GtkAddMagnetLinkWindow::GtkAddMagnetLinkWindow()
 	//m_header->set_title("Add Magnet URL");
 	//m_header->set_show_close_button(true);
 
-	//this->set_titlebar(*m_header);
+	this->set_title("Paste magnet link here");
 	
 	m_textview = Gtk::manage(new Gtk::TextView());
 	m_textview->set_wrap_mode(Gtk::WRAP_WORD_CHAR);
@@ -22,7 +22,7 @@ GtkAddMagnetLinkWindow::GtkAddMagnetLinkWindow()
 	this->add_button("Add", Gtk::RESPONSE_OK);
 	this->add_button("Cancel", Gtk::RESPONSE_CANCEL);
 	this->show_all();
-
+	
 	Glib::RefPtr<Gtk::Clipboard> clip = Gtk::Clipboard::get();
 	clip->request_text(sigc::mem_fun(*this, &GtkAddMagnetLinkWindow::onClipboardReady));
 }
