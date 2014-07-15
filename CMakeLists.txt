@@ -14,7 +14,7 @@ SET (GTORRENT_VERSION_PATCH 0)
 
 ############################################################
 
-SET (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -g")
+SET (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -g -include all.h")
 
 # Fuck liboost for not providing boost.pc or fucking something
 SET (Boost_USE_STATIC_LIBS ON) 

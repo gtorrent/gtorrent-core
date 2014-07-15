@@ -3,8 +3,6 @@
 #include "libtorrent.hpp"
 #include "Torrent.hpp"
 #include <memory>
-#include <vector>
-
 
 class Core;
 
