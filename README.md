@@ -33,11 +33,7 @@ Ubuntu notes
 The version of libgtkmm in 14.04 is a bit out of date. To fix this do:
 
 ```
-<<<<<<< HEAD
-$ sudo add-apt-repository ppa:gnome3-team/gnome3-stagin
-=======
 $ sudo add-apt-repository ppa:gnome3-team/gnome3-staging
->>>>>>> 8b6b289907eb5a8d149e70a34a383df1844f950d
 $ sudo apt-get update
 $ sudo apt-get dist-upgrade
 ```
