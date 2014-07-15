@@ -35,7 +35,7 @@ Ubuntu notes
 The version of libgtkmm in 14.04 is a bit out of date. To fix this do:
 
 ```
-$ sudo apt-get update && sudo apt-get dist-upgrade && sudo add-apt-repository ppa:gnome3-team/gnome3-staging && sudo apt-get update && sudo apt-get dist-upgrade
+$ sudo add-apt-repository ppa:gnome3-team/gnome3-staging && sudo apt-get update && sudo apt-get dist-upgrade
 ```
 
 Then it'll build with no problems.
