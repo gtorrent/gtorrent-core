@@ -16,8 +16,7 @@ Torrent::Torrent(std::string path) :
 
 bool Torrent::pollEvent(gt::Event &event)
 {
-	if (getTotalProgress() >= 100)
-	{
+	if (getTotalProgress() >= 100) {
 		event.type = gt::Event::DownloadCompleted;
 		return true;
 	}
@@ -81,8 +80,7 @@ libtorrent::torrent_status::state_t Torrent::getState()
 
 std::string Torrent::getTextState()
 {
-	switch (getState())
-	{
+	switch (getState()) {
 		case libtorrent::torrent_status::checking_files:
 			return "Checking";
 		break;
