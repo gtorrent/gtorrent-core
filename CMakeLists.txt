@@ -6,7 +6,7 @@ if (COMMAND cmake_policy)
  cmake_policy (SET CMP0003 NEW)
 endif (COMMAND cmake_policy)
 
-PROJECT (gTorrent)
+PROJECT (gtorrent)
 
 SET (GTORRENT_VERSION_MAJOR 0)                                                                                                                                                                                                                 
 SET (GTORRENT_VERSION_MINOR 0)
