@@ -1,13 +1,22 @@
 #include "Gtk.hpp"
-#include <gtkmm/application.h>
-#include "GtkMainWindow.hpp"
-
 
 GuiGtk::GuiGtk(int argc, char **argv)
 {
 	m_gtkmain = new Gtk::Main(0, 0, false);
 
-	GtkMainWindow *wnd = Gtk::manage(new GtkMainWindow());
+	mainWindow = new GtkMainWindow();
+}
+
+GuiGtk::~GuiGtk()
+{
+	// You know, we could use auto and
+	// make_shared(...) instead so we still
+	// receive benefits of shared_ptr
+	// without the xbauxhueg mess
+
+	// This is called after Core::shutdown
+
+	delete mainWindow;
 }
 
 void GuiGtk::update()
