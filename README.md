@@ -30,6 +30,14 @@ $ cmake ..
 $ make
 ```
 
+Ubuntu notes
+-------------
+The version of libgtkmm in 14.04 is a bit out of date. To fix this do:
+
+$ sudo apt-get update && sudo apt-get dist-upgrade && sudo add-apt-repository ppa:gnome3-team/gnome3-staging && sudo apt-get update && sudo apt-get dist-upgrade
+
+Then it'll build with no problems.
+
 Compiling on Windows
 -------------
 Requires CMake, MinGW, msys and all dependencies. Note that since gtorrent uses gtkmm/headerbar.h you must use at least  gtkmm-3.9.16. (Note: I have not verified that gtkmm-3.9.16 is enough) This has dependencies
