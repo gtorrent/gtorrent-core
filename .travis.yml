@@ -13,4 +13,4 @@ compiler:
         - clang
 
 # Change this to your needs
-script: mkdir -p build && cd build && cmake .. && make
+script: ./install.sh
