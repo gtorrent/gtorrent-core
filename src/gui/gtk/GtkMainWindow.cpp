@@ -19,12 +19,12 @@ GtkMainWindow::GtkMainWindow() :
 	// This needs to be refactored
 
 	Gtk::Button *add_torrent_btn = Gtk::manage(new Gtk::Button());
-	add_torrent_btn->set_label("Add");
+	add_torrent_btn->set_label("Add .torrent");
 	add_torrent_btn->signal_clicked().connect(sigc::mem_fun(*this, &GtkMainWindow::onAddBtnClicked));
 	header->add(*add_torrent_btn);
 
 	Gtk::Button *add_link_btn = Gtk::manage(new Gtk::Button());
-	add_link_btn->set_label("Add Link");
+	add_link_btn->set_label("Add Magnet");
 	add_link_btn->signal_clicked().connect(sigc::mem_fun(*this, &GtkMainWindow::onAddMagnetBtnClicked));
 	header->add(*add_link_btn);
 
@@ -47,7 +47,7 @@ bool GtkMainWindow::onSecTick()
 
 void GtkMainWindow::onAddBtnClicked()
 {
-	Gtk::FileChooserDialog fc("Browse", Gtk::FILE_CHOOSER_ACTION_OPEN);
+	Gtk::FileChooserDialog fc("Browse for torrent file", Gtk::FILE_CHOOSER_ACTION_OPEN);
 	fc.set_select_multiple();
 	fc.set_transient_for(*this);
 	fc.add_button("_Cancel", Gtk::RESPONSE_CANCEL);
