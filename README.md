@@ -24,9 +24,7 @@ Compiling on GNU/Linux or Mac OS X
 -------------
 ```
 $ mkdir -p build/ && cd build/
-
 $ cmake ..
-
 $ make
 ```
 
@@ -36,9 +34,7 @@ The version of libgtkmm in 14.04 is a bit out of date. To fix this do:
 
 ```
 $ sudo add-apt-repository ppa:gnome3-team/gnome3-staging
-
 $ sudo apt-get update
-
 $ sudo apt-get dist-upgrade
 ```
 
@@ -53,10 +49,7 @@ Note that since the prebuilt gtk package for Windows is currently at 3.6.4, you 
 In a bash shell:
 ```
 mkdir -p build/ && cd build/
-
 cmake -G "MSYS Makefiles" ..
-
 make
-
 gTorrent.exe
 ```
