@@ -1,9 +1,9 @@
 #ifndef APPLICATION_HPP
 #define APPLICATION_HPP
 
-#include "lib/core/Core.hpp"
-#include "gui/core/Base.hpp"
-#include "gui/gtk/Gtk.hpp"
+#include <gui/core/Base.hpp>
+#include <gui/gtk/Gtk.hpp>
+#include <core/Core.hpp>
 #include <memory>
 
 class Application;	typedef std::shared_ptr<Application> app_ptr;
