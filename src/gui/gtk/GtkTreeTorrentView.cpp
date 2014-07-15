@@ -43,6 +43,8 @@ void GtkTorrentTreeView::setupColumns()
 
 void GtkTorrentTreeView::addCell(t_ptr &t)
 {
+	if (t == NULL)
+		return;
 	Gtk::TreeModel::Row row = *(m_liststore->append());
 	row[m_cols.m_col_name] = t->getHandle().name();
 	row[m_cols.m_col_percent] = t->getTotalProgress();
