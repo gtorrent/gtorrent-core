@@ -5,7 +5,7 @@ app_ptr Application::m_app = nullptr;
 
 Application::Application()
 {
-	/* Constructor */
+	// Constructor
 }
 
 app_ptr Application::getSingleton()

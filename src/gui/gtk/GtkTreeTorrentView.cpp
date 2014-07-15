@@ -61,7 +61,7 @@ void GtkTorrentTreeView::updateCells()
 		c[m_cols.m_col_seeders] = t->getTotalSeeders();
 		c[m_cols.m_col_percent_text] = t->getTextState();
 
-		/* TODO: Handle with events */
+		// TODO: Handle with events
 
 		//m_cells[i]->property_text() = t->getTextState();
 
