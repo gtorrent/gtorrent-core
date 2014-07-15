@@ -3,7 +3,7 @@
 
 #define T_PPM 1000000.f
 
-Torrent::Torrent(std::string path) :
+Torrent::Torrent(string path) :
 	m_path(path)
 {
 	m_torrent_params.save_path = "./";
@@ -34,7 +34,7 @@ libtorrent::torrent_handle &Torrent::getHandle()
 	return m_handle;
 }
 
-std::string Torrent::getPath()
+string Torrent::getPath()
 {
 	return m_path;
 }
@@ -78,7 +78,7 @@ libtorrent::torrent_status::state_t Torrent::getState()
 	return m_handle.status().state;
 }
 
-std::string Torrent::getTextState()
+string Torrent::getTextState()
 {
 	switch (getState()) {
 		case libtorrent::torrent_status::checking_files:

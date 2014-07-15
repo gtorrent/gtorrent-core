@@ -8,12 +8,12 @@ Core::Core() :
 	// tl;dr, figure out something useful to use the error code for,
 	// like handling what the fuck might happen if listen_on fails kthnx
 	libtorrent::error_code ec;
-	m_session.listen_on(std::make_pair(6881, 6889), ec);
+	m_session.listen_on(make_pair(6881, 6889), ec);
 }
 
-bool Core::isMagnetLink(std::string url)
+bool Core::isMagnetLink(string url)
 {
-	std::string prefix = "magnet:";
+	string prefix = "magnet:";
 	return url.substr(0, prefix.size()) == prefix;
 }
 
@@ -27,7 +27,7 @@ tc_ptr &Core::getTorrents()
 	return m_torrents;
 }
 
-t_ptr Core::addTorrent(std::string path)
+t_ptr Core::addTorrent(string path)
 {
 	if (path.empty())
 		return NULL;

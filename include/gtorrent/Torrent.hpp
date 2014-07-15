@@ -14,17 +14,17 @@ private:
 	unsigned int m_id;
 	libtorrent::add_torrent_params m_torrent_params;
 	libtorrent::torrent_handle m_handle;
-	std::string m_path;
+	string m_path;
 	
 public:
-	Torrent(std::string path);
+	Torrent(string path);
 
 	bool pollEvent(gt::Event &event);
 
 	// Getters
 	libtorrent::add_torrent_params getTorrentParams();
 	libtorrent::torrent_handle &getHandle();
-	std::string getPath();
+	string getPath();
 	
 	// Returns percentage of all files downloading
 	float getTotalProgress();
@@ -48,7 +48,7 @@ public:
 	libtorrent::torrent_status::state_t getState();
 
 	// Returns a friendly string for the torrent state
-	std::string getTextState();
+	string getTextState();
 
 	// Setters
 	void setHandle(libtorrent::torrent_handle &h);
