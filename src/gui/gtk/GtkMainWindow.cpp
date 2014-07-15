@@ -18,15 +18,15 @@ GtkMainWindow::GtkMainWindow() :
 
 	// This needs to be refactored
 
-	Gtk::Button *btn = Gtk::manage(new Gtk::Button());
-	btn->set_label("Add");
-	btn->signal_clicked().connect(sigc::mem_fun(*this, &GtkMainWindow::onAddBtnClicked));
-	header->add(*btn);
+	Gtk::Button *add_torrent_btn = Gtk::manage(new Gtk::Button());
+	add_torrent_btn->set_label("Add");
+	add_torrent_btn->signal_clicked().connect(sigc::mem_fun(*this, &GtkMainWindow::onAddBtnClicked));
+	header->add(*add_torrent_btn);
 
-	Gtk::Button *btn_m = Gtk::manage(new Gtk::Button());
-	btn_m->set_label("Add Link");
-	btn_m->signal_clicked().connect(sigc::mem_fun(*this, &GtkMainWindow::onAddMagnetBtnClicked));
-	header->add(*btn_m);
+	Gtk::Button *add_link_btn = Gtk::manage(new Gtk::Button());
+	add_link_btn->set_label("Add Link");
+	add_link_btn->signal_clicked().connect(sigc::mem_fun(*this, &GtkMainWindow::onAddMagnetBtnClicked));
+	header->add(*add_link_btn);
 
 	this->set_titlebar(*header);
 
