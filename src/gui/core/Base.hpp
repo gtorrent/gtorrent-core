@@ -1,5 +1,5 @@
-#ifndef GUIBASE_HPP
-#define GUIBASE_HPP
+#pragma once
+
 #include "core/Core.hpp"
 #include <memory>
 #include <string>
@@ -16,4 +16,3 @@ public:
 	virtual void update() = 0;
 };
 
-#endif
