@@ -1,4 +1,5 @@
 #include "Core.hpp"
+#include "Log.hpp"
 
 Core::Core() :
 	m_running(true)
@@ -93,5 +94,6 @@ void Core::update()
 
 void Core::shutdown()
 {
+	gt::Log::Debug("Shutting down core library...\n");
 	m_running = false;
 }
