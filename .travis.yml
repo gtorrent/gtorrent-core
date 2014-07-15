@@ -6,16 +6,10 @@ notifications:
                 on_success: always
                 on_failure: always
 
-before_install:
-        # Update repos
-        - sudo apt-add-repository -y ppa:ubuntu-toolchain-r/test
-        - sudo apt-get update -qq
-        
 install:
         # Install dependancies
-        - sudo apt-get install -qqy cmake libgtkmm-3.0-dev libglibmm-2.4-dev libtorrent-rasterbar-dev libboost-dev g++-4.8
-        - sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-4.8 90
         - scripts/deps.sh
+        - sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-4.8 90
         
 language: cpp
 
