@@ -8,6 +8,10 @@ endif (COMMAND cmake_policy)
 
 PROJECT (gTorrent)
 
+SET (GTORRENT_VERSION_MAJOR 0)                                                                                                                                                                                                                 
+SET (GTORRENT_VERSION_MINOR 0)
+SET (GTORRENT_VERSION_PATCH 0)
+
 ############################################################
 
 SET (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -g")
