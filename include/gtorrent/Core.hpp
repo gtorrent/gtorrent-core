@@ -6,7 +6,9 @@
 #include <vector>
 
 
-class Core;	typedef std::shared_ptr<Core> core_ptr;
+class Core;
+
+typedef std::shared_ptr<Core> core_ptr;
 typedef std::vector<std::shared_ptr<Torrent> > tc_ptr;
 
 class Core

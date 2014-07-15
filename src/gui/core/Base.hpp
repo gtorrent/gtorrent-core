@@ -4,7 +4,9 @@
 #include <memory>
 #include <string>
 
-class GuiBase;	typedef std::shared_ptr<GuiBase> gui_ptr;
+class GuiBase;
+
+typedef std::shared_ptr<GuiBase> gui_ptr;
 
 class GuiBase
 {

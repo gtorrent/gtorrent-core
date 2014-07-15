@@ -4,7 +4,9 @@
 #include "Event.hpp"
 #include <memory>
 
-class Torrent;	typedef std::shared_ptr<Torrent> t_ptr;
+class Torrent;
+
+typedef std::shared_ptr<Torrent> t_ptr;
 
 class Torrent
 {
