@@ -10,7 +10,7 @@ GtkMainWindow::GtkMainWindow() :
 	m_core(Application::getSingleton()->getCore())
 {
 	this->set_position(Gtk::WIN_POS_CENTER);
-	this->set_default_size(1280, 720);
+	this->set_default_size(800, 500);
 
 	header = Gtk::manage(new Gtk::HeaderBar());
 	header->set_title("gTorrent");
