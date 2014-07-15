@@ -3,7 +3,11 @@
 Core::Core() :
 	m_running(true)
 {
-	m_session.listen_on(std::make_pair(6881, 6889));
+	// Fuck your deprecated shit, we're going void down in here
+	// tl;dr, figure out something useful to use the error code for,
+	// like handling what the fuck might happen if listen_on fails kthnx
+	libtorrent::error_code ec;
+	m_session.listen_on(std::make_pair(6881, 6889), ec);
 }
 
 bool Core::isMagnetLink(std::string url)
