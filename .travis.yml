@@ -10,17 +10,20 @@ before_install:
         # Update repos
         - sudo apt-add-repository -y ppa:ubuntu-toolchain-r/test
         - sudo apt-get update -qq
+        # Download gtkmm
         - wget http://ftp.acc.umu.se/pub/GNOME/sources/gtkmm/3.12/gtkmm-3.12.0.tar.xz
         - tar xf gtkmm-3.12.0.tar.xz
         
 install:
+        # Install dependancies
         - sudo apt-get install -qqy cmake libgtkmm-3.0-dev libglibmm-2.4-dev libtorrent-rasterbar-dev libboost-dev g++-4.8
         - sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-4.8 90
+        # Install gtkmm
         - cd gtkmm-3.12.0
         - ./configure
         - make
         - sudo make install
-        - cd ..
+        - cd ../
         
 language: cpp
 
@@ -28,7 +31,6 @@ compiler:
         - gcc
         - clang
 
-          # Change this to your needs
 script:
         - mkdir -p build 
         - cd build
