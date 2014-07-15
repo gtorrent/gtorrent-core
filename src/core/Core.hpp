@@ -7,7 +7,7 @@
 class Core;
 
 typedef std::shared_ptr<Core> core_ptr;
-typedef std::vector<std::shared_ptr<Torrent> > tc_ptr;
+typedef vector<std::shared_ptr<Torrent> > tc_ptr;
 
 class Core
 {
@@ -19,10 +19,10 @@ private:
 public:
 	Core();
 
-	static bool isMagnetLink(std::string link);
+	static bool isMagnetLink(string link);
 	
 	tc_ptr &getTorrents();
-	t_ptr addTorrent(std::string path);
+	t_ptr addTorrent(string path);
 	bool isRunning();
 
 	void shutdown();
