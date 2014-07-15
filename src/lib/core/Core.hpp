@@ -1,27 +1,33 @@
-#ifndef CORE_HPP
-#define CORE_HPP
-#include "TorrentEngine.hpp"
+#ifndef GTCORE_HPP
+#define GTCORE_HPP
+#include "libtorrent.hpp"
+#include "Torrent.hpp"
 #include <memory>
+#include <vector>
 
-class GTorrent_Core;	typedef std::shared_ptr<GTorrent_Core> core_ptr;
 
-class GTorrent_Core
+class Core;	typedef std::shared_ptr<Core> core_ptr;
+typedef std::vector<std::shared_ptr<Torrent> > tc_ptr;
+
+class Core
 {
 private:
-	te_ptr m_engine;
+	libtorrent::session m_session;
+	tc_ptr m_torrents;
+
 	bool m_running;
 public:
-	GTorrent_Core();
+	Core();
 
+	static bool isMagnetLink(std::string link);
+	
+	tc_ptr &getTorrents();
+	t_ptr addTorrent(std::string path);
 	bool isRunning();
+
 	void shutdown();
 	void update();
-
-	/* Getters */
-	te_ptr getEngine();
-
-	/* Useful function for determining if passed url is a magnet link */
-	static bool isMagnetLink(std::string url);
+	
 };
 
 #endif
