@@ -11,6 +11,15 @@ before_install:
         # Update repos
         - sudo apt-add-repository -y ppa:ubuntu-toolchain-r/test > dev/null
         - sudo apt-get update -q > dev/null
+        # Install gtkmm-
+        - wget http://ftp.gnome.org/pub/GNOME/sources/gtkmm/3.11/gtkmm-3.11.10.tar.xz > dev/null
+        - tar xf gtkmm-3.11.10.tar.xz > /dev/null
+        - cd gtkmm-3.11.10/
+        - ./configure > /dev/null
+          # TODO send output to /dev/null
+        - make
+        - make install
+        - cd ../
 install:
         - sudo apt-get install -qy cmake libgtkmm-3.0-dev libglibmm-2.4-dev libtorrent-rasterbar-dev libboost-dev g++-4.8 > dev/null
         - sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-4.8 90 > dev/null
