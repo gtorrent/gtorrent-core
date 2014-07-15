@@ -20,6 +20,7 @@ install:
         - ./configure
         - make
         - sudo make install
+        - cd ..
         
 language: cpp
 
@@ -29,7 +30,7 @@ compiler:
 
           # Change this to your needs
 script:
-        -  mkdir -p build 
-        -  cd build
-        -  cmake ..
-        -  make -j$(nproc)
+        - mkdir -p build 
+        - cd build
+        - cmake ..
+        - make -j$(nproc)
