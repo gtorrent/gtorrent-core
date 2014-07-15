@@ -3,9 +3,9 @@
 #include <cstdio>
 #include <ctime>
 
-std::string getFullDateNumber(int n)
+string getFullDateNumber(int n)
 {
-	std::ostringstream oss;
+	ostringstream oss;
 
 	if (n < 10) {
 		oss << "0" << n;
@@ -16,14 +16,14 @@ std::string getFullDateNumber(int n)
 	return oss.str();
 }
 
-std::string gt::Log::getTimeStamp()
+string gt::Log::getTimeStamp()
 {
 	time_t t = time(0);
 	struct tm *lt = localtime(&t);
 
 	// TODO: Maybe convert this stream string structure into something else.
 
-	std::stringstream oss;
+	stringstream oss;
 
 	oss << (1900 + lt->tm_year);
 	oss << "-";
