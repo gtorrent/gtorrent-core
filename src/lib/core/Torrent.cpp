@@ -8,7 +8,7 @@ Torrent::Torrent(std::string path) :
 {
 	m_torrent_params.save_path = "./";
 
-	if (GTorrent_Core::isMagnetLink(path))
+	if (Core::isMagnetLink(path))
 		m_torrent_params.url = path;
 	else
 		m_torrent_params.ti = new libtorrent::torrent_info(path);
