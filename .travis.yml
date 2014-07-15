@@ -1,6 +1,5 @@
 notifications:
         email: false
-
         irc:
                 channels:
                         - "irc.rizon.net#gtorrent"
@@ -11,19 +10,25 @@ before_install:
         # Update repos
         - sudo apt-add-repository -y ppa:ubuntu-toolchain-r/test
         - sudo apt-get update -qq
+        - wget http://ftp.acc.umu.se/pub/GNOME/sources/gtkmm/3.12/gtkmm-3.12.0.tar.xz
+        - tar xf gtkmm-3.12.0.tar.xz
+        
 install:
         - sudo apt-get install -qqy cmake libgtkmm-3.0-dev libglibmm-2.4-dev libtorrent-rasterbar-dev libboost-dev g++-4.8
         - sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-4.8 90
+        - cd gtkmm-3.12.0
+        - ./configure
+        - make
+        - sudo make install
+        
 language: cpp
+
 compiler:
         - gcc
         - clang
 
           # Change this to your needs
 script:
-        -  ls /usr/include/gtkmm-3.0/gtkmm
-        -  find /usr/include -name 'headerbar.h'
-        -  dpkg -L libgtkmm-3.0-dev | grep -i headerbar
         -  mkdir -p build 
         -  cd build
         -  cmake ..
