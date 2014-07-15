@@ -12,6 +12,8 @@ see the branches
 
 what we have so far: http://a.pomf.se/lkowau.webm
 
+#### About
+A minimalistic lightweight bittorrent client written by the 4chan technology board.
 
 #### Goals
 1. Use native GUI toolkit on target platforms.
