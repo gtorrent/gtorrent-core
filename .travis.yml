@@ -10,19 +10,10 @@ notifications:
 before_install:
         # Update repos
         - sudo apt-add-repository -y ppa:ubuntu-toolchain-r/test
-        - sudo apt-get update -q > dev/null
-        # Install gtkmm-
-        - wget http://ftp.gnome.org/pub/GNOME/sources/gtkmm/3.11/gtkmm-3.11.10.tar.xz > dev/null
-        - tar xf gtkmm-3.11.10.tar.xz > /dev/null
-        - cd gtkmm-3.11.10/
-        - ./configure > /dev/null
-          # TODO send output to /dev/null
-        - make
-        - make install
-        - cd ../
+        - sudo apt-get update -qq
 install:
-        - sudo apt-get install -qy cmake libgtkmm-3.0-dev libglibmm-2.4-dev libtorrent-rasterbar-dev libboost-dev g++-4.8
-        - sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-4.8 90 > dev/null
+        - sudo apt-get install -qqy cmake libgtkmm-3.0-dev libglibmm-2.4-dev libtorrent-rasterbar-dev libboost-dev g++-4.8
+        - sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-4.8 90
 language: cpp
 compiler:
         - gcc
@@ -30,7 +21,10 @@ compiler:
 
           # Change this to your needs
 script:
+        -  ls /usr/include/gtkmm-3.0/gtkmm
+        -  find /usr/include -name 'headerbar.h'
+        -  dpkg -L libgtkmm-3.0-dev | grep -i headerbar
         -  mkdir -p build 
         -  cd build
         -  cmake ..
-        -  make
+        -  make -j$(nproc)
