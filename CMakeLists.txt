@@ -40,9 +40,9 @@ ADD_EXECUTABLE ( ${PROJECT_NAME}
         src/gui/gtk/GtkAddMagnetLinkWindow.cpp
         src/gui/gtk/GtkMainWindow.cpp
         src/gui/gtk/GtkTreeTorrentView.cpp
-        src/lib/core/Core.cpp
-        src/lib/core/Torrent.cpp
-        src/lib/core/Log.cpp
+        src/core/Core.cpp
+        src/core/Torrent.cpp
+        src/core/Log.cpp
         src/main.cpp
 )
 
@@ -53,7 +53,6 @@ ADD_DEFINITIONS (
 )
 
 INCLUDE_DIRECTORIES (
-        src/lib/
         src/gui/
         src/
         ${Boost_INCLUDE_DIRS}
