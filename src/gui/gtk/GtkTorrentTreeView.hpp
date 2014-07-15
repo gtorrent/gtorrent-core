@@ -6,7 +6,7 @@
 #include <gtkmm/treeview.h>
 #include <core/Torrent.hpp>
 
-/* Gtk Torrent Columns Section */
+// Gtk Torrent Columns Section
 
 class GtkTorrentColumns : public Gtk::TreeModel::ColumnRecord
 {
@@ -27,7 +27,7 @@ public:
 	Gtk::TreeModelColumn<unsigned int> m_col_empty;
 };
 
-/* Gtk Torrent Tree View Section */
+// Gtk Torrent Tree View Section
 
 class GtkTorrentTreeView : public Gtk::TreeView
 {
