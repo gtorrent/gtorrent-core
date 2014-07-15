@@ -2,7 +2,6 @@
 
 #include "core/Core.hpp"
 #include <memory>
-#include <string>
 
 class GuiBase;
 
