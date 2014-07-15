@@ -21,36 +21,36 @@ public:
 
 	bool pollEvent(gt::Event &event);
 
-	/* Getters */
+	// Getters
 	libtorrent::add_torrent_params getTorrentParams();
 	libtorrent::torrent_handle &getHandle();
 	std::string getPath();
 	
-	/* Returns percentage of all files downloading */
+	// Returns percentage of all files downloading
 	float getTotalProgress();
 
-	/* Returns the current download rate of the torrent */
+	// Returns the current download rate of the torrent
 	unsigned int getDownloadRate();
 
-	/* Returns the progress in PPM of all files downloading */
+	// Returns the progress in PPM of all files downloading in this torrent
 	unsigned int getPPMProgress();
 
-	/* Returns the current number of seeders attached to the file */
+	// Returns the current number of seeders attached to the file
 	unsigned int getTotalSeeders();
 
-	/* Returns the current number of peers attached to the file */
+	// Returns the current number of peers attached to the file
 	unsigned int getTotalPeers();
 
-	/* Returns the current number of leechers attached to the file */
+	// Returns the current number of leechers attached to the file
 	unsigned int getTotalLeechers();
 
-	/* Returns the current torrent state (downloading, queueing, seeding, etc) */
+	// Returns the current torrent state (downloading, queueing, seeding, etc)
 	libtorrent::torrent_status::state_t getState();
 
-	/* Returns a friendly string for the torrent state */
+	// Returns a friendly string for the torrent state
 	std::string getTextState();
 
-	/* Setters */
+	// Setters
 	void setHandle(libtorrent::torrent_handle &h);
 };
 

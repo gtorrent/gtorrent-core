@@ -12,8 +12,7 @@ GuiGtk::GuiGtk(int argc, char **argv)
 
 void GuiGtk::update()
 {
-	while (m_gtkmain->events_pending())
-	{
+	while (m_gtkmain->events_pending()) {
 		m_gtkmain->iteration();
 	}
 }
