@@ -12,7 +12,7 @@ private:
 	Gtk::HeaderBar *m_header;
 	Gtk::TextView *m_textview; 
 
-	/* Signal Responders */
+	// Signal Responders
 
 	void onAddBtnClicked();
 	void onClipboardReady(const Glib::ustring &text);
@@ -20,7 +20,8 @@ private:
 public:
 	GtkAddMagnetLinkWindow();
 
-	/* Getters */
+	// Getters
+	
 	std::string getMagnetURL();
 };
 

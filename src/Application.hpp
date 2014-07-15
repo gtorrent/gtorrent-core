@@ -13,7 +13,8 @@ class Application
 {
 private:
 	static app_ptr m_app;
-	/* Private Member Functions & Variables */
+	
+	// Private Member Functions & Variables 
 	core_ptr m_core;
 	gui_ptr m_gui;
 
@@ -21,10 +22,10 @@ public:
 	Application();
 	static app_ptr getSingleton();
 
-	/* Getters */
+	// Getters
 	core_ptr &getCore();
 
-	/* Public Member Functions & Variables */
+	// Public Member Functions & Variables
 	int run(int argc, char **argv);
 };
 
