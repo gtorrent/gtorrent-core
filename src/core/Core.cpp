@@ -24,6 +24,9 @@ tc_ptr &Core::getTorrents()
 
 t_ptr Core::addTorrent(std::string path)
 {
+	if (path.empty())
+		return NULL;
+	
 	std::shared_ptr<Torrent> t = std::shared_ptr<Torrent>(new Torrent(path));
 	libtorrent::torrent_handle h = m_session.add_torrent(t->getTorrentParams());
 

@@ -13,7 +13,6 @@ class Application
 {
 private:
 	static app_ptr m_app;
-
 	/* Private Member Functions & Variables */
 	core_ptr m_core;
 	gui_ptr m_gui;
