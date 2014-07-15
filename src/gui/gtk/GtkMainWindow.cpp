@@ -16,7 +16,7 @@ GtkMainWindow::GtkMainWindow() :
 	header->set_title("gTorrent");
 	header->set_show_close_button(true);
 
-	/* This needs to be refactored */
+	// This needs to be refactored
 
 	Gtk::Button *btn = Gtk::manage(new Gtk::Button());
 	btn->set_label("Add");

@@ -30,11 +30,11 @@ t_ptr Core::addTorrent(std::string path)
 	t->setHandle(h);
 	m_torrents.push_back(t);
 
-	/* TODO: Event polling for magnet update information */
+	// TODO: Event polling for magnet update information
 	//libtorrent::file_storage fs = info.files();
 	//libtorrent::torrent_info info = h.get_torrent_info();
 
-	/* An Example For Fetching All Files From Torrent: */
+	// An Example For Fetching All Files From Torrent:
 
 	/*unsigned int numFiles = fs.num_files();
 
