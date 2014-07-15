@@ -5,7 +5,9 @@
 #include <core/Core.hpp>
 #include <memory>
 
-class Application;	typedef std::shared_ptr<Application> app_ptr;
+class Application;
+
+typedef std::shared_ptr<Application> app_ptr;
 
 class Application
 {
