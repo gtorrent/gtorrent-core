@@ -1,6 +1,12 @@
 notifications:
         email: false
 
+        irc:
+                channels:
+                        - "chat.freenode.net#tox-dev"
+                on_success: always
+                on_failure: always
+
 before_install:
         - sudo apt-add-repository -y ppa:ubuntu-toolchain-r/test
         - sudo add-apt-repository ppa:gnome3-team/gnome3-staging
@@ -13,5 +19,5 @@ compiler:
         - gcc
         - clang
 
-# Change this to your needs
+          # Change this to your needs
 script: ./install.sh
