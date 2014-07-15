@@ -28,8 +28,7 @@ int Application::run(int argc, char **argv)
 	gt::Log::Debug("Starting up GUI layer...\n");
 	m_gui = gui_ptr(new GuiGtk(argc, argv));
 
-	while (m_core->isRunning())
-	{
+	while (m_core->isRunning()) {
 		m_core->update();
 		m_gui->update();
 	}
