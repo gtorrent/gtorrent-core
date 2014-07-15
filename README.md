@@ -36,6 +36,9 @@ $ sudo apt-get update
 $ sudo apt-get dist-upgrade
 ```
 
+#### ArchLinux
+You have it easy. Install from the [AUR](https://aur.archlinux.org/packages/gtorrent/)
+
 Then it'll build with no problems.
 
 ##### Compiling on Windows
