@@ -1,5 +1,4 @@
-#ifndef GTKADDMAGNETLINKWINDOW_HPP
-#define GTKADDMAGNETLINKWINDOW_HPP
+#pragma once
 
 #include <gtkmm/headerbar.h>
 #include <gtkmm/textview.h>
@@ -25,4 +24,3 @@ public:
 	std::string getMagnetURL();
 };
 
-#endif
