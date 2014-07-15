@@ -28,14 +28,12 @@ void GtkTorrentTreeView::setupColumns()
 	cid = this->append_column("Progress", *cell);
 	col = this->get_column(cid - 1);
 
-	if (col)
-	{
+	if (col) {
 		col->add_attribute(cell->property_value(), m_cols.m_col_percent);
 		col->add_attribute(cell->property_text(), m_cols.m_col_percent_text);
 	}
 
-	for (auto &c : this->get_columns())
-	{
+	for (auto &c : this->get_columns()) {
 		c->set_sizing(Gtk::TreeViewColumnSizing::TREE_VIEW_COLUMN_FIXED);
 		c->set_clickable();
 		c->set_resizable();
@@ -56,8 +54,7 @@ void GtkTorrentTreeView::updateCells()
 {
 	unsigned int i = 0;
 
-	for (auto &c : m_liststore->children())
-	{
+	for (auto &c : m_liststore->children()) {
 		t_ptr t = Application::getSingleton()->getCore()->getTorrents()[i];
 
 		c[m_cols.m_col_percent] = t->getTotalProgress();

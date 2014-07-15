@@ -60,8 +60,7 @@ void GtkMainWindow::onAddBtnClicked()
 
 	int result = fc.run();
 
-	switch (result)
-	{
+	switch (result) {
 		case Gtk::RESPONSE_OK:
 			for (auto &f : fc.get_filenames())
 			{
@@ -78,8 +77,7 @@ void GtkMainWindow::onAddMagnetBtnClicked()
 	d.set_transient_for(*this);
 	int r = d.run();
 
-	switch (r)
-	{
+	switch (r) {
 		case Gtk::RESPONSE_OK:
 			t_ptr t = m_core->addTorrent(d.getMagnetURL());
 			m_treeview->addCell(t);
