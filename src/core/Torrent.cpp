@@ -14,13 +14,7 @@ Torrent::Torrent(string path) :
 	}
 	else
 	{
-		// TODO: Provide method that resolves the ugly macro code elsewhere.
-
-		#ifdef __WIN32__
-			m_torrent_params.ti = boost::shared_ptr<libtorrent::torrent_info>(new libtorrent::torrent_info(path)); // This fails on GNU/Linux
-		#else
-			m_torrent_params.ti = new libtorrent::torrent_info(path);
-		#endif
+			m_torrent_params.ti = boost::intrusive_ptr<libtorrent::torrent_info>(new libtorrent::torrent_info(path)); // This is the proper way to cast a pointer to an intrusive_ptr
 	}
 		
 }
