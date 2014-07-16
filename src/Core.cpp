@@ -1,7 +1,7 @@
 #include "Core.hpp"
 #include "Log.hpp"
 
-Core::Core() :
+gt::Core::Core() :
 	m_running(true)
 {
 	// Fuck your deprecated shit, we're going void down in here
@@ -11,23 +11,23 @@ Core::Core() :
 	m_session.listen_on(make_pair(6881, 6889), ec);
 }
 
-bool Core::isMagnetLink(string url)
+bool gt::Core::isMagnetLink(string url)
 {
 	string prefix = "magnet:";
 	return url.substr(0, prefix.size()) == prefix;
 }
 
-bool Core::isRunning()
+bool gt::Core::isRunning()
 {
 	return m_running;
 }
 
-tc_ptr &Core::getTorrents()
+vector<shared_ptr<Torrent> > &gt::Core::getTorrents()
 {
 	return m_torrents;
 }
 
-t_ptr Core::addTorrent(string path)
+shared_ptr<Torrent> gt::Core::addTorrent(string path)
 {
 	if (path.empty())
 		return NULL;
@@ -65,7 +65,7 @@ t_ptr Core::addTorrent(string path)
 	return t;
 }
 
-void Core::update()
+void gt::Core::update()
 {
 	/*auto iter = std::begin(m_torrents);
 
@@ -92,7 +92,7 @@ void Core::update()
 	}*/
 }
 
-void Core::shutdown()
+void gt::Core::shutdown()
 {
 	gt::Log::Debug("Shutting down core library...\n");
 	m_running = false;

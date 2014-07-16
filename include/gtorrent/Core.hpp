@@ -4,29 +4,24 @@
 #include "Torrent.hpp"
 #include <memory>
 
-class Core;
-
-typedef std::shared_ptr<Core> core_ptr;
-typedef vector<std::shared_ptr<Torrent> > tc_ptr;
-
-class Core
+namespace gt
 {
-private:
-	libtorrent::session m_session;
-	tc_ptr m_torrents;
+	class Core
+	{
+	private:
+		vector<shared_ptr<Torrent> > m_torrents;
+		libtorrent::session m_session;
+		bool m_running;
+	public:
+		Core();
 
-	bool m_running;
-public:
-	Core();
-
-	static bool isMagnetLink(string link);
-	
-	tc_ptr &getTorrents();
-	t_ptr addTorrent(string path);
-	bool isRunning();
-
-	void shutdown();
-	void update();
-	
-};
-
+		static bool isMagnetLink(string link);
+		
+		vector<shared_ptr<Torrent> > &getTorrents();
+		shared_ptr<Torrent> addTorrent(string path);
+		
+		bool isRunning();
+		void shutdown();
+		void update();
+	};
+}
