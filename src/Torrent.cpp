@@ -94,9 +94,9 @@ string Torrent::getTextState()
 		break;
 		case libtorrent::torrent_status::downloading:
 		default:
-			char p[5];
-			sprintf(p, "%.1f %%", getTotalProgress());
-			return p;
+			std::ostringstream o;
+			o << std::setprecision(3) << getTotalProgress();
+			return o.str();
 		break;
 	}
 }
