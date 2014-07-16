@@ -1,17 +1,12 @@
 #include "Application.hpp"
 #include <core/Log.hpp>
 
-app_ptr Application::m_app = nullptr;
+shared_ptr<Application> Application::m_app = nullptr;
 
-Application::Application()
-{
-	// Constructor
-}
-
-app_ptr Application::getSingleton()
+shared_ptr<Application> Application::getSingleton()
 {
 	if (m_app == nullptr)
-		m_app = app_ptr(new Application());
+		m_app = shared_ptr<Application>(new Application());
 	return m_app;
 }
 
