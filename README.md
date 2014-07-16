@@ -3,23 +3,17 @@
 
 PULL REQUESTS ARE ENCOURAGED
 
-\>absolutely no code
-
 \>yet another failed /g/ project
-
-see the branches
 
 what we have so far: http://a.pomf.se/lkowau.webm
 
 #### About
-A minimalistic lightweight bittorrent client written by the 4chan technology board.
+A minimalistic lightweight bittorrent client written by some smart people from the 4chan technology board.
 
 #### Goals
-1. Use native GUI toolkit on target platforms.
-2. gTorrent should be themable with CSS, and XML/JSON for representing the application components.
-3. RSS Automation
-4. What the fuck should we write this in?
-5. ...
+1. Support multiple GUIs (Qt, Gtk, Cocoa, node-webkit)
+2. RSS Automation
+3. ...
 
 ## Compiling/Installing
 #### GNU/Linux or Mac OS X
