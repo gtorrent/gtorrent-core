@@ -23,6 +23,11 @@ void GtkTorrentTreeView::setupColumns()
 	col = this->get_column(cid - 1);
 	col->set_alignment(0.5);
 	col->set_fixed_width(90);
+	
+	cid = this->append_column("Leechers", m_cols.m_col_leechers);
+	col = this->get_column(cid - 1);
+	col->set_alignment(0.5);
+	col->set_fixed_width(90);
 
 	Gtk::CellRendererProgress *cell = Gtk::manage(new Gtk::CellRendererProgress());
 	cid = this->append_column("Progress", *cell);
@@ -50,6 +55,7 @@ void GtkTorrentTreeView::addCell(t_ptr &t)
 	row[m_cols.m_col_percent] = t->getTotalProgress();
 	row[m_cols.m_col_percent_text] = t->getTextState();
 	row[m_cols.m_col_seeders] = t->getTotalSeeders();
+	row[m_cols.m_col_leechers] = t->getTotalLeechers();
 }
 
 void GtkTorrentTreeView::updateCells()
@@ -62,7 +68,7 @@ void GtkTorrentTreeView::updateCells()
 		c[m_cols.m_col_percent] = t->getTotalProgress();
 		c[m_cols.m_col_seeders] = t->getTotalSeeders();
 		c[m_cols.m_col_percent_text] = t->getTextState();
-
+		c[m_cols.m_col_leechers] = t->getTotalLeechers();
 		// TODO: Handle with events
 
 		//m_cells[i]->property_text() = t->getTextState();
