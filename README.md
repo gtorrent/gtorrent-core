@@ -1,11 +1,9 @@
 #gTorrent
 [![Build Status](https://travis-ci.org/gtorrent/gTorrent.svg?branch=master)](https://travis-ci.org/gtorrent/gTorrent)
 
-PULL REQUESTS ARE ENCOURAGED
-
-\>yet another failed /g/ project
-
 what we have so far: http://a.pomf.se/lkowau.webm
+
+PULL REQUESTS ARE ENCOURAGED
 
 ## About
 A minimalistic lightweight bittorrent client written by some smart people from the 4chan technology board.
@@ -14,6 +12,17 @@ A minimalistic lightweight bittorrent client written by some smart people from t
 1. Support multiple GUIs (Qt, Gtk, Cocoa, node-webkit)
 2. RSS Automation
 3. ...
+
+- [0.0.1](https://github.com/gtorrent/gTorrent/issues/16)
+
+## Dependancies
+
+- cmake (make)
+- git (make)
+- boost
+- glibmm
+- gtkmm
+- libtorrent-rasterbar
 
 ## Compiling/Installing
 ### GNU/Linux or Mac OS X
@@ -33,8 +42,8 @@ $ sudo apt-get dist-upgrade
 ```
 
 #### ArchLinux
-You have it easy. Install from the [AUR](https://aur.archlinux.org/packages/gtorrent/)
-Then it'll build with no problems.
+You have it easier, dumbass nerds and your "bleeding edge" repos.
+Install from the [AUR](https://aur.archlinux.org/packages/gtorrent/)
 
 ### Windows
 Requires CMake, MinGW, msys and all dependencies. Note that since gtorrent uses gtkmm/headerbar.h you must use at least  gtkmm-3.9.16. (Note: I have not verified that gtkmm-3.9.16 is enough) This has dependencies
