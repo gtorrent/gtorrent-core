@@ -43,7 +43,7 @@ ADD_EXECUTABLE ( ${PROJECT_NAME}
         src/gui/gtk/Gtk.cpp
         src/gui/gtk/GtkAddMagnetLinkWindow.cpp
         src/gui/gtk/GtkMainWindow.cpp
-        src/gui/gtk/GtkTreeTorrentView.cpp
+        src/gui/gtk/GtkTorrentTreeView.cpp
         src/core/Core.cpp
         src/core/Torrent.cpp
         src/core/Log.cpp
