@@ -94,6 +94,6 @@ void gt::Core::update()
 
 void gt::Core::shutdown()
 {
-	gt::Log::Debug("Shutting down core library...\n");
+	gt::Log::Debug("Shutting down core library...");
 	m_running = false;
 }
