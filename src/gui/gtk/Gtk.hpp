@@ -12,7 +12,7 @@ private:
 	Gtk::Main *m_gtkmain;
 	GtkMainWindow *mainWindow;
 public:
-	GuiGtk();
+	GuiGtk(int argc, char **argv);
 	~GuiGtk();
 
 	// Public Members & Functions
