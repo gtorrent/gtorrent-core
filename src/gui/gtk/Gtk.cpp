@@ -1,6 +1,6 @@
 #include "Gtk.hpp"
 
-GuiGtk::GuiGtk()
+GuiGtk::GuiGtk(int argc, char **argv)
 {
 	m_gtkmain = new Gtk::Main(0, 0, false);
 
