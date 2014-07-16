@@ -1,6 +1,7 @@
 #include <core/Core.hpp>
 #include "Torrent.hpp"
 #define T_PPM 1000000.f
+
 Torrent::Torrent(string path) :
 	m_path(path)
 {
