@@ -22,7 +22,7 @@ private:
 public:
 	GtkMainWindow();
 
-	bool onDestroy(GdkEvent *event);
+	bool onDestroy(GdkEventAny *event);
 	bool onSecTick();
 };
 
