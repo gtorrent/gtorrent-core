@@ -32,7 +32,7 @@ shared_ptr<Torrent> gt::Core::addTorrent(string path)
 	if (path.empty())
 		return NULL;
 	
-	std::shared_ptr<Torrent> t = std::shared_ptr<Torrent>(new Torrent(path));
+	shared_ptr<Torrent> t = make_shared<Torrent>(path);
 	libtorrent::torrent_handle h = m_session.add_torrent(t->getTorrentParams());
 
 	t->setHandle(h);
