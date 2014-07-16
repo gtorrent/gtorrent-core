@@ -1,11 +1,21 @@
 #include <core/Core.hpp>
 #include "Torrent.hpp"
 #define T_PPM 1000000.f
+#include <cstdlib>
+
+string GetDefaultSavePath()
+{
+	char *savepath = getenv("HOME");
+    return savepath == NULL ? std::string("") : std::string(savepath)+"/Downloads";
+}
 
 Torrent::Torrent(string path) :
 	m_path(path)
 {
-	m_torrent_params.save_path = "./";
+	string savepath = GetDefaultSavePath();
+	if (savepath == "")
+		savepath="./"; //Fall back to ./ if $HOME or %HOME% is not set
+	m_torrent_params.save_path = savepath;
 	if (gt::Core::isMagnetLink(path))
 	{
 		m_torrent_params.url = path;
