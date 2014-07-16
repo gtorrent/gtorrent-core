@@ -42,7 +42,7 @@ private:
 public:
 	GtkTorrentTreeView();
 
-	void addCell(t_ptr &t);
+	void addCell(shared_ptr<Torrent> &t);
 	void updateCells();
 };
 
