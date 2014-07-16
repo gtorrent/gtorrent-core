@@ -1,28 +1,21 @@
 #include <core/Core.hpp>
 #include "Torrent.hpp"
-
 #define T_PPM 1000000.f
-
 Torrent::Torrent(string path) :
 	m_path(path)
 {
 	m_torrent_params.save_path = "./";
-
 	if (gt::Core::isMagnetLink(path))
 	{
 		m_torrent_params.url = path;
 	}
 	else
 	{
-		// TODO: Provide method that resolves the ugly macro code elsewhere.
-
-		#ifdef __WIN32__
-			m_torrent_params.ti = boost::shared_ptr<libtorrent::torrent_info>(new libtorrent::torrent_info(path)); // This fails on GNU/Linux
-		#else
-			m_torrent_params.ti = new libtorrent::torrent_info(path);
-		#endif
+			//libtorrent::add_torrent_params.ti is an intrusive_ptr in 1.0 and a shared_ptr in svn.
+			//Using decltype allows us to make it compatible with both versions while still properly using the constructor to avoid a compiler error on boost 1.55 when the = operator is used with a pointer.
+			m_torrent_params.ti = decltype(m_torrent_params.ti)(new libtorrent::torrent_info(path)); 
 	}
-		
+
 }
 
 bool Torrent::pollEvent(gt::Event &event)
