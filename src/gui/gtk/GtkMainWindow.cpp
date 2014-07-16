@@ -93,7 +93,7 @@ void GtkMainWindow::onAddMagnetBtnClicked()
 	}
 }
 
-bool GtkMainWindow::onDestroy(GdkEventAny *event)
+bool GtkMainWindow::onDestroy(void)
 {
 	m_core->shutdown();
 	return false;
