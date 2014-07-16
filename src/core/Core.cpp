@@ -11,10 +11,10 @@ gt::Core::Core() :
 	m_session.listen_on(make_pair(6881, 6889), ec);
 }
 
-bool gt::Core::isMagnetLink(string url)
+bool gt::Core::isMagnetLink(string const& url)
 {
-	string prefix = "magnet:";
-	return url.substr(0, prefix.size()) == prefix;
+    const std::string prefix = "magnet:";
+    return url.compare(0, prefix.length(), prefix) == 0;
 }
 
 bool gt::Core::isRunning()
