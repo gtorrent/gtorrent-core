@@ -51,7 +51,7 @@ void GtkTorrentTreeView::setupColumns()
 	}
 }
 
-void GtkTorrentTreeView::addCell(t_ptr &t)
+void GtkTorrentTreeView::addCell(shared_ptr<Torrent> &t)
 {
 	if (t == NULL)
 		return;
@@ -69,7 +69,7 @@ void GtkTorrentTreeView::updateCells()
 	unsigned int i = 0;
 
 	for (auto &c : m_liststore->children()) {
-		t_ptr t = Application::getSingleton()->getCore()->getTorrents()[i];
+		shared_ptr<Torrent> t = Application::getSingleton()->getCore()->getTorrents()[i];
 
 		c[m_cols.m_col_percent] = t->getTotalProgress();
 		c[m_cols.m_col_seeders] = t->getTotalSeeders();
