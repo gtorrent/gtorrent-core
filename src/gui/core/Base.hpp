@@ -3,14 +3,10 @@
 #include "core/Core.hpp"
 #include <memory>
 
-class GuiBase;
-
-typedef std::shared_ptr<GuiBase> gui_ptr;
-
 class GuiBase
 {
 protected:
-	core_ptr &m_core;
+	shared_ptr<gt::Core> &m_core;
 	
 public:
 	GuiBase();
