@@ -9,4 +9,3 @@ namespace gt
 		static void Debug(const char *fmt, ...);
 	};
 }
-
