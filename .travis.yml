@@ -1,3 +1,9 @@
+language: cpp
+
+compiler:
+  - gcc
+  - clang
+
 notifications:
         email: false
         irc:
@@ -5,17 +11,16 @@ notifications:
                         - "irc.rizon.net#gtorrent"
                 on_success: always
                 on_failure: always
+        template:
+                - "%{repository_slug}/%{branch} (%{commit} - %{author}): %{message}"
+                - "Change view : %{compare_url}"
+                - "Build details: %{build_url}"
+                - "Result: %{result}"
 
 install:
         # Install dependancies
         - scripts/deps.sh
         - sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-4.8 90
-        
-language: cpp
-
-compiler:
-        - gcc
-        - clang
 
 script:
         - scripts/install.sh
