@@ -10,14 +10,14 @@ private:
 	static shared_ptr<Application> m_app;
 	
 	// Private Member Functions & Variables 
-	core_ptr m_core;
-	gui_ptr m_gui;
+	shared_ptr<gt::Core> m_core;
+	shared_ptr<GuiBase> m_gui;
 
 public:
 	static shared_ptr<Application> getSingleton();
 
 	// Getters
-	core_ptr &getCore();
+	shared_ptr<gt::Core> &getCore();
 
 	// Public Member Functions & Variables
 	int run(int argc, char **argv);
