@@ -8,5 +8,4 @@ namespace gt
 		static string getTimeStamp();
 		static void Debug(const char *fmt, ...);
 	};
-};
-
+}
