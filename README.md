@@ -11,7 +11,7 @@ A minimalistic lightweight bittorrent client written by some smart people from t
 ## Goals
 1. Support multiple GUIs (Qt, Gtk, Cocoa, node-webkit)
 2. RSS Automation
-3. ...
+3. ......
 
 - [0.0.1](https://github.com/gtorrent/gTorrent/issues/16)
 
