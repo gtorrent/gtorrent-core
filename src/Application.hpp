@@ -3,6 +3,7 @@
 #include <gui/core/Base.hpp>
 #include <gui/gtk/Gtk.hpp>
 #include <core/Core.hpp>
+#include <utils/Version.hpp>
 
 class Application
 {
