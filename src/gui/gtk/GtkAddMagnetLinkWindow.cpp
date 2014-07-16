@@ -34,7 +34,7 @@ std::string GtkAddMagnetLinkWindow::getMagnetURL()
 
 void GtkAddMagnetLinkWindow::onClipboardReady(const Glib::ustring &text)
 {
-	if (Core::isMagnetLink(text)) {
+	if (gt::Core::isMagnetLink(text)) {
 		Glib::RefPtr<Gtk::TextBuffer> buf = m_textview->get_buffer();
 		buf->set_text(text);
 	}

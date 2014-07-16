@@ -9,7 +9,7 @@
 class GtkMainWindow : public Gtk::Window
 {
 private:
-	core_ptr &m_core;
+	shared_ptr<gt::Core> &m_core;
 
 	Gtk::HeaderBar *header;
 	GtkTorrentTreeView *m_treeview;
