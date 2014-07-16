@@ -14,6 +14,10 @@ SET (GTORRENT_VERSION_PATCH 0)
 
 ############################################################
 
+# Configure version into utils/Version.hpp
+configure_file(src/utils/Version.hpp.in Version.hpp)
+
+# Set compiler flags
 SET (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -g -include all.h")
 
 # Fuck liboost for not providing boost.pc or fucking something
