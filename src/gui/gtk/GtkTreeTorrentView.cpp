@@ -50,6 +50,7 @@ void GtkTorrentTreeView::addCell(t_ptr &t)
 {
 	if (t == NULL)
 		return;
+
 	Gtk::TreeModel::Row row = *(m_liststore->append());
 	row[m_cols.m_col_name] = t->getHandle().name();
 	row[m_cols.m_col_percent] = t->getTotalProgress();
@@ -69,6 +70,7 @@ void GtkTorrentTreeView::updateCells()
 		c[m_cols.m_col_seeders] = t->getTotalSeeders();
 		c[m_cols.m_col_percent_text] = t->getTextState();
 		c[m_cols.m_col_leechers] = t->getTotalLeechers();
+		
 		// TODO: Handle with events
 
 		//m_cells[i]->property_text() = t->getTextState();
