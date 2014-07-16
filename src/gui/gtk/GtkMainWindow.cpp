@@ -19,12 +19,14 @@ GtkMainWindow::GtkMainWindow() :
 	// This needs to be refactored
 
 	Gtk::Button *add_torrent_btn = Gtk::manage(new Gtk::Button());
-	add_torrent_btn->set_label("Add .torrent");
+//	add_torrent_btn->set_label("Add .torrent");
+	add_torrent_btn->set_image_from_icon_name("document-open");
 	add_torrent_btn->signal_clicked().connect(sigc::mem_fun(*this, &GtkMainWindow::onAddBtnClicked));
 	header->add(*add_torrent_btn);
 
 	Gtk::Button *add_link_btn = Gtk::manage(new Gtk::Button());
-	add_link_btn->set_label("Add Magnet");
+//	add_link_btn->set_label("Add Magnet");
+	add_link_btn->set_image_from_icon_name("edit-paste");
 	add_link_btn->signal_clicked().connect(sigc::mem_fun(*this, &GtkMainWindow::onAddMagnetBtnClicked));
 	header->add(*add_link_btn);
 
