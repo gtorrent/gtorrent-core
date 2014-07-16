@@ -3,6 +3,7 @@
 #include "GtkMainWindow.hpp"
 #include <Application.hpp>
 #include <gtkmm/button.h>
+#include <gtkmm/hvseparator.h>
 #include <gtkmm/stock.h>
 #include <glibmm.h>
 
@@ -19,16 +20,21 @@ GtkMainWindow::GtkMainWindow() :
 	// This needs to be refactored
 
 	Gtk::Button *add_torrent_btn = Gtk::manage(new Gtk::Button());
-//	add_torrent_btn->set_label("Add .torrent");
-	add_torrent_btn->set_image_from_icon_name("document-open");
+	add_torrent_btn->set_image_from_icon_name("gtk-add");
 	add_torrent_btn->signal_clicked().connect(sigc::mem_fun(*this, &GtkMainWindow::onAddBtnClicked));
 	header->add(*add_torrent_btn);
 
 	Gtk::Button *add_link_btn = Gtk::manage(new Gtk::Button());
-//	add_link_btn->set_label("Add Magnet");
-	add_link_btn->set_image_from_icon_name("edit-paste");
+	add_link_btn->set_image_from_icon_name("gtk-paste");
 	add_link_btn->signal_clicked().connect(sigc::mem_fun(*this, &GtkMainWindow::onAddMagnetBtnClicked));
 	header->add(*add_link_btn);
+
+	Gtk::VSeparator *separator = Gtk::manage(new Gtk::VSeparator());
+	header->add(*separator);
+
+	Gtk::Button *pause_btn = Gtk::manage(new Gtk::Button());
+	pause_btn->set_image_from_icon_name("gtk-media-pause");
+	header->add(*pause_btn);
 
 	this->set_titlebar(*header);
 
