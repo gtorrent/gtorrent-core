@@ -10,7 +10,7 @@ shared_ptr<Application> Application::getSingleton()
 	return m_app;
 }
 
-core_ptr &Application::getCore()
+shared_ptr<gt::Core> &Application::getCore()
 {
 	return m_core;
 }
@@ -18,10 +18,10 @@ core_ptr &Application::getCore()
 int Application::run(int argc, char **argv)
 {
 	gt::Log::Debug("Starting up core library...\n");
-	m_core = core_ptr(new Core());
+	m_core = make_shared<gt::Core>();
 
 	gt::Log::Debug("Starting up GUI layer...\n");
-	m_gui = gui_ptr(new GuiGtk(argc, argv));
+	m_gui = make_shared<GuiGtk>(argc, argv);
 
 	while (m_core->isRunning()) {
 		m_core->update();
