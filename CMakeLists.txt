@@ -10,7 +10,7 @@ PROJECT (gtorrent)
 
 SET (GTORRENT_VERSION_MAJOR 0)                                                                                                                                                                                                                 
 SET (GTORRENT_VERSION_MINOR 0)
-SET (GTORRENT_VERSION_PATCH 0)
+SET (GTORRENT_VERSION_PATCH 1)
 
 ############################################################
 
