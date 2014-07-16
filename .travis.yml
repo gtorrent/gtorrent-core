@@ -17,10 +17,25 @@ notifications:
                 - "Build details: %{build_url}"
                 - "Result: %{result}"
 
+before_install:
+        # Update dependancies
+        #- scripts/deps.sh
+        - wget http://ftp.us.debian.org/debian/pool/main/g/gtk+3.0/libgtk-3-0_3.12.2-1+b1_i386.deb
+        - wget http://ftp.us.debian.org/debian/pool/main/g/gtkmm3.0/libgtkmm-3.0-dev_3.12.0-1_i386.deb
+        - wget http://ftp.debian.org/debian/pool/main/g/glibmm2.4/libglibmm-2.4-dev_2.40.0-1_i386.deb
+        - wget http://ftp.us.debian.org/debian/pool/main/libt/libtorrent-rasterbar/libtorrent-rasterbar-dev_0.16.17-1_i386.deb
+
 install:
         # Install dependancies
-        - scripts/deps.sh
         - sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-4.8 90
+        - sudo dpkg -i --yes libgtk-3-0_3.12.2-1+b1_i386.deb
+        - sudo dpkg -i --yes libgtkmm-3.0-dev_3.12.0-1_i386.deb
+        - sudo dpkg -i --yes libglibmm-2.4-dev_2.40.0-1_i386.deb
+        - sudo dpkg -i --yes libtorrent-rasterbar-dev_0.16.17-1_i386.deb
+
 
 script:
-        - scripts/install.sh
+        - mkdir -p build/
+        - cd build/
+        - cmake ..
+        - make -j`nproc`
