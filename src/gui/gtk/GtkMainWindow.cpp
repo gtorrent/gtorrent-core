@@ -72,7 +72,7 @@ void GtkMainWindow::onAddBtnClicked()
 		case Gtk::RESPONSE_OK:
 			for (auto &f : fc.get_filenames())
 			{
-				t_ptr t = m_core->addTorrent(f.c_str());
+				shared_ptr<Torrent> t = m_core->addTorrent(f.c_str());
 				m_treeview->addCell(t);
 			}
 		break;
@@ -87,7 +87,7 @@ void GtkMainWindow::onAddMagnetBtnClicked()
 
 	switch (r) {
 		case Gtk::RESPONSE_OK:
-			t_ptr t = m_core->addTorrent(d.getMagnetURL());
+			shared_ptr<Torrent> t = m_core->addTorrent(d.getMagnetURL());
 			m_treeview->addCell(t);
 		break;
 	}
