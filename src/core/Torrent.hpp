@@ -15,7 +15,7 @@ private:
 	
 public:
 	Torrent(string path);
-
+	
 	bool pollEvent(gt::Event &event);
 
 	// Getters

@@ -73,7 +73,8 @@ void GtkMainWindow::onAddBtnClicked()
 			for (auto &f : fc.get_filenames())
 			{
 				shared_ptr<Torrent> t = m_core->addTorrent(f.c_str());
-				m_treeview->addCell(t);
+				if (t)//Checks if t is not null
+					m_treeview->addCell(t);
 			}
 		break;
 	}
