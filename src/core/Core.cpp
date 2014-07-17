@@ -13,13 +13,25 @@ gt::Core::Core() :
 
 bool gt::Core::isMagnetLink(string const& url)
 {
-    const std::string prefix = "magnet:";
-    return url.compare(0, prefix.length(), prefix) == 0;
+	const string prefix = "magnet:";
+	return url.compare(0, prefix.length(), prefix) == 0;
 }
 
 bool gt::Core::isRunning()
 {
 	return m_running;
+}
+
+string gt::Core::getDefaultSavePath()
+{
+	#ifndef _WIN32
+	char *savepath = getenv("HOME");
+	return savepath == NULL ? string("") : string(savepath)+"/Downloads";
+	#else
+	char *savedrive = getenv("HOMEDRIVE");
+	char *savepath = getenv("HOMEPATH");
+	return savepath == NULL ? string("") : string(savedrive)+string(savepath)+"/Downloads";
+	#endif
 }
 
 vector<shared_ptr<Torrent> > &gt::Core::getTorrents()
@@ -67,9 +79,9 @@ shared_ptr<Torrent> gt::Core::addTorrent(string path)
 
 void gt::Core::update()
 {
-	/*auto iter = std::begin(m_torrents);
+	/*auto iter = begin(m_torrents);
 
-	while (iter != std::end(m_torrents))
+	while (iter != end(m_torrents))
 	{
 		auto &t = **iter;
 

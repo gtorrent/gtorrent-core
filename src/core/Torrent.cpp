@@ -5,7 +5,7 @@
 Torrent::Torrent(string path) :
 	m_path(path)
 {
-	m_torrent_params.save_path = "./";
+	setSavePath(""); //TODO add argument to allow user to override the default save path of $HOME/Downloads
 	if (gt::Core::isMagnetLink(path))
 		m_torrent_params.url = path;
 	else
@@ -13,6 +13,15 @@ Torrent::Torrent(string path) :
 			//Using decltype allows us to make it compatible with both versions while still properly using the constructor to avoid a compiler error on boost 1.55 when the = operator is used with a pointer.
 			m_torrent_params.ti = decltype(m_torrent_params.ti)(new libtorrent::torrent_info(path)); 
 
+}
+
+void Torrent::setSavePath(string savepath)
+{
+	if (savepath.empty())
+		savepath = gt::Core::getDefaultSavePath();
+	if (savepath.empty())
+		savepath="./"; //Fall back to ./ if $HOME is not set
+	m_torrent_params.save_path = savepath; 
 }
 
 bool Torrent::pollEvent(gt::Event &event)
