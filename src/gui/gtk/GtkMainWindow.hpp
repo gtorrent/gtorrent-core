@@ -3,6 +3,7 @@
 #include "GtkTorrentTreeView.hpp"
 #include <gtkmm/headerbar.h>
 #include <gtkmm/window.h>
+#include <gtkmm/button.h>
 #include <core/Core.hpp>
 #include <gtkmm/main.h>
 
@@ -14,11 +15,14 @@ private:
 	Gtk::HeaderBar *header;
 	GtkTorrentTreeView *m_treeview;
 
+	Gtk::Button *pause_btn;
+
 	// Signal Responders
 	
 	void onAddBtnClicked();
+	void onPauseBtnClicked();
 	void onAddMagnetBtnClicked();
-
+	void onTreeViewRowActivated(const Gtk::TreeModel::Path &path, Gtk::TreeViewColumn *column);
 public:
 	GtkMainWindow();
 

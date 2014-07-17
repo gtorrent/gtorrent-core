@@ -1,9 +1,8 @@
 #include "GtkAddMagnetLinkWindow.hpp"
 #include <gtkmm/filechooserdialog.h>
+#include <gtkmm/hvseparator.h>
 #include "GtkMainWindow.hpp"
 #include <Application.hpp>
-#include <gtkmm/button.h>
-#include <gtkmm/hvseparator.h>
 #include <gtkmm/stock.h>
 #include <glibmm.h>
 
@@ -32,8 +31,9 @@ GtkMainWindow::GtkMainWindow() :
 	Gtk::VSeparator *separator = Gtk::manage(new Gtk::VSeparator());
 	header->add(*separator);
 
-	Gtk::Button *pause_btn = Gtk::manage(new Gtk::Button());
+	pause_btn = Gtk::manage(new Gtk::Button());
 	pause_btn->set_image_from_icon_name("gtk-media-pause");
+	pause_btn->signal_clicked().connect(sigc::mem_fun(*this, &GtkMainWindow::onPauseBtnClicked));
 	header->add(*pause_btn);
 
 	this->set_titlebar(*header);
@@ -43,6 +43,7 @@ GtkMainWindow::GtkMainWindow() :
 
 	Glib::signal_timeout().connect(sigc::mem_fun(*this, &GtkMainWindow::onSecTick), 10);
 	this->signal_delete_event().connect(sigc::mem_fun(*this, &GtkMainWindow::onDestroy));
+	m_treeview->signal_row_activated().connect(sigc::mem_fun(*this, &GtkMainWindow::onTreeViewRowActivated));
 
 	this->show_all();
 }
@@ -90,6 +91,28 @@ void GtkMainWindow::onAddMagnetBtnClicked()
 			shared_ptr<Torrent> t = m_core->addTorrent(d.getMagnetURL());
 			m_treeview->addCell(t);
 		break;
+	}
+}
+
+void GtkMainWindow::onTreeViewRowActivated(const Gtk::TreeModel::Path &path, Gtk::TreeViewColumn *column)
+{
+	unsigned int index = path[0];
+	shared_ptr<Torrent> &t = m_core->getTorrents()[index];
+
+	printf("%i\n", t->getPaused());
+}
+
+void GtkMainWindow::onPauseBtnClicked()
+{
+	unsigned int index = m_treeview->getSelectedIndex();
+	shared_ptr<Torrent> &t = m_core->getTorrents()[index];
+
+	if (t->getPaused()) {
+		printf("Resumed\n");
+		t->resume();
+	} else {
+		printf("Paused\n");
+		t->pause();
 	}
 }
 
