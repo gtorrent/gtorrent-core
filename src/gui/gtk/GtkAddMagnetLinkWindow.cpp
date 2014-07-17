@@ -27,7 +27,7 @@ GtkAddMagnetLinkWindow::GtkAddMagnetLinkWindow()
 	clip->request_text(sigc::mem_fun(*this, &GtkAddMagnetLinkWindow::onClipboardReady));
 }
 
-std::string GtkAddMagnetLinkWindow::getMagnetURL()
+string GtkAddMagnetLinkWindow::getMagnetURL()
 {
 	return m_textview->get_buffer()->get_text();
 }
