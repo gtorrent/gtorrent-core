@@ -22,6 +22,6 @@ public:
 
 	// Getters
 	
-	std::string getMagnetURL();
+	string getMagnetURL();
 };
 
