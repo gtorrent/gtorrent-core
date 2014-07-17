@@ -22,15 +22,11 @@ Torrent::Torrent(string path) :
 		savepath="./"; //Fall back to ./ if $HOME or %HOME% is not set
 	m_torrent_params.save_path = savepath;
 	if (gt::Core::isMagnetLink(path))
-	{
 		m_torrent_params.url = path;
-	}
 	else
-	{
 			//libtorrent::add_torrent_params.ti is an intrusive_ptr in 1.0 and a shared_ptr in svn.
 			//Using decltype allows us to make it compatible with both versions while still properly using the constructor to avoid a compiler error on boost 1.55 when the = operator is used with a pointer.
 			m_torrent_params.ti = decltype(m_torrent_params.ti)(new libtorrent::torrent_info(path)); 
-	}
 
 }
 
