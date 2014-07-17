@@ -13,7 +13,7 @@ gt::Core::Core() :
 
 bool gt::Core::isMagnetLink(string const& url)
 {
-    const std::string prefix = "magnet:";
+    const string prefix = "magnet:";
     return url.compare(0, prefix.length(), prefix) == 0;
 }
 
@@ -30,7 +30,7 @@ string gt::Core::getDefaultSavePath()
 	#else
 	char *savedrive = getenv("HOMEDRIVE");
 	char *savepath = getenv("HOMEPATH");
-    return savepath == NULL ? std::string("") : string(savedrive)+string(savepath)+"/Downloads";
+    return savepath == NULL ? string("") : string(savedrive)+string(savepath)+"/Downloads";
 	#endif
 }
 
@@ -79,9 +79,9 @@ shared_ptr<Torrent> gt::Core::addTorrent(string path)
 
 void gt::Core::update()
 {
-	/*auto iter = std::begin(m_torrents);
+	/*auto iter = begin(m_torrents);
 
-	while (iter != std::end(m_torrents))
+	while (iter != end(m_torrents))
 	{
 		auto &t = **iter;
 
