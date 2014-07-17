@@ -19,9 +19,9 @@ SET (VERSION ${GTORRENT_VERSION_MAJOR}.${GTORRENT_VERSION_MINOR}.${GTORRENT_VERS
 configure_file(src/utils/Version.hpp.in Version.hpp @ONLY)
 
 if(WIN32)
-    set(WIN32_CXXFLAGS "-mwindows" ) #Prevents process from automatically spawning a console window.
+    SET (WIN32_CXXFLAGS "-mwindows" ) #Prevents process from automatically spawning a console window.
 else()
-    set(WIN32_CXXFLAGS "")
+    SET (WIN32_CXXFLAGS "")
 endif()
 
 # Set compiler flags
