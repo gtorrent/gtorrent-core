@@ -30,7 +30,9 @@ before_install:
 install:
         # Install dependancies
         - sudo apt-get install -f -y libgtkmm-3.0-dev libglibmm-2.4-dev libtorrent-rasterbar-dev libboost-all-dev 
-        - sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-4.8 90
+        # Update g++ to 4.9
+        - sudo apt-get install -f -y g++
+        - sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-4.9 90
 
 script:
         - mkdir -p build/
