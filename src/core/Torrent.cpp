@@ -2,11 +2,16 @@
 #include "Torrent.hpp"
 #define T_PPM 1000000.f
 #include <cstdlib>
-
 string GetDefaultSavePath()
 {
+	#ifndef _WIN32
 	char *savepath = getenv("HOME");
-    return savepath == NULL ? std::string("") : std::string(savepath)+"/Downloads";
+    return savepath == NULL ? string("") : string(savepath)+"/Downloads";
+	#else
+	char *savedrive = getenv("HOMEDRIVE");
+	char *savepath = getenv("homepath");
+    return savepath == NULL ? std::string("") : string(savedrive)+string(savepath)+"/Downloads";
+	#endif
 }
 
 Torrent::Torrent(string path) :
