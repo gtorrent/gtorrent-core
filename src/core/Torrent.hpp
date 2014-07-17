@@ -47,6 +47,9 @@ public:
 	// Returns a friendly string for the torrent state
 	string getTextState();
 
+	// Returns a friendly string for the current download rate
+	string getTextDownloadRate();
+
 	// Setters
 	void setHandle(libtorrent::torrent_handle &h);
 };
