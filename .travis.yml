@@ -17,6 +17,8 @@ notifications:
                 - "Build details: %{build_url}"
                 - "Result: %{result}"
 
+cache: apt
+
 install:
         # Install dependancies
         - scripts/deps.sh
