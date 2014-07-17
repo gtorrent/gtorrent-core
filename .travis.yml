@@ -18,6 +18,9 @@ notifications:
                 - "Result: %{result}"
 
 before_install:
+        # Debugging
+        - sudo cat /etc/sources.lists
+        - lsb_release -sc
         # Update dependancies
         #- scripts/deps.sh
         - wget http://ftp.us.debian.org/debian/pool/main/g/gtk+3.0/libgtk-3-0_3.12.2-1+b1_amd64.deb
