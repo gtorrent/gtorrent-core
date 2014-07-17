@@ -2,7 +2,8 @@
 
 #include "libtorrent.hpp"
 #include "Event.hpp"
-#include <memory>
+#include <iomanip>
+#include <sstream>
 
 class Torrent
 {
@@ -46,7 +47,11 @@ public:
 	// Returns a friendly string for the torrent state
 	string getTextState();
 
+	// Returns a friendly string for the current download rate
+	string getTextDownloadRate();
+
 	// Setters
 	void setHandle(libtorrent::torrent_handle &h);
+	void setSavePath(string savepath);
 };
 
