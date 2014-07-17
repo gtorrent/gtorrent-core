@@ -5,7 +5,7 @@ if [ "$USER" != "root" ]; then
   echo "You have to sudo or be root to install dependencies."
 else
   if [ -f "/etc/debian_version" ]; then
-    apt-get install -y cmake libgtkmm-3.0-dev libglibmm-2.4-dev libtorrent-rasterbar-dev libboost-all-dev libssl-dev
+    apt-get install -y cmake libgtkmm-3.0-dev libglibmm-2.4-dev libtorrent-rasterbar-dev libboost-all-dev libssl-dev g++-4.8
     SATISFIED=1
   fi
 

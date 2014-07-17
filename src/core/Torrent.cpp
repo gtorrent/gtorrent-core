@@ -5,18 +5,23 @@
 Torrent::Torrent(string path) :
 	m_path(path)
 {
-	m_torrent_params.save_path = "./";
+	setSavePath(""); //TODO add argument to allow user to override the default save path of $HOME/Downloads
 	if (gt::Core::isMagnetLink(path))
-	{
 		m_torrent_params.url = path;
-	}
 	else
-	{
 			//libtorrent::add_torrent_params.ti is an intrusive_ptr in 1.0 and a shared_ptr in svn.
 			//Using decltype allows us to make it compatible with both versions while still properly using the constructor to avoid a compiler error on boost 1.55 when the = operator is used with a pointer.
 			m_torrent_params.ti = decltype(m_torrent_params.ti)(new libtorrent::torrent_info(path)); 
-	}
 
+}
+
+void Torrent::setSavePath(string savepath)
+{
+	if (savepath.empty())
+		savepath = gt::Core::getDefaultSavePath();
+	if (savepath.empty())
+		savepath="./"; //Fall back to ./ if $HOME is not set
+	m_torrent_params.save_path = savepath; 
 }
 
 bool Torrent::pollEvent(gt::Event &event)
@@ -94,11 +99,28 @@ string Torrent::getTextState()
 		break;
 		case libtorrent::torrent_status::downloading:
 		default:
-			char p[5];
-			sprintf(p, "%.1f %%", getTotalProgress());
-			return p;
+			std::ostringstream o;
+			o << setprecision(2) << getTotalProgress();
+			return o.str();
 		break;
 	}
+}
+
+string Torrent::getTextDownloadRate()
+{
+	std::ostringstream oss;
+
+	double rate = getDownloadRate() / 1024;
+
+	if (rate <= 0) {
+		oss << string();
+	} else if (rate > 1024) {
+		oss << setprecision(2) << (rate / 1024) << " MB/s";
+	} else {
+		oss << rate << " KB/s";
+	}
+
+	return oss.str();
 }
 
 void Torrent::setHandle(libtorrent::torrent_handle &h)
