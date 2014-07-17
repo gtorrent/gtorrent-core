@@ -18,6 +18,7 @@ namespace gt
 
 		static bool isMagnetLink(string const& link);
 		
+		static string getDefaultSavePath();
 		vector<shared_ptr<Torrent> > &getTorrents();
 		shared_ptr<Torrent> addTorrent(string path);
 		
