@@ -3,7 +3,8 @@
 #include "GtkTorrentTreeView.hpp"
 #include <Application.hpp>
 
-GtkTorrentTreeView::GtkTorrentTreeView()
+GtkTorrentTreeView::GtkTorrentTreeView() :
+	m_index(0)
 {
 	m_liststore = Gtk::ListStore::create(m_cols);
 	this->set_model(m_liststore);
@@ -49,6 +50,8 @@ void GtkTorrentTreeView::setupColumns()
 		c->set_resizable();
 		c->set_reorderable();
 	}
+
+	this->set_activate_on_single_click();
 }
 
 void GtkTorrentTreeView::addCell(shared_ptr<Torrent> &t)
@@ -85,3 +88,12 @@ void GtkTorrentTreeView::updateCells()
 	}
 }
 
+void GtkTorrentTreeView::setSelectedIndex(unsigned int index)
+{
+	m_index = index;
+}
+
+unsigned int GtkTorrentTreeView::getSelectedIndex()
+{
+	return m_index;
+}
