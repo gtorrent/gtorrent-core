@@ -17,7 +17,7 @@ void GtkTorrentTreeView::setupColumns()
 
 	cid = this->append_column("Name", m_cols.m_col_name);
 	col = this->get_column(cid - 1);
-	col->set_fixed_width(250);
+	col->set_fixed_width(325);
 
 	cid = this->append_column("Seeders", m_cols.m_col_seeders);
 	col = this->get_column(cid - 1);
