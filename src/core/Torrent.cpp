@@ -103,7 +103,9 @@ string Torrent::getTextDownloadRate()
 
 	double rate = getDownloadRate() / 1024;
 
-	if (rate > 1024) {
+	if (rate <= 0) {
+		oss << string();
+	} else if (rate > 1024) {
 		oss << setprecision(2) << (rate / 1024) << " MB/s";
 	} else {
 		oss << rate << " KB/s";
