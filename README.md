@@ -8,14 +8,18 @@ PULL REQUESTS ARE ENCOURAGED
 ## About
 A minimalistic lightweight bittorrent client written by some smart people from the 4chan technology board.
 
+### Branches
+
+
 ## Goals
 1. Support multiple GUIs (Qt, Gtk, Cocoa, node-webkit)
 2. RSS Automation
 3. ......
 
+- [0.1.0](https://github.com/gtorrent/gTorrent/issues/41)
 - [0.0.1](https://github.com/gtorrent/gTorrent/issues/16)
 
-## Dependancies
+## Dependencies
 
 - cmake (make)
 - git (make)
