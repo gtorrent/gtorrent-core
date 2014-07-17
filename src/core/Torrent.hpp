@@ -4,6 +4,7 @@
 #include "Event.hpp"
 #include <iomanip>
 #include <sstream>
+#include <fstream>
 
 class Torrent
 {
