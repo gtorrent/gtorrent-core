@@ -29,7 +29,7 @@ void GtkTorrentTreeView::setupColumns()
 	col->set_alignment(0.5);
 	col->set_fixed_width(90);
 
-	cid = this->append_column("Rate (KB/s)", m_cols.m_col_dl_speed);
+	cid = this->append_column("Rate", m_cols.m_col_dl_speed);
 	col = this->get_column(cid - 1);
 	col->set_alignment(0.5);
 	col->set_fixed_width(95);
@@ -75,7 +75,7 @@ void GtkTorrentTreeView::updateCells()
 		c[m_cols.m_col_seeders] = t->getTotalSeeders();
 		c[m_cols.m_col_percent_text] = t->getTextState();
 		c[m_cols.m_col_leechers] = t->getTotalLeechers();
-		c[m_cols.m_col_dl_speed] = t->getDownloadRate() / 1024; //Return the download rate to KB/s, it's in Bytes/s 
+		c[m_cols.m_col_dl_speed] = t->getTextDownloadRate();
 		
 		// TODO: Handle with events
 
