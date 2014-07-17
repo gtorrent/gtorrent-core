@@ -27,7 +27,7 @@ public:
 	Gtk::TreeModelColumn<unsigned int> m_col_percent;
 	Gtk::TreeModelColumn<Glib::ustring> m_col_percent_text;
 	Gtk::TreeModelColumn<unsigned int> m_col_empty;
-	Gtk::TreeModelColumn<unsigned int> m_col_dl_speed;
+	Gtk::TreeModelColumn<Glib::ustring> m_col_dl_speed;
 };
 
 // Gtk Torrent Tree View Section
