@@ -3,9 +3,7 @@
 #include "libtorrent.hpp"
 #include "Event.hpp"
 #include <iomanip>
-#include <memory>
 #include <sstream>
-#include <string>
 
 class Torrent
 {
