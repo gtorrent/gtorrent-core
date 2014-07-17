@@ -46,4 +46,4 @@ You have it easier, dumbass nerds and your "bleeding edge" repos.
 Install from the [AUR](https://aur.archlinux.org/packages/gtorrent/)
 
 ### Windows
-Refere [here](https://github.com/gtorrent/gTorrent/wiki/Building-on-Windows)
+Refer [here](https://github.com/gtorrent/gTorrent/wiki/Building-on-Windows)
