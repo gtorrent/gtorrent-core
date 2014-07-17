@@ -12,7 +12,6 @@ Torrent::Torrent(string path) :
 			//libtorrent::add_torrent_params.ti is an intrusive_ptr in 1.0 and a shared_ptr in svn.
 			//Using decltype allows us to make it compatible with both versions while still properly using the constructor to avoid a compiler error on boost 1.55 when the = operator is used with a pointer.
 			m_torrent_params.ti = decltype(m_torrent_params.ti)(new libtorrent::torrent_info(path)); 
-
 }
 
 void Torrent::setSavePath(string savepath)
@@ -20,7 +19,7 @@ void Torrent::setSavePath(string savepath)
 	if (savepath.empty())
 		savepath = gt::Core::getDefaultSavePath();
 	if (savepath.empty())
-		savepath="./"; //Fall back to ./ if $HOME is not set
+		savepath = "./"; // Fall back to ./ if $HOME is not set
 	m_torrent_params.save_path = savepath; 
 }
 
@@ -32,6 +31,16 @@ bool Torrent::pollEvent(gt::Event &event)
 	}
 
 	return false;
+}
+
+void Torrent::resume()
+{
+	m_handle.resume();
+}
+
+void Torrent::pause()
+{
+	m_handle.pause();
 }
 
 libtorrent::add_torrent_params Torrent::getTorrentParams()
@@ -81,6 +90,11 @@ unsigned int Torrent::getTotalPeers()
 unsigned int Torrent::getTotalLeechers()
 {
 	return m_handle.status().num_incomplete;
+}
+
+bool Torrent::getPaused()
+{
+	return m_handle.status().paused;
 }
 
 libtorrent::torrent_status::state_t Torrent::getState()
