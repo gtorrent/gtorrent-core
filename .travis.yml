@@ -21,6 +21,10 @@ before_install:
         # Debugging
         - sudo cat /etc/sources.lists
         - lsb_release -sc
+        # Update repositories to not be shit.
+        - sudo add-apt-repository "deb http://us.archive.ubuntu.com/ubuntu/ saucy main restricted"
+        - sudo add-apt-repository "deb-src http://us.archive.ubuntu.com/ubuntu/ saucy main restricted"
+        - sudo apt-get update
         # Update dependancies
         #- scripts/deps.sh
         - wget http://ftp.us.debian.org/debian/pool/main/g/gtk+3.0/libgtk-3-0_3.12.2-1+b1_amd64.deb
