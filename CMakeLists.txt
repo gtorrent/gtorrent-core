@@ -18,8 +18,14 @@ SET (GTORRENT_VERSION_PATCH 1)
 SET (VERSION ${GTORRENT_VERSION_MAJOR}.${GTORRENT_VERSION_MINOR}.${GTORRENT_VERSION_PATCH})
 configure_file(src/utils/Version.hpp.in Version.hpp @ONLY)
 
+if(WIN32)
+    set(WIN32_CXXFLAGS "-mwindows" ) #Prevents process from automatically spawning a console window.
+else()
+    set(WIN32_CXXFLAGS "")
+endif()
+
 # Set compiler flags
-SET (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -g -include all.h -Wall")
+SET (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -g -include all.h -Wall ${WIN32_CXXFLAGS}")
 
 # Fuck liboost for not providing boost.pc or fucking something
 SET (Boost_USE_STATIC_LIBS ON) 
