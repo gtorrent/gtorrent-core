@@ -17,10 +17,24 @@ notifications:
                 - "Build details: %{build_url}"
                 - "Result: %{result}"
 
+before_install:
+        # Debugging
+        - lsb_release -sc
+        # Update repositories to not be shit.
+        - sudo add-apt-repository "deb http://us.archive.ubuntu.com/ubuntu/ utopic main restricted universe multiverse"
+        - sudo apt-get clean
+        - sudo apt-get update
+        # Update dependancies
+        #- scripts/deps.sh
+
 install:
         # Install dependancies
-        - scripts/deps.sh
-        - sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-4.8 90
+        - sudo apt-get install -f -y libgtkmm-3.0-dev libglibmm-2.4-dev libtorrent-rasterbar-dev libboost-all-dev 
+        # Update g++ to 4.9
+        - sudo apt-get install -f -y g++
 
 script:
-        - scripts/install.sh
+        - mkdir -p build/
+        - cd build/
+        - cmake ..
+        - make -j`nproc`
