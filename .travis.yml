@@ -21,8 +21,8 @@ before_install:
         # Debugging
         - lsb_release -sc
         # Update repositories to not be shit.
-        - sudo add-apt-repository "deb http://us.archive.ubuntu.com/ubuntu/ utopic main restricted"
-        - sudo add-apt-repository "deb-src http://us.archive.ubuntu.com/ubuntu/ utopic main restricted"
+        - sudo add-apt-repository "deb http://us.archive.ubuntu.com/ubuntu/ utopic universe multiverse"
+        - sudo add-apt-repository "deb-src http://us.archive.ubuntu.com/ubuntu/ utopic universe multiverse"
         - sudo apt-get update
         # Update dependancies
         #- scripts/deps.sh
