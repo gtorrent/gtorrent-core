@@ -16,9 +16,9 @@ Torrent::Torrent(string path) :
 }
 void Torrent::setSavePath(string savepath)
 {
-	if (savepath == "")
+	if (savepath.empty())
 		savepath = gt::Core::getDefaultSavePath();
-	if (savepath == "")
+	if (savepath.empty())
 		savepath="./"; //Fall back to ./ if $HOME is not set
 	m_torrent_params.save_path = savepath; 
 }
