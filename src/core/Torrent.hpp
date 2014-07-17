@@ -49,5 +49,6 @@ public:
 
 	// Setters
 	void setHandle(libtorrent::torrent_handle &h);
+	void setSavePath(string savepath);
 };
 

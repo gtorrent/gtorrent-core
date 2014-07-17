@@ -1,33 +1,26 @@
 #include <core/Core.hpp>
 #include "Torrent.hpp"
 #define T_PPM 1000000.f
-#include <cstdlib>
-string GetDefaultSavePath()
-{
-	#ifndef _WIN32
-	char *savepath = getenv("HOME");
-    return savepath == NULL ? string("") : string(savepath)+"/Downloads";
-	#else
-	char *savedrive = getenv("HOMEDRIVE");
-	char *savepath = getenv("homepath");
-    return savepath == NULL ? std::string("") : string(savedrive)+string(savepath)+"/Downloads";
-	#endif
-}
 
 Torrent::Torrent(string path) :
 	m_path(path)
 {
-	string savepath = GetDefaultSavePath();
-	if (savepath == "")
-		savepath="./"; //Fall back to ./ if $HOME or %HOME% is not set
-	m_torrent_params.save_path = savepath;
+	setSavePath(""); //TODO add argument to override the default save path of $HOME/Downloads
 	if (gt::Core::isMagnetLink(path))
 		m_torrent_params.url = path;
 	else
-			//libtorrent::add_torrent_params.ti is an intrusive_ptr in 1.0 and a shared_ptr in svn.
-			//Using decltype allows us to make it compatible with both versions while still properly using the constructor to avoid a compiler error on boost 1.55 when the = operator is used with a pointer.
-			m_torrent_params.ti = decltype(m_torrent_params.ti)(new libtorrent::torrent_info(path)); 
+		//libtorrent::add_torrent_params.ti is an intrusive_ptr in 1.0 and a shared_ptr in svn.
+		//Using decltype allows us to make it compatible with both versions while still properly using the constructor to avoid a compiler error on boost 1.55 when the = operator is used with a pointer.
+		m_torrent_params.ti = decltype(m_torrent_params.ti)(new libtorrent::torrent_info(path)); 
 
+}
+void Torrent::setSavePath(string savepath)
+{
+	if (savepath == "")
+		savepath = gt::Core::getDefaultSavePath();
+	if (savepath == "")
+		savepath="./"; //Fall back to ./ if $HOME is not set
+	m_torrent_params.save_path = savepath; 
 }
 
 bool Torrent::pollEvent(gt::Event &event)
