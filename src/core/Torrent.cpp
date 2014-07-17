@@ -9,16 +9,14 @@ Torrent::Torrent(string path) :
 	setSavePath(""); //TODO add argument to allow user to override the default save path of $HOME/Downloads
 	if (gt::Core::isMagnetLink(path))
 		m_torrent_params.url = path;
-	else
-	{
+	else {
 		//libtorrent::add_torrent_params.ti is an intrusive_ptr in 1.0 and a shared_ptr in svn.
 		//Using decltype allows us to make it compatible with both versions while still properly using the constructor to avoid a compiler error on boost 1.55 when the = operator is used with a pointer.
 		libtorrent::error_code ec;
 		decltype(m_torrent_params.ti) tester = decltype(m_torrent_params.ti)(new libtorrent::torrent_info(path,ec));
 		if (ec.value() == 0)
 			m_torrent_params.ti = tester;//If no exception was thrown add the torrent
-		else
-		{
+		else {
 			gt::Log::Debug(ec.message().c_str());//Call deconstructor? 
 			throw -1;//Throw error if construction of libtorrent::torrent_info fails.
 		}

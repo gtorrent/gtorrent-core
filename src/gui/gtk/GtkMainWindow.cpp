@@ -75,6 +75,7 @@ void GtkMainWindow::onAddBtnClicked()
 				shared_ptr<Torrent> t = m_core->addTorrent(f.c_str());
 				if (t)//Checks if t is not null
 					m_treeview->addCell(t);
+				//TODO Add error dialogue if torrent add is unsuccessful
 			}
 		break;
 	}
@@ -89,7 +90,9 @@ void GtkMainWindow::onAddMagnetBtnClicked()
 	switch (r) {
 		case Gtk::RESPONSE_OK:
 			shared_ptr<Torrent> t = m_core->addTorrent(d.getMagnetURL());
-			m_treeview->addCell(t);
+			if (t)//Checks if t is not null
+				m_treeview->addCell(t);
+			//TODO Add error dialogue if torrent add is unsuccessful
 		break;
 	}
 }
