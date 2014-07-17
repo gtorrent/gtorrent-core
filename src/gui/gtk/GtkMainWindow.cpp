@@ -59,7 +59,7 @@ void GtkMainWindow::onAddBtnClicked()
 	fc.set_select_multiple();
 	fc.set_transient_for(*this);
 	fc.add_button("_Cancel", Gtk::RESPONSE_CANCEL);
-  	fc.add_button("Select", Gtk::RESPONSE_OK);
+	fc.add_button("Select", Gtk::RESPONSE_OK);
 
   	Glib::RefPtr<Gtk::FileFilter> filter_t = Gtk::FileFilter::create();
 	filter_t->set_name("Torrent Files");

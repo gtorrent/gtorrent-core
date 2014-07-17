@@ -46,5 +46,5 @@ void gt::Log::Debug(const char *fmt, ...)
 
 	printf("[%s]: ", gt::Log::getTimeStamp().c_str());
 	vprintf(fmt, args);
-        printf("\n");
+	printf("\n");
 }
