@@ -91,10 +91,25 @@ string Torrent::getTextState()
 		case libtorrent::torrent_status::downloading:
 		default:
 			std::ostringstream o;
-			o << std::setprecision(3) << getTotalProgress();
+			o << setprecision(2) << getTotalProgress();
 			return o.str();
 		break;
 	}
+}
+
+string Torrent::getTextDownloadRate()
+{
+	std::ostringstream oss;
+
+	double rate = getDownloadRate() / 1024;
+
+	if (rate > 1024) {
+		oss << setprecision(2) << (rate / 1024) << " MB/s";
+	} else {
+		oss << rate << " KB/s";
+	}
+
+	return oss.str();
 }
 
 void Torrent::setHandle(libtorrent::torrent_handle &h)
