@@ -80,7 +80,7 @@ unsigned int Torrent::getTotalPeers()
 
 unsigned int Torrent::getTotalLeechers()
 {
-	return m_handle.status().num_incomplete;
+	return m_handle.status().num_peers - m_handle.status().num_seeds;
 }
 
 libtorrent::torrent_status::state_t Torrent::getState()
