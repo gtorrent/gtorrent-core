@@ -27,19 +27,10 @@ before_install:
         - sudo apt-get update
         # Update dependancies
         #- scripts/deps.sh
-        - wget http://ftp.us.debian.org/debian/pool/main/g/gtk+3.0/libgtk-3-0_3.12.2-1+b1_amd64.deb
-        - wget http://ftp.us.debian.org/debian/pool/main/g/gtkmm3.0/libgtkmm-3.0-dev_3.12.0-1_amd64.deb
-        - wget http://ftp.debian.org/debian/pool/main/g/glibmm2.4/libglibmm-2.4-dev_2.40.0-1_amd64.deb
-        - wget http://ftp.us.debian.org/debian/pool/main/libt/libtorrent-rasterbar/libtorrent-rasterbar-dev_0.16.17-1_amd64.deb
 
 install:
         # Install dependancies
         #- sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-4.8 90
-        - sudo dpkg -i libgtk-3-0_3.12.2-1+b1_amd64.deb
-        - sudo dpkg -i libgtkmm-3.0-dev_3.12.0-1_amd64.deb
-        - sudo dpkg -i libglibmm-2.4-dev_2.40.0-1_amd64.deb
-        - sudo dpkg -i libtorrent-rasterbar-dev_0.16.17-1_amd64.deb
-
 
 script:
         - mkdir -p build/
