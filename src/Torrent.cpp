@@ -161,18 +161,18 @@ string Torrent::getTextTotalUploaded()
 {
         std::ostringstream ttu;
 
-        boost::int64_t uploaded = getTotalUploaded() / 1024;
+        boost::int64_t uploaded = getTotalUploaded();
 
         if (uploaded <= 0) {
                 ttu << string();
 	} else if (uploaded > 0 && uploaded <= 1024) {
-                ttu << setprecision(2) << uploaded << " KB";
+                ttu << setprecision(2) << uploaded << " B";
         }  else if (uploaded > 1024 && uploaded <= (1024*1024)) {
-                ttu << setprecision(2) << (uploaded / 1024) << " MB";
+                ttu << setprecision(2) << (uploaded / 1024) << " KB";
         } else if (uploaded > (1024*1024) && uploaded <= (1024*1024*1024)) {
-                ttu << (uploaded / 1024 / 1024) << " GB";
+                ttu << (uploaded / 1024 / 1024) << " MB";
         } else if (uploaded > (1024*1024*1024)) {
-                ttu << (uploaded / 1024 / 1024 / 1024) << " TB+";
+                ttu << (uploaded / 1024 / 1024 / 1024) << " GB";
         }
 
         return ttu.str();
@@ -188,18 +188,18 @@ string Torrent::getTextTotalDownloaded()
 {
         std::ostringstream ttd;
 
-        boost::int64_t  downloaded = getTotalDownloaded() / 1024;
+        boost::int64_t  downloaded = getTotalDownloaded();
 
         if (downloaded<=0) {
                 ttd << string();
         } else if (downloaded > 0 && downloaded <= 1024) {
-                ttd << setprecision(2) << downloaded << " KB";
+                ttd << setprecision(2) << downloaded << " B";
         }  else if (downloaded > 1024 && downloaded <= (1024*1024)) {
-                ttd << setprecision(2) << (downloaded / 1024) << " MB";
+                ttd << setprecision(2) << (downloaded / 1024) << " KB";
         } else if (downloaded > (1024*1024) && downloaded <= (1024*1024*1024)) {
-                ttd << (downloaded / 1024 / 1024) << " GB";
+                ttd << (downloaded / 1024 / 1024) << " MB";
         } else if (downloaded > (1024*1024*1024)) {
-                ttd << (downloaded / 1024 / 1024 / 1024) << " TB";
+                ttd << (downloaded / 1024 / 1024 / 1024) << " GB";
 	}
         return ttd.str();
 }
