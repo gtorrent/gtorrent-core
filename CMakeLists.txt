@@ -21,7 +21,7 @@ configure_file(src/utils/Version.hpp.in Version.hpp @ONLY)
 
 
 # Set compiler flags
-SET (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -g -include all.h -Wall ${WIN32_CXXFLAGS}")
+SET (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -g -include ../src/all.h -Wall")
 
 # Fuck liboost for not providing boost.pc or fucking something
 SET (Boost_USE_STATIC_LIBS ON) 
@@ -32,8 +32,6 @@ FIND_PACKAGE(Boost COMPONENTS system REQUIRED)
 # Find libraries the proper way
 INCLUDE (FindPkgConfig)
 PKG_SEARCH_MODULE(LIBTORRENT REQUIRED libtorrent-rasterbar)
-PKG_SEARCH_MODULE(LIBGTKMM REQUIRED gtkmm-3.0)
-PKG_SEARCH_MODULE(LIBGLIBMM REQUIRED glibmm-2.4)
 
 INCLUDE_DIRECTORIES( ${PROJECT_BINARY_DIR} )
 
