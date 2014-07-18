@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Compiled Object files
 *.slo
 *.lo
@@ -19,3 +20,21 @@
 *.exe
 *.out
 *.app
+=======
+# cmake 
+Makefile
+CMakeFiles/*
+CMakeCache.txt
+cmake_install.cmake
+
+# binaries
+bin/*
+build/*
+gTorrent
+
+# Ignore vim swp files
+*.swp
+
+# ctag files
+tags
+>>>>>>> 27e3d9b802eefa6814d5ba08e6fde3f5be875f92

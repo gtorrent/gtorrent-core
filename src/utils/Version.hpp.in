@@ -1,0 +1,3 @@
+#pragma once
+
+#define GTORRENT_VERSION "@VERSION@"
