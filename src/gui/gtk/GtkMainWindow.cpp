@@ -34,6 +34,7 @@ GtkMainWindow::GtkMainWindow() :
 
 	Gtk::Button *pause_btn = Gtk::manage(new Gtk::Button());
 	pause_btn->set_image_from_icon_name("gtk-media-pause");
+	pause_btn->signal_clicked().connect(sigc::mem_fun(*this, &GtkMainWindow::onPauseBtnClicked));
 	header->add(*pause_btn);
 
 	this->set_titlebar(*header);
@@ -91,6 +92,21 @@ void GtkMainWindow::onAddMagnetBtnClicked()
 			m_treeview->addCell(t);
 		break;
 	}
+}
+
+void GtkMainWindow::onPauseBtnClicked()
+{
+    Glib::RefPtr<Gtk::TreeSelection> sel = m_treeview->get_selection();
+    sel->set_mode(Gtk::SelectionMode::SELECTION_MULTIPLE);
+    std::vector<Gtk::TreeModel::Path> path = sel->get_selected_rows();
+    std::vector<unsigned> indices;
+    for(auto val : path)
+        indices.push_back(val[0]); // we only get the first index because our tree is 1 node deep
+
+
+    std::vector<std::shared_ptr<Torrent> > t = Application::getSingleton()->getCore()->getTorrents();
+    for(auto i : indices)
+        t[i]->setPaused(!t[i]->isPaused());// the pause button switches the status
 }
 
 bool GtkMainWindow::onDestroy(GdkEventAny *event)

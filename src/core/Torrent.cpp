@@ -127,3 +127,23 @@ void Torrent::setHandle(libtorrent::torrent_handle &h)
 {
 	m_handle = h;
 }
+
+void Torrent::setPaused(bool isPaused)
+{
+    if(isPaused)
+    {
+        m_handle.auto_managed(false);
+        m_handle.pause();
+    }
+    else
+    {
+        m_handle.auto_managed(true);
+        m_handle.resume();
+    }
+}
+
+bool Torrent::isPaused()
+{
+    return m_handle.status().paused;
+}
+

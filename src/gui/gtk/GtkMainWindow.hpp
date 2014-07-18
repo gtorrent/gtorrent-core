@@ -18,6 +18,7 @@ private:
 	
 	void onAddBtnClicked();
 	void onAddMagnetBtnClicked();
+    void onPauseBtnClicked();
 
 public:
 	GtkMainWindow();

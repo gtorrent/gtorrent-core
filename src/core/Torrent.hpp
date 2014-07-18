@@ -53,5 +53,8 @@ public:
 	// Setters
 	void setHandle(libtorrent::torrent_handle &h);
 	void setSavePath(string savepath);
+
+    void setPaused(bool isPaused);
+    bool isPaused();
 };
 
