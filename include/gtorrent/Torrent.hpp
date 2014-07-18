@@ -12,7 +12,7 @@ private:
 	libtorrent::add_torrent_params m_torrent_params;
 	libtorrent::torrent_handle m_handle;
 	string m_path;
-	
+
 public:
 	Torrent(string path);
 
@@ -22,7 +22,7 @@ public:
 	libtorrent::add_torrent_params getTorrentParams();
 	libtorrent::torrent_handle &getHandle();
 	string getPath();
-	
+
 	// Returns percentage of all files downloading
 	float getTotalProgress();
 
@@ -41,6 +41,15 @@ public:
 	// Returns the current number of leechers attached to the file
 	unsigned int getTotalLeechers();
 
+        // Returns the current amount of data uploaded for this torrent
+	unsigned int getTotalUploaded();
+
+        // Returns the current amount of data downloaded for this torrent
+	unsigned int getTotalDownloaded();
+
+	// Returns the ratio (uploaded/downloaded) for this torrent
+	float getTotalRatio();
+
 	// Returns the current torrent state (downloading, queueing, seeding, etc)
 	libtorrent::torrent_status::state_t getState();
 
@@ -49,6 +58,15 @@ public:
 
 	// Returns a friendly string for the current download rate
 	string getTextDownloadRate();
+
+	// Returns a friendly string for the current upload total
+        string getTextTotalUploaded();
+
+	// Returns a friendly string for the current download total
+        string getTextTotalDownloaded();
+
+	// Returns a friendly string for the current ratio
+        string getTextTotalRatio();
 
 	// Setters
 	void setHandle(libtorrent::torrent_handle &h);
