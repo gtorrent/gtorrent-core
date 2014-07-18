@@ -148,10 +148,11 @@ string Torrent::getTextDownloadRate()
 	} else if (downrate >= (1024*1024*1024)) {
 		dnr << setprecision(2) << (downrate / 1024 / 1024 / 1024) << " sanic/s";
 	}
+
 	return dnr.str();
 }
 
-unsigned int Torrent::getTotalUploaded()
+boost::int64_t Torrent::getTotalUploaded()
 {
         return m_handle.status().total_upload;
 }
@@ -160,7 +161,7 @@ string Torrent::getTextTotalUploaded()
 {
         std::ostringstream ttu;
 
-        double uploaded = getTotalUploaded() / 1024;
+        boost::int64_t uploaded = getTotalUploaded() / 1024;
 
         if (uploaded <= 0) {
                 ttu << string();
@@ -171,15 +172,14 @@ string Torrent::getTextTotalUploaded()
         } else if (uploaded > (1024*1024) && uploaded <= (1024*1024*1024)) {
                 ttu << (uploaded / 1024 / 1024) << " GB";
         } else if (uploaded > (1024*1024*1024)) {
-                ttu << (uploaded / 1024 / 1024 / 1024) << " TB";
+                ttu << (uploaded / 1024 / 1024 / 1024) << " TB+";
         }
-
 
         return ttu.str();
 }
 
 
-unsigned int Torrent::getTotalDownloaded()
+boost::int64_t Torrent::getTotalDownloaded()
 {
         return m_handle.status().total_download;
 }
@@ -188,7 +188,7 @@ string Torrent::getTextTotalDownloaded()
 {
         std::ostringstream ttd;
 
-        double downloaded = getTotalDownloaded() / 1024;
+        boost::int64_t  downloaded = getTotalDownloaded() / 1024;
 
         if (downloaded<=0) {
                 ttd << string();
@@ -200,8 +200,7 @@ string Torrent::getTextTotalDownloaded()
                 ttd << (downloaded / 1024 / 1024) << " GB";
         } else if (downloaded > (1024*1024*1024)) {
                 ttd << (downloaded / 1024 / 1024 / 1024) << " TB";
-        }
-
+	}
         return ttd.str();
 }
 

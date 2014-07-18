@@ -45,10 +45,10 @@ public:
 	unsigned int getTotalLeechers();
 
         // Returns the current amount of data uploaded for this torrent
-	unsigned int getTotalUploaded();
+	boost::int64_t getTotalUploaded();
 
         // Returns the current amount of data downloaded for this torrent
-	unsigned int getTotalDownloaded();
+	boost::int64_t getTotalDownloaded();
 
 	// Returns the ratio (uploaded/downloaded) for this torrent
 	float getTotalRatio();
