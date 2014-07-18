@@ -1,4 +1,4 @@
-- move core into separate project
-  - define the API
-  - all processing should be done in core & not UI (search, rss, error checking)
-- use consistent coding style
+- [ ] move core into separate project
+  - [ ] define the API
+  - [ ] all processing should be done in core & not UI (search, rss, error checking)
+- [ ] use consistent coding style - Allman/ANSI
