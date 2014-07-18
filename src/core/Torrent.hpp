@@ -26,6 +26,9 @@ public:
 	// Returns percentage of all files downloading
 	float getTotalProgress();
 
+	// Returns the current upload rate of the torrent
+        unsigned int getUploadRate();
+
 	// Returns the current download rate of the torrent
 	unsigned int getDownloadRate();
 
@@ -55,6 +58,9 @@ public:
 
 	// Returns a friendly string for the torrent state
 	string getTextState();
+
+        // Returns a friendly string for the current upload rate
+        string getTextUploadRate();
 
 	// Returns a friendly string for the current download rate
 	string getTextDownloadRate();
