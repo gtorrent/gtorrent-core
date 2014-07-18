@@ -19,6 +19,9 @@ public:
 		add(m_col_dl_speed);
 		add(m_col_percent);
 		add(m_col_percent_text);
+		add(m_col_ul_total);
+		add(m_col_dl_total);
+		add(m_col_dl_ratio);
 	}
 	
 	Gtk::TreeModelColumn<Glib::ustring> m_col_name;
@@ -28,6 +31,10 @@ public:
 	Gtk::TreeModelColumn<Glib::ustring> m_col_percent_text;
 	Gtk::TreeModelColumn<unsigned int> m_col_empty;
 	Gtk::TreeModelColumn<Glib::ustring> m_col_dl_speed;
+	Gtk::TreeModelColumn<Glib::ustring> m_col_ul_total;
+	Gtk::TreeModelColumn<Glib::ustring> m_col_dl_total;
+	Gtk::TreeModelColumn<Glib::ustring> m_col_dl_ratio;
+
 };
 
 // Gtk Torrent Tree View Section
@@ -38,7 +45,7 @@ private:
 	GtkTorrentColumns m_cols;
 	Glib::RefPtr<Gtk::ListStore> m_liststore;
 	void setupColumns();
-	
+
 public:
 	GtkTorrentTreeView();
 
