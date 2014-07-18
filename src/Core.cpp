@@ -21,6 +21,8 @@ bool gt::Core::isMagnetLink(string const& url)
 
 string gt::Core::getDefaultSavePath()
 {
+	// Items like this will _probably_ be a virtual function for each platform
+	// Or handled somewhere else in the core, like Plat class.
 #ifndef _WIN32
 	char *savepath = getenv("HOME");
 	return savepath == NULL ? string("") : string(savepath) + "/Downloads";
