@@ -35,12 +35,12 @@ GtkMainWindow::GtkMainWindow() :
 	// This needs to be refactored
 
 	Gtk::Button *add_torrent_btn = Gtk::manage(new Gtk::Button());
-	add_torrent_btn->set_image_from_icon_name("gtk-add");
+	add_torrent_btn->set_image_from_icon_name("list-add");
 	add_torrent_btn->signal_clicked().connect(sigc::mem_fun(*this, &GtkMainWindow::onAddBtnClicked));
 	header->add(*add_torrent_btn);
 
 	Gtk::Button *add_link_btn = Gtk::manage(new Gtk::Button());
-	add_link_btn->set_image_from_icon_name("gtk-paste");
+	add_link_btn->set_image_from_icon_name("edit-paste");
 	add_link_btn->signal_clicked().connect(sigc::mem_fun(*this, &GtkMainWindow::onAddMagnetBtnClicked));
 	header->add(*add_link_btn);
 
@@ -53,7 +53,7 @@ GtkMainWindow::GtkMainWindow() :
 	header->add(*resume_btn);
 
 	Gtk::Button *pause_btn = Gtk::manage(new Gtk::Button());
-	pause_btn->set_image_from_icon_name("gtk-media-pause");
+	pause_btn->set_image_from_icon_name("media-playback-pause");
 	pause_btn->signal_clicked().connect(sigc::mem_fun(*this, &GtkMainWindow::onPauseBtnClicked));
 	header->add(*pause_btn);
 	
