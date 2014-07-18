@@ -38,11 +38,13 @@ private:
 	GtkTorrentColumns m_cols;
 	Glib::RefPtr<Gtk::ListStore> m_liststore;
 	void setupColumns();
+    vector<unsigned> selectedIndices();
 	
 public:
 	GtkTorrentTreeView();
 
 	void addCell(shared_ptr<Torrent> &t);
 	void updateCells();
+    void setSelectedPaused(bool isPaused);
 };
 

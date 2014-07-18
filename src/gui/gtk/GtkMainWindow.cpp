@@ -7,21 +7,6 @@
 #include <gtkmm/stock.h>
 #include <glibmm.h>
 
-namespace
-{
-    vector<unsigned> selectedIndices(GtkTorrentTreeView *treeview)
-    {
-        Glib::RefPtr<Gtk::TreeSelection> sel = treeview->get_selection();
-        sel->set_mode(Gtk::SelectionMode::SELECTION_MULTIPLE);
-        vector<Gtk::TreeModel::Path> path = sel->get_selected_rows();
-        vector<unsigned> indices;
-        for(auto val : path)
-            indices.push_back(val[0]); // we only get the first index because our tree is 1 node deep
-        return indices;
-    }
-
-}
-
 GtkMainWindow::GtkMainWindow() :
 	m_core(Application::getSingleton()->getCore())
 {
@@ -116,16 +101,12 @@ void GtkMainWindow::onAddMagnetBtnClicked()
 
 void GtkMainWindow::onPauseBtnClicked()
 {
-    vector<shared_ptr<Torrent> > t = Application::getSingleton()->getCore()->getTorrents();
-    for(auto i : selectedIndices(m_treeview))
-        t[i]->setPaused(true);// the pause button switches the status
+    m_treeview->setSelectedPaused(true);
 }
 
 void GtkMainWindow::onResumeBtnClicked()
 {
-    vector<shared_ptr<Torrent> > t = Application::getSingleton()->getCore()->getTorrents();
-    for(auto i : selectedIndices(m_treeview))
-        t[i]->setPaused(false);// the pause button switches the status
+    m_treeview->setSelectedPaused(false);
 }
 bool GtkMainWindow::onDestroy(GdkEventAny *event)
 {
