@@ -166,13 +166,13 @@ string Torrent::getTextTotalUploaded()
         if (uploaded <= 0.0f) {
                 ttu << string();
 	} else if (uploaded > 0.0f && uploaded <= 1024.f) {
-                ttu << setprecision(3) << uploaded << " B";
+                ttu << fixed << setprecision(3) << uploaded << " B";
         }  else if (uploaded > 1024.f && uploaded <= (1024.f*1024.f)) {
-                ttu << setprecision(3) << (uploaded / 1024.f) << " KB";
+                ttu << fixed << setprecision(3) << (uploaded / 1024.f) << " KB";
         } else if (uploaded > (1024.f*1024.f) && uploaded <= (1024.f*1024.f*1024.f)) {
-                ttu << setprecision(3) << (uploaded / 1024.f / 1024.f) << " MB";
+                ttu << fixed << setprecision(3) << (uploaded / 1024.f / 1024.f) << " MB";
         } else if (uploaded > (1024.f*1024.f*1024.f)) {
-                ttu << setprecision(3) << (uploaded / 1024.f / 1024.f / 1024.f) << " GB";
+                ttu << fixed << setprecision(3) << (uploaded / 1024.f / 1024.f / 1024.f) << " GB";
         }
 
         return ttu.str();
