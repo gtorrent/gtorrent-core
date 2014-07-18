@@ -1,8 +1,7 @@
 #include "Core.hpp"
 #include "Log.hpp"
 
-gt::Core::Core() :
-	m_running(true)
+gt::Core::Core()
 {
 	// Fuck your deprecated shit, we're going void down in here
 	// tl;dr, figure out something useful to use the error code for,
@@ -86,37 +85,5 @@ shared_ptr<Torrent> gt::Core::addTorrent(string path)
 
 	printf("Downloading data from \"%s\"...\n", path.c_str());*/
 
-}
-
-void gt::Core::update()
-{
-	/*auto iter = begin(m_torrents);
-
-	while (iter != end(m_torrents))
-	{
-		auto &t = **iter;
-
-		gt::Event event;
-
-		if (t.pollEvent(event))
-		{
-			switch (event.type)
-			{
-				case gt::Event::DownloadCompleted:
-					printf("Done!\n");
-					iter = m_torrents.erase(iter);
-				break;
-			}
-		}
-		else
-		{
-			++iter;
-		}
-	}*/
-}
-
-void gt::Core::shutdown()
-{
-	gt::Log::Debug("Shutting down core library...");
-	m_running = false;
+	return t;
 }
