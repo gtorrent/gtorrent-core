@@ -1,6 +1,6 @@
 #include "Core.hpp"
 
-gt::Core::Core() :
+gt::Core::Core()
 {
 	libtorrent::error_code ec;
 	m_session.listen_on(make_pair(6881, 6889), ec);
@@ -12,16 +12,11 @@ bool gt::Core::isMagnetLink(string const& url)
 	return url.compare(0, prefix.length(), prefix) == 0;
 }
 
-bool gt::Core::isRunning()
-{
-	return m_running;
-}
-
 string gt::Core::getDefaultSavePath()
 {
 	// Items like this will _probably_ be a virtual function for each platform
 	// Or handled somewhere else in the core, like Plat class.
-	
+
 	#ifndef _WIN32
 	char *savepath = getenv("HOME");
 	return savepath == NULL ? string("") : string(savepath)+"/Downloads";
@@ -49,9 +44,4 @@ shared_ptr<Torrent> gt::Core::addTorrent(string path)
 	m_torrents.push_back(t);
 
 	return t;
-}
-
-void gt::Core::update()
-{
-	// Event Polling	
 }
