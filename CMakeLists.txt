@@ -54,8 +54,7 @@ ADD_DEFINITIONS (
 )
 
 INCLUDE_DIRECTORIES (
-    src/gui/
-    src/
+    include/gtorrent
     ${Boost_INCLUDE_DIRS}
     ${LIBTORRENT_INCLUDE_DIRS}
 )
