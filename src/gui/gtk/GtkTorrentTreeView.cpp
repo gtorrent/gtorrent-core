@@ -29,10 +29,15 @@ void GtkTorrentTreeView::setupColumns()
 	col->set_alignment(0.5);
 	col->set_fixed_width(90);
 
-	cid = this->append_column("Rate", m_cols.m_col_dl_speed);
+	cid = this->append_column("Upspeed", m_cols.m_col_ul_speed);
 	col = this->get_column(cid - 1);
 	col->set_alignment(0.5);
 	col->set_fixed_width(95);
+
+	cid = this->append_column("Downspeed", m_cols.m_col_dl_speed);
+        col = this->get_column(cid - 1);
+        col->set_alignment(0.5);
+        col->set_fixed_width(95);
 
 	cid = this->append_column("Uploaded", m_cols.m_col_ul_total);
         col = this->get_column(cid - 1);
@@ -94,6 +99,7 @@ void GtkTorrentTreeView::updateCells()
 		c[m_cols.m_col_seeders] = t->getTotalSeeders();
 		c[m_cols.m_col_percent_text] = t->getTextState();
 		c[m_cols.m_col_leechers] = t->getTotalLeechers();
+		c[m_cols.m_col_ul_speed] = t->getTextUploadRate();
 		c[m_cols.m_col_dl_speed] = t->getTextDownloadRate();
 		c[m_cols.m_col_ul_total] = t->getTextTotalUploaded();
 		c[m_cols.m_col_dl_total] = t->getTextTotalDownloaded();
