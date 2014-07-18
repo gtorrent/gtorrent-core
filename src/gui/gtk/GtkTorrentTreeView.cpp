@@ -23,16 +23,37 @@ void GtkTorrentTreeView::setupColumns()
 	col = this->get_column(cid - 1);
 	col->set_alignment(0.5);
 	col->set_fixed_width(90);
-	
+
 	cid = this->append_column("Leechers", m_cols.m_col_leechers);
 	col = this->get_column(cid - 1);
 	col->set_alignment(0.5);
 	col->set_fixed_width(90);
 
-	cid = this->append_column("Rate", m_cols.m_col_dl_speed);
+	cid = this->append_column("Upspeed", m_cols.m_col_ul_speed);
 	col = this->get_column(cid - 1);
 	col->set_alignment(0.5);
 	col->set_fixed_width(95);
+
+	cid = this->append_column("Downspeed", m_cols.m_col_dl_speed);
+        col = this->get_column(cid - 1);
+        col->set_alignment(0.5);
+        col->set_fixed_width(95);
+
+	cid = this->append_column("Uploaded", m_cols.m_col_ul_total);
+        col = this->get_column(cid - 1);
+        col->set_alignment(0.5);
+        col->set_fixed_width(95);
+
+	cid = this->append_column("Downloaded", m_cols.m_col_dl_total);
+        col = this->get_column(cid - 1);
+        col->set_alignment(0.5);
+        col->set_fixed_width(95);
+
+	cid = this->append_column("Ratio", m_cols.m_col_dl_ratio);
+        col = this->get_column(cid - 1);
+        col->set_alignment(0.5);
+        col->set_fixed_width(95);
+
 
 	Gtk::CellRendererProgress *cell = Gtk::manage(new Gtk::CellRendererProgress());
 	cid = this->append_column("Progress", *cell);
@@ -62,6 +83,9 @@ void GtkTorrentTreeView::addCell(shared_ptr<Torrent> &t)
 	row[m_cols.m_col_percent_text] = t->getTextState();
 	row[m_cols.m_col_seeders] = t->getTotalSeeders();
 	row[m_cols.m_col_leechers] = t->getTotalLeechers();
+	row[m_cols.m_col_ul_total] = t->getTextTotalUploaded();
+	row[m_cols.m_col_dl_total] = t->getTextTotalDownloaded();
+	row[m_cols.m_col_dl_ratio] = t->getTextTotalRatio();
 }
 
 void GtkTorrentTreeView::updateCells()
@@ -75,8 +99,12 @@ void GtkTorrentTreeView::updateCells()
 		c[m_cols.m_col_seeders] = t->getTotalSeeders();
 		c[m_cols.m_col_percent_text] = t->getTextState();
 		c[m_cols.m_col_leechers] = t->getTotalLeechers();
+		c[m_cols.m_col_ul_speed] = t->getTextUploadRate();
 		c[m_cols.m_col_dl_speed] = t->getTextDownloadRate();
-		
+		c[m_cols.m_col_ul_total] = t->getTextTotalUploaded();
+		c[m_cols.m_col_dl_total] = t->getTextTotalDownloaded();
+		c[m_cols.m_col_dl_ratio] = t->getTextTotalRatio();
+
 		// TODO: Handle with events
 
 		//m_cells[i]->property_text() = t->getTextState();
