@@ -9,12 +9,12 @@
 
 namespace
 {
-    std::vector<unsigned> selectedIndices(GtkTorrentTreeView *treeview)
+    vector<unsigned> selectedIndices(GtkTorrentTreeView *treeview)
     {
         Glib::RefPtr<Gtk::TreeSelection> sel = treeview->get_selection();
         sel->set_mode(Gtk::SelectionMode::SELECTION_MULTIPLE);
-        std::vector<Gtk::TreeModel::Path> path = sel->get_selected_rows();
-        std::vector<unsigned> indices;
+        vector<Gtk::TreeModel::Path> path = sel->get_selected_rows();
+        vector<unsigned> indices;
         for(auto val : path)
             indices.push_back(val[0]); // we only get the first index because our tree is 1 node deep
         return indices;
@@ -116,14 +116,14 @@ void GtkMainWindow::onAddMagnetBtnClicked()
 
 void GtkMainWindow::onPauseBtnClicked()
 {
-    std::vector<std::shared_ptr<Torrent> > t = Application::getSingleton()->getCore()->getTorrents();
+    vector<shared_ptr<Torrent> > t = Application::getSingleton()->getCore()->getTorrents();
     for(auto i : selectedIndices(m_treeview))
         t[i]->setPaused(true);// the pause button switches the status
 }
 
 void GtkMainWindow::onResumeBtnClicked()
 {
-    std::vector<std::shared_ptr<Torrent> > t = Application::getSingleton()->getCore()->getTorrents();
+    vector<shared_ptr<Torrent> > t = Application::getSingleton()->getCore()->getTorrents();
     for(auto i : selectedIndices(m_treeview))
         t[i]->setPaused(false);// the pause button switches the status
 }
