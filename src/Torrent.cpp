@@ -56,11 +56,6 @@ float Torrent::getTotalProgress()
 	return ((float) s.progress_ppm / (float) T_PPM) * 100;
 }
 
-unsigned int Torrent::getDownloadRate()
-{
-	return m_handle.status().download_rate;
-}
-
 unsigned int Torrent::getPPMProgress()
 {
 	libtorrent::torrent_status s = m_handle.status();
@@ -106,21 +101,54 @@ string Torrent::getTextState()
 	}
 }
 
+unsigned int Torrent::getUploadRate()
+{
+        return m_handle.status().upload_rate;
+}
+
+string Torrent::getTextUploadRate()
+{
+        std::ostringstream upr;
+
+        long double uprate = getUploadRate() / 1024;
+
+        if (uprate <= 0) {
+                upr << string();
+        } else if (uprate> 0 && uprate < 1024) {
+                upr << uprate << " KB/s";
+        } else if (uprate >= 1024 && uprate < (1024*1024)) {
+                upr << setprecision(2) << (uprate / 1024) << " MB/s";
+        } else if (uprate >= (1024*1024) && uprate<(1024*1024*1024)) {
+                upr << setprecision(2) << (uprate / 1024 / 1024) << " GB/s";
+        } else if (uprate >= (1024*1024*1024)) {
+                upr << setprecision(2) << (uprate / 1024 / 1024 / 1024) << " sanic/s";
+        }
+        return upr.str();
+}
+
+unsigned int Torrent::getDownloadRate()
+{
+        return m_handle.status().download_rate;
+}
+
 string Torrent::getTextDownloadRate()
 {
-	std::ostringstream oss;
+	std::ostringstream dnr;
 
-	double rate = getDownloadRate() / 1024;
+	long double downrate = getDownloadRate() / 1024;
 
-	if (rate <= 0) {
-		oss << string();
-	} else if (rate > 1024) {
-		oss << setprecision(2) << (rate / 1024) << " MB/s";
-	} else {
-		oss << rate << " KB/s";
+	if (downrate <= 0) {
+		dnr << string();
+	} else if (downrate> 0 && downrate < 1024) {
+		 dnr << downrate << " KB/s";
+        } else if (downrate >= 1024 && downrate < (1024*1024)) {
+		dnr << setprecision(2) << (downrate / 1024) << " MB/s";
+	} else if (downrate >= (1024*1024) && downrate<(1024*1024)) {
+		dnr << setprecision(2) << (downrate / 1024 / 1024) << " GB/s";
+	} else if (downrate >= (1024*1024*1024)) {
+		dnr << setprecision(2) << (downrate / 1024 / 1024 / 1024) << " sanic/s";
 	}
-
-	return oss.str();
+	return dnr.str();
 }
 
 unsigned int Torrent::getTotalUploaded()
@@ -181,24 +209,19 @@ float Torrent::getTotalRatio()
 {
 	if (getTotalDownloaded()==0) {
 		return 0.0f;
-	}
-	else
-	{
-		return float(getTotalUploaded() / getTotalDownloaded());
+	} else {
+		float totalRatio = float(getTotalUploaded()) / float(getTotalDownloaded());
+		return totalRatio;
 	}
 }
 
 string Torrent::getTextTotalRatio()
 {
-	std::ostringstream ttr;
+	std::stringstream ttr (stringstream::in | stringstream::out);
 
-        float ratio = getTotalRatio();
+	float ratio = getTotalRatio();
 
-        if (ratio<=0.0f) {
-                ttr << string();
-        } else {
-                ttr << ratio;//<< setprecision(2) << ratio;
-	}
+	ttr << setprecision(2) << ratio;
 
 	return ttr.str();
 }
