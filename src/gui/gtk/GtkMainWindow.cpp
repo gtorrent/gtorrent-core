@@ -7,6 +7,21 @@
 #include <gtkmm/stock.h>
 #include <glibmm.h>
 
+namespace
+{
+    std::vector<unsigned> selectedIndices(GtkTorrentTreeView *treeview)
+    {
+        Glib::RefPtr<Gtk::TreeSelection> sel = treeview->get_selection();
+        sel->set_mode(Gtk::SelectionMode::SELECTION_MULTIPLE);
+        std::vector<Gtk::TreeModel::Path> path = sel->get_selected_rows();
+        std::vector<unsigned> indices;
+        for(auto val : path)
+            indices.push_back(val[0]); // we only get the first index because our tree is 1 node deep
+        return indices;
+    }
+
+}
+
 GtkMainWindow::GtkMainWindow() :
 	m_core(Application::getSingleton()->getCore())
 {
@@ -32,11 +47,16 @@ GtkMainWindow::GtkMainWindow() :
 	Gtk::VSeparator *separator = Gtk::manage(new Gtk::VSeparator());
 	header->add(*separator);
 
+    Gtk::Button *resume_btn = Gtk::manage(new Gtk::Button());
+	resume_btn->set_image_from_icon_name("media-playback-start");
+	resume_btn->signal_clicked().connect(sigc::mem_fun(*this, &GtkMainWindow::onResumeBtnClicked));
+	header->add(*resume_btn);
+
 	Gtk::Button *pause_btn = Gtk::manage(new Gtk::Button());
 	pause_btn->set_image_from_icon_name("gtk-media-pause");
 	pause_btn->signal_clicked().connect(sigc::mem_fun(*this, &GtkMainWindow::onPauseBtnClicked));
 	header->add(*pause_btn);
-
+	
 	this->set_titlebar(*header);
 
 	m_treeview = Gtk::manage(new GtkTorrentTreeView());
@@ -96,19 +116,17 @@ void GtkMainWindow::onAddMagnetBtnClicked()
 
 void GtkMainWindow::onPauseBtnClicked()
 {
-    Glib::RefPtr<Gtk::TreeSelection> sel = m_treeview->get_selection();
-    sel->set_mode(Gtk::SelectionMode::SELECTION_MULTIPLE);
-    std::vector<Gtk::TreeModel::Path> path = sel->get_selected_rows();
-    std::vector<unsigned> indices;
-    for(auto val : path)
-        indices.push_back(val[0]); // we only get the first index because our tree is 1 node deep
-
-
     std::vector<std::shared_ptr<Torrent> > t = Application::getSingleton()->getCore()->getTorrents();
-    for(auto i : indices)
-        t[i]->setPaused(!t[i]->isPaused());// the pause button switches the status
+    for(auto i : selectedIndices(m_treeview))
+        t[i]->setPaused(true);// the pause button switches the status
 }
 
+void GtkMainWindow::onResumeBtnClicked()
+{
+    std::vector<std::shared_ptr<Torrent> > t = Application::getSingleton()->getCore()->getTorrents();
+    for(auto i : selectedIndices(m_treeview))
+        t[i]->setPaused(false);// the pause button switches the status
+}
 bool GtkMainWindow::onDestroy(GdkEventAny *event)
 {
 	m_core->shutdown();

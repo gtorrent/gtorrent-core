@@ -9,21 +9,21 @@
 class GtkMainWindow : public Gtk::Window
 {
 private:
-	shared_ptr<gt::Core> &m_core;
+    shared_ptr<gt::Core> &m_core;
 
-	Gtk::HeaderBar *header;
-	GtkTorrentTreeView *m_treeview;
+    Gtk::HeaderBar *header;
+    GtkTorrentTreeView *m_treeview;
 
-	// Signal Responders
-	
-	void onAddBtnClicked();
-	void onAddMagnetBtnClicked();
+    // Signal Responders
+
+    void onAddBtnClicked();
+    void onAddMagnetBtnClicked();
     void onPauseBtnClicked();
+    void onResumeBtnClicked();
 
 public:
-	GtkMainWindow();
+    GtkMainWindow();
 
-	bool onDestroy(GdkEventAny *event);
-	bool onSecTick();
+    bool onDestroy(GdkEventAny *event);
+    bool onSecTick();
 };
-
