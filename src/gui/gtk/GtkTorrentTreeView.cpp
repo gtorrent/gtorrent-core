@@ -19,6 +19,10 @@ void GtkTorrentTreeView::setupColumns()
 	col = this->get_column(cid - 1);
 	col->set_fixed_width(90);
 
+	cid = this->append_column("ETA", m_cols.m_col_eta);
+	col = this->get_column(cid - 1);
+	col->set_fixed_width(90);
+
 	cid = this->append_column("Name", m_cols.m_col_name);
 	col = this->get_column(cid - 1);
 	col->set_fixed_width(250);
@@ -58,6 +62,16 @@ void GtkTorrentTreeView::setupColumns()
 	col->set_alignment(0.5);
 	col->set_fixed_width(95);
 
+	cid = this->append_column("Size", m_cols.m_col_size);
+        col = this->get_column(cid - 1);
+        col->set_alignment(0.5);
+        col->set_fixed_width(95);
+
+	cid = this->append_column("Remaining", m_cols.m_col_remaining);
+        col = this->get_column(cid - 1);
+        col->set_alignment(0.5);
+        col->set_fixed_width(95);
+
 	cid = this->append_column("Ratio", m_cols.m_col_dl_ratio);
 	col = this->get_column(cid - 1);
 	col->set_alignment(0.5);
@@ -90,6 +104,7 @@ void GtkTorrentTreeView::addCell(shared_ptr<Torrent> &t)
 
 	Gtk::TreeModel::Row row = *(m_liststore->append());
 	row[m_cols.m_col_active] = t->getTextActive();
+	row[m_cols.m_col_eta] = t->getTextEta();
 	row[m_cols.m_col_name] = t->getHandle().name();
 	row[m_cols.m_col_percent] = t->getTotalProgress();
 	row[m_cols.m_col_percent_text] = t->getTextState();
@@ -97,6 +112,8 @@ void GtkTorrentTreeView::addCell(shared_ptr<Torrent> &t)
 	row[m_cols.m_col_leechers] = t->getTotalLeechers();
 	row[m_cols.m_col_ul_total] = t->getTextTotalUploaded();
 	row[m_cols.m_col_dl_total] = t->getTextTotalDownloaded();
+	row[m_cols.m_col_size] = t->getTextSize();
+	row[m_cols.m_col_remaining] = t->getTextRemaining();
 	row[m_cols.m_col_dl_ratio] = t->getTextTotalRatio();
 }
 
@@ -109,6 +126,7 @@ void GtkTorrentTreeView::updateCells()
 		shared_ptr<Torrent> t = Application::getSingleton()->getCore()->getTorrents()[i];
 
 		c[m_cols.m_col_active] = t->getTextActive();
+		c[m_cols.m_col_eta] = t->getTextEta();
 		c[m_cols.m_col_percent] = t->getTotalProgress();
 		c[m_cols.m_col_seeders] = t->getTotalSeeders();
 		c[m_cols.m_col_percent_text] = t->getTextState();
@@ -117,6 +135,7 @@ void GtkTorrentTreeView::updateCells()
 		c[m_cols.m_col_dl_speed] = t->getTextDownloadRate();
 		c[m_cols.m_col_ul_total] = t->getTextTotalUploaded();
 		c[m_cols.m_col_dl_total] = t->getTextTotalDownloaded();
+		c[m_cols.m_col_size] = t->getTextSize();
 		c[m_cols.m_col_dl_ratio] = t->getTextTotalRatio();
 		c[m_cols.m_col_eta] = t->getTextTimeRemaining();
 

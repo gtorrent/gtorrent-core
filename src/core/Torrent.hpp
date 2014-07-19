@@ -33,6 +33,12 @@ public:
 	// Returns formatted active time as string
 	string getTextActive();
 
+	// Returns number of seconds eta for the torrent
+	boost::int64_t getEta();
+
+	// Returns formatted eta as string
+	string getTextEta();
+
 	// Returns percentage of all files downloading
 	float getTotalProgress();
 
@@ -60,6 +66,12 @@ public:
 	// Returns the current amount of data downloaded for this torrent
 	boost::int64_t getTotalDownloaded();
 
+	// Returns the total size of files in this torrent
+        boost::int64_t getSize();
+
+	// Returns the total size of wanted files in this torrent
+        boost::int64_t getWanted();
+
 	//Returns the size of the torrent
 	boost::int64_t getTorrentSize();
 
@@ -86,6 +98,15 @@ public:
 
 	// Returns a friendly string for the current download total
 	string getTextTotalDownloaded();
+	
+	// Returns a friendly string for the total size of files in torrent
+        string getTextSize();
+
+	// Returns a the total size of files remaining to download in torrent
+        boost::int64_t getRemaining();
+
+	// Returns a friendly string for the total size of files remaining to download in torrent
+        string getTextRemaining();
 
 	// Returns a friendly string for the current ratio
 	string getTextTotalRatio();

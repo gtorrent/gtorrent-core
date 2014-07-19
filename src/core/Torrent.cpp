@@ -112,6 +112,57 @@ string Torrent::getTextActive()
 	return tas.str();
 }
 
+boost::int64_t Torrent::getWanted()
+{
+        return m_handle.status().total_wanted;
+}
+
+boost::int64_t Torrent::getEta()
+{
+	if (getDownloadRate() <= 0){
+		return 817;
+	}else{
+	return (getWanted() / getDownloadRate());
+	}
+}
+
+string Torrent::getTextEta()
+{
+	std::ostringstream tet;
+
+	boost::int64_t  eta = getEta();
+	//TODO: Figure out leap years
+	if (eta <= 0)
+	{
+		tet << string();
+	}
+	else if (eta > 0 && eta <= 60)    //seconds
+	{
+		tet << fixed << setprecision(2) << eta;
+	}
+	else if (eta > 60 && eta <= (60 * 60))  //minutes
+	{
+		tet << ((eta - eta % 60) / 60) << ":" << (eta % 60);
+	}
+	else if (eta > (60 * 60) && eta <= (60 * 60 * 24)) //hours
+	{
+		tet << ((eta - eta % 60) / 60 / 24) << ":" << ((eta - eta % 60) / 60) << ":" << (eta % 60);
+	}
+	else if (eta > (60 * 60 * 24) && eta <= (60 * 60 * 24 * 7)) //days
+	{
+		tet << ((eta - eta % 60) / 60 / 24) << ":" << ((eta - eta % 60) / 60) << ":" << ((eta - eta % 60) / 60) << ":" << (eta % 60);
+	}
+	else if (eta > (60 * 60 * 24 * 7) && eta <= (60 * 60 * 24 * 365)) //weeks
+	{
+		tet << ((eta - eta % 60) / 60 / 24 / 7) << ":" << ((eta - eta % 60) / 60 / 24) << ":" << ((eta - eta % 60) / 60) << ":" << ((eta - eta % 60) / 60) << ":" << (eta % 60);
+	}
+	else if (eta > (60 * 60 * 24 * 365)) //years
+	{
+		tet << ((eta - eta % 60) / 60 / 24 / 365) << ":" << ((eta - eta % 60) / 60 / 24 / 7) << ":" << ((eta - eta % 60) / 60 / 24) << ":" << ((eta - eta % 60) / 60) << ":" << ((eta - eta % 60) / 60) << ":" << (eta % 60);
+	}
+	return tet.str();
+}
+
 float Torrent::getTotalProgress()
 {
 	libtorrent::torrent_status s = m_handle.status();
@@ -306,6 +357,74 @@ string Torrent::getTextTotalDownloaded()
 		ttd << fixed << setprecision(3) << (downloaded / 1024.f / 1024.f / 1024.f) << " GB";
 	}
 	return ttd.str();
+}
+
+boost::int64_t Torrent::getSize()
+{
+        return m_handle.status().total_wanted;
+}
+
+string Torrent::getTextSize()
+{
+	std::ostringstream ts;
+
+	boost::int64_t  size = getSize();
+
+	if (size <= 0)
+	{
+		ts << string();
+	}
+	else if (size > 0 && size <= 1024.f)
+	{
+		ts << fixed << setprecision(3) << size << " B";
+	}
+	else if (size > 1024.f && size <= (1024.f * 1024.f))
+	{
+		ts << fixed << setprecision(3) << (size / 1024.f) << " KB";
+	}
+	else if (size > (1024.f * 1024.f) && size <= (1024.f * 1024.f * 1024.f))
+	{
+		ts << fixed << setprecision(3)  << (size / 1024.f / 1024.f) << " MB";
+	}
+	else if (size > (1024.f * 1024.f * 1024.f))
+	{
+		ts << fixed << setprecision(3) << (size / 1024.f / 1024.f / 1024.f) << " GB";
+	}
+	return ts.str();
+}
+
+boost::int64_t Torrent::getRemaining()
+{
+        return m_handle.status().total_wanted - m_handle.status().total_wanted_done;
+}
+
+string Torrent::getTextRemaining()
+{
+	std::ostringstream tr;
+
+	boost::int64_t remaining = getRemaining();
+
+	if (remaining <= 0)
+	{
+		tr << string();
+	}
+	else if (remaining > 0 && remaining <= 1024.f)
+	{
+		tr << fixed << setprecision(3) << remaining << " B";
+	}
+	else if (remaining > 1024.f && remaining <= (1024.f * 1024.f))
+	{
+		tr << fixed << setprecision(3) << (remaining / 1024.f) << " KB";
+	}
+	else if (remaining > (1024.f * 1024.f) && remaining <= (1024.f * 1024.f * 1024.f))
+	{
+		tr << fixed << setprecision(3)  << (remaining / 1024.f / 1024.f) << " MB";
+	}
+	else if (remaining > (1024.f * 1024.f * 1024.f))
+	{
+		tr << fixed << setprecision(3) << (remaining / 1024.f / 1024.f / 1024.f) << " GB";
+	}
+	return tr.str();
 }
 
 boost::int64_t Torrent::getTorrentSize()
