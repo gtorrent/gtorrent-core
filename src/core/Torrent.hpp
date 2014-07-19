@@ -16,14 +16,14 @@ private:
 
 public:
 	Torrent(string path);
-	
+
 	bool pollEvent(gt::Event &event);
 
 	// Getters
 	libtorrent::add_torrent_params getTorrentParams();
 	libtorrent::torrent_handle &getHandle();
 	string getPath();
-	
+
 	// Returns number of seconds the torrent has been active
 	boost::int64_t getActive();
 

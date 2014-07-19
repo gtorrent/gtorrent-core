@@ -68,15 +68,16 @@ void GtkMainWindow::onAddBtnClicked()
 
 	int result = fc.run();
 
-	switch (result) {
-		case Gtk::RESPONSE_OK:
-			for (auto &f : fc.get_filenames())
-			{
-				shared_ptr<Torrent> t = m_core->addTorrent(f.c_str());
-				if (t)//Checks if t is not null
-					m_treeview->addCell(t);
-				//TODO Add error dialogue if torrent add is unsuccessful
-			}
+	switch (result)
+	{
+	case Gtk::RESPONSE_OK:
+		for (auto &f : fc.get_filenames())
+		{
+			shared_ptr<Torrent> t = m_core->addTorrent(f.c_str());
+			if (t)//Checks if t is not null
+				m_treeview->addCell(t);
+			//TODO Add error dialogue if torrent add is unsuccessful
+		}
 		break;
 	}
 }
@@ -87,12 +88,13 @@ void GtkMainWindow::onAddMagnetBtnClicked()
 	d.set_transient_for(*this);
 	int r = d.run();
 
-	switch (r) {
-		case Gtk::RESPONSE_OK:
-			shared_ptr<Torrent> t = m_core->addTorrent(d.getMagnetURL());
-			if (t)//Checks if t is not null
-				m_treeview->addCell(t);
-			//TODO Add error dialogue if torrent add is unsuccessful
+	switch (r)
+	{
+	case Gtk::RESPONSE_OK:
+		shared_ptr<Torrent> t = m_core->addTorrent(d.getMagnetURL());
+		if (t)//Checks if t is not null
+			m_treeview->addCell(t);
+		//TODO Add error dialogue if torrent add is unsuccessful
 		break;
 	}
 }
