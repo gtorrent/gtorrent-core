@@ -304,6 +304,40 @@ string Torrent::getTextTotalDownloaded()
 	return ttd.str();
 }
 
+boost::int64_t Torrent::getSize()
+{
+        return m_handle.status().total_wanted;
+}
+
+string Torrent::getTextSize()
+{
+	std::ostringstream ts;
+
+	boost::int64_t  size = getSize();
+
+	if (size <= 0)
+	{
+		ts << string();
+	}
+	else if (size > 0 && size <= 1024.f)
+	{
+		ts << fixed << setprecision(3) << size << " B";
+	}
+	else if (size > 1024.f && size <= (1024.f * 1024.f))
+	{
+		ts << fixed << setprecision(3) << (size / 1024.f) << " KB";
+	}
+	else if (size > (1024.f * 1024.f) && size <= (1024.f * 1024.f * 1024.f))
+	{
+		ts << fixed << setprecision(3)  << (size / 1024.f / 1024.f) << " MB";
+	}
+	else if (size > (1024.f * 1024.f * 1024.f))
+	{
+		ts << fixed << setprecision(3) << (size / 1024.f / 1024.f / 1024.f) << " GB";
+	}
+	return ts.str();
+}
+
 float Torrent::getTotalRatio()
 {
 	if (getTotalDownloaded() == 0)

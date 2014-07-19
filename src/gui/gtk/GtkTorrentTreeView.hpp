@@ -23,6 +23,7 @@ public:
 		add(m_col_percent_text);
 		add(m_col_ul_total);
 		add(m_col_dl_total);
+		add(m_col_size);
 		add(m_col_dl_ratio);
 	}
 	Gtk::TreeModelColumn<Glib::ustring> m_col_active;
@@ -36,6 +37,7 @@ public:
 	Gtk::TreeModelColumn<Glib::ustring> m_col_dl_speed;
 	Gtk::TreeModelColumn<Glib::ustring> m_col_ul_total;
 	Gtk::TreeModelColumn<Glib::ustring> m_col_dl_total;
+	Gtk::TreeModelColumn<Glib::ustring> m_col_size;
 	Gtk::TreeModelColumn<Glib::ustring> m_col_dl_ratio;
 };
 

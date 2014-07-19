@@ -53,6 +53,11 @@ void GtkTorrentTreeView::setupColumns()
 	col->set_alignment(0.5);
 	col->set_fixed_width(95);
 
+	cid = this->append_column("Size", m_cols.m_col_size);
+        col = this->get_column(cid - 1);
+        col->set_alignment(0.5);
+        col->set_fixed_width(95);
+
 	cid = this->append_column("Ratio", m_cols.m_col_dl_ratio);
 	col = this->get_column(cid - 1);
 	col->set_alignment(0.5);
@@ -92,6 +97,7 @@ void GtkTorrentTreeView::addCell(shared_ptr<Torrent> &t)
 	row[m_cols.m_col_leechers] = t->getTotalLeechers();
 	row[m_cols.m_col_ul_total] = t->getTextTotalUploaded();
 	row[m_cols.m_col_dl_total] = t->getTextTotalDownloaded();
+	row[m_cols.m_col_size] = t->getTextSize();
 	row[m_cols.m_col_dl_ratio] = t->getTextTotalRatio();
 }
 
@@ -112,6 +118,7 @@ void GtkTorrentTreeView::updateCells()
 		c[m_cols.m_col_dl_speed] = t->getTextDownloadRate();
 		c[m_cols.m_col_ul_total] = t->getTextTotalUploaded();
 		c[m_cols.m_col_dl_total] = t->getTextTotalDownloaded();
+		c[m_cols.m_col_size] = t->getTextSize();
 		c[m_cols.m_col_dl_ratio] = t->getTextTotalRatio();
 
 		// TODO: Handle with events

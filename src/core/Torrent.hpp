@@ -57,6 +57,9 @@ public:
 	// Returns the current amount of data downloaded for this torrent
 	boost::int64_t getTotalDownloaded();
 
+	// Returns the total size of files in this torrent
+        boost::int64_t getSize();
+
 	// Returns the ratio (uploaded/downloaded) for this torrent
 	float getTotalRatio();
 
@@ -77,6 +80,9 @@ public:
 
 	// Returns a friendly string for the current download total
 	string getTextTotalDownloaded();
+	
+	// Returns a friendly string for the total size of files in torrent
+        string getTextSize();
 
 	// Returns a friendly string for the current ratio
 	string getTextTotalRatio();
