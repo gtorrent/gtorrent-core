@@ -22,6 +22,12 @@ public:
 	libtorrent::add_torrent_params getTorrentParams();
 	libtorrent::torrent_handle &getHandle();
 	string getPath();
+	
+	// Returns number of seconds the torrent has been active
+	boost::int64_t getActive();
+
+	// Returns formatted active time as string
+	string getTextActive();
 
 	// Returns percentage of all files downloading
 	float getTotalProgress();
