@@ -159,7 +159,11 @@ string Torrent::getTextState()
 	case libtorrent::torrent_status::downloading:
 	default:
 		std::ostringstream o;
-		o << setprecision(2) << getTotalProgress() << " %";
+		int precision = 1;
+		if (m_torrent_params.ti != NULL) //m_torrent_params.ti is not initial initialized for magnet links
+			if (m_torrent_params.ti->total_size() < 1024 * 1024 * 1024)
+				precision = 0;//Set 0 decimal places if file is less than 1 gig.
+		o << fixed << setprecision(precision) << getTotalProgress() << " %";
 		return o.str();
 		break;
 	}
