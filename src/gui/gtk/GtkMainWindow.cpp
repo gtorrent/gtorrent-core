@@ -36,6 +36,10 @@ GtkMainWindow::GtkMainWindow() :
 	pause_btn->set_image_from_icon_name("gtk-media-pause");
 	header->add(*pause_btn);
 
+	Gtk::Button *remove_btn = Gtk::manage(new Gtk::Button());
+	remove_btn->set_image_from_icon_name("gtk-cancel");
+	header->add(*remove_btn);
+
 	this->set_titlebar(*header);
 
 	m_treeview = Gtk::manage(new GtkTorrentTreeView());
@@ -56,6 +60,8 @@ bool GtkMainWindow::onSecTick()
 void GtkMainWindow::onAddBtnClicked()
 {
 	Gtk::FileChooserDialog fc("Browse for torrent file", Gtk::FILE_CHOOSER_ACTION_OPEN);
+	fc.set_default_size(256, 256);
+	//fc.set_window_position(0, 128);
 	fc.set_select_multiple();
 	fc.set_transient_for(*this);
 	fc.add_button("_Cancel", Gtk::RESPONSE_CANCEL);
