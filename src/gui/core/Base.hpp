@@ -1,7 +1,6 @@
 #pragma once
 
 #include "core/Core.hpp"
-#include <memory>
 
 class GuiBase
 {

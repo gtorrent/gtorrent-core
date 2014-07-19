@@ -27,6 +27,7 @@ public:
 		add(m_col_size);
 		add(m_col_remaining);
 		add(m_col_dl_ratio);
+		add(m_col_eta);
 	}
 	Gtk::TreeModelColumn<Glib::ustring> m_col_active;
 	Gtk::TreeModelColumn<Glib::ustring> m_col_eta;
@@ -43,6 +44,7 @@ public:
 	Gtk::TreeModelColumn<Glib::ustring> m_col_size;
 	Gtk::TreeModelColumn<Glib::ustring> m_col_remaining;
 	Gtk::TreeModelColumn<Glib::ustring> m_col_dl_ratio;
+	Gtk::TreeModelColumn<Glib::ustring> m_col_eta;
 };
 
 // Gtk Torrent Tree View Section
