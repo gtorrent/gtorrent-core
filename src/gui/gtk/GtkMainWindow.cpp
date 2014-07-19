@@ -42,6 +42,10 @@ GtkMainWindow::GtkMainWindow() :
 
 	this->set_titlebar(*header);
 
+	Gtk::Button *configure_btn = Gtk::manage(new Gtk::Button());
+	configure_btn->set_image_from_icon_name("gtk-properties");
+	header->add(*configure_btn);
+
 	m_treeview = Gtk::manage(new GtkTorrentTreeView());
 	this->add(*m_treeview);
 
