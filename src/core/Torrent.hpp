@@ -1,6 +1,6 @@
 #pragma once
 
-#define SECOND 60 
+#define SECOND 60
 #define HOUR 60 * 60
 
 #include "libtorrent.hpp"
@@ -76,7 +76,7 @@ public:
 	boost::int64_t getTorrentSize();
 
 	//Returns the elapsed time remaining in seconds
-	boost::int64_t timeRemaining();
+	boost::int64_t getTimeRemaining();
 
 	// Returns the ratio (uploaded/downloaded) for this torrent
 	float getTotalRatio();
@@ -98,7 +98,7 @@ public:
 
 	// Returns a friendly string for the current download total
 	string getTextTotalDownloaded();
-	
+
 	// Returns a friendly string for the total size of files in torrent
         string getTextSize();
 
@@ -118,4 +118,3 @@ public:
 	void setHandle(libtorrent::torrent_handle &h);
 	void setSavePath(string savepath);
 };
-

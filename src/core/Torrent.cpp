@@ -3,6 +3,101 @@
 #include "Log.hpp"
 #define T_PPM 1000000.f
 
+string getTimeString(boost::int64_t time_s) {
+	boost::int64_t time_m = (time_s - (fmod (time_s, time_s / 60))) / 60;
+	boost::int64_t time_h = (time_m - (fmod (time_m, time_m / 60))) / 60;
+	boost::int64_t time_d = (time_h - (fmod (time_h, time_h / 24))) / 24;
+
+	ostringstream time_string;
+
+	if(time_s <= 0)	{
+		return string();
+	}
+	if(time_s < 60)	{
+		if(time_s == 1) {
+			time_string << time_s << " Second";
+		} else {
+			time_string << time_s << " Seconds";
+		}
+	}
+	if(time_s >= 60 && time_s < (60 * 60)) {
+		if(time_m == 1) {
+			time_string << time_m << " Minute, ";
+		} else {
+			time_string << time_m << " Minutes, ";
+		}
+	}
+	if(time_m >= 60 && time_m < (60 * 60)) {
+		if(time_h == 1) {
+			time_string << time_h << " Hour, ";
+		} else {
+			time_string << time_h << " Hours, ";
+		}
+	}
+	if(time_h >= 24) {
+		if(time_h == 1) {
+			time_string << time_d << " Day, ";
+		} else {
+			time_string << time_d << " Days, ";
+		}
+	}
+	return time_string.str();
+}
+
+string getRateString(boost::int64_t file_rate)
+{
+	ostringstream file_rate_string;
+
+	if (file_rate <= 0)
+	{
+		return string();
+	}
+	if (file_rate >= (1024 * 1024 * 1024))
+	{
+		file_rate_string <<  fixed << setprecision(3) << (file_rate / 1024 / 1024 / 1024) << " GB/s";
+	}
+	if (file_rate >= (1024 * 1024) && file_rate < (1024 * 1024 * 1024))
+	{
+		file_rate_string <<  fixed << setprecision(3) << (file_rate / 1024 / 1024) << " MB/s";
+	}
+	if (file_rate >= 1024 && file_rate < (1024 * 1024))
+	{
+		file_rate_string << fixed << setprecision(3) << (file_rate / 1024) << " KB/s";
+	}
+	if (file_rate > 0 && file_rate < 1024)
+	{
+		file_rate_string << file_rate << " B/s";
+	}
+	return file_rate_string.str();
+}
+
+string getFileSizeString(boost::int64_t file_size)
+{
+	ostringstream file_size_string;
+
+	if (file_size <= 0)
+	{
+		return string();
+	}
+	if (file_size >= (1024 * 1024 * 1024))
+	{
+		file_size_string <<  fixed << setprecision(3) << (file_size / 1024 / 1024 / 1024) << " GB,";
+	}
+	if (file_size >= (1024 * 1024) && file_size < (1024 * 1024 * 1024))
+	{
+		file_size_string <<  fixed << setprecision(3) << (file_size / 1024 / 1024) << " MB,";
+	}
+	if (file_size >= 1024 && file_size < (1024 * 1024))
+	{
+		file_size_string << fixed << setprecision(3) << (file_size / 1024) << " KB,";
+	}
+	if (file_size > 0 && file_size < 1024)
+	{
+		file_size_string << file_size << " B";
+	}
+	return file_size_string.str();
+}
+
 Torrent::Torrent(string path) :
 	m_path(path)
 {
@@ -77,90 +172,26 @@ boost::int64_t Torrent::getActive()
 
 string Torrent::getTextActive()
 {
-	ostringstream tas;
-
-	boost::int64_t  active = getActive();
-	//TODO: Figure out leap years
-	if (active <= 0)
-	{
-		tas << string();
-	}
-	else if (active > 0 && active <= 60)    //seconds
-	{
-		tas << fixed << setprecision(2) << active;
-	}
-	else if (active > 60 && active <= (60 * 60))  //minutes
-	{
-		tas << ((active - active % 60) / 60) << ":" << (active % 60);
-	}
-	else if (active > (60 * 60) && active <= (60 * 60 * 24)) //hours
-	{
-		tas << ((active - active % 60) / 60 / 24) << ":" << ((active - active % 60) / 60) << ":" << (active % 60);
-	}
-	else if (active > (60 * 60 * 24) && active <= (60 * 60 * 24 * 7)) //days
-	{
-		tas << ((active - active % 60) / 60 / 24) << ":" << ((active - active % 60) / 60) << ":" << ((active - active % 60) / 60) << ":" << (active % 60);
-	}
-	else if (active > (60 * 60 * 24 * 7) && active <= (60 * 60 * 24 * 365)) //weeks
-	{
-		tas << ((active - active % 60) / 60 / 24 / 7) << ":" << ((active - active % 60) / 60 / 24) << ":" << ((active - active % 60) / 60) << ":" << ((active - active % 60) / 60) << ":" << (active % 60);
-	}
-	else if (active > (60 * 60 * 24 * 365)) //years
-	{
-		tas << ((active - active % 60) / 60 / 24 / 365) << ":" << ((active - active % 60) / 60 / 24 / 7) << ":" << ((active - active % 60) / 60 / 24) << ":" << ((active - active % 60) / 60) << ":" << ((active - active % 60) / 60) << ":" << (active % 60);
-	}
-	return tas.str();
+	return getTimeString(getActive());
 }
 
 boost::int64_t Torrent::getWanted()
 {
-        return m_handle.status().total_wanted;
+	return m_handle.status().total_wanted;
 }
 
 boost::int64_t Torrent::getEta()
 {
 	if (getDownloadRate() <= 0){
 		return 817;
-	}else{
+	} else {
 	return (getWanted() / getDownloadRate());
 	}
 }
 
 string Torrent::getTextEta()
 {
-	std::ostringstream tet;
-
-	boost::int64_t  eta = getEta();
-	//TODO: Figure out leap years
-	if (eta <= 0)
-	{
-		tet << string();
-	}
-	else if (eta > 0 && eta <= 60)    //seconds
-	{
-		tet << fixed << setprecision(2) << eta;
-	}
-	else if (eta > 60 && eta <= (60 * 60))  //minutes
-	{
-		tet << ((eta - eta % 60) / 60) << ":" << (eta % 60);
-	}
-	else if (eta > (60 * 60) && eta <= (60 * 60 * 24)) //hours
-	{
-		tet << ((eta - eta % 60) / 60 / 24) << ":" << ((eta - eta % 60) / 60) << ":" << (eta % 60);
-	}
-	else if (eta > (60 * 60 * 24) && eta <= (60 * 60 * 24 * 7)) //days
-	{
-		tet << ((eta - eta % 60) / 60 / 24) << ":" << ((eta - eta % 60) / 60) << ":" << ((eta - eta % 60) / 60) << ":" << (eta % 60);
-	}
-	else if (eta > (60 * 60 * 24 * 7) && eta <= (60 * 60 * 24 * 365)) //weeks
-	{
-		tet << ((eta - eta % 60) / 60 / 24 / 7) << ":" << ((eta - eta % 60) / 60 / 24) << ":" << ((eta - eta % 60) / 60) << ":" << ((eta - eta % 60) / 60) << ":" << (eta % 60);
-	}
-	else if (eta > (60 * 60 * 24 * 365)) //years
-	{
-		tet << ((eta - eta % 60) / 60 / 24 / 365) << ":" << ((eta - eta % 60) / 60 / 24 / 7) << ":" << ((eta - eta % 60) / 60 / 24) << ":" << ((eta - eta % 60) / 60) << ":" << ((eta - eta % 60) / 60) << ":" << (eta % 60);
-	}
-	return tet.str();
+	return getTimeString(getEta());
 }
 
 float Torrent::getTotalProgress()
@@ -227,31 +258,7 @@ unsigned int Torrent::getUploadRate()
 
 string Torrent::getTextUploadRate()
 {
-	ostringstream upr;
-
-	long double uprate = getUploadRate() / 1024;
-
-	if (uprate <= 0)
-	{
-		upr << string();
-	}
-	else if (uprate > 0 && uprate < 1024)
-	{
-		upr << uprate << " KB/s";
-	}
-	else if (uprate >= 1024 && uprate < (1024 * 1024))
-	{
-		upr << fixed << setprecision(3) << (uprate / 1024) << " MB/s";
-	}
-	else if (uprate >= (1024 * 1024) && uprate < (1024 * 1024 * 1024))
-	{
-		upr <<  fixed << setprecision(3) << (uprate / 1024 / 1024) << " GB/s";
-	}
-	else if (uprate >= (1024 * 1024 * 1024))
-	{
-		upr <<  fixed << setprecision(3) << (uprate / 1024 / 1024 / 1024) << " sanic/s";
-	}
-	return upr.str();
+	return getRateString(getUploadRate());
 }
 
 unsigned int Torrent::getDownloadRate()
@@ -261,32 +268,7 @@ unsigned int Torrent::getDownloadRate()
 
 string Torrent::getTextDownloadRate()
 {
-	ostringstream dnr;
-
-	long double downrate = getDownloadRate() / 1024;
-
-	if (downrate <= 0)
-	{
-		dnr << string();
-	}
-	else if (downrate > 0 && downrate < 1024)
-	{
-		dnr << downrate << " KB/s";
-	}
-	else if (downrate >= 1024 && downrate < (1024 * 1024))
-	{
-		dnr <<  fixed << setprecision(3) << (downrate / 1024) << " MB/s";
-	}
-	else if (downrate >= (1024 * 1024) && downrate < (1024 * 1024))
-	{
-		dnr <<  fixed << setprecision(3) << (downrate / 1024 / 1024) << " GB/s";
-	}
-	else if (downrate >= (1024 * 1024 * 1024))
-	{
-		dnr <<  fixed << setprecision(3) << (downrate / 1024 / 1024 / 1024) << " sanic/s";
-	}
-
-	return dnr.str();
+	return getRateString(getDownloadRate());
 }
 
 boost::int64_t Torrent::getTotalUploaded()
@@ -296,32 +278,7 @@ boost::int64_t Torrent::getTotalUploaded()
 
 string Torrent::getTextTotalUploaded()
 {
-	ostringstream ttu;
-
-	boost::int64_t uploaded = getTotalUploaded();
-
-	if (uploaded <= 0.0f)
-	{
-		ttu << string();
-	}
-	else if (uploaded > 0.0f && uploaded <= 1024.f)
-	{
-		ttu << fixed << setprecision(3) << uploaded << " B";
-	}
-	else if (uploaded > 1024.f && uploaded <= (1024.f * 1024.f))
-	{
-		ttu << fixed << setprecision(3) << (uploaded / 1024.f) << " KB";
-	}
-	else if (uploaded > (1024.f * 1024.f) && uploaded <= (1024.f * 1024.f * 1024.f))
-	{
-		ttu << fixed << setprecision(3) << (uploaded / 1024.f / 1024.f) << " MB";
-	}
-	else if (uploaded > (1024.f * 1024.f * 1024.f))
-	{
-		ttu << fixed << setprecision(3) << (uploaded / 1024.f / 1024.f / 1024.f) << " GB";
-	}
-
-	return ttu.str();
+	return getFileSizeString(getTotalUploaded());
 }
 
 
@@ -332,31 +289,7 @@ boost::int64_t Torrent::getTotalDownloaded()
 
 string Torrent::getTextTotalDownloaded()
 {
-	ostringstream ttd;
-
-	boost::int64_t  downloaded = getTotalDownloaded();
-
-	if (downloaded <= 0)
-	{
-		ttd << string();
-	}
-	else if (downloaded > 0 && downloaded <= 1024.f)
-	{
-		ttd << fixed << setprecision(3) << downloaded << " B";
-	}
-	else if (downloaded > 1024.f && downloaded <= (1024.f * 1024.f))
-	{
-		ttd << fixed << setprecision(3) << (downloaded / 1024.f) << " KB";
-	}
-	else if (downloaded > (1024.f * 1024.f) && downloaded <= (1024.f * 1024.f * 1024.f))
-	{
-		ttd << fixed << setprecision(3)  << (downloaded / 1024.f / 1024.f) << " MB";
-	}
-	else if (downloaded > (1024.f * 1024.f * 1024.f))
-	{
-		ttd << fixed << setprecision(3) << (downloaded / 1024.f / 1024.f / 1024.f) << " GB";
-	}
-	return ttd.str();
+	return getFileSizeString(getTotalDownloaded());
 }
 
 boost::int64_t Torrent::getSize()
@@ -366,31 +299,7 @@ boost::int64_t Torrent::getSize()
 
 string Torrent::getTextSize()
 {
-	std::ostringstream ts;
-
-	boost::int64_t  size = getSize();
-
-	if (size <= 0)
-	{
-		ts << string();
-	}
-	else if (size > 0 && size <= 1024.f)
-	{
-		ts << fixed << setprecision(3) << size << " B";
-	}
-	else if (size > 1024.f && size <= (1024.f * 1024.f))
-	{
-		ts << fixed << setprecision(3) << (size / 1024.f) << " KB";
-	}
-	else if (size > (1024.f * 1024.f) && size <= (1024.f * 1024.f * 1024.f))
-	{
-		ts << fixed << setprecision(3)  << (size / 1024.f / 1024.f) << " MB";
-	}
-	else if (size > (1024.f * 1024.f * 1024.f))
-	{
-		ts << fixed << setprecision(3) << (size / 1024.f / 1024.f / 1024.f) << " GB";
-	}
-	return ts.str();
+	return getFileSizeString(getSize());
 }
 
 boost::int64_t Torrent::getRemaining()
@@ -400,31 +309,7 @@ boost::int64_t Torrent::getRemaining()
 
 string Torrent::getTextRemaining()
 {
-	std::ostringstream tr;
-
-	boost::int64_t remaining = getRemaining();
-
-	if (remaining <= 0)
-	{
-		tr << string();
-	}
-	else if (remaining > 0 && remaining <= 1024.f)
-	{
-		tr << fixed << setprecision(3) << remaining << " B";
-	}
-	else if (remaining > 1024.f && remaining <= (1024.f * 1024.f))
-	{
-		tr << fixed << setprecision(3) << (remaining / 1024.f) << " KB";
-	}
-	else if (remaining > (1024.f * 1024.f) && remaining <= (1024.f * 1024.f * 1024.f))
-	{
-		tr << fixed << setprecision(3)  << (remaining / 1024.f / 1024.f) << " MB";
-	}
-	else if (remaining > (1024.f * 1024.f * 1024.f))
-	{
-		tr << fixed << setprecision(3) << (remaining / 1024.f / 1024.f / 1024.f) << " GB";
-	}
-	return tr.str();
+	return getFileSizeString(getRemaining());
 }
 
 boost::int64_t Torrent::getTorrentSize()
@@ -432,7 +317,7 @@ boost::int64_t Torrent::getTorrentSize()
 	return m_handle.status().total_wanted;
 }
 
-boost::int64_t Torrent::timeRemaining()
+boost::int64_t Torrent::getTimeRemaining()
 {
 	if(getDownloadRate() > 0)
 		return getTorrentSize() / getDownloadRate();
@@ -442,33 +327,7 @@ boost::int64_t Torrent::timeRemaining()
 
 string Torrent::getTextTimeRemaining()
 {
-	//Very crude, pls to be fixing me, kthnx
-	ostringstream oss;
-
-	double time_s = timeRemaining();
-
-	int hours = 0;
-	int mins = time_s / 60;
-
-	if(mins >= 60)
-	{
-		hours = mins / 60;
-		mins = ((mins / hours) - 60) * hours;
-
-		if(hours == 1)
-			oss << hours << " Hour, " << mins << " Mins";
-		else
-			oss << hours << " Hours, " << mins << " Mins";
-	}
-	else
-	{
-		if(mins == 1)
-			oss << mins << " Minute";
-		else
-			oss << mins << " Minutes";
-	}
-	
-	return oss.str();
+	return getTimeString(getTimeRemaining());
 }
 
 float Torrent::getTotalRatio()
