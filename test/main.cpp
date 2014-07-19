@@ -5,7 +5,7 @@
 #include <gtorrent/Torrent.hpp>
 
 int main(int argc, char *argv[]) {
-	printf("gTest.exe started");
+	printf("gTest.exe started\n");
 	gt::Log::Debug("Testing logging");
 	return 0;
 }

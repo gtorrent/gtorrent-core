@@ -46,6 +46,7 @@ LINK_DIRECTORIES (
 ADD_LIBRARY ( ${PROJECT_NAME}
     src/Core.cpp
     src/Torrent.cpp
+    src/Log.cpp
 )
 
 # Create test executable
@@ -71,10 +72,9 @@ TARGET_LINK_LIBRARIES ( ${PROJECT_NAME}
 )      
 
 TARGET_LINK_LIBRARIES ( gTest
-	${PROJECT_LIBRARIES}
-	libgtorrent.a
     ${Boost_LIBRARIES}
     ${LIBTORRENT_LIBRARIES}
+    ${CMAKE_BINARY_DIR}/libgtorrent.a
 )      
 
 
