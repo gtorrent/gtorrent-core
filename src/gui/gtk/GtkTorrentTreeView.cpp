@@ -58,22 +58,21 @@ void GtkTorrentTreeView::setupColumns()
 	col->set_fixed_width(112);
 
 	cid = this->append_column("Size", m_cols.m_col_size);
-        col = this->get_column(cid - 1);
-        col->set_alignment(0.5);
-        col->set_fixed_width(84);
+  col = this->get_column(cid - 1);
+  col->set_alignment(0.5);
+  col->set_fixed_width(84);
 
 	cid = this->append_column("Remaining", m_cols.m_col_remaining);
-        col = this->get_column(cid - 1);
-        col->set_alignment(0.5);
-        col->set_fixed_width(96);
+  col = this->get_column(cid - 1);
+  col->set_alignment(0.5);
+  col->set_fixed_width(96);
 
 	cid = this->append_column("Ratio", m_cols.m_col_dl_ratio);
 	col = this->get_column(cid - 1);
 	col->set_alignment(0.5);
 	col->set_fixed_width(84);
 
-
-	Gtk::CellRendererProgress *cell = Gtk::manage(new Gtk::CellRendererProgress());
+	cell = Gtk::manage(new Gtk::CellRendererProgress());
 	cid = this->append_column("Progress", *cell);
 	col = this->get_column(cid - 1);
 
