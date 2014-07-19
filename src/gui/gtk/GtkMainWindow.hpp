@@ -16,6 +16,7 @@ private:
 
 	// Signal Responders
 
+	void onAboutBtnClicked();
 	void onAddBtnClicked();
 	void onAddMagnetBtnClicked();
 	void onPauseBtnClicked();
