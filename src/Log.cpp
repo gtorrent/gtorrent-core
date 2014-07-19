@@ -2,6 +2,7 @@
 #include <sstream>
 #include <cstdio>
 #include <ctime>
+#include <stdarg.h>
 
 string getFullDateNumber(int n)
 {
@@ -46,8 +47,9 @@ string gt::Log::getTimeStamp()
 void gt::Log::Debug(const char *fmt, ...)
 {
 	va_list args;
-
+    va_start(args, fmt);
 	printf("[%s]: ", gt::Log::getTimeStamp().c_str());
 	vprintf(fmt, args);
 	printf("\n");
+    va_end(args);
 }

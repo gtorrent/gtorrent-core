@@ -72,9 +72,9 @@ TARGET_LINK_LIBRARIES ( ${PROJECT_NAME}
 )      
 
 TARGET_LINK_LIBRARIES ( gTest
+    ${CMAKE_BINARY_DIR}/libgtorrent.a
     ${Boost_LIBRARIES}
     ${LIBTORRENT_LIBRARIES}
-    ${CMAKE_BINARY_DIR}/libgtorrent.a
 )      
 
 
