@@ -9,9 +9,9 @@ Torrent::Torrent(string path) :
 	if (gt::Core::isMagnetLink(path))
 		m_torrent_params.url = path;
 	else
-			//libtorrent::add_torrent_params.ti is an intrusive_ptr in 1.0 and a shared_ptr in svn.
-			//Using decltype allows us to make it compatible with both versions while still properly using the constructor to avoid a compiler error on boost 1.55 when the = operator is used with a pointer.
-			m_torrent_params.ti = decltype(m_torrent_params.ti)(new libtorrent::torrent_info(path)); 
+		//libtorrent::add_torrent_params.ti is an intrusive_ptr in 1.0 and a shared_ptr in svn.
+		//Using decltype allows us to make it compatible with both versions while still properly using the constructor to avoid a compiler error on boost 1.55 when the = operator is used with a pointer.
+		m_torrent_params.ti = decltype(m_torrent_params.ti)(new libtorrent::torrent_info(path));
 
 }
 
@@ -20,13 +20,14 @@ void Torrent::setSavePath(string savepath)
 	if (savepath.empty())
 		savepath = gt::Core::getDefaultSavePath();
 	if (savepath.empty())
-		savepath="./"; //Fall back to ./ if $HOME is not set
+		savepath = "./"; //Fall back to ./ if $HOME is not set
 	m_torrent_params.save_path = savepath;
 }
 
 bool Torrent::pollEvent(gt::Event &event)
 {
-	if (getTotalProgress() >= 100) {
+	if (getTotalProgress() >= 100)
+	{
 		event.type = gt::Event::DownloadCompleted;
 		return true;
 	}
@@ -85,50 +86,60 @@ libtorrent::torrent_status::state_t Torrent::getState()
 
 string Torrent::getTextState()
 {
-	switch (getState()) {
-		case libtorrent::torrent_status::checking_files:
-			return "Checking";
+	switch (getState())
+	{
+	case libtorrent::torrent_status::checking_files:
+		return "Checking";
 		break;
-		case libtorrent::torrent_status::seeding:
-			return "Seeding";
+	case libtorrent::torrent_status::seeding:
+		return "Seeding";
 		break;
-		case libtorrent::torrent_status::downloading:
-		default:
-			std::ostringstream o;
-			o << setprecision(2) << getTotalProgress() << " %";
-			return o.str();
+	case libtorrent::torrent_status::downloading:
+	default:
+		std::ostringstream o;
+		o << setprecision(2) << getTotalProgress() << " %";
+		return o.str();
 		break;
 	}
 }
 
 unsigned int Torrent::getUploadRate()
 {
-        return m_handle.status().upload_rate;
+	return m_handle.status().upload_rate;
 }
 
 string Torrent::getTextUploadRate()
 {
-        std::ostringstream upr;
+	std::ostringstream upr;
 
-        long double uprate = getUploadRate() / 1024;
+	long double uprate = getUploadRate() / 1024;
 
-        if (uprate <= 0) {
-                upr << string();
-        } else if (uprate> 0 && uprate < 1024) {
-                upr << uprate << " KB/s";
-        } else if (uprate >= 1024 && uprate < (1024*1024)) {
-                upr << fixed << setprecision(3) << (uprate / 1024) << " MB/s";
-        } else if (uprate >= (1024*1024) && uprate<(1024*1024*1024)) {
-                upr <<  fixed << setprecision(3) << (uprate / 1024 / 1024) << " GB/s";
-        } else if (uprate >= (1024*1024*1024)) {
-                upr <<  fixed << setprecision(3) << (uprate / 1024 / 1024 / 1024) << " sanic/s";
-        }
-        return upr.str();
+	if (uprate <= 0)
+	{
+		upr << string();
+	}
+	else if (uprate > 0 && uprate < 1024)
+	{
+		upr << uprate << " KB/s";
+	}
+	else if (uprate >= 1024 && uprate < (1024 * 1024))
+	{
+		upr << fixed << setprecision(3) << (uprate / 1024) << " MB/s";
+	}
+	else if (uprate >= (1024 * 1024) && uprate < (1024 * 1024 * 1024))
+	{
+		upr <<  fixed << setprecision(3) << (uprate / 1024 / 1024) << " GB/s";
+	}
+	else if (uprate >= (1024 * 1024 * 1024))
+	{
+		upr <<  fixed << setprecision(3) << (uprate / 1024 / 1024 / 1024) << " sanic/s";
+	}
+	return upr.str();
 }
 
 unsigned int Torrent::getDownloadRate()
 {
-        return m_handle.status().download_rate;
+	return m_handle.status().download_rate;
 }
 
 string Torrent::getTextDownloadRate()
@@ -137,15 +148,24 @@ string Torrent::getTextDownloadRate()
 
 	long double downrate = getDownloadRate() / 1024;
 
-	if (downrate <= 0) {
+	if (downrate <= 0)
+	{
 		dnr << string();
-	} else if (downrate> 0 && downrate < 1024) {
-		 dnr << downrate << " KB/s";
-        } else if (downrate >= 1024 && downrate < (1024*1024)) {
+	}
+	else if (downrate > 0 && downrate < 1024)
+	{
+		dnr << downrate << " KB/s";
+	}
+	else if (downrate >= 1024 && downrate < (1024 * 1024))
+	{
 		dnr <<  fixed << setprecision(3) << (downrate / 1024) << " MB/s";
-	} else if (downrate >= (1024*1024) && downrate<(1024*1024)) {
+	}
+	else if (downrate >= (1024 * 1024) && downrate < (1024 * 1024))
+	{
 		dnr <<  fixed << setprecision(3) << (downrate / 1024 / 1024) << " GB/s";
-	} else if (downrate >= (1024*1024*1024)) {
+	}
+	else if (downrate >= (1024 * 1024 * 1024))
+	{
 		dnr <<  fixed << setprecision(3) << (downrate / 1024 / 1024 / 1024) << " sanic/s";
 	}
 
@@ -154,61 +174,82 @@ string Torrent::getTextDownloadRate()
 
 boost::int64_t Torrent::getTotalUploaded()
 {
-        return m_handle.status().total_upload;
+	return m_handle.status().total_upload;
 }
 
 string Torrent::getTextTotalUploaded()
 {
-        std::ostringstream ttu;
+	std::ostringstream ttu;
 
-        boost::int64_t uploaded = getTotalUploaded();
+	boost::int64_t uploaded = getTotalUploaded();
 
-        if (uploaded <= 0.0f) {
-                ttu << string();
-	} else if (uploaded > 0.0f && uploaded <= 1024.f) {
-                ttu << fixed << setprecision(3) << uploaded << " B";
-        }  else if (uploaded > 1024.f && uploaded <= (1024.f*1024.f)) {
-                ttu << fixed << setprecision(3) << (uploaded / 1024.f) << " KB";
-        } else if (uploaded > (1024.f*1024.f) && uploaded <= (1024.f*1024.f*1024.f)) {
-                ttu << fixed << setprecision(3) << (uploaded / 1024.f / 1024.f) << " MB";
-        } else if (uploaded > (1024.f*1024.f*1024.f)) {
-                ttu << fixed << setprecision(3) << (uploaded / 1024.f / 1024.f / 1024.f) << " GB";
-        }
+	if (uploaded <= 0.0f)
+	{
+		ttu << string();
+	}
+	else if (uploaded > 0.0f && uploaded <= 1024.f)
+	{
+		ttu << fixed << setprecision(3) << uploaded << " B";
+	}
+	else if (uploaded > 1024.f && uploaded <= (1024.f * 1024.f))
+	{
+		ttu << fixed << setprecision(3) << (uploaded / 1024.f) << " KB";
+	}
+	else if (uploaded > (1024.f * 1024.f) && uploaded <= (1024.f * 1024.f * 1024.f))
+	{
+		ttu << fixed << setprecision(3) << (uploaded / 1024.f / 1024.f) << " MB";
+	}
+	else if (uploaded > (1024.f * 1024.f * 1024.f))
+	{
+		ttu << fixed << setprecision(3) << (uploaded / 1024.f / 1024.f / 1024.f) << " GB";
+	}
 
-        return ttu.str();
+	return ttu.str();
 }
 
 
 boost::int64_t Torrent::getTotalDownloaded()
 {
-        return m_handle.status().total_download;
+	return m_handle.status().total_download;
 }
 
 string Torrent::getTextTotalDownloaded()
 {
-        std::ostringstream ttd;
+	std::ostringstream ttd;
 
-        boost::int64_t  downloaded = getTotalDownloaded();
+	boost::int64_t  downloaded = getTotalDownloaded();
 
-        if (downloaded<=0) {
-                ttd << string();
-        } else if (downloaded > 0 && downloaded <= 1024.f) {
-                ttd << fixed << setprecision(3) << downloaded << " B";
-        }  else if (downloaded > 1024.f && downloaded <= (1024.f*1024.f)) {
-                ttd << fixed << setprecision(3) << (downloaded / 1024.f) << " KB";
-        } else if (downloaded > (1024.f*1024.f) && downloaded <= (1024.f*1024.f*1024.f)) {
-                ttd << fixed << setprecision(3)  << (downloaded / 1024.f / 1024.f) << " MB";
-        } else if (downloaded > (1024.f*1024.f*1024.f)) {
-                ttd << fixed << setprecision(3) << (downloaded / 1024.f / 1024.f / 1024.f) << " GB";
+	if (downloaded <= 0)
+	{
+		ttd << string();
 	}
-        return ttd.str();
+	else if (downloaded > 0 && downloaded <= 1024.f)
+	{
+		ttd << fixed << setprecision(3) << downloaded << " B";
+	}
+	else if (downloaded > 1024.f && downloaded <= (1024.f * 1024.f))
+	{
+		ttd << fixed << setprecision(3) << (downloaded / 1024.f) << " KB";
+	}
+	else if (downloaded > (1024.f * 1024.f) && downloaded <= (1024.f * 1024.f * 1024.f))
+	{
+		ttd << fixed << setprecision(3)  << (downloaded / 1024.f / 1024.f) << " MB";
+	}
+	else if (downloaded > (1024.f * 1024.f * 1024.f))
+	{
+		ttd << fixed << setprecision(3) << (downloaded / 1024.f / 1024.f / 1024.f) << " GB";
+	}
+	return ttd.str();
 }
 
 float Torrent::getTotalRatio()
 {
-	if (getTotalDownloaded()==0) {
+	if (getTotalDownloaded() == 0)
+	{
 		return 0.0f;
-	} else {
+	}
+	else
+	{
 		float totalRatio = float(getTotalUploaded()) / float(getTotalDownloaded());
 		return totalRatio;
 	}
