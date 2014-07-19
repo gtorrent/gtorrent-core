@@ -10,7 +10,7 @@ class GtkAddMagnetLinkWindow : public Gtk::Dialog
 {
 private:
 	Gtk::HeaderBar *m_header;
-	Gtk::TextView *m_textview; 
+	Gtk::TextView *m_textview;
 
 	// Signal Responders
 
@@ -21,7 +21,7 @@ public:
 	GtkAddMagnetLinkWindow();
 
 	// Getters
-	
+
 	string getMagnetURL();
 };
 

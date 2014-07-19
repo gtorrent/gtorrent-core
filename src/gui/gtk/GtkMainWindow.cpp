@@ -61,7 +61,7 @@ void GtkMainWindow::onAddBtnClicked()
 	fc.add_button("_Cancel", Gtk::RESPONSE_CANCEL);
 	fc.add_button("Select", Gtk::RESPONSE_OK);
 
-  	Glib::RefPtr<Gtk::FileFilter> filter_t = Gtk::FileFilter::create();
+	Glib::RefPtr<Gtk::FileFilter> filter_t = Gtk::FileFilter::create();
 	filter_t->set_name("Torrent Files");
 	filter_t->add_mime_type("application/x-bittorrent");
 	fc.add_filter(filter_t);
