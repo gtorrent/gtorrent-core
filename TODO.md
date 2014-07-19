@@ -1,4 +1,7 @@
 - [ ] move core into separate project
   - [ ] define the API
+  - [ ] Implement logging to file
+  - [ ] Implement database for torrents [containing download location/file location/other]
+  - [ ] Implement moving all .torrent files to a central directory
   - [ ] all processing should be done in core & not UI (search, rss, error checking)
 - [ ] use consistent coding style - Allman/ANSI
