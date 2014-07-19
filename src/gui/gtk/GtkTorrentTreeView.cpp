@@ -1,5 +1,6 @@
 #include <gtkmm/cellrendererprogress.h>
 #include <gtkmm/treeviewcolumn.h>
+#include <gtkmm/hvseparator.h>
 #include "GtkTorrentTreeView.hpp"
 #include <Application.hpp>
 
@@ -8,6 +9,50 @@ GtkTorrentTreeView::GtkTorrentTreeView()
 	m_liststore = Gtk::ListStore::create(m_cols);
 	this->set_model(m_liststore);
 	this->setupColumns();
+
+
+ 	signal_button_press_event().connect(sigc::mem_fun(*this, &GtkTorrentTreeView::view_onClick), false);
+ }
+
+ bool GtkTorrentTreeView::view_onClick(GdkEventButton *event)
+ {
+ 	if(event->button == 3)
+ 	{
+ 		Gtk::Menu     *rcMenu  = Gtk::manage(new Gtk::Menu());
+ 		Gtk::MenuItem *rcmItem = Gtk::manage(new Gtk::MenuItem("This is a click on the torrent view"));
+ 		rcmItem->signal_activate().connect(sigc::mem_fun(*this, &GtkTorrentTreeView::torrentContext_onClick));
+ 		rcMenu->add(*rcmItem);
+ 		rcMenu->show_all();
+ 		rcMenu->popup(event->button, event->time);
+ 	}
+
+ 	return false;
+ }
+
+ void GtkTorrentTreeView::torrentContext_onClick()
+ {
+ 	puts(">2014\n>touching my tralala");
+ }
+
+
+ void GtkTorrentTreeView::columnContext_onClick()
+ {
+ 	puts(">2014\n>touching my dingdingdong");
+ }
+
+ bool GtkTorrentTreeView::torrentColumns_onClick(GdkEventButton *event)
+ {
+ 	if(event->button == 3)
+ 	{
+ 		Gtk::Menu     *rcMenu  = Gtk::manage(new Gtk::Menu());
+ 		Gtk::MenuItem *rcmItem = Gtk::manage(new Gtk::MenuItem("This is a click on a torrent column"));
+ 		rcmItem->signal_activate().connect(sigc::mem_fun(*this, &GtkTorrentTreeView::columnContext_onClick));
+ 		rcMenu->add(*rcmItem);
+ 		rcMenu->show_all();
+ 		rcMenu->popup(event->button, event->time);
+ 	}
+
+ 	return true; //The bool that deter
 }
 
 void GtkTorrentTreeView::setupColumns()
@@ -137,6 +182,6 @@ void GtkTorrentTreeView::updateCells()
 
 		//m_cells[i]->property_text() = t->getTextState();
 
-		++i;
+		i;
 	}
 }

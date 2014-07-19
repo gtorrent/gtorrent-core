@@ -53,6 +53,10 @@ private:
 	GtkTorrentColumns m_cols;
 	Glib::RefPtr<Gtk::ListStore> m_liststore;
 	void setupColumns();
+	bool           view_onClick(GdkEventButton *event);
+	bool torrentColumns_onClick(GdkEventButton *event);
+	void           torrentContext_onClick();
+	void           columnContext_onClick();
 
 public:
 	GtkTorrentTreeView();
@@ -60,4 +64,3 @@ public:
 	void addCell(shared_ptr<Torrent> &t);
 	void updateCells();
 };
-
