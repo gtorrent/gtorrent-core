@@ -93,7 +93,6 @@ void GtkTorrentTreeView::setupColumns()
 		col->set_fixed_width(250);
 	}
 
-<<<<<<< HEAD
 	if(m_visibleColumns & 2)
 	{
 		cid = this->append_column("Seeders", m_cols.m_col_seeders);
@@ -213,7 +212,7 @@ void GtkTorrentTreeView::setupColumns()
 
 	if(m_visibleColumns & 65536)
 	{
-		Gtk::CellRendererProgress *cell = Gtk::manage(new Gtk::CellRendererProgress());
+		cell = Gtk::manage(new Gtk::CellRendererProgress());
 		cid = this->append_column("Progress", *cell);
 		col = this->get_column(cid - 1);
 		col->add_attribute(cell->property_value(), m_cols.m_col_percent);
