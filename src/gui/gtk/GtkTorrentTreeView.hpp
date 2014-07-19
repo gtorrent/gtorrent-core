@@ -13,6 +13,7 @@ class GtkTorrentColumns : public Gtk::TreeModel::ColumnRecord
 public:
 	GtkTorrentColumns()
 	{
+		add(m_col_active);
 		add(m_col_name);
 		add(m_col_seeders);
 		add(m_col_leechers);
@@ -24,6 +25,7 @@ public:
 		add(m_col_dl_total);
 		add(m_col_dl_ratio);
 	}
+	Gtk::TreeModelColumn<Glib::ustring> m_col_active;
 	Gtk::TreeModelColumn<Glib::ustring> m_col_name;
 	Gtk::TreeModelColumn<unsigned int> m_col_seeders;
 	Gtk::TreeModelColumn<unsigned int> m_col_leechers;
