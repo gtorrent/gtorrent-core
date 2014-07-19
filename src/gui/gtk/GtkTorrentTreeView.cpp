@@ -47,11 +47,6 @@ void GtkTorrentTreeView::setupColumns()
 	col->set_alignment(0.5);
 	col->set_fixed_width(95);
 
-	cid = this->append_column("ETA", m_cols.m_col_eta);
-	col = this->get_column(cid - 1);
-	col->set_alignment(0.5);
-	col->set_fixed_width(110);
-
 	cid = this->append_column("Uploaded", m_cols.m_col_ul_total);
 	col = this->get_column(cid - 1);
 	col->set_alignment(0.5);
