@@ -9,6 +9,8 @@ PULL REQUESTS ARE ENCOURAGED
 A minimalistic lightweight bittorrent client written by some smart people from the 4chan technology board.
 
 gTorrent uses astyle to format our code. Please run astyle before making a pull request. You can find more about it [here](http://astyle.sourceforge.net/)
+
+Install astyle, and then run scripts/format.sh at the root of the repo.
 ### References
 Links to the documentation of each library.
 - [gtkmm](https://developer.gnome.org/gtkmm/3.12/)
