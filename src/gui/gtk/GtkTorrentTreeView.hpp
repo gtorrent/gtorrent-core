@@ -13,21 +13,37 @@ class GtkTorrentColumns : public Gtk::TreeModel::ColumnRecord
 public:
 	GtkTorrentColumns()
 	{
+		add(m_col_active);
+		add(m_col_eta);
 		add(m_col_name);
 		add(m_col_seeders);
 		add(m_col_leechers);
+		add(m_col_ul_speed);
 		add(m_col_dl_speed);
 		add(m_col_percent);
 		add(m_col_percent_text);
+		add(m_col_ul_total);
+		add(m_col_dl_total);
+		add(m_col_size);
+		add(m_col_remaining);
+		add(m_col_dl_ratio);
 	}
-	
+
+	Gtk::TreeModelColumn<Glib::ustring> m_col_active;
+	Gtk::TreeModelColumn<Glib::ustring> m_col_eta;
 	Gtk::TreeModelColumn<Glib::ustring> m_col_name;
 	Gtk::TreeModelColumn<unsigned int>  m_col_seeders;
 	Gtk::TreeModelColumn<unsigned int>  m_col_leechers;
 	Gtk::TreeModelColumn<unsigned int>  m_col_percent;
 	Gtk::TreeModelColumn<Glib::ustring> m_col_percent_text;
-	Gtk::TreeModelColumn<unsigned int>  m_col_empty;
+	Gtk::TreeModelColumn<unsigned int> m_col_empty;
+	Gtk::TreeModelColumn<Glib::ustring> m_col_ul_speed;
 	Gtk::TreeModelColumn<Glib::ustring> m_col_dl_speed;
+	Gtk::TreeModelColumn<Glib::ustring> m_col_ul_total;
+	Gtk::TreeModelColumn<Glib::ustring> m_col_dl_total;
+	Gtk::TreeModelColumn<Glib::ustring> m_col_size;
+	Gtk::TreeModelColumn<Glib::ustring> m_col_remaining;
+	Gtk::TreeModelColumn<Glib::ustring> m_col_dl_ratio;
 };
 
 // Gtk Torrent Tree View Section
@@ -53,14 +69,6 @@ private:
 	bool    torrentColumns_onClick(GdkEventButton *event);
 	bool ColumnContextMenu_onClick(GdkEventButton *event, int n);
 
-	/* Event Handlers for the columns context Menu */
-	void     nameColumnContext_onClick();
-	void     rateColumnContext_onClick();
-	void  seedersColumnContext_onClick();
-	void  torrentColumnContext_onClick();
-	void leechersColumnContext_onClick();
-	void progressColumnContext_onClick();
-
 	/* Event handlers for the torrent view context menu */
 	void     stopView_onClick();
 	void     openView_onClick();
@@ -68,8 +76,6 @@ private:
 	void   removeView_onClick();
 	void priorityView_onClick();
 	void propertyView_onClick();
-
-	void RebuildTorrentView();
 	
 public:
 	GtkTorrentTreeView();

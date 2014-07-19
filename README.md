@@ -8,6 +8,11 @@ PULL REQUESTS ARE ENCOURAGED
 ## About
 A minimalistic lightweight bittorrent client written by some smart people from the 4chan technology board.
 
+### References
+Links to the documentation of each library.
+- [gtkmm](https://developer.gnome.org/gtkmm/3.12/)
+- libtorrent-rasterbar: [Here](http://libtorrent.org/reference.html) and [here](http://libtorrent.org/manual.html).
+
 ### Branches
 
 

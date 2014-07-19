@@ -36,7 +36,15 @@ GtkMainWindow::GtkMainWindow() :
 	pause_btn->set_image_from_icon_name("gtk-media-pause");
 	header->add(*pause_btn);
 
+	Gtk::Button *remove_btn = Gtk::manage(new Gtk::Button());
+	remove_btn->set_image_from_icon_name("gtk-cancel");
+	header->add(*remove_btn);
+
 	this->set_titlebar(*header);
+
+	Gtk::Button *properties_btn = Gtk::manage(new Gtk::Button());
+	properties_btn->set_image_from_icon_name("gtk-properties");
+	header->add(*properties_btn);
 
 	m_treeview = Gtk::manage(new GtkTorrentTreeView());
 	this->add(*m_treeview);
@@ -56,25 +64,30 @@ bool GtkMainWindow::onSecTick()
 void GtkMainWindow::onAddBtnClicked()
 {
 	Gtk::FileChooserDialog fc("Browse for torrent file", Gtk::FILE_CHOOSER_ACTION_OPEN);
+	fc.set_default_size(256, 256);
+	//fc.set_window_position(0, 128);
 	fc.set_select_multiple();
 	fc.set_transient_for(*this);
 	fc.add_button("_Cancel", Gtk::RESPONSE_CANCEL);
 	fc.add_button("Select", Gtk::RESPONSE_OK);
 
-  	Glib::RefPtr<Gtk::FileFilter> filter_t = Gtk::FileFilter::create();
+	Glib::RefPtr<Gtk::FileFilter> filter_t = Gtk::FileFilter::create();
 	filter_t->set_name("Torrent Files");
 	filter_t->add_mime_type("application/x-bittorrent");
 	fc.add_filter(filter_t);
 
 	int result = fc.run();
 
-	switch (result) {
-		case Gtk::RESPONSE_OK:
-			for (auto &f : fc.get_filenames())
-			{
-				shared_ptr<Torrent> t = m_core->addTorrent(f.c_str());
+	switch (result)
+	{
+	case Gtk::RESPONSE_OK:
+		for (auto &f : fc.get_filenames())
+		{
+			shared_ptr<Torrent> t = m_core->addTorrent(f.c_str());
+			if (t)//Checks if t is not null
 				m_treeview->addCell(t);
-			}
+			//TODO Add error dialogue if torrent add is unsuccessful
+		}
 		break;
 	}
 }
@@ -85,12 +98,30 @@ void GtkMainWindow::onAddMagnetBtnClicked()
 	d.set_transient_for(*this);
 	int r = d.run();
 
-	switch (r) {
-		case Gtk::RESPONSE_OK:
-			shared_ptr<Torrent> t = m_core->addTorrent(d.getMagnetURL());
+	switch (r)
+	{
+	case Gtk::RESPONSE_OK:
+		shared_ptr<Torrent> t = m_core->addTorrent(d.getMagnetURL());
+		if (t)//Checks if t is not null
 			m_treeview->addCell(t);
+		//TODO Add error dialogue if torrent add is unsuccessful
 		break;
 	}
+}
+
+void GtkMainWindow::onPauseBtnClicked()
+{
+	//TODO: handle pausing torrents
+}
+
+void GtkMainWindow::onRemoveBtnClicked()
+{
+	//TODO: handle removing torrents
+}
+
+void GtkMainWindow::onPropertiesBtnClicked()
+{
+	//TODO: handle properties button click
 }
 
 bool GtkMainWindow::onDestroy(GdkEventAny *event)

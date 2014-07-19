@@ -93,6 +93,7 @@ void GtkTorrentTreeView::setupColumns()
 		col->set_fixed_width(250);
 	}
 
+<<<<<<< HEAD
 	if(m_visibleColumns & 2)
 	{
 		cid = this->append_column("Seeders", m_cols.m_col_seeders);
@@ -119,7 +120,100 @@ void GtkTorrentTreeView::setupColumns()
 
 	if(m_visibleColumns & 16)
 	{
-		cell = Gtk::manage(new Gtk::CellRendererProgress());
+		cid = this->append_column("Active", m_cols.m_col_active);
+		col = this->get_column(cid - 1);
+		col->set_fixed_width(90);
+	}
+
+	if(m_visibleColumns & 32)
+	{
+		cid = this->append_column("ETA", m_cols.m_col_eta);
+		col = this->get_column(cid - 1);
+		col->set_fixed_width(90);
+	}
+
+	if(m_visibleColumns & 64)
+	{
+		cid = this->append_column("Name", m_cols.m_col_name);
+		col = this->get_column(cid - 1);
+		col->set_fixed_width(250);
+	}
+
+	if(m_visibleColumns & 128)
+	{
+		cid = this->append_column("Seeders", m_cols.m_col_seeders);
+		col = this->get_column(cid - 1);
+		col->set_alignment(0.5);
+		col->set_fixed_width(90);
+	}
+
+	if(m_visibleColumns & 256)
+	{
+		cid = this->append_column("Leechers", m_cols.m_col_leechers);
+		col = this->get_column(cid - 1);
+		col->set_alignment(0.5);
+		col->set_fixed_width(90);
+	}
+
+	if(m_visibleColumns & 512)
+	{
+		cid = this->append_column("Upspeed", m_cols.m_col_ul_speed);
+		col = this->get_column(cid - 1);
+		col->set_alignment(0.5);
+		col->set_fixed_width(95);
+	}
+
+	if(m_visibleColumns & 1024)
+	{
+		cid = this->append_column("Downspeed", m_cols.m_col_dl_speed);
+		col = this->get_column(cid - 1);
+		col->set_alignment(0.5);
+		col->set_fixed_width(95);
+	}
+
+	if(m_visibleColumns & 2048)
+	{
+		cid = this->append_column("Uploaded", m_cols.m_col_ul_total);
+		col = this->get_column(cid - 1);
+		col->set_alignment(0.5);
+		col->set_fixed_width(95);
+	}
+
+	if(m_visibleColumns & 4096)
+	{
+		cid = this->append_column("Downloaded", m_cols.m_col_dl_total);
+		col = this->get_column(cid - 1);
+		col->set_alignment(0.5);
+		col->set_fixed_width(95);
+	}
+
+	if(m_visibleColumns & 8192)
+	{
+		cid = this->append_column("Size", m_cols.m_col_size);
+		col = this->get_column(cid - 1);
+		col->set_alignment(0.5);
+		col->set_fixed_width(95);
+	}
+
+	if(m_visibleColumns & 16386)
+	{
+		cid = this->append_column("Remaining", m_cols.m_col_remaining);
+		col = this->get_column(cid - 1);
+		col->set_alignment(0.5);
+		col->set_fixed_width(95);
+	}
+
+	if(m_visibleColumns & 32768)
+	{
+		cid = this->append_column("Ratio", m_cols.m_col_dl_ratio);
+		col = this->get_column(cid - 1);
+		col->set_alignment(0.5);
+		col->set_fixed_width(95);
+	}
+
+	if(m_visibleColumns & 65536)
+	{
+		Gtk::CellRendererProgress *cell = Gtk::manage(new Gtk::CellRendererProgress());
 		cid = this->append_column("Progress", *cell);
 		col = this->get_column(cid - 1);
 		col->add_attribute(cell->property_value(), m_cols.m_col_percent);
@@ -130,7 +224,6 @@ void GtkTorrentTreeView::setupColumns()
 	{
 		Gtk::Button *butt = c->get_button();	
 		butt->signal_button_press_event().connect(sigc::mem_fun(*this, &GtkTorrentTreeView::torrentColumns_onClick));
-
 		c->set_sizing(Gtk::TreeViewColumnSizing::TREE_VIEW_COLUMN_FIXED);
 		c->set_clickable();
 		c->set_resizable();
@@ -144,12 +237,18 @@ void GtkTorrentTreeView::addCell(shared_ptr<Torrent> &t)
 		return;
 
 	Gtk::TreeModel::Row row = *(m_liststore->append());
+	row[m_cols.m_col_active] = t->getTextActive();
+	row[m_cols.m_col_eta] = t->getTextEta();
 	row[m_cols.m_col_name] = t->getHandle().name();
 	row[m_cols.m_col_percent] = t->getTotalProgress();
 	row[m_cols.m_col_percent_text] = t->getTextState();
 	row[m_cols.m_col_seeders] = t->getTotalSeeders();
 	row[m_cols.m_col_leechers] = t->getTotalLeechers();
-
+	row[m_cols.m_col_ul_total] = t->getTextTotalUploaded();
+	row[m_cols.m_col_dl_total] = t->getTextTotalDownloaded();
+	row[m_cols.m_col_size] = t->getTextSize();
+	row[m_cols.m_col_remaining] = t->getTextRemaining();
+	row[m_cols.m_col_dl_ratio] = t->getTextTotalRatio();
 }
 
 void GtkTorrentTreeView::updateCells()
@@ -159,12 +258,20 @@ void GtkTorrentTreeView::updateCells()
 	{
 		shared_ptr<Torrent> t = Application::getSingleton()->getCore()->getTorrents()[i];
 
+		c[m_cols.m_col_active] = t->getTextActive();
+		c[m_cols.m_col_eta] = t->getTextEta();
 		c[m_cols.m_col_percent] = t->getTotalProgress();
 		c[m_cols.m_col_seeders] = t->getTotalSeeders();
 		c[m_cols.m_col_percent_text] = t->getTextState();
 		c[m_cols.m_col_leechers] = t->getTotalLeechers();
+		c[m_cols.m_col_ul_speed] = t->getTextUploadRate();
 		c[m_cols.m_col_dl_speed] = t->getTextDownloadRate();
-		
+		c[m_cols.m_col_ul_total] = t->getTextTotalUploaded();
+		c[m_cols.m_col_dl_total] = t->getTextTotalDownloaded();
+		c[m_cols.m_col_size] = t->getTextSize();
+		c[m_cols.m_col_dl_ratio] = t->getTextTotalRatio();
+		c[m_cols.m_col_eta] = t->getTextTimeRemaining();
+
 		// TODO: Handle with events
 
 		//m_cells[i]->property_text() = t->getTextState();
