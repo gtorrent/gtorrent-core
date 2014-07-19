@@ -84,6 +84,9 @@ public:
 	// Returns the current torrent state (downloading, queueing, seeding, etc)
 	libtorrent::torrent_status::state_t getState();
 
+	//Returns the URL of the last working tracker
+	string getCurrentTrackerURL();
+
 	// Returns a friendly string for the torrent state
 	string getTextState();
 

@@ -251,6 +251,11 @@ string Torrent::getTextState()
 	}
 }
 
+string Torrent::getCurrentTrackerURL()
+{
+	return m_handle.status().current_tracker;
+}
+
 unsigned int Torrent::getUploadRate()
 {
 	return m_handle.status().upload_rate;
