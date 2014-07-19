@@ -18,6 +18,9 @@ private:
 
 	void onAddBtnClicked();
 	void onAddMagnetBtnClicked();
+	void onPauseBtnClicked();
+	void onRemoveBtnClicked();
+	void onPropertiesBtnClicked();
 
 public:
 	GtkMainWindow();
@@ -25,4 +28,3 @@ public:
 	bool onDestroy(GdkEventAny *event);
 	bool onSecTick();
 };
-
