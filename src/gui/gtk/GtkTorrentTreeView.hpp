@@ -14,6 +14,7 @@ public:
 	GtkTorrentColumns()
 	{
 		add(m_col_active);
+		add(m_col_eta);
 		add(m_col_name);
 		add(m_col_seeders);
 		add(m_col_leechers);
@@ -24,9 +25,11 @@ public:
 		add(m_col_ul_total);
 		add(m_col_dl_total);
 		add(m_col_size);
+		add(m_col_remaining);
 		add(m_col_dl_ratio);
 	}
 	Gtk::TreeModelColumn<Glib::ustring> m_col_active;
+	Gtk::TreeModelColumn<Glib::ustring> m_col_eta;
 	Gtk::TreeModelColumn<Glib::ustring> m_col_name;
 	Gtk::TreeModelColumn<unsigned int> m_col_seeders;
 	Gtk::TreeModelColumn<unsigned int> m_col_leechers;
@@ -38,6 +41,7 @@ public:
 	Gtk::TreeModelColumn<Glib::ustring> m_col_ul_total;
 	Gtk::TreeModelColumn<Glib::ustring> m_col_dl_total;
 	Gtk::TreeModelColumn<Glib::ustring> m_col_size;
+	Gtk::TreeModelColumn<Glib::ustring> m_col_remaining;
 	Gtk::TreeModelColumn<Glib::ustring> m_col_dl_ratio;
 };
 
