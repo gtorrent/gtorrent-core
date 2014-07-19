@@ -27,7 +27,7 @@ public:
 	float getTotalProgress();
 
 	// Returns the current upload rate of the torrent
-        unsigned int getUploadRate();
+	unsigned int getUploadRate();
 
 	// Returns the current download rate of the torrent
 	unsigned int getDownloadRate();
@@ -44,10 +44,10 @@ public:
 	// Returns the current number of leechers attached to the file
 	unsigned int getTotalLeechers();
 
-        // Returns the current amount of data uploaded for this torrent
+	// Returns the current amount of data uploaded for this torrent
 	boost::int64_t getTotalUploaded();
 
-        // Returns the current amount of data downloaded for this torrent
+	// Returns the current amount of data downloaded for this torrent
 	boost::int64_t getTotalDownloaded();
 
 	// Returns the ratio (uploaded/downloaded) for this torrent
@@ -59,20 +59,20 @@ public:
 	// Returns a friendly string for the torrent state
 	string getTextState();
 
-        // Returns a friendly string for the current upload rate
-        string getTextUploadRate();
+	// Returns a friendly string for the current upload rate
+	string getTextUploadRate();
 
 	// Returns a friendly string for the current download rate
 	string getTextDownloadRate();
 
 	// Returns a friendly string for the current upload total
-        string getTextTotalUploaded();
+	string getTextTotalUploaded();
 
 	// Returns a friendly string for the current download total
-        string getTextTotalDownloaded();
+	string getTextTotalDownloaded();
 
 	// Returns a friendly string for the current ratio
-        string getTextTotalRatio();
+	string getTextTotalRatio();
 
 	// Setters
 	void setHandle(libtorrent::torrent_handle &h);
