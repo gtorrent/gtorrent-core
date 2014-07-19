@@ -38,6 +38,7 @@ INCLUDE_DIRECTORIES( ${PROJECT_BINARY_DIR} )
 LINK_DIRECTORIES (
     ${Boost_LIBRARY_DIRS}
     ${LIBTORRENT_LIBRARY_DIRS}
+	${CMAKE_SOURCE_DIRECTORY}
 )
 
 # Create static libbrary
@@ -48,12 +49,34 @@ ADD_LIBRARY ( ${PROJECT_NAME}
     src/Log.cpp
 )
 
+# Create test executable
+ADD_EXECUTABLE ( gTest
+	test/main.cpp
+)
+
+# Make sure libgtorrent.a is built before gTest.exe
+ADD_DEPENDENCIES(gTest gtorrent)
+
+# Add and move test torrents
+add_custom_target(copytorrents ALL
+    COMMENT "Copying torrents"
+)
+FILE(GLOB Torrents ${PROJECT_SOURCE_DIR}/test/*.torrent)
+FOREACH(Torrent ${Torrents})
+    ADD_CUSTOM_COMMAND(TARGET copytorrents 
+        COMMAND ${CMAKE_COMMAND} -E copy ${Torrent} ${CMAKE_BINARY_DIR}/${Torrent_NAME}
+        COMMENT "Copying ${Torrent}"
+    )
+ENDFOREACH()
+ADD_DEPENDENCIES(copytorrents gTest)
+
 ADD_DEFINITIONS (
     ${LIBTORRENT_CFLAGS}
 )
 
 INCLUDE_DIRECTORIES (
     include/gtorrent
+	include
     ${Boost_INCLUDE_DIRS}
     ${LIBTORRENT_INCLUDE_DIRS}
 )
@@ -63,5 +86,12 @@ TARGET_LINK_LIBRARIES ( ${PROJECT_NAME}
     ${Boost_LIBRARIES}
     ${LIBTORRENT_LIBRARIES}
 )      
+
+TARGET_LINK_LIBRARIES ( gTest
+    ${CMAKE_BINARY_DIR}/libgtorrent.a
+    ${Boost_LIBRARIES}
+    ${LIBTORRENT_LIBRARIES}
+)      
+
 
 INSTALL(TARGETS ${PROJECT_NAME} DESTINATION ${PREFIX}/bin/ PERMISSIONS OWNER_EXECUTE OWNER_WRITE OWNER_READ GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE)
