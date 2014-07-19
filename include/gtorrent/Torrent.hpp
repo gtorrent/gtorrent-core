@@ -13,6 +13,8 @@ string getTimeString(boost::int64_t time_s);
 string getRateString(boost::int64_t file_rate);
 string getFileSizeString(boost::int64_t file_size);
 
+namespace gt {
+
 class Torrent
 {
 private:
@@ -138,3 +140,5 @@ public:
 	inline void resume() { setPaused(false); }
 	inline void pause() { setPaused(true); }
 };
+
+}
