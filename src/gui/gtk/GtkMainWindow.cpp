@@ -42,9 +42,9 @@ GtkMainWindow::GtkMainWindow() :
 
 	this->set_titlebar(*header);
 
-	Gtk::Button *configure_btn = Gtk::manage(new Gtk::Button());
-	configure_btn->set_image_from_icon_name("gtk-properties");
-	header->add(*configure_btn);
+	Gtk::Button *properties_btn = Gtk::manage(new Gtk::Button());
+	properties_btn->set_image_from_icon_name("gtk-properties");
+	header->add(*properties_btn);
 
 	m_treeview = Gtk::manage(new GtkTorrentTreeView());
 	this->add(*m_treeview);
@@ -107,6 +107,21 @@ void GtkMainWindow::onAddMagnetBtnClicked()
 		//TODO Add error dialogue if torrent add is unsuccessful
 		break;
 	}
+}
+
+void GtkMainWindow::onPauseBtnClicked()
+{
+	//TODO: handle pausing torrents
+}
+
+void GtkMainWindow::onRemoveBtnClicked()
+{
+	//TODO: handle removing torrents
+}
+
+void GtkMainWindow::onPropertiesBtnClicked()
+{
+	//TODO: handle properties button click
 }
 
 bool GtkMainWindow::onDestroy(GdkEventAny *event)
