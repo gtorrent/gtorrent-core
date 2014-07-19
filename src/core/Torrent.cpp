@@ -77,7 +77,7 @@ boost::int64_t Torrent::getActive()
 
 string Torrent::getTextActive()
 {
-	std::ostringstream tas;
+	ostringstream tas;
 
 	boost::int64_t  active = getActive();
 	//TODO: Figure out leap years
@@ -158,7 +158,7 @@ string Torrent::getTextState()
 		break;
 	case libtorrent::torrent_status::downloading:
 	default:
-		std::ostringstream o;
+		ostringstream o;
 		o << setprecision(2) << getTotalProgress() << " %";
 		return o.str();
 		break;
@@ -172,7 +172,7 @@ unsigned int Torrent::getUploadRate()
 
 string Torrent::getTextUploadRate()
 {
-	std::ostringstream upr;
+	ostringstream upr;
 
 	long double uprate = getUploadRate() / 1024;
 
@@ -206,7 +206,7 @@ unsigned int Torrent::getDownloadRate()
 
 string Torrent::getTextDownloadRate()
 {
-	std::ostringstream dnr;
+	ostringstream dnr;
 
 	long double downrate = getDownloadRate() / 1024;
 
@@ -241,7 +241,7 @@ boost::int64_t Torrent::getTotalUploaded()
 
 string Torrent::getTextTotalUploaded()
 {
-	std::ostringstream ttu;
+	ostringstream ttu;
 
 	boost::int64_t uploaded = getTotalUploaded();
 
@@ -277,7 +277,7 @@ boost::int64_t Torrent::getTotalDownloaded()
 
 string Torrent::getTextTotalDownloaded()
 {
-	std::ostringstream ttd;
+	ostringstream ttd;
 
 	boost::int64_t  downloaded = getTotalDownloaded();
 
@@ -319,7 +319,7 @@ float Torrent::getTotalRatio()
 
 string Torrent::getTextTotalRatio()
 {
-	std::stringstream ttr (stringstream::in | stringstream::out);
+	stringstream ttr (stringstream::in | stringstream::out);
 
 	float ratio = getTotalRatio();
 
