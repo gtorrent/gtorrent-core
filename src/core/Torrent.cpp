@@ -359,7 +359,6 @@ string Torrent::getTextTotalDownloaded()
 	return ttd.str();
 }
 
-<<<<<<< HEAD
 boost::int64_t Torrent::getSize()
 {
         return m_handle.status().total_wanted;
@@ -426,7 +425,8 @@ string Torrent::getTextRemaining()
 		tr << fixed << setprecision(3) << (remaining / 1024.f / 1024.f / 1024.f) << " GB";
 	}
 	return tr.str();
-=======
+}
+
 boost::int64_t Torrent::getTorrentSize()
 {
 	return m_handle.status().total_wanted;
@@ -469,7 +469,6 @@ string Torrent::getTextTimeRemaining()
 	}
 	
 	return oss.str();
->>>>>>> d2d0c966c66c343b38c8f3a6c8a8cb508a03150b
 }
 
 float Torrent::getTotalRatio()
