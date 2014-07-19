@@ -17,60 +17,60 @@ void GtkTorrentTreeView::setupColumns()
 
 	cid = this->append_column("Active", m_cols.m_col_active);
 	col = this->get_column(cid - 1);
-	col->set_fixed_width(90);
+	col->set_fixed_width(84);
 
 	cid = this->append_column("ETA", m_cols.m_col_eta);
 	col = this->get_column(cid - 1);
-	col->set_fixed_width(90);
+	col->set_fixed_width(84);
 
 	cid = this->append_column("Name", m_cols.m_col_name);
 	col = this->get_column(cid - 1);
-	col->set_fixed_width(250);
+	col->set_fixed_width(84);
 
 	cid = this->append_column("Seeders", m_cols.m_col_seeders);
 	col = this->get_column(cid - 1);
 	col->set_alignment(0.5);
-	col->set_fixed_width(90);
+	col->set_fixed_width(84);
 
 	cid = this->append_column("Leechers", m_cols.m_col_leechers);
 	col = this->get_column(cid - 1);
 	col->set_alignment(0.5);
-	col->set_fixed_width(90);
+	col->set_fixed_width(96);
 
 	cid = this->append_column("Upspeed", m_cols.m_col_ul_speed);
 	col = this->get_column(cid - 1);
 	col->set_alignment(0.5);
-	col->set_fixed_width(95);
+	col->set_fixed_width(96);
 
 	cid = this->append_column("Downspeed", m_cols.m_col_dl_speed);
 	col = this->get_column(cid - 1);
 	col->set_alignment(0.5);
-	col->set_fixed_width(95);
+	col->set_fixed_width(102);
 
 	cid = this->append_column("Uploaded", m_cols.m_col_ul_total);
 	col = this->get_column(cid - 1);
 	col->set_alignment(0.5);
-	col->set_fixed_width(95);
+	col->set_fixed_width(96);
 
 	cid = this->append_column("Downloaded", m_cols.m_col_dl_total);
 	col = this->get_column(cid - 1);
 	col->set_alignment(0.5);
-	col->set_fixed_width(95);
+	col->set_fixed_width(112);
 
 	cid = this->append_column("Size", m_cols.m_col_size);
         col = this->get_column(cid - 1);
         col->set_alignment(0.5);
-        col->set_fixed_width(95);
+        col->set_fixed_width(84);
 
 	cid = this->append_column("Remaining", m_cols.m_col_remaining);
         col = this->get_column(cid - 1);
         col->set_alignment(0.5);
-        col->set_fixed_width(95);
+        col->set_fixed_width(96);
 
 	cid = this->append_column("Ratio", m_cols.m_col_dl_ratio);
 	col = this->get_column(cid - 1);
 	col->set_alignment(0.5);
-	col->set_fixed_width(95);
+	col->set_fixed_width(84);
 
 
 	Gtk::CellRendererProgress *cell = Gtk::manage(new Gtk::CellRendererProgress());
@@ -141,4 +141,3 @@ void GtkTorrentTreeView::updateCells()
 		++i;
 	}
 }
-

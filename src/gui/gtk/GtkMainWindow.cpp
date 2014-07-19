@@ -1,4 +1,5 @@
 #include "GtkAddMagnetLinkWindow.hpp"
+#include "GtkPropertiesWindow.hpp"
 #include <gtkmm/filechooserdialog.h>
 #include "GtkMainWindow.hpp"
 #include <Application.hpp>
@@ -19,6 +20,13 @@ GtkMainWindow::GtkMainWindow() :
 
 	// This needs to be refactored
 
+	Gtk::Button *about_btn = Gtk::manage(new Gtk::Button());
+	about_btn->set_image_from_icon_name("gtk-about");
+	header->add(*about_btn);
+
+	Gtk::VSeparator *separator0 = Gtk::manage(new Gtk::VSeparator());
+	header->add(*separator0);
+
 	Gtk::Button *add_torrent_btn = Gtk::manage(new Gtk::Button());
 	add_torrent_btn->set_image_from_icon_name("gtk-add");
 	add_torrent_btn->signal_clicked().connect(sigc::mem_fun(*this, &GtkMainWindow::onAddBtnClicked));
@@ -29,8 +37,19 @@ GtkMainWindow::GtkMainWindow() :
 	add_link_btn->signal_clicked().connect(sigc::mem_fun(*this, &GtkMainWindow::onAddMagnetBtnClicked));
 	header->add(*add_link_btn);
 
-	Gtk::VSeparator *separator = Gtk::manage(new Gtk::VSeparator());
-	header->add(*separator);
+	Gtk::VSeparator *separator1 = Gtk::manage(new Gtk::VSeparator());
+	header->add(*separator1);
+
+	Gtk::Button *up_btn = Gtk::manage(new Gtk::Button());
+	up_btn->set_image_from_icon_name("gtk-go-up");
+	header->add(*up_btn);
+
+	Gtk::Button *down_btn = Gtk::manage(new Gtk::Button());
+	down_btn->set_image_from_icon_name("gtk-go-down");
+	header->add(*down_btn);
+
+	Gtk::VSeparator *separator2 = Gtk::manage(new Gtk::VSeparator());
+	header->add(*separator2);
 
 	Gtk::Button *pause_btn = Gtk::manage(new Gtk::Button());
 	pause_btn->set_image_from_icon_name("gtk-media-pause");
@@ -42,8 +61,14 @@ GtkMainWindow::GtkMainWindow() :
 
 	this->set_titlebar(*header);
 
+	Gtk::VSeparator *separator3 = Gtk::manage(new Gtk::VSeparator());
+	header->add(*separator3);
+
 	Gtk::Button *properties_btn = Gtk::manage(new Gtk::Button());
 	properties_btn->set_image_from_icon_name("gtk-properties");
+	//TODO:align properties button to right of top bar
+	//properties_btn->set_alignment(1.0f,0.0f);
+
 	header->add(*properties_btn);
 
 	m_treeview = Gtk::manage(new GtkTorrentTreeView());
@@ -111,18 +136,37 @@ void GtkMainWindow::onAddMagnetBtnClicked()
 
 void GtkMainWindow::onPauseBtnClicked()
 {
-	//TODO: handle pausing torrents
+	//get the torrent selected in treeview
+
+	//toggle pause status
+	//if(torrent.is_paused()) {
+	//	torrent.resume();
+	//} else {
+	//	torrent.pause();
+	//}
 }
 
 void GtkMainWindow::onRemoveBtnClicked()
 {
-	//TODO: handle removing torrents
-}
+	//get the torrent selected in treeview
 
+	//remove the torrent from treeview
+	//torrent.remove();
+}
+/*
 void GtkMainWindow::onPropertiesBtnClicked()
 {
-	//TODO: handle properties button click
-}
+	GtkPropertiesWindow d;
+	d.set_transient_for(*this);
+	int r = d.run();
+
+	switch (r)
+	{
+	case Gtk::RESPONSE_OK:
+		//TODO: Store slected settings to .config file
+		break;
+	}
+}*/
 
 bool GtkMainWindow::onDestroy(GdkEventAny *event)
 {
