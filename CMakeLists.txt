@@ -52,7 +52,23 @@ ADD_LIBRARY ( ${PROJECT_NAME}
 # Create test executable
 ADD_EXECUTABLE ( gTest
 	test/main.cpp
-	)
+)
+
+# Make sure libgtorrent.a is built before gTest.exe
+ADD_DEPENDENCIES(gTest gtorrent)
+
+# Add and move test torrents
+add_custom_target(copytorrents ALL
+    COMMENT "Copying torrents"
+)
+FILE(GLOB Torrents ${PROJECT_SOURCE_DIR}/test/*.torrent)
+FOREACH(Torrent ${Torrents})
+    ADD_CUSTOM_COMMAND(TARGET copytorrents 
+        COMMAND ${CMAKE_COMMAND} -E copy ${Torrent} ${CMAKE_BINARY_DIR}/${Torrent_NAME}
+        COMMENT "Copying ${Torrent}"
+    )
+ENDFOREACH()
+ADD_DEPENDENCIES(copytorrents gTest)
 
 ADD_DEFINITIONS (
     ${LIBTORRENT_CFLAGS}
