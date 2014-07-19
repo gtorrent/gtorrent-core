@@ -11,14 +11,14 @@
 class GtkTorrentColumns : public Gtk::TreeModel::ColumnRecord
 {
 public:
-	GtkTorrentColumns(unsigned int flags = 0xFFFFFFFF)
+	GtkTorrentColumns()
 	{
-		if(flags &  1) add(m_col_name);
-		if(flags &  2) add(m_col_seeders);
-		if(flags &  4) add(m_col_leechers);
-		if(flags &  8) add(m_col_dl_speed);
-		if(flags & 16) add(m_col_percent);
-		if(flags & 32) add(m_col_percent_text);
+		add(m_col_name);
+		add(m_col_seeders);
+		add(m_col_leechers);
+		add(m_col_dl_speed);
+		add(m_col_percent);
+		add(m_col_percent_text);
 	}
 	
 	Gtk::TreeModelColumn<Glib::ustring> m_col_name;
@@ -36,20 +36,38 @@ class GtkTorrentTreeView : public Gtk::TreeView
 {
 private:
 	GtkTorrentColumns m_cols;
+
 	Glib::RefPtr<Gtk::ListStore> m_liststore;
+
+	/* Yeah it's shit. */
+	/* Just a quick way to toggle columns */
+	/* Each bit from the LSB enables or disables a panel */
+	/* You can toggle a bit by XORing with 1 */
 	unsigned visibleColumns = 0xFFFFFFFF;
 
 	void setupColumns();
 
-	bool                      view_onClick(GdkEventButton *event);
+	/* Event handlers for clicks on the controls */
+	bool               torrentView_onClick(GdkEventButton *event);
 	bool            torrentColumns_onClick(GdkEventButton *event);
-	void            torrentContext_onClick();
-	void               nameContext_onClick();
-	void            seedersContext_onClick();
-	void           leechersContext_onClick();
-	void               rateContext_onClick();
-	void           progressContext_onClick();
-	void Rebuild();
+
+	/* Event Handlers for the columns context Menu */
+	void     nameColumnContext_onClick();
+	void     rateColumnContext_onClick();
+	void  seedersColumnContext_onClick();
+	void  torrentColumnContext_onClick();
+	void leechersColumnContext_onClick();
+	void progressColumnContext_onClick();
+
+	/* Event handlers for the torrent view context menu */
+	void     stopView_onClick();
+	void     openView_onClick();
+	void    startView_onClick();
+	void   removeView_onClick();
+	void priorityView_onClick();
+	void propertyView_onClick();
+
+	void RebuildTorrentView();
 	
 public:
 	GtkTorrentTreeView();
