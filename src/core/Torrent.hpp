@@ -4,6 +4,7 @@
 #include "Event.hpp"
 #include <iomanip>
 #include <sstream>
+#include <fstream>
 
 class Torrent
 {
@@ -22,7 +23,7 @@ public:
 	libtorrent::add_torrent_params getTorrentParams();
 	libtorrent::torrent_handle &getHandle();
 	string getPath();
-	
+
 	// Returns number of seconds the torrent has been active
 	boost::int64_t getActive();
 

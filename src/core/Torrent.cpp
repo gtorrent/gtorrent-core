@@ -1,5 +1,6 @@
 #include <core/Core.hpp>
 #include "Torrent.hpp"
+#include "Log.hpp"
 #define T_PPM 1000000.f
 
 Torrent::Torrent(string path) :
@@ -9,10 +10,29 @@ Torrent::Torrent(string path) :
 	if (gt::Core::isMagnetLink(path))
 		m_torrent_params.url = path;
 	else
+	{
 		//libtorrent::add_torrent_params.ti is an intrusive_ptr in 1.0 and a shared_ptr in svn.
 		//Using decltype allows us to make it compatible with both versions while still properly using the constructor to avoid a compiler error on boost 1.55 when the = operator is used with a pointer.
-		m_torrent_params.ti = decltype(m_torrent_params.ti)(new libtorrent::torrent_info(path));
-
+		libtorrent::error_code ec;
+		decltype(m_torrent_params.ti) tester = decltype(m_torrent_params.ti)(new libtorrent::torrent_info(path, ec));
+		if (ec.value() == 0)
+		{
+			ifstream torrentcheck(path);
+			bool isempty = torrentcheck.peek() == ifstream::traits_type::eof();
+			torrentcheck.close();
+			if (isempty)
+			{
+				gt::Log::Debug("The torrent file was empty");
+				throw - 1;
+			}
+			m_torrent_params.ti = tester;//If no exception was thrown add the torrent
+		}
+		else
+		{
+			gt::Log::Debug(ec.message().c_str());//Call deconstructor?
+			throw - 1; //Throw error if construction of libtorrent::torrent_info fails.
+		}
+	}
 }
 
 void Torrent::setSavePath(string savepath)
@@ -57,26 +77,39 @@ boost::int64_t Torrent::getActive()
 
 string Torrent::getTextActive()
 {
-        std::ostringstream tas;
+	std::ostringstream tas;
 
-        boost::int64_t  active = getActive();
+	boost::int64_t  active = getActive();
 	//TODO: Figure out leap years
-        if (active<=0) {
-                tas << string();
-        } else if (active > 0 && active <= 60) {//seconds
-                tas << fixed << setprecision(2) << active;
-        } else if (active > 60 && active <= (60*60)) {//minutes
-                tas << ((active - active % 60)/60) << ":" << (active % 60);
-        } else if (active > (60*60) && active <= (60*60*24)) {//hours
-                tas << ((active - active % 60)/60/24) << ":" << ((active - active % 60)/60) << ":" << (active % 60);
-        } else if (active > (60*60*24) && active <= (60*60*24*7)) {//days
-                tas << ((active - active % 60)/60/24) << ":" << ((active - active % 60)/60) << ":" << ((active - active % 60)/60) << ":" << (active % 60);
-	} else if (active > (60*60*24*7) && active <= (60*60*24*365)) {//weeks
-                tas << ((active - active % 60)/60/24/7) << ":" << ((active - active % 60)/60/24) << ":" << ((active - active % 60)/60) << ":" << ((active - active % 60)/60) << ":" << (active % 60);
-	} else if (active > (60*60*24*365)) {//years
-                tas << ((active - active % 60)/60/24/365) << ":" << ((active - active % 60)/60/24/7) << ":" << ((active - active % 60)/60/24) << ":" << ((active - active % 60)/60) << ":" << ((active - active % 60)/60) << ":" << (active % 60);
+	if (active <= 0)
+	{
+		tas << string();
 	}
-        return tas.str();
+	else if (active > 0 && active <= 60)    //seconds
+	{
+		tas << fixed << setprecision(2) << active;
+	}
+	else if (active > 60 && active <= (60 * 60))  //minutes
+	{
+		tas << ((active - active % 60) / 60) << ":" << (active % 60);
+	}
+	else if (active > (60 * 60) && active <= (60 * 60 * 24)) //hours
+	{
+		tas << ((active - active % 60) / 60 / 24) << ":" << ((active - active % 60) / 60) << ":" << (active % 60);
+	}
+	else if (active > (60 * 60 * 24) && active <= (60 * 60 * 24 * 7)) //days
+	{
+		tas << ((active - active % 60) / 60 / 24) << ":" << ((active - active % 60) / 60) << ":" << ((active - active % 60) / 60) << ":" << (active % 60);
+	}
+	else if (active > (60 * 60 * 24 * 7) && active <= (60 * 60 * 24 * 365)) //weeks
+	{
+		tas << ((active - active % 60) / 60 / 24 / 7) << ":" << ((active - active % 60) / 60 / 24) << ":" << ((active - active % 60) / 60) << ":" << ((active - active % 60) / 60) << ":" << (active % 60);
+	}
+	else if (active > (60 * 60 * 24 * 365)) //years
+	{
+		tas << ((active - active % 60) / 60 / 24 / 365) << ":" << ((active - active % 60) / 60 / 24 / 7) << ":" << ((active - active % 60) / 60 / 24) << ":" << ((active - active % 60) / 60) << ":" << ((active - active % 60) / 60) << ":" << (active % 60);
+	}
+	return tas.str();
 }
 
 float Torrent::getTotalProgress()
