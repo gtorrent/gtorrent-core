@@ -77,7 +77,7 @@ boost::int64_t Torrent::getActive()
 
 string Torrent::getTextActive()
 {
-	std::ostringstream tas;
+	ostringstream tas;
 
 	boost::int64_t  active = getActive();
 	//TODO: Figure out leap years
@@ -158,7 +158,7 @@ string Torrent::getTextState()
 		break;
 	case libtorrent::torrent_status::downloading:
 	default:
-		std::ostringstream o;
+		ostringstream o;
 		int precision = 1;
 		if (m_torrent_params.ti != NULL) //m_torrent_params.ti is not initial initialized for magnet links
 			if (m_torrent_params.ti->total_size() < 1024 * 1024 * 1024)
@@ -176,7 +176,7 @@ unsigned int Torrent::getUploadRate()
 
 string Torrent::getTextUploadRate()
 {
-	std::ostringstream upr;
+	ostringstream upr;
 
 	long double uprate = getUploadRate() / 1024;
 
@@ -210,7 +210,7 @@ unsigned int Torrent::getDownloadRate()
 
 string Torrent::getTextDownloadRate()
 {
-	std::ostringstream dnr;
+	ostringstream dnr;
 
 	long double downrate = getDownloadRate() / 1024;
 
@@ -245,7 +245,7 @@ boost::int64_t Torrent::getTotalUploaded()
 
 string Torrent::getTextTotalUploaded()
 {
-	std::ostringstream ttu;
+	ostringstream ttu;
 
 	boost::int64_t uploaded = getTotalUploaded();
 
@@ -281,7 +281,7 @@ boost::int64_t Torrent::getTotalDownloaded()
 
 string Torrent::getTextTotalDownloaded()
 {
-	std::ostringstream ttd;
+	ostringstream ttd;
 
 	boost::int64_t  downloaded = getTotalDownloaded();
 
@@ -308,6 +308,50 @@ string Torrent::getTextTotalDownloaded()
 	return ttd.str();
 }
 
+boost::int64_t Torrent::getTorrentSize()
+{
+	return m_handle.status().total_wanted;
+}
+
+boost::int64_t Torrent::timeRemaining()
+{
+	if(getDownloadRate() > 0)
+		return getTorrentSize() / getDownloadRate();
+	else
+		return 0;
+}
+
+string Torrent::getTextTimeRemaining()
+{
+	//Very crude, pls to be fixing me, kthnx
+	ostringstream oss;
+
+	double time_s = timeRemaining();
+
+	int hours = 0;
+	int mins = time_s / 60;
+
+	if(mins >= 60)
+	{
+		hours = mins / 60;
+		mins = ((mins / hours) - 60) * hours;
+
+		if(hours == 1)
+			oss << hours << " Hour, " << mins << " Mins";
+		else
+			oss << hours << " Hours, " << mins << " Mins";
+	}
+	else
+	{
+		if(mins == 1)
+			oss << mins << " Minute";
+		else
+			oss << mins << " Minutes";
+	}
+	
+	return oss.str();
+}
+
 float Torrent::getTotalRatio()
 {
 	if (getTotalDownloaded() == 0)
@@ -323,7 +367,7 @@ float Torrent::getTotalRatio()
 
 string Torrent::getTextTotalRatio()
 {
-	std::stringstream ttr (stringstream::in | stringstream::out);
+	stringstream ttr (stringstream::in | stringstream::out);
 
 	float ratio = getTotalRatio();
 
