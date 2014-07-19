@@ -1,5 +1,4 @@
 #include "GtkAddMagnetLinkWindow.hpp"
-#include "GtkPropertiesWindow.hpp"
 #include <gtkmm/filechooserdialog.h>
 #include "GtkMainWindow.hpp"
 #include <Application.hpp>
