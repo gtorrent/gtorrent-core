@@ -1,6 +1,7 @@
 #include <gtkmm/cellrendererprogress.h>
 #include <gtkmm/treeviewcolumn.h>
 #include <gtkmm/hvseparator.h>
+#include <gtkmm/checkmenuitem.h>
 
 #include <Application.hpp>
 #include "GtkTorrentTreeView.hpp"
@@ -11,13 +12,22 @@ GtkTorrentTreeView::GtkTorrentTreeView()
 	this->set_model(m_liststore);
 	this->setupColumns();
 	signal_button_press_event().connect(sigc::mem_fun(*this, &GtkTorrentTreeView::torrentView_onClick), false);
+
+	int i = 1;
+	for(auto c : get_columns())
+	{
+		Gtk::CheckMenuItem *rcmItem1 = Gtk::manage(new Gtk::CheckMenuItem(c->get_title()));
+		rcmItem1->signal_button_press_event().connect(sigc::bind<1>(sigc::mem_fun(*this, &GtkTorrentTreeView::ColumnContextMenu_onClick), i));
+		i <<= 1;
+		m_rcMenu->add(*rcmItem1);
+	}
 }
 
 bool GtkTorrentTreeView::torrentView_onClick(GdkEventButton *event)
 {
 	if(event->button == 3) 
 	{
-		Gtk::Menu     *rcMenu  = Gtk::manage(new Gtk::Menu());
+		Gtk::Menu     *m_rcMenu   = Gtk::manage(new Gtk::Menu());
 		Gtk::MenuItem *rcmItem1 = Gtk::manage(new Gtk::MenuItem("Start"));
 		Gtk::MenuItem *rcmItem2 = Gtk::manage(new Gtk::MenuItem("Stop"));
 		Gtk::MenuItem *rcmItem3 = Gtk::manage(new Gtk::MenuItem("Remove"));
@@ -36,46 +46,34 @@ bool GtkTorrentTreeView::torrentView_onClick(GdkEventButton *event)
 		rcmItem5->signal_activate().connect(sigc::mem_fun(*this, &GtkTorrentTreeView::priorityView_onClick));
 		rcmItem6->signal_activate().connect(sigc::mem_fun(*this, &GtkTorrentTreeView::propertyView_onClick));
 
-		rcMenu->add(*rcmItem1);
-		rcMenu->add(*rcmItem2);
-		rcMenu->add(*rcmItem3);
-		rcMenu->add(*rcmItem4);
-		rcMenu->add(*rcmItem5);
-		rcMenu->add(*rcmItem6);
+		m_rcMenu->add(*rcmItem1);
+		m_rcMenu->add(*rcmItem2);
+		m_rcMenu->add(*rcmItem3);
+		m_rcMenu->add(*rcmItem4);
+		m_rcMenu->add(*rcmItem5);
+		m_rcMenu->add(*rcmItem6);
 
-		rcMenu->show_all();
-		rcMenu->popup(event->button, event->time);
+		m_rcMenu->show_all();
+		m_rcMenu->popup(event->button, event->time);
 	}
 
 	return false;
+}
+
+bool GtkTorrentTreeView::ColumnContextMenu_onClick(GdkEventButton *event, int n)
+{	
+	m_visibleColumns ^= n;
+	remove_all_columns();
+	setupColumns();
+	return true;
 }
 
 bool GtkTorrentTreeView::torrentColumns_onClick(GdkEventButton *event)
 {
 	if(event->button == 3) 
 	{
-		Gtk::Menu     *rcMenu   = Gtk::manage(new Gtk::Menu());
-
-		Gtk::MenuItem *rcmItem1 = Gtk::manage(new Gtk::MenuItem("Name"));
-		Gtk::MenuItem *rcmItem2 = Gtk::manage(new Gtk::MenuItem("Seeders"));
-		Gtk::MenuItem *rcmItem3 = Gtk::manage(new Gtk::MenuItem("Leechers"));
-		Gtk::MenuItem *rcmItem4 = Gtk::manage(new Gtk::MenuItem("Rate"));
-		Gtk::MenuItem *rcmItem5 = Gtk::manage(new Gtk::MenuItem("Progress"));
-
-		rcmItem1->signal_activate().connect(sigc::mem_fun(*this, &GtkTorrentTreeView::    nameColumnContext_onClick));
-		rcmItem4->signal_activate().connect(sigc::mem_fun(*this, &GtkTorrentTreeView::    rateColumnContext_onClick));
-		rcmItem2->signal_activate().connect(sigc::mem_fun(*this, &GtkTorrentTreeView:: seedersColumnContext_onClick));
-		rcmItem3->signal_activate().connect(sigc::mem_fun(*this, &GtkTorrentTreeView::leechersColumnContext_onClick));
-		rcmItem5->signal_activate().connect(sigc::mem_fun(*this, &GtkTorrentTreeView::progressColumnContext_onClick));
-
-		rcMenu->add(*rcmItem1);
-		rcMenu->add(*rcmItem2);
-		rcMenu->add(*rcmItem3);
-		rcMenu->add(*rcmItem4);
-		rcMenu->add(*rcmItem5);
-
-		rcMenu->show_all();
-		rcMenu->popup(event->button, event->time);
+		m_rcMenu->show_all();
+		m_rcMenu->popup(event->button, event->time);
 	}
 
 	return true; //The bool that determine if the event has been handled allows to propagete or not a click
@@ -87,14 +85,14 @@ void GtkTorrentTreeView::setupColumns()
 	Gtk::TreeViewColumn *col = nullptr;
 	Gtk::CellRendererProgress *cell = nullptr;
 
-	if(visibleColumns & 1)
+	if(m_visibleColumns & 1)
 	{
 		cid = this->append_column("Name", m_cols.m_col_name);
 		col = this->get_column(cid - 1);
 		col->set_fixed_width(250);
 	}
 
-	if(visibleColumns & 2)
+	if(m_visibleColumns & 2)
 	{
 		cid = this->append_column("Seeders", m_cols.m_col_seeders);
 		col = this->get_column(cid - 1);
@@ -102,7 +100,7 @@ void GtkTorrentTreeView::setupColumns()
 		col->set_fixed_width(90);
 	}
 
-	if(visibleColumns & 4)
+	if(m_visibleColumns & 4)
 	{
 		cid = this->append_column("Leechers", m_cols.m_col_leechers);
 		col = this->get_column(cid - 1);
@@ -110,7 +108,7 @@ void GtkTorrentTreeView::setupColumns()
 		col->set_fixed_width(90);
 	}
 
-	if(visibleColumns & 8)
+	if(m_visibleColumns & 8)
 	{
 		cid = this->append_column("Rate", m_cols.m_col_dl_speed);
 		col = this->get_column(cid - 1);
@@ -118,7 +116,7 @@ void GtkTorrentTreeView::setupColumns()
 		col->set_fixed_width(95);
 	}
 
-	if(visibleColumns & 16)
+	if(m_visibleColumns & 16)
 	{
 		cell = Gtk::manage(new Gtk::CellRendererProgress());
 		cid = this->append_column("Progress", *cell);
@@ -172,42 +170,6 @@ void GtkTorrentTreeView::updateCells()
 
 		++i;
 	}
-}
-
-void GtkTorrentTreeView::nameColumnContext_onClick()
-{
-	visibleColumns ^= 1;
-	RebuildTorrentView();
-}
-
-void GtkTorrentTreeView::seedersColumnContext_onClick()
-{
-	visibleColumns ^= 2;
-	RebuildTorrentView();
-}
-
-void GtkTorrentTreeView::leechersColumnContext_onClick()
-{
-	visibleColumns ^= 4;
-	RebuildTorrentView();
-}
-
-void GtkTorrentTreeView::rateColumnContext_onClick()
-{
-	visibleColumns ^= 8;
-	RebuildTorrentView();
-}
-
-void GtkTorrentTreeView::progressColumnContext_onClick()
-{
-	visibleColumns ^= 16;
-	RebuildTorrentView();
-}
-
-void GtkTorrentTreeView::RebuildTorrentView()
-{
-	remove_all_columns();
-	setupColumns();
 }
 
 void GtkTorrentTreeView::    stopView_onClick() { /* Doesn't do nuffin wrong */ }

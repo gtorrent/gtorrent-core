@@ -43,13 +43,15 @@ private:
 	/* Just a quick way to toggle columns */
 	/* Each bit from the LSB enables or disables a panel */
 	/* You can toggle a bit by XORing with 1 */
-	unsigned visibleColumns = 0xFFFFFFFF;
+	unsigned m_visibleColumns = 0xFFFFFFFF;
+	Gtk::Menu *m_rcMenu = Gtk::manage(new Gtk::Menu());
 
 	void setupColumns();
 
 	/* Event handlers for clicks on the controls */
-	bool               torrentView_onClick(GdkEventButton *event);
-	bool            torrentColumns_onClick(GdkEventButton *event);
+	bool       torrentView_onClick(GdkEventButton *event);
+	bool    torrentColumns_onClick(GdkEventButton *event);
+	bool ColumnContextMenu_onClick(GdkEventButton *event, int n);
 
 	/* Event Handlers for the columns context Menu */
 	void     nameColumnContext_onClick();
