@@ -7,9 +7,12 @@ string getFullDateNumber(int n)
 {
 	ostringstream oss;
 
-	if (n < 10) {
+	if (n < 10)
+	{
 		oss << "0" << n;
-	} else {
+	}
+	else
+	{
 		oss << n;
 	}
 
