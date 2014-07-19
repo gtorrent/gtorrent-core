@@ -2,6 +2,6 @@
 #include "Base.hpp"
 
 GuiBase::GuiBase() :
-	m_core(Application::getSingleton()->getCore())
+    m_core(Application::getSingleton()->getCore())
 {
 }

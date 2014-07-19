@@ -9,14 +9,14 @@
 class GuiGtk : public GuiBase
 {
 private:
-	Gtk::Main *m_gtkmain;
-	GtkMainWindow *mainWindow;
+    Gtk::Main *m_gtkmain;
+    GtkMainWindow *mainWindow;
 public:
-	GuiGtk(int argc, char **argv);
-	~GuiGtk();
+    GuiGtk(int argc, char **argv);
+    ~GuiGtk();
 
-	// Public Members & Functions
+    // Public Members & Functions
 
-	void update();
+    void update();
 };
 

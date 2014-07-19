@@ -9,19 +9,19 @@
 class GtkAddMagnetLinkWindow : public Gtk::Dialog
 {
 private:
-	Gtk::HeaderBar *m_header;
-	Gtk::TextView *m_textview; 
+    Gtk::HeaderBar *m_header;
+    Gtk::TextView *m_textview;
 
-	// Signal Responders
+    // Signal Responders
 
-	void onAddBtnClicked();
-	void onClipboardReady(const Glib::ustring &text);
+    void onAddBtnClicked();
+    void onClipboardReady(const Glib::ustring &text);
 
 public:
-	GtkAddMagnetLinkWindow();
+    GtkAddMagnetLinkWindow();
 
-	// Getters
-	
-	string getMagnetURL();
+    // Getters
+
+    string getMagnetURL();
 };
 
