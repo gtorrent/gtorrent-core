@@ -15,7 +15,7 @@ private:
 	GtkTorrentTreeView *m_treeview;
 
 	// Signal Responders
-	
+
 	void onAddBtnClicked();
 	void onAddMagnetBtnClicked();
 
