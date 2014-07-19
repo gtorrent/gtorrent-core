@@ -3,6 +3,7 @@
 #include "GtkTorrentTreeView.hpp"
 #include <gtkmm/headerbar.h>
 #include <gtkmm/window.h>
+#include <gtkmm/button.h>
 #include <core/Core.hpp>
 #include <gtkmm/main.h>
 
@@ -20,7 +21,6 @@ private:
     void onAddMagnetBtnClicked();
     void onPauseBtnClicked();
     void onResumeBtnClicked();
-
 public:
     GtkMainWindow();
 

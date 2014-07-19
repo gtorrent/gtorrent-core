@@ -1,9 +1,8 @@
 #include "GtkAddMagnetLinkWindow.hpp"
 #include <gtkmm/filechooserdialog.h>
+#include <gtkmm/hvseparator.h>
 #include "GtkMainWindow.hpp"
 #include <Application.hpp>
-#include <gtkmm/button.h>
-#include <gtkmm/hvseparator.h>
 #include <gtkmm/stock.h>
 #include <glibmm.h>
 
@@ -110,6 +109,7 @@ void GtkMainWindow::onResumeBtnClicked()
 {
     m_treeview->setSelectedPaused(false);
 }
+
 bool GtkMainWindow::onDestroy(GdkEventAny *event)
 {
     m_core->shutdown();

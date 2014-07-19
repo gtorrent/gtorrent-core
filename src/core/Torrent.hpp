@@ -80,5 +80,22 @@ public:
 
     void setPaused(bool isPaused);
     bool isPaused();
+	
+    // Torrent Actions ( I suppose these could just be getHandle()->start() and getHandle()->resume() instead ... )
+	// Only useful to consider if libtorrent has a criticial update but decides to change API,
+	// We won't then need to update every UI ( .. unlikely though )
+	
+	void resume();
+	void pause();
+
+	// Getters
+	libtorrent::add_torrent_params getTorrentParams();
+	libtorrent::torrent_handle &getHandle();
+	string getPath();
+
+	bool getPaused();
+	
+	// Returns percentage of all files downloading
+	float getTotalProgress();
 };
 

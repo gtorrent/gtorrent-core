@@ -12,7 +12,6 @@ Torrent::Torrent(string path) :
         //libtorrent::add_torrent_params.ti is an intrusive_ptr in 1.0 and a shared_ptr in svn.
         //Using decltype allows us to make it compatible with both versions while still properly using the constructor to avoid a compiler error on boost 1.55 when the = operator is used with a pointer.
         m_torrent_params.ti = decltype(m_torrent_params.ti)(new libtorrent::torrent_info(path));
-
 }
 
 void Torrent::setSavePath(string savepath)
@@ -77,6 +76,11 @@ unsigned int Torrent::getTotalPeers()
 unsigned int Torrent::getTotalLeechers()
 {
     return m_handle.status().num_peers - m_handle.status().num_seeds;
+}
+
+bool Torrent::getPaused()
+{
+	return m_handle.status().paused;
 }
 
 libtorrent::torrent_status::state_t Torrent::getState()
@@ -283,5 +287,15 @@ void Torrent::setPaused(bool isPaused)
 bool Torrent::isPaused()
 {
     return m_handle.status().paused;
+}
+
+void Torrent::resume()
+{
+    setPaused(false);
+}
+
+void Torrent::pause()
+{
+    setPaused(true);
 }
 
