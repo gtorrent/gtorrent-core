@@ -1,6 +1,6 @@
 - [ ] define the API
 - [ ] Make sure libgtorrent.a builds before gTest.exe
-- [ ] Implement logging to file
+- [x] Implement logging to file
 - [ ] Implement database for torrents [containing download location/file location/other]
 - [ ] Implement moving all .torrent files to a central directory
 - [ ] all processing should be done in core & not UI (search, rss, error checking)
