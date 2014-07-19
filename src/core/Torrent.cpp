@@ -271,6 +271,50 @@ string Torrent::getTextTotalDownloaded()
 	return ttd.str();
 }
 
+boost::int64_t Torrent::getTorrentSize()
+{
+	return m_handle.status().total_wanted;
+}
+
+boost::int64_t Torrent::timeRemaining()
+{
+	if(getDownloadRate() > 0)
+		return getTorrentSize() / getDownloadRate();
+	else
+		return 0;
+}
+
+string Torrent::getTextTimeRemaining()
+{
+	//Very crude, pls to be fixing me, kthnx
+	ostringstream oss;
+
+	double time_s = timeRemaining();
+
+	int hours = 0;
+	int mins = time_s / 60;
+
+	if(mins >= 60)
+	{
+		hours = mins / 60;
+		mins = ((mins / hours) - 60) * hours;
+
+		if(hours == 1)
+			oss << hours << " Hour, " << mins << " Mins";
+		else
+			oss << hours << " Hours, " << mins << " Mins";
+	}
+	else
+	{
+		if(mins == 1)
+			oss << mins << " Minute";
+		else
+			oss << mins << " Minutes";
+	}
+	
+	return oss.str();
+}
+
 float Torrent::getTotalRatio()
 {
 	if (getTotalDownloaded() == 0)

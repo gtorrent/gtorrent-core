@@ -24,6 +24,7 @@ public:
 		add(m_col_ul_total);
 		add(m_col_dl_total);
 		add(m_col_dl_ratio);
+		add(m_col_eta);
 	}
 	Gtk::TreeModelColumn<Glib::ustring> m_col_active;
 	Gtk::TreeModelColumn<Glib::ustring> m_col_name;
@@ -37,6 +38,7 @@ public:
 	Gtk::TreeModelColumn<Glib::ustring> m_col_ul_total;
 	Gtk::TreeModelColumn<Glib::ustring> m_col_dl_total;
 	Gtk::TreeModelColumn<Glib::ustring> m_col_dl_ratio;
+	Gtk::TreeModelColumn<Glib::ustring> m_col_eta;
 };
 
 // Gtk Torrent Tree View Section
