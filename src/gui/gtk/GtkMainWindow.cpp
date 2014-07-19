@@ -61,20 +61,21 @@ void GtkMainWindow::onAddBtnClicked()
 	fc.add_button("_Cancel", Gtk::RESPONSE_CANCEL);
 	fc.add_button("Select", Gtk::RESPONSE_OK);
 
-  	Glib::RefPtr<Gtk::FileFilter> filter_t = Gtk::FileFilter::create();
+	Glib::RefPtr<Gtk::FileFilter> filter_t = Gtk::FileFilter::create();
 	filter_t->set_name("Torrent Files");
 	filter_t->add_mime_type("application/x-bittorrent");
 	fc.add_filter(filter_t);
 
 	int result = fc.run();
 
-	switch (result) {
-		case Gtk::RESPONSE_OK:
-			for (auto &f : fc.get_filenames())
-			{
-				shared_ptr<Torrent> t = m_core->addTorrent(f.c_str());
-				m_treeview->addCell(t);
-			}
+	switch (result)
+	{
+	case Gtk::RESPONSE_OK:
+		for (auto &f : fc.get_filenames())
+		{
+			shared_ptr<Torrent> t = m_core->addTorrent(f.c_str());
+			m_treeview->addCell(t);
+		}
 		break;
 	}
 }
@@ -85,10 +86,11 @@ void GtkMainWindow::onAddMagnetBtnClicked()
 	d.set_transient_for(*this);
 	int r = d.run();
 
-	switch (r) {
-		case Gtk::RESPONSE_OK:
-			shared_ptr<Torrent> t = m_core->addTorrent(d.getMagnetURL());
-			m_treeview->addCell(t);
+	switch (r)
+	{
+	case Gtk::RESPONSE_OK:
+		shared_ptr<Torrent> t = m_core->addTorrent(d.getMagnetURL());
+		m_treeview->addCell(t);
 		break;
 	}
 }
