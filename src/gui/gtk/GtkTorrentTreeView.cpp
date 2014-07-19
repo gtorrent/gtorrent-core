@@ -15,6 +15,10 @@ void GtkTorrentTreeView::setupColumns()
 	unsigned int cid = 0;
 	Gtk::TreeViewColumn *col = nullptr;
 
+	cid = this->append_column("Active", m_cols.m_col_active);
+	col = this->get_column(cid - 1);
+	col->set_fixed_width(90);
+
 	cid = this->append_column("Name", m_cols.m_col_name);
 	col = this->get_column(cid - 1);
 	col->set_fixed_width(250);
@@ -78,6 +82,7 @@ void GtkTorrentTreeView::addCell(shared_ptr<Torrent> &t)
 		return;
 
 	Gtk::TreeModel::Row row = *(m_liststore->append());
+	row[m_cols.m_col_active] = t->getTextActive();
 	row[m_cols.m_col_name] = t->getHandle().name();
 	row[m_cols.m_col_percent] = t->getTotalProgress();
 	row[m_cols.m_col_percent_text] = t->getTextState();
@@ -95,6 +100,7 @@ void GtkTorrentTreeView::updateCells()
 	for (auto &c : m_liststore->children()) {
 		shared_ptr<Torrent> t = Application::getSingleton()->getCore()->getTorrents()[i];
 
+		c[m_cols.m_col_active] = t->getTextActive();
 		c[m_cols.m_col_percent] = t->getTotalProgress();
 		c[m_cols.m_col_seeders] = t->getTotalSeeders();
 		c[m_cols.m_col_percent_text] = t->getTextState();
