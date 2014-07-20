@@ -86,68 +86,25 @@ void GtkTorrentTreeView::setupColumns()
 	Gtk::TreeViewColumn *col = nullptr;
 	Gtk::CellRendererProgress *cell = nullptr;
 
-	cid = this->append_column("Queue", m_cols.m_col_queue);
-	col = this->get_column(cid - 1);
-	col->set_fixed_width(96);
-
-	cid = this->append_column("Age", m_cols.m_col_age);
-	col = this->get_column(cid - 1);
-	col->set_fixed_width(96);
-
-	cid = this->append_column("ETA", m_cols.m_col_eta);
-	col = this->get_column(cid - 1);
-	col->set_alignment(Gtk::Align::ALIGN_CENTER);
-	col->set_fixed_width(96);
-
-	cid = this->append_column("Name", m_cols.m_col_name);
-	col = this->get_column(cid - 1);
-	col->set_fixed_width(96);
-
-	cid = this->append_column("Seed", m_cols.m_col_seeders);
-	col = this->get_column(cid - 1);
-	col->set_fixed_width(96);
-
-	cid = this->append_column("Leech", m_cols.m_col_leechers);
-	col = this->get_column(cid - 1);
-	col->set_fixed_width(96);
-
-	cid = this->append_column("Upload Speed", m_cols.m_col_ul_speed);
-	col = this->get_column(cid - 1);
-	col->set_fixed_width(96);
-
-	cid = this->append_column("Download Speed", m_cols.m_col_dl_speed);
-	col = this->get_column(cid - 1);
-
-	col->set_fixed_width(104);
-
-	cid = this->append_column("Uploaded", m_cols.m_col_ul_total);
-	col = this->get_column(cid - 1);
-	col->set_fixed_width(96);
-
-	cid = this->append_column("Downloaded", m_cols.m_col_dl_total);
-	col = this->get_column(cid - 1);
-	col->set_alignment(Gtk::Align::ALIGN_CENTER);
-	col->set_fixed_width(96);
-
-	cid = this->append_column("Size", m_cols.m_col_size);
-	col = this->get_column(cid - 1);
-
-	col->set_fixed_width(96);
-
-	cid = this->append_column("Remains", m_cols.m_col_remaining);
-	col = this->get_column(cid - 1);
-	col->set_fixed_width(96);
-
-	cid = this->append_column("Ratio", m_cols.m_col_dl_ratio);
-	col = this->get_column(cid - 1);
-	col->set_fixed_width(96);
+	this->append_column("Queue", m_cols.m_col_queue);
+	this->append_column("Age", m_cols.m_col_age);
+	this->append_column("ETA", m_cols.m_col_eta);
+	this->append_column("Name", m_cols.m_col_name);
+	this->append_column("Seed", m_cols.m_col_seeders);
+	this->append_column("Leech", m_cols.m_col_leechers);
+	this->append_column("Upload Speed", m_cols.m_col_ul_speed);
+	this->append_column("Download Speed", m_cols.m_col_dl_speed);
+	this->append_column("Uploaded", m_cols.m_col_ul_total);
+	this->append_column("Downloaded", m_cols.m_col_dl_total);
+	this->append_column("Size", m_cols.m_col_size);
+	this->append_column("Remains", m_cols.m_col_remaining);
+	this->append_column("Ratio", m_cols.m_col_dl_ratio);
 
 	cell = Gtk::manage(new Gtk::CellRendererProgress());
 	cid = this->append_column("Progress", *cell);
 	col = this->get_column(cid - 1);
 	col->add_attribute(cell->property_value(), m_cols.m_col_percent);
 	col->add_attribute(cell->property_text(), m_cols.m_col_percent_text);
-
 
 	for (auto & c : this->get_columns())
 	{
@@ -158,6 +115,7 @@ void GtkTorrentTreeView::setupColumns()
 		c->set_clickable();
 		c->set_resizable();
 		c->set_reorderable();
+                c->set_fixed_width(96);
 	}
 }
 
