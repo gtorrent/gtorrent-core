@@ -21,7 +21,7 @@ configure_file(src/utils/Version.hpp.in Version.hpp @ONLY)
 
 
 # Set compiler flags
-SET (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -g -include all.h -Wall")
+SET (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -g -Wall")
 
 # Fuck liboost for not providing boost.pc or fucking something
 SET (Boost_USE_STATIC_LIBS ON) 
@@ -38,7 +38,7 @@ INCLUDE_DIRECTORIES( ${PROJECT_BINARY_DIR} )
 LINK_DIRECTORIES (
     ${Boost_LIBRARY_DIRS}
     ${LIBTORRENT_LIBRARY_DIRS}
-	${CMAKE_SOURCE_DIRECTORY}
+    ${CMAKE_SOURCE_DIRECTORY}
 )
 
 # Create static libbrary
@@ -52,7 +52,7 @@ ADD_LIBRARY ( ${PROJECT_NAME}
 # Create test executable
 ADD_EXECUTABLE ( gTest
     EXCLUDE_FROM_ALL
-	test/main.cpp
+    test/main.cpp
 )
 
 # Make sure libgtorrent.a is built before gTest.exe
@@ -77,8 +77,8 @@ ADD_DEFINITIONS (
 )
 
 INCLUDE_DIRECTORIES (
+    include
     include/gtorrent
-	include
     ${Boost_INCLUDE_DIRS}
     ${LIBTORRENT_INCLUDE_DIRS}
 )

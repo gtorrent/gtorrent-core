@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 # Compiled Object files
 *.slo
 *.lo
@@ -20,7 +19,7 @@
 *.exe
 *.out
 *.app
-=======
+
 # cmake 
 Makefile
 CMakeFiles/*
@@ -37,4 +36,3 @@ gTorrent
 
 # ctag files
 tags
->>>>>>> dd8a0308ed49d12a42dfe3a5c6ec4279ece8d262
