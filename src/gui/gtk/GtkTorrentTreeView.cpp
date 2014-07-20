@@ -2,14 +2,13 @@
 #include <gtkmm/treeviewcolumn.h>
 #include <gtkmm/hvseparator.h>
 #include <gtkmm/checkmenuitem.h>
-
+#include <gtkmm/treeviewcolumn.h>
 #include <Application.hpp>
 #include "GtkTorrentTreeView.hpp"
 
 GtkTorrentTreeView::GtkTorrentTreeView()
 {
 	m_liststore = Gtk::ListStore::create(m_cols);
-
 	signal_button_press_event().connect(sigc::mem_fun(*this, &GtkTorrentTreeView::torrentView_onClick), false);
 
 	int i = 1;
@@ -17,12 +16,11 @@ GtkTorrentTreeView::GtkTorrentTreeView()
 	{
 		Gtk::CheckMenuItem *rcmItem1 = Gtk::manage(new Gtk::CheckMenuItem(c->get_title()));
 		rcmItem1->set_active();
-		rcmItem1->signal_button_press_event().connect(sigc::bind<1>(sigc::mem_fun(*this, &GtkTorrentTreeView::ColumnContextMenu_onClick), i));
+		rcmItem1->signal_button_press_event().connect(sigc::bind<1>(sigc::mem_fun(*this, &GtkTorrentTreeView::ColumnContextMenu_onClick), c));
 		i <<= 1;
 		m_rcMenu->add(*rcmItem1);
 	}
 
-	this->set_halign(Gtk::Align::ALIGN_CENTER);
 	this->set_model(m_liststore);
 	this->setupColumns();
 }
@@ -64,11 +62,9 @@ bool GtkTorrentTreeView::torrentView_onClick(GdkEventButton *event)
 	return false;
 }
 
-bool GtkTorrentTreeView::ColumnContextMenu_onClick(GdkEventButton *event, int n)
+bool GtkTorrentTreeView::ColumnContextMenu_onClick(GdkEventButton *event, Gtk::TreeViewColumn *tvc)
 {
-	m_visibleColumns ^= n;
-	remove_all_columns();
-	setupColumns();
+	tvc->set_visible(!tvc->get_visible());
 	return true;
 }
 
@@ -90,111 +86,68 @@ void GtkTorrentTreeView::setupColumns()
 	Gtk::TreeViewColumn *col = nullptr;
 	Gtk::CellRendererProgress *cell = nullptr;
 
-	if(m_visibleColumns & 1)
-	{
-		cid = this->append_column("Queue", m_cols.m_col_queue);
-		col = this->get_column(cid - 1);
-		col->set_fixed_width(96);
-	}
+	cid = this->append_column("Queue", m_cols.m_col_queue);
+	col = this->get_column(cid - 1);
+	col->set_fixed_width(96);
 
-	if(m_visibleColumns & 2)
-	{
-		cid = this->append_column("Age", m_cols.m_col_age);
-		col = this->get_column(cid - 1);
+	cid = this->append_column("Age", m_cols.m_col_age);
+	col = this->get_column(cid - 1);
+	col->set_fixed_width(96);
 
-		col->set_fixed_width(96);
-	}
+	cid = this->append_column("ETA", m_cols.m_col_eta);
+	col = this->get_column(cid - 1);
+	col->set_alignment(Gtk::Align::ALIGN_CENTER);
+	col->set_fixed_width(96);
 
-	if(m_visibleColumns & 4)
-	{
-		cid = this->append_column("ETA", m_cols.m_col_eta);
-		col = this->get_column(cid - 1);
-		col->set_alignment(Gtk::Align::ALIGN_CENTER);
-		col->set_fixed_width(96);
-	}
+	cid = this->append_column("Name", m_cols.m_col_name);
+	col = this->get_column(cid - 1);
+	col->set_fixed_width(96);
 
-	if(m_visibleColumns & 8)
-	{
-		cid = this->append_column("Name", m_cols.m_col_name);
-		col = this->get_column(cid - 1);
-		col->set_fixed_width(96);
-	}
+	cid = this->append_column("Seed", m_cols.m_col_seeders);
+	col = this->get_column(cid - 1);
+	col->set_fixed_width(96);
 
-	if(m_visibleColumns & 16)
-	{
-		cid = this->append_column("Seed", m_cols.m_col_seeders);
-		col = this->get_column(cid - 1);
-		col->set_fixed_width(96);
-	}
+	cid = this->append_column("Leech", m_cols.m_col_leechers);
+	col = this->get_column(cid - 1);
+	col->set_fixed_width(96);
 
-	if(m_visibleColumns & 32)
-	{
-		cid = this->append_column("Leech", m_cols.m_col_leechers);
-		col = this->get_column(cid - 1);
-		col->set_fixed_width(96);
-	}
+	cid = this->append_column("Upload Speed", m_cols.m_col_ul_speed);
+	col = this->get_column(cid - 1);
+	col->set_fixed_width(96);
 
-	if(m_visibleColumns & 64)
-	{
-		cid = this->append_column("Up", m_cols.m_col_ul_speed);
-		col = this->get_column(cid - 1);
-		col->set_fixed_width(96);
-	}
+	cid = this->append_column("Download Speed", m_cols.m_col_dl_speed);
+	col = this->get_column(cid - 1);
 
-	if(m_visibleColumns & 128)
-	{
-		cid = this->append_column("Down", m_cols.m_col_dl_speed);
-		col = this->get_column(cid - 1);
+	col->set_fixed_width(104);
 
-		col->set_fixed_width(96);
-	}
+	cid = this->append_column("Uploaded", m_cols.m_col_ul_total);
+	col = this->get_column(cid - 1);
+	col->set_fixed_width(96);
 
-	if(m_visibleColumns & 256)
-	{
-		cid = this->append_column("Up", m_cols.m_col_ul_total);
-		col = this->get_column(cid - 1);
+	cid = this->append_column("Downloaded", m_cols.m_col_dl_total);
+	col = this->get_column(cid - 1);
+	col->set_alignment(Gtk::Align::ALIGN_CENTER);
+	col->set_fixed_width(96);
 
-		col->set_fixed_width(96);
-	}
+	cid = this->append_column("Size", m_cols.m_col_size);
+	col = this->get_column(cid - 1);
 
-	if(m_visibleColumns & 512)
-	{
-		cid = this->append_column("Down", m_cols.m_col_dl_total);
-		col = this->get_column(cid - 1);
-		col->set_alignment(Gtk::Align::ALIGN_CENTER);
-		col->set_fixed_width(96);
-	}
+	col->set_fixed_width(96);
 
-	if(m_visibleColumns & 1024)
-	{
-		cid = this->append_column("Size", m_cols.m_col_size);
-		col = this->get_column(cid - 1);
+	cid = this->append_column("Remains", m_cols.m_col_remaining);
+	col = this->get_column(cid - 1);
+	col->set_fixed_width(96);
 
-		col->set_fixed_width(96);
-	}
+	cid = this->append_column("Ratio", m_cols.m_col_dl_ratio);
+	col = this->get_column(cid - 1);
+	col->set_fixed_width(96);
 
-	if(m_visibleColumns & 2048)
-	{
-		cid = this->append_column("Remains", m_cols.m_col_remaining);
-		col = this->get_column(cid - 1);
-		col->set_fixed_width(96);
-	}
+	cell = Gtk::manage(new Gtk::CellRendererProgress());
+	cid = this->append_column("Progress", *cell);
+	col = this->get_column(cid - 1);
+	col->add_attribute(cell->property_value(), m_cols.m_col_percent);
+	col->add_attribute(cell->property_text(), m_cols.m_col_percent_text);
 
-	if(m_visibleColumns & 4096)
-	{
-		cid = this->append_column("Ratio", m_cols.m_col_dl_ratio);
-		col = this->get_column(cid - 1);
-		col->set_fixed_width(96);
-	}
-
-	if(m_visibleColumns & 8192)
-	{
-		cell = Gtk::manage(new Gtk::CellRendererProgress());
-		cid = this->append_column("Progress", *cell);
-		col = this->get_column(cid - 1);
-		col->add_attribute(cell->property_value(), m_cols.m_col_percent);
-		col->add_attribute(cell->property_text(), m_cols.m_col_percent_text);
-	}
 
 	for (auto & c : this->get_columns())
 	{
