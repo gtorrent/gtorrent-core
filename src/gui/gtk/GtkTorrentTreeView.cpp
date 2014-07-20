@@ -91,13 +91,12 @@ void GtkTorrentTreeView::setupColumns()
 	{
 		cid = this->append_column("Queue", m_cols.m_col_queue);
 		col = this->get_column(cid - 1);
-
 		col->set_fixed_width(96);
 	}
 
 	if(m_visibleColumns & 2)
 	{
-		cid = this->append_column("Name", m_cols.m_col_name);
+		cid = this->append_column("Age", m_cols.m_col_age);
 		col = this->get_column(cid - 1);
 
 		col->set_fixed_width(96);
@@ -105,7 +104,7 @@ void GtkTorrentTreeView::setupColumns()
 
 	if(m_visibleColumns & 4)
 	{
-		cid = this->append_column("Age", m_cols.m_col_age);
+		cid = this->append_column("ETA", m_cols.m_col_eta);
 		col = this->get_column(cid - 1);
 		col->set_alignment(Gtk::Align::ALIGN_CENTER);
 		col->set_fixed_width(96);
@@ -113,9 +112,8 @@ void GtkTorrentTreeView::setupColumns()
 
 	if(m_visibleColumns & 8)
 	{
-		cid = this->append_column("ETA", m_cols.m_col_eta);
+		cid = this->append_column("Name", m_cols.m_col_name);
 		col = this->get_column(cid - 1);
-
 		col->set_fixed_width(96);
 	}
 
@@ -123,7 +121,6 @@ void GtkTorrentTreeView::setupColumns()
 	{
 		cid = this->append_column("Seed", m_cols.m_col_seeders);
 		col = this->get_column(cid - 1);
-
 		col->set_fixed_width(96);
 	}
 
@@ -131,27 +128,17 @@ void GtkTorrentTreeView::setupColumns()
 	{
 		cid = this->append_column("Leech", m_cols.m_col_leechers);
 		col = this->get_column(cid - 1);
-
 		col->set_fixed_width(96);
 	}
 
 	if(m_visibleColumns & 64)
 	{
-		cid = this->append_column("Rate", m_cols.m_col_dl_speed);
+		cid = this->append_column("Up", m_cols.m_col_ul_speed);
 		col = this->get_column(cid - 1);
-
 		col->set_fixed_width(96);
 	}
 
 	if(m_visibleColumns & 128)
-	{
-		cid = this->append_column("Up", m_cols.m_col_ul_speed);
-		col = this->get_column(cid - 1);
-
-		col->set_fixed_width(96);
-	}
-
-	if(m_visibleColumns & 256)
 	{
 		cid = this->append_column("Down", m_cols.m_col_dl_speed);
 		col = this->get_column(cid - 1);
@@ -159,7 +146,7 @@ void GtkTorrentTreeView::setupColumns()
 		col->set_fixed_width(96);
 	}
 
-	if(m_visibleColumns & 512)
+	if(m_visibleColumns & 256)
 	{
 		cid = this->append_column("Up", m_cols.m_col_ul_total);
 		col = this->get_column(cid - 1);
@@ -167,7 +154,7 @@ void GtkTorrentTreeView::setupColumns()
 		col->set_fixed_width(96);
 	}
 
-	if(m_visibleColumns & 1024)
+	if(m_visibleColumns & 512)
 	{
 		cid = this->append_column("Down", m_cols.m_col_dl_total);
 		col = this->get_column(cid - 1);
@@ -175,7 +162,7 @@ void GtkTorrentTreeView::setupColumns()
 		col->set_fixed_width(96);
 	}
 
-	if(m_visibleColumns & 2048)
+	if(m_visibleColumns & 1024)
 	{
 		cid = this->append_column("Size", m_cols.m_col_size);
 		col = this->get_column(cid - 1);
@@ -183,22 +170,21 @@ void GtkTorrentTreeView::setupColumns()
 		col->set_fixed_width(96);
 	}
 
-	if(m_visibleColumns & 4096)
+	if(m_visibleColumns & 2048)
 	{
 		cid = this->append_column("Remains", m_cols.m_col_remaining);
 		col = this->get_column(cid - 1);
 		col->set_fixed_width(96);
 	}
 
-	if(m_visibleColumns & 8192)
+	if(m_visibleColumns & 4096)
 	{
 		cid = this->append_column("Ratio", m_cols.m_col_dl_ratio);
 		col = this->get_column(cid - 1);
 		col->set_fixed_width(96);
 	}
 
-	if(m_visibleColumns & 16384)
-	{
+	if(m_visibleColumns & 8192) {
 		cell = Gtk::manage(new Gtk::CellRendererProgress());
 		cid = this->append_column("Progress", *cell);
 		col = this->get_column(cid - 1);
@@ -227,8 +213,6 @@ void GtkTorrentTreeView::addCell(shared_ptr<Torrent> &t)
 	row[m_cols.m_col_age] = t->getTextAge();
 	row[m_cols.m_col_eta] = t->getTextEta();
 	row[m_cols.m_col_name] = t->getHandle().name();
-	row[m_cols.m_col_percent] = t->getTotalProgress();
-	row[m_cols.m_col_percent_text] = t->getTextState();
 	row[m_cols.m_col_seeders] = t->getTotalSeeders();
 	row[m_cols.m_col_leechers] = t->getTotalLeechers();
 	row[m_cols.m_col_ul_total] = t->getTextTotalUploaded();
@@ -249,7 +233,6 @@ void GtkTorrentTreeView::updateCells()
 		c[m_cols.m_col_eta] = t->getTextEta();
 		c[m_cols.m_col_percent] = t->getTotalProgress();
 		c[m_cols.m_col_seeders] = t->getTotalSeeders();
-		c[m_cols.m_col_percent_text] = t->getTextState();
 		c[m_cols.m_col_leechers] = t->getTotalLeechers();
 		c[m_cols.m_col_ul_speed] = t->getTextUploadRate();
 		c[m_cols.m_col_dl_speed] = t->getTextDownloadRate();
@@ -267,9 +250,46 @@ void GtkTorrentTreeView::updateCells()
 	}
 }
 
-void GtkTorrentTreeView::    stopView_onClick() { /* Doesn't do nuffin wrong */ }
-void GtkTorrentTreeView::    openView_onClick() { /* Doesn't do nuffin wrong */ }
-void GtkTorrentTreeView::   startView_onClick() { /* Doesn't do nuffin wrong */ }
-void GtkTorrentTreeView::  removeView_onClick() { /* Doesn't do nuffin wrong */ }
-void GtkTorrentTreeView::priorityView_onClick() { /* Doesn't do nuffin wrong */ }
-void GtkTorrentTreeView::propertyView_onClick() { /* Doesn't do nuffin wrong */ }
+vector<unsigned> GtkTorrentTreeView::selectedIndices()
+{
+	Glib::RefPtr<Gtk::TreeSelection> sel = this->get_selection();
+	sel->set_mode(Gtk::SelectionMode::SELECTION_MULTIPLE);
+	vector<Gtk::TreeModel::Path> path = sel->get_selected_rows();
+	vector<unsigned> indices;
+	for (auto val : path)
+		indices.push_back(val[0]); // we only get the first index because our tree is 1 node deep
+	return indices;
+}
+
+void GtkTorrentTreeView::setSelectedPaused(bool isPaused)
+{
+	vector<shared_ptr<Torrent> > t = Application::getSingleton()->getCore()->getTorrents();
+	for (auto i : selectedIndices())
+		t[i]->setPaused(isPaused);// the pause button switches the status
+
+}
+
+void GtkTorrentTreeView::stopView_onClick()
+{
+	/* Doesn't do nuffin wrong */
+}
+void GtkTorrentTreeView::openView_onClick()
+{
+	/* Doesn't do nuffin wrong */
+}
+void GtkTorrentTreeView::startView_onClick()
+{
+	/* Doesn't do nuffin wrong */
+}
+void GtkTorrentTreeView::removeView_onClick()
+{
+	/* Doesn't do nuffin wrong */
+}
+void GtkTorrentTreeView::priorityView_onClick()
+{
+	/* Doesn't do nuffin wrong */
+}
+void GtkTorrentTreeView::propertyView_onClick()
+{
+	/* Doesn't do nuffin wrong */
+}

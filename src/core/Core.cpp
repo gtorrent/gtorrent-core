@@ -19,11 +19,6 @@ bool gt::Core::isMagnetLink(string const& url)
 	return url.compare(0, prefix.length(), prefix) == 0;
 }
 
-bool gt::Core::isRunning()
-{
-	return m_running;
-}
-
 string gt::Core::getDefaultSavePath()
 {
 #ifndef _WIN32
@@ -34,11 +29,6 @@ string gt::Core::getDefaultSavePath()
 	char *savepath = getenv("HOMEPATH");
 	return savepath == NULL ? string("") : string(savedrive) + string(savepath) + "/Downloads";
 #endif
-}
-
-vector<shared_ptr<Torrent> > &gt::Core::getTorrents()
-{
-	return m_torrents;
 }
 
 shared_ptr<Torrent> gt::Core::addTorrent(string path)

@@ -67,10 +67,10 @@ public:
 	boost::int64_t getTotalDownloaded();
 
 	// Returns the total size of files in this torrent
-  boost::int64_t getSize();
+	boost::int64_t getSize();
 
 	// Returns the total size of wanted files in this torrent
-  boost::int64_t getWanted();
+	boost::int64_t getWanted();
 
 	//Returns the size of the torrent
 	boost::int64_t getTorrentSize();
@@ -83,6 +83,9 @@ public:
 
 	// Returns the current torrent state (downloading, queueing, seeding, etc)
 	libtorrent::torrent_status::state_t getState();
+
+	//Returns the URL of the last working tracker
+	string getCurrentTrackerURL();
 
 	// Returns a friendly string for the torrent state
 	string getTextState();
@@ -114,10 +117,13 @@ public:
 	// Returns a friendly string for the current time remaining
 	string getTextTimeRemaining();
 
+	bool isPaused();
+
 	// Setters
 	void setHandle(libtorrent::torrent_handle &h);
 	void setSavePath(string savepath);
 
 	void setPaused(bool isPaused);
-	bool isPaused();
+	void resume();
+	void pause();
 };

@@ -1,10 +1,8 @@
 #include "GtkAddMagnetLinkWindow.hpp"
-#include "GtkPropertiesWindow.hpp"
 #include <gtkmm/filechooserdialog.h>
+#include <gtkmm/hvseparator.h>
 #include "GtkMainWindow.hpp"
 #include <Application.hpp>
-#include <gtkmm/button.h>
-#include <gtkmm/hvseparator.h>
 #include <gtkmm/stock.h>
 #include <glibmm.h>
 
@@ -40,9 +38,22 @@ GtkMainWindow::GtkMainWindow() :
 	header->add(*add_torrent_btn);
 
 	Gtk::Button *add_link_btn = Gtk::manage(new Gtk::Button());
-	add_link_btn->set_image_from_icon_name("gtk-paste");
+	add_link_btn->set_image_from_icon_name("edit-paste");
 	add_link_btn->signal_clicked().connect(sigc::mem_fun(*this, &GtkMainWindow::onAddMagnetBtnClicked));
 	header->add(*add_link_btn);
+
+	Gtk::VSeparator *separator = Gtk::manage(new Gtk::VSeparator());
+	header->add(*separator);
+
+	Gtk::Button *resume_btn = Gtk::manage(new Gtk::Button());
+	resume_btn->set_image_from_icon_name("media-playback-start");
+	resume_btn->signal_clicked().connect(sigc::mem_fun(*this, &GtkMainWindow::onResumeBtnClicked));
+	header->add(*resume_btn);
+
+	Gtk::Button *pause_btn = Gtk::manage(new Gtk::Button());
+	pause_btn->set_image_from_icon_name("media-playback-pause");
+	pause_btn->signal_clicked().connect(sigc::mem_fun(*this, &GtkMainWindow::onPauseBtnClicked));
+	header->add(*pause_btn);
 
 	Gtk::VSeparator *separator1 = Gtk::manage(new Gtk::VSeparator());
 	header->add(*separator1);
@@ -58,10 +69,6 @@ GtkMainWindow::GtkMainWindow() :
 	Gtk::VSeparator *separator2 = Gtk::manage(new Gtk::VSeparator());
 	header->add(*separator2);
 
-	Gtk::Button *pause_btn = Gtk::manage(new Gtk::Button());
-	pause_btn->set_image_from_icon_name("gtk-media-pause");
-	pause_btn->signal_clicked().connect(sigc::mem_fun(*this, &GtkMainWindow::onPauseBtnClicked));
-	header->add(*pause_btn);
 
 	Gtk::Button *remove_btn = Gtk::manage(new Gtk::Button());
 	remove_btn->set_image_from_icon_name("gtk-cancel");
@@ -145,20 +152,14 @@ void GtkMainWindow::onAddMagnetBtnClicked()
 }
 
 void GtkMainWindow::onPauseBtnClicked()
- {
-     Glib::RefPtr<Gtk::TreeSelection> sel = m_treeview->get_selection();
-     sel->set_mode(Gtk::SelectionMode::SELECTION_MULTIPLE);
-     std::vector<Gtk::TreeModel::Path> path = sel->get_selected_rows();
-     std::vector<unsigned> indices;
-     for(auto val : path)
-         indices.push_back(val[0]); // we only get the first index because our tree is 1 node deep
+{
+	m_treeview->setSelectedPaused(true);
+}
 
-
-     std::vector<std::shared_ptr<Torrent> > t = Application::getSingleton()->getCore()->getTorrents();
-     for(auto i : indices)
-         t[i]->setPaused(!t[i]->isPaused());// the pause button switches the status
- }
-
+void GtkMainWindow::onResumeBtnClicked()
+{
+	m_treeview->setSelectedPaused(false);
+}
 
 void GtkMainWindow::onRemoveBtnClicked()
 {

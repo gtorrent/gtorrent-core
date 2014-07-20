@@ -21,8 +21,6 @@ public:
 		add(m_col_leechers);
 		add(m_col_ul_speed);
 		add(m_col_dl_speed);
-		add(m_col_percent);
-		add(m_col_percent_text);
 		add(m_col_ul_total);
 		add(m_col_dl_total);
 		add(m_col_size);
@@ -38,7 +36,7 @@ public:
 	Gtk::TreeModelColumn<unsigned int>  m_col_leechers;
 	Gtk::TreeModelColumn<unsigned int>  m_col_percent;
 	Gtk::TreeModelColumn<Glib::ustring> m_col_percent_text;
-	Gtk::TreeModelColumn<unsigned int> m_col_empty;
+	Gtk::TreeModelColumn<unsigned int>  m_col_empty;
 	Gtk::TreeModelColumn<Glib::ustring> m_col_ul_speed;
 	Gtk::TreeModelColumn<Glib::ustring> m_col_dl_speed;
 	Gtk::TreeModelColumn<Glib::ustring> m_col_ul_total;
@@ -65,6 +63,7 @@ private:
 	Gtk::Menu *m_rcMenu = Gtk::manage(new Gtk::Menu());
 
 	void setupColumns();
+	vector<unsigned> selectedIndices();
 
 	/* Event handlers for clicks on the controls */
 	bool       torrentView_onClick(GdkEventButton *event);
@@ -84,4 +83,5 @@ public:
 
 	void addCell(shared_ptr<Torrent> &t);
 	void updateCells();
+	void setSelectedPaused(bool isPaused);
 };
