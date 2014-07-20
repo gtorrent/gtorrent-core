@@ -4,7 +4,6 @@
 #include "GtkMainWindow.hpp"
 #include <gtkmm/settings.h>
 #include <gtkmm/main.h>
-#include <memory>
 
 class GuiGtk : public GuiBase
 {

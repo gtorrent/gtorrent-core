@@ -2,8 +2,6 @@
 
 #include "libtorrent.hpp"
 #include "Torrent.hpp"
-#include <memory>
-#include <string>
 
 namespace gt
 {

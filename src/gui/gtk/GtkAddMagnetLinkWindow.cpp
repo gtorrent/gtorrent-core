@@ -4,13 +4,8 @@
 
 GtkAddMagnetLinkWindow::GtkAddMagnetLinkWindow()
 {
-    this->set_modal(true);
-    this->set_default_size(500, 250);
-    //this->set_resizable(false);
-
-    //m_header = Gtk::manage(new Gtk::HeaderBar());
-    //m_header->set_title("Add Magnet URL");
-    //m_header->set_show_close_button(true);
+	this->set_modal(true);
+	this->set_default_size(500, 250);
 
     this->set_title("Paste magnet link here");
 

@@ -15,12 +15,16 @@ private:
     Gtk::HeaderBar *header;
     GtkTorrentTreeView *m_treeview;
 
-    // Signal Responders
+	// Signal Responders
 
-    void onAddBtnClicked();
-    void onAddMagnetBtnClicked();
+	void onAboutBtnClicked();
+	void onAddBtnClicked();
+	void onAddMagnetBtnClicked();
     void onPauseBtnClicked();
     void onResumeBtnClicked();
+	void onRemoveBtnClicked();
+	void onPropertiesBtnClicked();
+
 public:
     GtkMainWindow();
 

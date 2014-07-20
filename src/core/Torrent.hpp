@@ -1,9 +1,13 @@
 #pragma once
 
+#define SECOND 60
+#define HOUR 60 * 60
+
 #include "libtorrent.hpp"
 #include "Event.hpp"
 #include <iomanip>
 #include <sstream>
+#include <fstream>
 
 class Torrent
 {
@@ -23,8 +27,20 @@ public:
     libtorrent::torrent_handle &getHandle();
     string getPath();
 
-    // Returns percentage of all files downloading
-    float getTotalProgress();
+	// Returns number of seconds the torrent has been active
+	boost::int64_t getActive();
+
+	// Returns formatted active time as string
+	string getTextActive();
+
+	// Returns number of seconds eta for the torrent
+	boost::int64_t getEta();
+
+	// Returns formatted eta as string
+	string getTextEta();
+
+	// Returns percentage of all files downloading
+	float getTotalProgress();
 
     // Returns the current upload rate of the torrent
     unsigned int getUploadRate();
@@ -50,14 +66,29 @@ public:
     // Returns the current amount of data downloaded for this torrent
     boost::int64_t getTotalDownloaded();
 
-    // Returns the ratio (uploaded/downloaded) for this torrent
-    float getTotalRatio();
+	// Returns the total size of files in this torrent
+        boost::int64_t getSize();
+
+	// Returns the total size of wanted files in this torrent
+        boost::int64_t getWanted();
+
+	//Returns the size of the torrent
+	boost::int64_t getTorrentSize();
+
+	//Returns the elapsed time remaining in seconds
+	boost::int64_t getTimeRemaining();
+
+	// Returns the ratio (uploaded/downloaded) for this torrent
+	float getTotalRatio();
 
     // Returns the current torrent state (downloading, queueing, seeding, etc)
     libtorrent::torrent_status::state_t getState();
 
-    // Returns a friendly string for the torrent state
-    string getTextState();
+	//Returns the URL of the last working tracker
+	string getCurrentTrackerURL();
+
+	// Returns a friendly string for the torrent state
+	string getTextState();
 
     // Returns a friendly string for the current upload rate
     string getTextUploadRate();
@@ -71,23 +102,29 @@ public:
     // Returns a friendly string for the current download total
     string getTextTotalDownloaded();
 
-    // Returns a friendly string for the current ratio
-    string getTextTotalRatio();
-	
-    bool getPaused();
+	// Returns a friendly string for the total size of files in torrent
+    string getTextSize();
+
+	// Returns a the total size of files remaining to download in torrent
+    boost::int64_t getRemaining();
+
+	// Returns a friendly string for the total size of files remaining to download in torrent
+        string getTextRemaining();
+
+	// Returns a friendly string for the current ratio
+	string getTextTotalRatio();
+
+	// Returns a friendly string for the current time remaining
+	string getTextTimeRemaining();
+
+    bool isPaused();
 
     // Setters
     void setHandle(libtorrent::torrent_handle &h);
     void setSavePath(string savepath);
 
     void setPaused(bool isPaused);
-    bool isPaused();
-	
-    // Torrent Actions ( I suppose these could just be getHandle()->start() and getHandle()->resume() instead ... )
-	// Only useful to consider if libtorrent has a criticial update but decides to change API,
-	// We won't then need to update every UI ( .. unlikely though )
 	
 	void resume();
 	void pause();
 };
-
