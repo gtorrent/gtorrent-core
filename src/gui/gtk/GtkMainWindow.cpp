@@ -25,64 +25,53 @@ GtkMainWindow::GtkMainWindow() :
 	//		connect_btn,add_torrent_btn,add_link_btn,up_btn,down_btn,pause_btn,
 	//		remove_btn:maximise,minimize,close);
 	//TODO:Here's a nifty connect button to hang connection settings, rate limiter from.
-	Gtk::Button *connect_btn = Gtk::manage(new Gtk::Button());
-	connect_btn->set_image_from_icon_name("gtk-directory");
-	header->add(*connect_btn);
-
-	Gtk::VSeparator *separator0 = Gtk::manage(new Gtk::VSeparator());
-	header->add(*separator0);
-
-	Gtk::Button *add_torrent_btn = Gtk::manage(new Gtk::Button());
-	add_torrent_btn->set_image_from_icon_name("gtk-add");
-	add_torrent_btn->signal_clicked().connect(sigc::mem_fun(*this, &GtkMainWindow::onAddBtnClicked));
-	header->add(*add_torrent_btn);
-
 	Gtk::Button *add_link_btn = Gtk::manage(new Gtk::Button());
-	add_link_btn->set_image_from_icon_name("edit-paste");
-	add_link_btn->signal_clicked().connect(sigc::mem_fun(*this, &GtkMainWindow::onAddMagnetBtnClicked));
-	header->add(*add_link_btn);
-
-	Gtk::VSeparator *separator = Gtk::manage(new Gtk::VSeparator());
-	header->add(*separator);
-
-	Gtk::Button *resume_btn = Gtk::manage(new Gtk::Button());
-	resume_btn->set_image_from_icon_name("media-playback-start");
-	resume_btn->signal_clicked().connect(sigc::mem_fun(*this, &GtkMainWindow::onResumeBtnClicked));
-	header->add(*resume_btn);
-
-	Gtk::Button *pause_btn = Gtk::manage(new Gtk::Button());
-	pause_btn->set_image_from_icon_name("media-playback-pause");
-	pause_btn->signal_clicked().connect(sigc::mem_fun(*this, &GtkMainWindow::onPauseBtnClicked));
-	header->add(*pause_btn);
-
-	Gtk::VSeparator *separator1 = Gtk::manage(new Gtk::VSeparator());
-	header->add(*separator1);
-
-	Gtk::Button *up_btn = Gtk::manage(new Gtk::Button());
-	up_btn->set_image_from_icon_name("gtk-go-up");
-	header->add(*up_btn);
-
+	Gtk::Button *add_torrent_btn = Gtk::manage(new Gtk::Button());
+	Gtk::Button *connect_btn = Gtk::manage(new Gtk::Button());
 	Gtk::Button *down_btn = Gtk::manage(new Gtk::Button());
-	down_btn->set_image_from_icon_name("gtk-go-down");
-	header->add(*down_btn);
-
-	Gtk::VSeparator *separator2 = Gtk::manage(new Gtk::VSeparator());
-	header->add(*separator2);
-
-
-	Gtk::Button *remove_btn = Gtk::manage(new Gtk::Button());
-	remove_btn->set_image_from_icon_name("gtk-cancel");
-	header->add(*remove_btn);
-
-	Gtk::VSeparator *separator3 = Gtk::manage(new Gtk::VSeparator());
-	header->add(*separator3);
-
+	Gtk::Button *pause_btn = Gtk::manage(new Gtk::Button());
 	Gtk::Button *properties_btn = Gtk::manage(new Gtk::Button());
+	Gtk::Button *remove_btn = Gtk::manage(new Gtk::Button());
+	Gtk::Button *resume_btn = Gtk::manage(new Gtk::Button());
+	Gtk::Button *up_btn = Gtk::manage(new Gtk::Button());
+	Gtk::VSeparator *separator = Gtk::manage(new Gtk::VSeparator());
+	Gtk::VSeparator *separator0 = Gtk::manage(new Gtk::VSeparator());
+	Gtk::VSeparator *separator1 = Gtk::manage(new Gtk::VSeparator());
+	Gtk::VSeparator *separator2 = Gtk::manage(new Gtk::VSeparator());
+	Gtk::VSeparator *separator3 = Gtk::manage(new Gtk::VSeparator());
+
+	add_link_btn->signal_clicked().connect(sigc::mem_fun(*this, &GtkMainWindow::onAddMagnetBtnClicked));
+	add_torrent_btn->signal_clicked().connect(sigc::mem_fun(*this, &GtkMainWindow::onAddBtnClicked));
+	pause_btn->signal_clicked().connect(sigc::mem_fun(*this, &GtkMainWindow::onPauseBtnClicked));
+	resume_btn->signal_clicked().connect(sigc::mem_fun(*this, &GtkMainWindow::onResumeBtnClicked));
+
+	connect_btn->set_image_from_icon_name("gtk-directory");
+	add_torrent_btn->set_image_from_icon_name("gtk-add");
+	add_link_btn->set_image_from_icon_name("edit-paste");
+	down_btn->set_image_from_icon_name("gtk-go-down");
+	resume_btn->set_image_from_icon_name("media-playback-start");
+	pause_btn->set_image_from_icon_name("media-playback-pause");
+	up_btn->set_image_from_icon_name("gtk-go-up");
+	remove_btn->set_image_from_icon_name("gtk-cancel");
 	properties_btn->set_image_from_icon_name("gtk-properties");
+
 	//TODO:align properties button to right of top bar
 	//properties_btn->set_alignment(1.0f,0.0f);
-
+	header->add(*pause_btn);
+	header->add(*resume_btn);
+	header->add(*separator);
+	header->add(*add_link_btn);
+	header->add(*add_torrent_btn);
+	header->add(*connect_btn);
+	header->add(*separator0);
+	header->add(*separator1);
+	header->add(*up_btn);
+	header->add(*down_btn);
+	header->add(*separator2);
+	header->add(*remove_btn);
+	header->add(*separator3);
 	header->add(*properties_btn);
+
 	this->set_titlebar(*header);
 	//status = Gtk::manage(new Gtk::StatusBar());
 	//this->set_decorated(FALSE);
