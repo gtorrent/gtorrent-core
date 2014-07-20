@@ -6,12 +6,9 @@
 #include <gtkmm/treeview.h>
 #include <core/Torrent.hpp>
 
-class TorrentColumn
+class GtkTorrentColumn : Gtk::TreeView::Column
 {
-        string name;
-        bool enabled;
-        int width;
-}
+};
 
 // Gtk Torrent Columns Section
 
