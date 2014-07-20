@@ -1,9 +1,8 @@
 #include "GtkAddMagnetLinkWindow.hpp"
 #include <gtkmm/filechooserdialog.h>
+#include <gtkmm/hvseparator.h>
 #include "GtkMainWindow.hpp"
 #include <Application.hpp>
-#include <gtkmm/button.h>
-#include <gtkmm/hvseparator.h>
 #include <gtkmm/stock.h>
 #include <glibmm.h>
 
@@ -32,10 +31,22 @@ GtkMainWindow::GtkMainWindow() :
 	header->add(*add_torrent_btn);
 
 	Gtk::Button *add_link_btn = Gtk::manage(new Gtk::Button());
-	add_link_btn->set_image_from_icon_name("gtk-paste");
+	add_link_btn->set_image_from_icon_name("edit-paste");
 	add_link_btn->signal_clicked().connect(sigc::mem_fun(*this, &GtkMainWindow::onAddMagnetBtnClicked));
 	header->add(*add_link_btn);
 
+	Gtk::VSeparator *separator = Gtk::manage(new Gtk::VSeparator());
+	header->add(*separator);
+
+	Gtk::Button *resume_btn = Gtk::manage(new Gtk::Button());
+	resume_btn->set_image_from_icon_name("media-playback-start");
+	resume_btn->signal_clicked().connect(sigc::mem_fun(*this, &GtkMainWindow::onResumeBtnClicked));
+	header->add(*resume_btn);
+
+	Gtk::Button *pause_btn = Gtk::manage(new Gtk::Button());
+	pause_btn->set_image_from_icon_name("media-playback-pause");
+	pause_btn->signal_clicked().connect(sigc::mem_fun(*this, &GtkMainWindow::onPauseBtnClicked));
+	header->add(*pause_btn);
 	Gtk::VSeparator *separator1 = Gtk::manage(new Gtk::VSeparator());
 	header->add(*separator1);
 
@@ -50,9 +61,6 @@ GtkMainWindow::GtkMainWindow() :
 	Gtk::VSeparator *separator2 = Gtk::manage(new Gtk::VSeparator());
 	header->add(*separator2);
 
-	Gtk::Button *pause_btn = Gtk::manage(new Gtk::Button());
-	pause_btn->set_image_from_icon_name("gtk-media-pause");
-	header->add(*pause_btn);
 
 	Gtk::Button *remove_btn = Gtk::manage(new Gtk::Button());
 	remove_btn->set_image_from_icon_name("gtk-cancel");
@@ -135,14 +143,12 @@ void GtkMainWindow::onAddMagnetBtnClicked()
 
 void GtkMainWindow::onPauseBtnClicked()
 {
-	//get the torrent selected in treeview
+	m_treeview->setSelectedPaused(true);
+}
 
-	//toggle pause status
-	//if(torrent.is_paused()) {
-	//	torrent.resume();
-	//} else {
-	//	torrent.pause();
-	//}
+void GtkMainWindow::onResumeBtnClicked()
+{
+	m_treeview->setSelectedPaused(false);
 }
 
 void GtkMainWindow::onRemoveBtnClicked()

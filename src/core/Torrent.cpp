@@ -3,41 +3,59 @@
 #include "Log.hpp"
 #define T_PPM 1000000.f
 
-string getTimeString(boost::int64_t time_s) {
+string getTimeString(boost::int64_t time_s)
+{
 	boost::int64_t time_m = (time_s - (fmod (time_s, time_s / 60))) / 60;
 	boost::int64_t time_h = (time_m - (fmod (time_m, time_m / 60))) / 60;
 	boost::int64_t time_d = (time_h - (fmod (time_h, time_h / 24))) / 24;
 
 	ostringstream time_string;
 
-	if(time_s <= 0)	{
+	if(time_s <= 0)
+	{
 		return string();
 	}
-	if(time_s < 60)	{
-		if(time_s == 1) {
+	if(time_s < 60)
+	{
+		if(time_s == 1)
+		{
 			time_string << time_s << " Second";
-		} else {
+		}
+		else
+		{
 			time_string << time_s << " Seconds";
 		}
 	}
-	if(time_s >= 60 && time_s < (60 * 60)) {
-		if(time_m == 1) {
+	if(time_s >= 60 && time_s < (60 * 60))
+	{
+		if(time_m == 1)
+		{
 			time_string << time_m << " Minute, ";
-		} else {
+		}
+		else
+		{
 			time_string << time_m << " Minutes, ";
 		}
 	}
-	if(time_m >= 60 && time_m < (60 * 60)) {
-		if(time_h == 1) {
+	if(time_m >= 60 && time_m < (60 * 60))
+	{
+		if(time_h == 1)
+		{
 			time_string << time_h << " Hour, ";
-		} else {
+		}
+		else
+		{
 			time_string << time_h << " Hours, ";
 		}
 	}
-	if(time_h >= 24) {
-		if(time_h == 1) {
+	if(time_h >= 24)
+	{
+		if(time_h == 1)
+		{
 			time_string << time_d << " Day, ";
-		} else {
+		}
+		else
+		{
 			time_string << time_d << " Days, ";
 		}
 	}
@@ -81,15 +99,15 @@ string getFileSizeString(boost::int64_t file_size)
 	}
 	if (file_size >= (1024 * 1024 * 1024))
 	{
-		file_size_string <<  fixed << setprecision(3) << (file_size / 1024 / 1024 / 1024) << " GB,";
+		file_size_string <<  fixed << setprecision(3) << (file_size / 1024 / 1024 / 1024) << " GB";
 	}
 	if (file_size >= (1024 * 1024) && file_size < (1024 * 1024 * 1024))
 	{
-		file_size_string <<  fixed << setprecision(3) << (file_size / 1024 / 1024) << " MB,";
+		file_size_string <<  fixed << setprecision(3) << (file_size / 1024 / 1024) << " MB";
 	}
 	if (file_size >= 1024 && file_size < (1024 * 1024))
 	{
-		file_size_string << fixed << setprecision(3) << (file_size / 1024) << " KB,";
+		file_size_string << fixed << setprecision(3) << (file_size / 1024) << " KB";
 	}
 	if (file_size > 0 && file_size < 1024)
 	{
@@ -182,10 +200,13 @@ boost::int64_t Torrent::getWanted()
 
 boost::int64_t Torrent::getEta()
 {
-	if (getDownloadRate() <= 0){
+	if (getDownloadRate() <= 0)
+	{
 		return 817;
-	} else {
-	return (getWanted() / getDownloadRate());
+	}
+	else
+	{
+		return (getWanted() / getDownloadRate());
 	}
 }
 
@@ -299,7 +320,7 @@ string Torrent::getTextTotalDownloaded()
 
 boost::int64_t Torrent::getSize()
 {
-        return m_handle.status().total_wanted;
+	return m_handle.status().total_wanted;
 }
 
 string Torrent::getTextSize()
@@ -309,7 +330,7 @@ string Torrent::getTextSize()
 
 boost::int64_t Torrent::getRemaining()
 {
-        return m_handle.status().total_wanted - m_handle.status().total_wanted_done;
+	return m_handle.status().total_wanted - m_handle.status().total_wanted_done;
 }
 
 string Torrent::getTextRemaining()
@@ -363,3 +384,28 @@ void Torrent::setHandle(libtorrent::torrent_handle &h)
 {
 	m_handle = h;
 }
+
+void Torrent::setPaused(bool isPaused)
+{
+	m_handle.auto_managed(!isPaused);
+	isPaused ?
+	m_handle.pause()
+	:
+	m_handle.resume();
+}
+
+bool Torrent::isPaused()
+{
+	return m_handle.status().paused;
+}
+
+void Torrent::resume()
+{
+	setPaused(false);
+}
+
+void Torrent::pause()
+{
+	setPaused(true);
+}
+
