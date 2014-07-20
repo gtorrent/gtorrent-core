@@ -9,7 +9,6 @@
 GtkTorrentTreeView::GtkTorrentTreeView()
 {
 	m_liststore = Gtk::ListStore::create(m_cols);
-	this->set_halign(Gtk::Align::ALIGN_CENTER);
 	this->set_model(m_liststore);
 	this->setupColumns();
 	signal_button_press_event().connect(sigc::mem_fun(*this, &GtkTorrentTreeView::torrentView_onClick), false);

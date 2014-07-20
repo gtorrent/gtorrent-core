@@ -86,7 +86,6 @@ GtkMainWindow::GtkMainWindow() :
 	this->set_titlebar(*header);
 	//status = Gtk::manage(new Gtk::StatusBar());
 	//this->set_decorated(FALSE);
-	this->set_deletable(FALSE);
 	//this->set_hide_titlebar_when_maximized(TRUE);
 	this->maximize();
 	this->show_all();
