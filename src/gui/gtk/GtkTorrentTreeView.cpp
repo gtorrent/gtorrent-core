@@ -62,6 +62,7 @@ bool GtkTorrentTreeView::torrentColumns_onClick(GdkEventButton *event)
 {
 	if(event->button == 3)
 	{
+		m_rcMenu = Gtk::manage(new Gtk::Menu());
                 for(auto c : get_columns())
                 {
                         Gtk::CheckMenuItem *rcmItem1 = Gtk::manage(new Gtk::CheckMenuItem(c->get_title()));
