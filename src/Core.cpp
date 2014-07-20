@@ -1,5 +1,6 @@
 #include "Core.hpp"
 #include "Log.hpp"
+#include <fstream>
 
 gt::Core::Core() :
 	m_running(true)
@@ -9,6 +10,7 @@ gt::Core::Core() :
 	// like handling what the fuck might happen if listen_on fails kthnx
 	libtorrent::error_code ec;
 	m_session.listen_on(make_pair(6881, 6889), ec);
+    torrentCopyPath = getDefaultTorrentCopyPath();
 }
 
 bool gt::Core::isMagnetLink(string const& url)
@@ -44,6 +46,19 @@ shared_ptr<Torrent> gt::Core::addTorrent(string path)
 	if (path.empty())
 		return NULL;
 
+    // Copy torrent file to torrentcopypath
+    ifstream src(path, ios::binary);
+    // Set the output filename
+    string outpath = path;
+    int pos;
+    pos = path.find_last_of("\\/");
+    outpath = torrentCopyPath + "/" + outpath.substr(pos + 1, outpath.size() - pos - 1);
+    gt::Log::Debug("%s", outpath.c_str());
+    ofstream dst(outpath, ios::binary);
+    // Copy data
+    dst << src.rdbuf();
+
+
 	shared_ptr<Torrent> t = make_shared<Torrent>(path);
 	libtorrent::torrent_handle h = m_session.add_torrent(t->getTorrentParams());
 
@@ -77,6 +92,16 @@ shared_ptr<Torrent> gt::Core::addTorrent(string path)
 	return t;
 }
 
+string gt::Core::getDefaultTorrentCopyPath()
+{
+#ifndef _WIN32
+    char* copyPath = getenv("HOME");
+    return copyPath = NULL ? string("") : string(copyPath) + "/.config/gtorrent/torrents";
+#else
+	char *copyPath = getenv("LOCALAPPDATA");
+	return copyPath == NULL ? string("") : string(copyPath) + "/gtorrent/torrents";
+#endif
+}
 void gt::Core::update()
 {
 	/*auto iter = begin(m_torrents);
