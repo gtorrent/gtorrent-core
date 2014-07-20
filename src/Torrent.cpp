@@ -57,26 +57,39 @@ boost::int64_t Torrent::getActive()
 
 string Torrent::getTextActive()
 {
-        std::ostringstream tas;
+	std::ostringstream tas;
 
-        boost::int64_t  active = getActive();
+	boost::int64_t  active = getActive();
 	//TODO: Figure out leap years
-        if (active<=0) {
-                tas << string();
-        } else if (active > 0 && active <= 60) {//seconds
-                tas << fixed << setprecision(2) << active;
-        } else if (active > 60 && active <= (60*60)) {//minutes
-                tas << ((active - active % 60)/60) << ":" << (active % 60);
-        } else if (active > (60*60) && active <= (60*60*24)) {//hours
-                tas << ((active - active % 60)/60/24) << ":" << ((active - active % 60)/60) << ":" << (active % 60);
-        } else if (active > (60*60*24) && active <= (60*60*24*7)) {//days
-                tas << ((active - active % 60)/60/24) << ":" << ((active - active % 60)/60) << ":" << ((active - active % 60)/60) << ":" << (active % 60);
-	} else if (active > (60*60*24*7) && active <= (60*60*24*365)) {//weeks
-                tas << ((active - active % 60)/60/24/7) << ":" << ((active - active % 60)/60/24) << ":" << ((active - active % 60)/60) << ":" << ((active - active % 60)/60) << ":" << (active % 60);
-	} else if (active > (60*60*24*365)) {//years
-                tas << ((active - active % 60)/60/24/365) << ":" << ((active - active % 60)/60/24/7) << ":" << ((active - active % 60)/60/24) << ":" << ((active - active % 60)/60) << ":" << ((active - active % 60)/60) << ":" << (active % 60);
+	if (active <= 0)
+	{
+		tas << string();
 	}
-        return tas.str();
+	else if (active > 0 && active <= 60)    //seconds
+	{
+		tas << fixed << setprecision(2) << active;
+	}
+	else if (active > 60 && active <= (60 * 60))  //minutes
+	{
+		tas << ((active - active % 60) / 60) << ":" << (active % 60);
+	}
+	else if (active > (60 * 60) && active <= (60 * 60 * 24)) //hours
+	{
+		tas << ((active - active % 60) / 60 / 24) << ":" << ((active - active % 60) / 60) << ":" << (active % 60);
+	}
+	else if (active > (60 * 60 * 24) && active <= (60 * 60 * 24 * 7)) //days
+	{
+		tas << ((active - active % 60) / 60 / 24) << ":" << ((active - active % 60) / 60) << ":" << ((active - active % 60) / 60) << ":" << (active % 60);
+	}
+	else if (active > (60 * 60 * 24 * 7) && active <= (60 * 60 * 24 * 365)) //weeks
+	{
+		tas << ((active - active % 60) / 60 / 24 / 7) << ":" << ((active - active % 60) / 60 / 24) << ":" << ((active - active % 60) / 60) << ":" << ((active - active % 60) / 60) << ":" << (active % 60);
+	}
+	else if (active > (60 * 60 * 24 * 365)) //years
+	{
+		tas << ((active - active % 60) / 60 / 24 / 365) << ":" << ((active - active % 60) / 60 / 24 / 7) << ":" << ((active - active % 60) / 60 / 24) << ":" << ((active - active % 60) / 60) << ":" << ((active - active % 60) / 60) << ":" << (active % 60);
+	}
+	return tas.str();
 }
 
 float Torrent::getTotalProgress()
