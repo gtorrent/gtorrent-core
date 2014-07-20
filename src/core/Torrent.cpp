@@ -81,15 +81,15 @@ string getFileSizeString(boost::int64_t file_size)
 	}
 	if (file_size >= (1024 * 1024 * 1024))
 	{
-		file_size_string <<  fixed << setprecision(3) << (file_size / 1024 / 1024 / 1024) << " GB,";
+		file_size_string <<  fixed << setprecision(3) << (file_size / 1024 / 1024 / 1024) << " GB";
 	}
 	if (file_size >= (1024 * 1024) && file_size < (1024 * 1024 * 1024))
 	{
-		file_size_string <<  fixed << setprecision(3) << (file_size / 1024 / 1024) << " MB,";
+		file_size_string <<  fixed << setprecision(3) << (file_size / 1024 / 1024) << " MB";
 	}
 	if (file_size >= 1024 && file_size < (1024 * 1024))
 	{
-		file_size_string << fixed << setprecision(3) << (file_size / 1024) << " KB,";
+		file_size_string << fixed << setprecision(3) << (file_size / 1024) << " KB";
 	}
 	if (file_size > 0 && file_size < 1024)
 	{
