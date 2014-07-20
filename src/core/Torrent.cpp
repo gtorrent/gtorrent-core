@@ -10,11 +10,11 @@ string getTimeString( boost::int64_t time_s )
 		return "???";
 
 	boost::int64_t time_m = time_s / 60;
-	time_s = time_s % 60;
+	time_s %= 60;
 	boost::int64_t time_h = time_m / 60;
-	time_m = time_m % 60;
+	time_m %= 60;
 	boost::int64_t time_d = time_h / 24;
-	time_h = time_h % 24;
+	time_h %= 24;
 
 	ostringstream time_string;
 
