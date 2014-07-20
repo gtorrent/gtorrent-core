@@ -77,6 +77,7 @@ ADD_DEFINITIONS (
 )
 
 INCLUDE_DIRECTORIES (
+    include
     include/gtorrent
     ${Boost_INCLUDE_DIRS}
     ${LIBTORRENT_INCLUDE_DIRS}
