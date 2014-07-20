@@ -27,11 +27,11 @@ public:
 	libtorrent::torrent_handle &getHandle();
 	string getPath();
 
-	// Returns number of seconds the torrent has been active
-	boost::int64_t getActive();
+	// Returns number of seconds the torrent has been age
+	boost::int64_t getAge();
 
-	// Returns formatted active time as string
-	string getTextActive();
+	// Returns formatted age time as string
+	string getTextAge();
 
 	// Returns number of seconds eta for the torrent
 	boost::int64_t getEta();
@@ -67,10 +67,10 @@ public:
 	boost::int64_t getTotalDownloaded();
 
 	// Returns the total size of files in this torrent
-        boost::int64_t getSize();
+  boost::int64_t getSize();
 
 	// Returns the total size of wanted files in this torrent
-        boost::int64_t getWanted();
+  boost::int64_t getWanted();
 
 	//Returns the size of the torrent
 	boost::int64_t getTorrentSize();
@@ -100,13 +100,13 @@ public:
 	string getTextTotalDownloaded();
 
 	// Returns a friendly string for the total size of files in torrent
-        string getTextSize();
+  string getTextSize();
 
 	// Returns a the total size of files remaining to download in torrent
-        boost::int64_t getRemaining();
+  boost::int64_t getRemaining();
 
 	// Returns a friendly string for the total size of files remaining to download in torrent
-        string getTextRemaining();
+  string getTextRemaining();
 
 	// Returns a friendly string for the current ratio
 	string getTextTotalRatio();
@@ -117,4 +117,7 @@ public:
 	// Setters
 	void setHandle(libtorrent::torrent_handle &h);
 	void setSavePath(string savepath);
+
+	void setPaused(bool isPaused);
+	bool isPaused();
 };

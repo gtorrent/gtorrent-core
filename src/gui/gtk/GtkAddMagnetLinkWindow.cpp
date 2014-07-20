@@ -14,8 +14,9 @@ GtkAddMagnetLinkWindow::GtkAddMagnetLinkWindow()
 
 	this->get_vbox()->pack_start(*m_textview, true, true);
 
-	this->add_button("Add", Gtk::RESPONSE_OK);
 	this->add_button("Cancel", Gtk::RESPONSE_CANCEL);
+	this->add_button("Add", Gtk::RESPONSE_OK);
+
 	this->show_all();
 
 	Glib::RefPtr<Gtk::Clipboard> clip = Gtk::Clipboard::get();

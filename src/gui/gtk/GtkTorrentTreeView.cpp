@@ -9,6 +9,7 @@
 GtkTorrentTreeView::GtkTorrentTreeView()
 {
 	m_liststore = Gtk::ListStore::create(m_cols);
+	this->set_halign(Gtk::Align::ALIGN_CENTER);
 	this->set_model(m_liststore);
 	this->setupColumns();
 	signal_button_press_event().connect(sigc::mem_fun(*this, &GtkTorrentTreeView::torrentView_onClick), false);
@@ -28,7 +29,7 @@ bool GtkTorrentTreeView::torrentView_onClick(GdkEventButton *event)
 {
 	if(event->button == 3)
 	{
-		Gtk::Menu     *m_rcMenu   = Gtk::manage(new Gtk::Menu());
+		Gtk::Menu     *m_rcMenu	= Gtk::manage(new Gtk::Menu());
 		Gtk::MenuItem *rcmItem1 = Gtk::manage(new Gtk::MenuItem("Start"));
 		Gtk::MenuItem *rcmItem2 = Gtk::manage(new Gtk::MenuItem("Stop"));
 		Gtk::MenuItem *rcmItem3 = Gtk::manage(new Gtk::MenuItem("Remove"));
@@ -90,108 +91,110 @@ void GtkTorrentTreeView::setupColumns()
 	{
 		cid = this->append_column("Queue", m_cols.m_col_queue);
 		col = this->get_column(cid - 1);
-		col->set_fixed_width(128);
+
+		col->set_fixed_width(96);
 	}
 
 	if(m_visibleColumns & 2)
 	{
 		cid = this->append_column("Name", m_cols.m_col_name);
 		col = this->get_column(cid - 1);
-		col->set_fixed_width(128);
+
+		col->set_fixed_width(96);
 	}
 
 	if(m_visibleColumns & 4)
 	{
-		cid = this->append_column("Active", m_cols.m_col_active);
+		cid = this->append_column("Age", m_cols.m_col_age);
 		col = this->get_column(cid - 1);
-		col->set_fixed_width(128);
+		col->set_alignment(Gtk::Align::ALIGN_CENTER);
+		col->set_fixed_width(96);
 	}
 
 	if(m_visibleColumns & 8)
 	{
 		cid = this->append_column("ETA", m_cols.m_col_eta);
 		col = this->get_column(cid - 1);
-		col->set_fixed_width(128);
+
+		col->set_fixed_width(96);
 	}
 
 	if(m_visibleColumns & 16)
 	{
-		cid = this->append_column("Seeders", m_cols.m_col_seeders);
+		cid = this->append_column("Seed", m_cols.m_col_seeders);
 		col = this->get_column(cid - 1);
-		col->set_alignment(0.5);
-		col->set_fixed_width(128);
+
+		col->set_fixed_width(96);
 	}
 
 	if(m_visibleColumns & 32)
 	{
-		cid = this->append_column("Leechers", m_cols.m_col_leechers);
+		cid = this->append_column("Leech", m_cols.m_col_leechers);
 		col = this->get_column(cid - 1);
-		col->set_alignment(0.5);
-		col->set_fixed_width(128);
+
+		col->set_fixed_width(96);
 	}
 
 	if(m_visibleColumns & 64)
 	{
 		cid = this->append_column("Rate", m_cols.m_col_dl_speed);
 		col = this->get_column(cid - 1);
-		col->set_alignment(0.5);
-		col->set_fixed_width(128);
+
+		col->set_fixed_width(96);
 	}
 
 	if(m_visibleColumns & 128)
 	{
-		cid = this->append_column("Upspeed", m_cols.m_col_ul_speed);
+		cid = this->append_column("Up", m_cols.m_col_ul_speed);
 		col = this->get_column(cid - 1);
-		col->set_alignment(0.5);
-		col->set_fixed_width(128);
+
+		col->set_fixed_width(96);
 	}
 
 	if(m_visibleColumns & 256)
 	{
-		cid = this->append_column("Downspeed", m_cols.m_col_dl_speed);
+		cid = this->append_column("Down", m_cols.m_col_dl_speed);
 		col = this->get_column(cid - 1);
-		col->set_alignment(0.5);
-		col->set_fixed_width(128);
+
+		col->set_fixed_width(96);
 	}
 
 	if(m_visibleColumns & 512)
 	{
-		cid = this->append_column("Uploaded", m_cols.m_col_ul_total);
+		cid = this->append_column("Up", m_cols.m_col_ul_total);
 		col = this->get_column(cid - 1);
-		col->set_alignment(0.5);
-		col->set_fixed_width(128);
+
+		col->set_fixed_width(96);
 	}
 
 	if(m_visibleColumns & 1024)
 	{
-		cid = this->append_column("Downloaded", m_cols.m_col_dl_total);
+		cid = this->append_column("Down", m_cols.m_col_dl_total);
 		col = this->get_column(cid - 1);
-		col->set_alignment(0.5);
-		col->set_fixed_width(128);
+		col->set_alignment(Gtk::Align::ALIGN_CENTER);
+		col->set_fixed_width(96);
 	}
 
 	if(m_visibleColumns & 2048)
 	{
 		cid = this->append_column("Size", m_cols.m_col_size);
 		col = this->get_column(cid - 1);
-		col->set_alignment(0.5);
-		col->set_fixed_width(128);
+
+		col->set_fixed_width(96);
 	}
 
 	if(m_visibleColumns & 4096)
 	{
-		cid = this->append_column("Remaining", m_cols.m_col_remaining);
+		cid = this->append_column("Remains", m_cols.m_col_remaining);
 		col = this->get_column(cid - 1);
-		col->set_alignment(0.5);
-		col->set_fixed_width(128);
+		col->set_fixed_width(96);
 	}
 
 	if(m_visibleColumns & 8192)
 	{
 		cid = this->append_column("Ratio", m_cols.m_col_dl_ratio);
 		col = this->get_column(cid - 1);
-		col->set_alignment(0.5);
-		col->set_fixed_width(128);
+		col->set_fixed_width(96);
 	}
 
 	if(m_visibleColumns & 16384)
@@ -208,6 +211,7 @@ void GtkTorrentTreeView::setupColumns()
 		Gtk::Button *butt = c->get_button();
 		butt->signal_button_press_event().connect(sigc::mem_fun(*this, &GtkTorrentTreeView::torrentColumns_onClick));
 		c->set_sizing(Gtk::TreeViewColumnSizing::TREE_VIEW_COLUMN_FIXED);
+		c->set_alignment(0.5f);
 		c->set_clickable();
 		c->set_resizable();
 		c->set_reorderable();
@@ -216,11 +220,11 @@ void GtkTorrentTreeView::setupColumns()
 
 void GtkTorrentTreeView::addCell(shared_ptr<Torrent> &t)
 {
-	if (t == NULL)
+	if (t == NULL){
 		return;
-
+	}
 	Gtk::TreeModel::Row row = *(m_liststore->append());
-	row[m_cols.m_col_active] = t->getTextActive();
+	row[m_cols.m_col_age] = t->getTextAge();
 	row[m_cols.m_col_eta] = t->getTextEta();
 	row[m_cols.m_col_name] = t->getHandle().name();
 	row[m_cols.m_col_percent] = t->getTotalProgress();
@@ -241,7 +245,7 @@ void GtkTorrentTreeView::updateCells()
 	{
 		shared_ptr<Torrent> t = Application::getSingleton()->getCore()->getTorrents()[i];
 
-		c[m_cols.m_col_active] = t->getTextActive();
+		c[m_cols.m_col_age] = t->getTextAge();
 		c[m_cols.m_col_eta] = t->getTextEta();
 		c[m_cols.m_col_percent] = t->getTotalProgress();
 		c[m_cols.m_col_seeders] = t->getTotalSeeders();
