@@ -27,11 +27,11 @@ public:
 	libtorrent::torrent_handle &getHandle();
 	string getPath();
 
-	// Returns number of seconds the torrent has been active
-	boost::int64_t getActive();
+	// Returns number of seconds the torrent has been age
+	boost::int64_t getAge();
 
-	// Returns formatted active time as string
-	string getTextActive();
+	// Returns formatted age time as string
+	string getTextAge();
 
 	// Returns number of seconds eta for the torrent
 	boost::int64_t getEta();
@@ -127,7 +127,6 @@ public:
 	void setSavePath(string savepath);
 
 	void setPaused(bool isPaused);
-
 	void resume();
 	void pause();
 };

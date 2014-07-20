@@ -186,14 +186,14 @@ string Torrent::getPath()
 	return m_path;
 }
 
-boost::int64_t Torrent::getActive()
+boost::int64_t Torrent::getAge()
 {
 	return m_handle.status().active_time;
 }
 
-string Torrent::getTextActive()
+string Torrent::getTextAge()
 {
-	return getTimeString(getActive());
+	return getTimeString(getAge());
 }
 
 boost::int64_t Torrent::getWanted()

@@ -9,18 +9,25 @@
 GtkMainWindow::GtkMainWindow() :
 	m_core(Application::getSingleton()->getCore())
 {
+	//TODO:This needs to be refactored
 	this->set_position(Gtk::WIN_POS_CENTER);
 	this->set_default_size(800, 500);
+	m_treeview = Gtk::manage(new GtkTorrentTreeView());
+	this->add(*m_treeview);
+
+	Glib::signal_timeout().connect(sigc::mem_fun(*this, &GtkMainWindow::onSecTick), 10);
+	this->signal_delete_event().connect(sigc::mem_fun(*this, &GtkMainWindow::onDestroy));
 
 	header = Gtk::manage(new Gtk::HeaderBar());
-	header->set_title("gTorrent");
 	header->set_show_close_button(true);
-
-	// This needs to be refactored
-
-	Gtk::Button *about_btn = Gtk::manage(new Gtk::Button());
-	about_btn->set_image_from_icon_name("gtk-about");
-	header->add(*about_btn);
+	//TODO: add max/minimise buttons, next to the close button
+	//header->set_decoration_layout(
+	//		connect_btn,add_torrent_btn,add_link_btn,up_btn,down_btn,pause_btn,
+	//		remove_btn:maximise,minimize,close);
+	//TODO:Here's a nifty connect button to hang connection settings, rate limiter from.
+	Gtk::Button *connect_btn = Gtk::manage(new Gtk::Button());
+	connect_btn->set_image_from_icon_name("gtk-directory");
+	header->add(*connect_btn);
 
 	Gtk::VSeparator *separator0 = Gtk::manage(new Gtk::VSeparator());
 	header->add(*separator0);
@@ -47,6 +54,7 @@ GtkMainWindow::GtkMainWindow() :
 	pause_btn->set_image_from_icon_name("media-playback-pause");
 	pause_btn->signal_clicked().connect(sigc::mem_fun(*this, &GtkMainWindow::onPauseBtnClicked));
 	header->add(*pause_btn);
+
 	Gtk::VSeparator *separator1 = Gtk::manage(new Gtk::VSeparator());
 	header->add(*separator1);
 
@@ -66,8 +74,6 @@ GtkMainWindow::GtkMainWindow() :
 	remove_btn->set_image_from_icon_name("gtk-cancel");
 	header->add(*remove_btn);
 
-	this->set_titlebar(*header);
-
 	Gtk::VSeparator *separator3 = Gtk::manage(new Gtk::VSeparator());
 	header->add(*separator3);
 
@@ -77,14 +83,18 @@ GtkMainWindow::GtkMainWindow() :
 	//properties_btn->set_alignment(1.0f,0.0f);
 
 	header->add(*properties_btn);
-
-	m_treeview = Gtk::manage(new GtkTorrentTreeView());
-	this->add(*m_treeview);
-
-	Glib::signal_timeout().connect(sigc::mem_fun(*this, &GtkMainWindow::onSecTick), 10);
-	this->signal_delete_event().connect(sigc::mem_fun(*this, &GtkMainWindow::onDestroy));
-
+	this->set_titlebar(*header);
+	//status = Gtk::manage(new Gtk::StatusBar());
+	//this->set_decorated(FALSE);
+	this->set_deletable(FALSE);
+	//this->set_hide_titlebar_when_maximized(TRUE);
+	this->maximize();
 	this->show_all();
+	//status = Gtk::manage(new Gtk::StatusBar());
+	//this->get_window().set_decoration(64);//WMDecoration.BORDER
+	//this.get_window().set_decorations(Gdk.WMDecoration.BORDER);
+	//this->set_decorations(FALSE);
+	//this->set_decorated(FALSE);
 }
 
 bool GtkMainWindow::onSecTick()
@@ -113,7 +123,7 @@ void GtkMainWindow::onAddBtnClicked()
 	switch (result)
 	{
 	case Gtk::RESPONSE_OK:
-		for (auto &f : fc.get_filenames())
+		for (auto & f : fc.get_filenames())
 		{
 			shared_ptr<Torrent> t = m_core->addTorrent(f.c_str());
 			if (t)//Checks if t is not null
