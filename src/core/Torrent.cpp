@@ -5,6 +5,9 @@
 
 string getTimeString(boost::int64_t time_s)
 {
+	if ( time_s <= 0 )
+		return "???";
+
 	boost::int64_t time_m = (time_s - (fmod (time_s, time_s / 60))) / 60;
 	boost::int64_t time_h = (time_m - (fmod (time_m, time_m / 60))) / 60;
 	boost::int64_t time_d = (time_h - (fmod (time_h, time_h / 24))) / 24;
@@ -200,19 +203,12 @@ boost::int64_t Torrent::getWanted()
 
 boost::int64_t Torrent::getEta()
 {
-	if (getDownloadRate() <= 0)
-	{
-		return 817;
-	}
-	else
-	{
-		return (getWanted() / getDownloadRate());
-	}
+	return ( getDownloadRate() <= 0 ) ? -1 : ( getWanted() / getDownloadRate() );
 }
 
 string Torrent::getTextEta()
 {
-	return getTimeString(getEta());
+	return getTimeString( getEta() );
 }
 
 float Torrent::getTotalProgress()
@@ -408,4 +404,3 @@ void Torrent::pause()
 {
 	setPaused(true);
 }
-

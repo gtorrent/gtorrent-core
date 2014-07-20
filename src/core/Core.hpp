@@ -17,10 +17,10 @@ namespace gt
 		static bool isMagnetLink(string const& link);
 
 		static string getDefaultSavePath();
-		vector<shared_ptr<Torrent> > &getTorrents();
+		inline vector< shared_ptr< Torrent > > &getTorrents() { return m_torrents; };
 		shared_ptr<Torrent> addTorrent(string path);
 
-		bool isRunning();
+		inline bool isRunning() const { return m_running; };
 		void shutdown();
 		void update();
 	};
