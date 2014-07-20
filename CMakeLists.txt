@@ -51,6 +51,7 @@ ADD_LIBRARY ( ${PROJECT_NAME}
 
 # Create test executable
 ADD_EXECUTABLE ( gTest
+    EXCLUDE_FROM_ALL
 	test/main.cpp
 )
 
@@ -58,7 +59,7 @@ ADD_EXECUTABLE ( gTest
 ADD_DEPENDENCIES(gTest gtorrent)
 
 # Add and move test torrents
-add_custom_target(copytorrents ALL
+add_custom_target(copytorrents
     COMMENT "Copying torrents"
 )
 FILE(GLOB Torrents ${PROJECT_SOURCE_DIR}/test/*.torrent)
@@ -68,7 +69,7 @@ FOREACH(Torrent ${Torrents})
         COMMENT "Copying ${Torrent}"
     )
 ENDFOREACH()
-ADD_DEPENDENCIES(copytorrents gTest)
+ADD_DEPENDENCIES(gTest copytorrents)
 
 ADD_DEFINITIONS (
     ${LIBTORRENT_CFLAGS}
