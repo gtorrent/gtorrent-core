@@ -30,6 +30,10 @@ We are using tabs for indentations. Don't like it? I don't either, but it's our 
 Fortunately, we are allowed to use spaces to align code. Will this cause a mess aligning using different tab sizes? *Yes.* So let's all
 agree to use tabsize=8, alright? I didn't decide this one.
 
+gTorrent uses astyle to format our code. You can find more about it [here](http://astyle.sourceforge.net/)
+
+Install astyle, and then run scripts/format.sh at the root of the repo, so that someone else doesn't have to fix your retarded indents
+
 ##### Coding style
 We are using our own, loosely based of kernel style. If something's not specified here, either follow what others have done or use your better judgement
 - if/else statements get their opening braces (Don't ask why, I hate this one too.)
@@ -43,10 +47,6 @@ Links to the documentation of each library.
 
 ## About
 A minimalistic lightweight bittorrent client written by some smart people from the 4chan technology board.
-
-gTorrent uses astyle to format our code. Please run astyle before making a pull request. You can find more about it [here](http://astyle.sourceforge.net/)
-
-Install astyle, and then run scripts/format.sh at the root of the repo.
 
 ### Goals
 1. Support multiple GUIs (Qt, Gtk, Cocoa, node-webkit)
