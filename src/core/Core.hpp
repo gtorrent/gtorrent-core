@@ -20,7 +20,7 @@ namespace gt
 		vector<shared_ptr<Torrent> > &getTorrents();
 		shared_ptr<Torrent> addTorrent(string path);
 
-		bool isRunning();
+		inline bool isRunning() const { return m_running; };
 		void shutdown();
 		void update();
 	};

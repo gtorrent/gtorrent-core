@@ -19,11 +19,6 @@ bool gt::Core::isMagnetLink(string const& url)
 	return url.compare(0, prefix.length(), prefix) == 0;
 }
 
-bool gt::Core::isRunning()
-{
-	return m_running;
-}
-
 string gt::Core::getDefaultSavePath()
 {
 #ifndef _WIN32
