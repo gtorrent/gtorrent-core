@@ -1,8 +1,5 @@
 #pragma once
 
-#define SECOND 60
-#define HOUR 60 * 60
-
 #include "libtorrent.hpp"
 #include "Event.hpp"
 #include <iomanip>

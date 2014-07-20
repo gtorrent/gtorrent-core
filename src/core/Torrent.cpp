@@ -3,65 +3,29 @@
 #include "Log.hpp"
 #define T_PPM 1000000.f
 
-string getTimeString(boost::int64_t time_s)
+// format 0d 0h 0m 0s
+string getTimeString( boost::int64_t time_s )
 {
 	if ( time_s <= 0 )
 		return "???";
 
-	boost::int64_t time_m = (time_s - (fmod (time_s, time_s / 60))) / 60;
-	boost::int64_t time_h = (time_m - (fmod (time_m, time_m / 60))) / 60;
-	boost::int64_t time_d = (time_h - (fmod (time_h, time_h / 24))) / 24;
+	boost::int64_t time_m = time_s / 60;
+	time_s = time_s % 60;
+	boost::int64_t time_h = time_m / 60;
+	time_m = time_m % 60;
+	boost::int64_t time_d = time_h / 24;
+	time_h = time_h % 24;
 
 	ostringstream time_string;
 
-	if(time_s <= 0)
-	{
-		return string();
-	}
-	if(time_s < 60)
-	{
-		if(time_s == 1)
-		{
-			time_string << time_s << " Second";
-		}
-		else
-		{
-			time_string << time_s << " Seconds";
-		}
-	}
-	if(time_s >= 60 && time_s < (60 * 60))
-	{
-		if(time_m == 1)
-		{
-			time_string << time_m << " Minute, ";
-		}
-		else
-		{
-			time_string << time_m << " Minutes, ";
-		}
-	}
-	if(time_m >= 60 && time_m < (60 * 60))
-	{
-		if(time_h == 1)
-		{
-			time_string << time_h << " Hour, ";
-		}
-		else
-		{
-			time_string << time_h << " Hours, ";
-		}
-	}
-	if(time_h >= 24)
-	{
-		if(time_h == 1)
-		{
-			time_string << time_d << " Day, ";
-		}
-		else
-		{
-			time_string << time_d << " Days, ";
-		}
-	}
+	if ( time_d > 0 )
+		time_string << time_d << "d ";
+	if ( time_h > 0 )
+		time_string << time_h << "h ";
+	if ( time_m > 0 )
+		time_string << time_m << "m ";
+	time_string << time_s << "s"
+
 	return time_string.str();
 }
 
