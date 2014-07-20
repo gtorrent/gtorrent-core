@@ -3,65 +3,29 @@
 #include "Log.hpp"
 #define T_PPM 1000000.f
 
-string getTimeString(boost::int64_t time_s)
+// format 0d 0h 0m 0s
+string getTimeString( boost::int64_t time_s )
 {
 	if ( time_s <= 0 )
 		return "???";
 
-	boost::int64_t time_m = (time_s - (fmod (time_s, time_s / 60))) / 60;
-	boost::int64_t time_h = (time_m - (fmod (time_m, time_m / 60))) / 60;
-	boost::int64_t time_d = (time_h - (fmod (time_h, time_h / 24))) / 24;
+	boost::int64_t time_m = time_s / 60;
+	time_s %= 60;
+	boost::int64_t time_h = time_m / 60;
+	time_m %= 60;
+	boost::int64_t time_d = time_h / 24;
+	time_h %= 24;
 
 	ostringstream time_string;
 
-	if(time_s <= 0)
-	{
-		return string();
-	}
-	if(time_s < 60)
-	{
-		if(time_s == 1)
-		{
-			time_string << time_s << " Second";
-		}
-		else
-		{
-			time_string << time_s << " Seconds";
-		}
-	}
-	if(time_s >= 60 && time_s < (60 * 60))
-	{
-		if(time_m == 1)
-		{
-			time_string << time_m << " Minute, ";
-		}
-		else
-		{
-			time_string << time_m << " Minutes, ";
-		}
-	}
-	if(time_m >= 60 && time_m < (60 * 60))
-	{
-		if(time_h == 1)
-		{
-			time_string << time_h << " Hour, ";
-		}
-		else
-		{
-			time_string << time_h << " Hours, ";
-		}
-	}
-	if(time_h >= 24)
-	{
-		if(time_h == 1)
-		{
-			time_string << time_d << " Day, ";
-		}
-		else
-		{
-			time_string << time_d << " Days, ";
-		}
-	}
+	if ( time_d > 0 )
+		time_string << time_d << "d ";
+	if ( time_h > 0 )
+		time_string << time_h << "h ";
+	if ( time_m > 0 )
+		time_string << time_m << "m ";
+	time_string << time_s << "s";
+
 	return time_string.str();
 }
 
@@ -171,80 +135,6 @@ bool Torrent::pollEvent(gt::Event &event)
 	return false;
 }
 
-libtorrent::add_torrent_params Torrent::getTorrentParams()
-{
-	return m_torrent_params;
-}
-
-libtorrent::torrent_handle &Torrent::getHandle()
-{
-	return m_handle;
-}
-
-string Torrent::getPath()
-{
-	return m_path;
-}
-
-boost::int64_t Torrent::getAge()
-{
-	return m_handle.status().active_time;
-}
-
-string Torrent::getTextAge()
-{
-	return getTimeString(getAge());
-}
-
-boost::int64_t Torrent::getWanted()
-{
-	return m_handle.status().total_wanted;
-}
-
-boost::int64_t Torrent::getEta()
-{
-	return ( getDownloadRate() <= 0 ) ? -1 : ( getWanted() / getDownloadRate() );
-}
-
-string Torrent::getTextEta()
-{
-	return getTimeString( getEta() );
-}
-
-float Torrent::getTotalProgress()
-{
-	libtorrent::torrent_status s = m_handle.status();
-
-	return ((float) s.progress_ppm / (float) T_PPM) * 100;
-}
-
-unsigned int Torrent::getPPMProgress()
-{
-	libtorrent::torrent_status s = m_handle.status();
-
-	return s.progress_ppm;
-}
-
-unsigned int Torrent::getTotalSeeders()
-{
-	return m_handle.status().num_seeds;
-}
-
-unsigned int Torrent::getTotalPeers()
-{
-	return m_handle.status().num_peers;
-}
-
-unsigned int Torrent::getTotalLeechers()
-{
-	return m_handle.status().num_peers - m_handle.status().num_seeds;
-}
-
-libtorrent::torrent_status::state_t Torrent::getState()
-{
-	return m_handle.status().state;
-}
-
 string Torrent::getTextState()
 {
 	switch (getState())
@@ -268,144 +158,26 @@ string Torrent::getTextState()
 	}
 }
 
-string Torrent::getCurrentTrackerURL()
+float Torrent::getTotalRatio() const
 {
-	return m_handle.status().current_tracker;
-}
-
-void Torrent::torrentForceRecheck()
-{
-	m_handle.force_recheck();
-}
-
-unsigned int Torrent::getUploadRate()
-{
-	return m_handle.status().upload_rate;
-}
-
-string Torrent::getTextUploadRate()
-{
-	return getRateString(getUploadRate());
-}
-
-unsigned int Torrent::getDownloadRate()
-{
-	return m_handle.status().download_rate;
-}
-
-string Torrent::getTextDownloadRate()
-{
-	return getRateString(getDownloadRate());
-}
-
-boost::int64_t Torrent::getTotalUploaded()
-{
-	return m_handle.status().total_upload;
-}
-
-string Torrent::getTextTotalUploaded()
-{
-	return getFileSizeString(getTotalUploaded());
-}
-
-
-boost::int64_t Torrent::getTotalDownloaded()
-{
-	return m_handle.status().total_download;
-}
-
-string Torrent::getTextTotalDownloaded()
-{
-	return getFileSizeString(getTotalDownloaded());
-}
-
-boost::int64_t Torrent::getSize()
-{
-	return m_handle.status().total_wanted;
-}
-
-string Torrent::getTextSize()
-{
-	return getFileSizeString(getSize());
-}
-
-boost::int64_t Torrent::getRemaining()
-{
-	return m_handle.status().total_wanted - m_handle.status().total_wanted_done;
-}
-
-string Torrent::getTextRemaining()
-{
-	return getFileSizeString(getRemaining());
-}
-
-boost::int64_t Torrent::getTorrentSize()
-{
-	return m_handle.status().total_wanted;
-}
-
-boost::int64_t Torrent::getTimeRemaining()
-{
-	if(getDownloadRate() > 0)
-		return getTorrentSize() / getDownloadRate();
+	if ( getTotalDownloaded() > 0 )
+		return float( getTotalUploaded() ) / float( getTotalDownloaded() );
 	else
-		return 0;
-}
-
-string Torrent::getTextTimeRemaining()
-{
-	return getTimeString(getTimeRemaining());
-}
-
-float Torrent::getTotalRatio()
-{
-	if (getTotalDownloaded() == 0)
-	{
 		return 0.0f;
-	}
-	else
-	{
-		float totalRatio = float(getTotalUploaded()) / float(getTotalDownloaded());
-		return totalRatio;
-	}
 }
 
 string Torrent::getTextTotalRatio()
 {
-	stringstream ttr (stringstream::in | stringstream::out);
-
-	float ratio = getTotalRatio();
-
-	ttr << fixed << setprecision(3) << ratio;
-
+	ostringstream ttr;
+	ttr << fixed << setprecision(3) << getTotalRatio();
 	return ttr.str();
-}
-
-void Torrent::setHandle(libtorrent::torrent_handle &h)
-{
-	m_handle = h;
 }
 
 void Torrent::setPaused(bool isPaused)
 {
 	m_handle.auto_managed(!isPaused);
-	isPaused ?
-	m_handle.pause()
-	:
-	m_handle.resume();
-}
-
-bool Torrent::isPaused()
-{
-	return m_handle.status().paused;
-}
-
-void Torrent::resume()
-{
-	setPaused(false);
-}
-
-void Torrent::pause()
-{
-	setPaused(true);
+	if ( isPaused )
+		m_handle.pause();
+	else
+		m_handle.resume();
 }
