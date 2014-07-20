@@ -122,9 +122,8 @@ void GtkTorrentTreeView::setupColumns()
 void GtkTorrentTreeView::addCell(shared_ptr<Torrent> &t)
 {
 	if (t == NULL)
-	{
 		return;
-	}
+
 	Gtk::TreeModel::Row row     = *(m_liststore->append());
 
 	row[m_cols.m_col_age]       = t->getTextAge();
