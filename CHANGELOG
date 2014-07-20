@@ -1,29 +1,23 @@
 [0.0.2]
 * GENERAL
-- Big fucking merge clusterfuck here thanks to idiots who can't into GitHub,
-  so I'm going to do my best documenting the fucking changes and fix every new bug I find.
+- Big fucking merge clusterfuck here so I'm going to do my best documenting the fucking changes and fix every new bug I find.
 * CHANGES
 infoburp
 - Added various columns
-- The retard that didn't use git's builtin merging functions and used copy paste everywhere.
-- Writes silly commit names that you actually have to check to know what the fuck they did.
 fuyukaidesu
 - Added ability to enable/disable columns via context menu
-- Added various context menus throughout TreeView that doesn't actually do anything.
+- Added various placeholder context menus throughout TreeView
 IGI-111
 - Added pause/resume buttons
 - Added pause/resume functionality
 Quaker762
 - Added ETA function
 - Added ETA column
-- Added force recheck function that's used nowhere in the project.
+- Added force recheck function
 AndrewBerry
 - Inlined some functions
 Explouad
-- Added astyle config to project root. Now we can lynch people who don't use correct indents.
-benwaffle
-- The retard that hardly did anything and caused a huge merge fuckup which is why we have the abortion that is 0.0.2
-
+- Added astyle config to project root.
 
 [0.0.1]
  - Base written.
