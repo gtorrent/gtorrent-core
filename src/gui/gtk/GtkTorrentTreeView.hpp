@@ -28,6 +28,8 @@ public:
 		add(m_col_leechers);
 		add(m_col_ul_speed);
 		add(m_col_dl_speed);
+		add(m_col_percent);
+		add(m_col_percent_text);
 		add(m_col_ul_total);
 		add(m_col_dl_total);
 		add(m_col_size);
@@ -66,7 +68,6 @@ private:
 	/* Just a quick way to toggle columns */
 	/* Each bit from the LSB enables or disables a panel */
 	/* You can toggle a bit by XORing with 1 */
-	unsigned m_visibleColumns = 0xFFFFFFFF;
 	Gtk::Menu *m_rcMenu = Gtk::manage(new Gtk::Menu());
 
 	void setupColumns();
@@ -75,7 +76,7 @@ private:
 	/* Event handlers for clicks on the controls */
 	bool       torrentView_onClick(GdkEventButton *event);
 	bool    torrentColumns_onClick(GdkEventButton *event);
-	bool ColumnContextMenu_onClick(GdkEventButton *event, int n);
+	bool ColumnContextMenu_onClick(GdkEventButton *event, Gtk::TreeViewColumn *tvc);
 
 	/* Event handlers for the torrent view context menu */
 	void     stopView_onClick();
