@@ -3,3 +3,4 @@
 --indent-namespaces
 --pad-oper
 --recursive
+--suffix=none
