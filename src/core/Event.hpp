@@ -2,14 +2,14 @@
 
 namespace gt
 {
-	struct Event
-	{
-		enum Type
-		{
-			DownloadCompleted
-		};
+struct Event
+{
+    enum Type
+    {
+        DownloadCompleted
+    };
 
-		Type type;
-	};
+    Type type;
+};
 }
 

@@ -99,7 +99,7 @@ string getFileSizeString(boost::int64_t file_size)
 }
 
 Torrent::Torrent(string path) :
-	m_path(path)
+    m_path(path)
 {
 	setSavePath(""); //TODO add argument to allow user to override the default save path of $HOME/Downloads
 	if (gt::Core::isMagnetLink(path))
@@ -132,37 +132,37 @@ Torrent::Torrent(string path) :
 
 void Torrent::setSavePath(string savepath)
 {
-	if (savepath.empty())
-		savepath = gt::Core::getDefaultSavePath();
-	if (savepath.empty())
-		savepath = "./"; //Fall back to ./ if $HOME is not set
-	m_torrent_params.save_path = savepath;
+    if (savepath.empty())
+        savepath = gt::Core::getDefaultSavePath();
+    if (savepath.empty())
+        savepath = "./"; //Fall back to ./ if $HOME is not set
+    m_torrent_params.save_path = savepath;
 }
 
 bool Torrent::pollEvent(gt::Event &event)
 {
-	if (getTotalProgress() >= 100)
-	{
-		event.type = gt::Event::DownloadCompleted;
-		return true;
-	}
+    if (getTotalProgress() >= 100)
+    {
+        event.type = gt::Event::DownloadCompleted;
+        return true;
+    }
 
-	return false;
+    return false;
 }
 
 libtorrent::add_torrent_params Torrent::getTorrentParams()
 {
-	return m_torrent_params;
+    return m_torrent_params;
 }
 
 libtorrent::torrent_handle &Torrent::getHandle()
 {
-	return m_handle;
+    return m_handle;
 }
 
 string Torrent::getPath()
 {
-	return m_path;
+    return m_path;
 }
 
 boost::int64_t Torrent::getActive()
@@ -196,36 +196,36 @@ string Torrent::getTextEta()
 
 float Torrent::getTotalProgress()
 {
-	libtorrent::torrent_status s = m_handle.status();
+    libtorrent::torrent_status s = m_handle.status();
 
-	return ((float) s.progress_ppm / (float) T_PPM) * 100;
+    return ((float) s.progress_ppm / (float) T_PPM) * 100;
 }
 
 unsigned int Torrent::getPPMProgress()
 {
-	libtorrent::torrent_status s = m_handle.status();
+    libtorrent::torrent_status s = m_handle.status();
 
-	return s.progress_ppm;
+    return s.progress_ppm;
 }
 
 unsigned int Torrent::getTotalSeeders()
 {
-	return m_handle.status().num_seeds;
+    return m_handle.status().num_seeds;
 }
 
 unsigned int Torrent::getTotalPeers()
 {
-	return m_handle.status().num_peers;
+    return m_handle.status().num_peers;
 }
 
 unsigned int Torrent::getTotalLeechers()
 {
-	return m_handle.status().num_peers - m_handle.status().num_seeds;
+    return m_handle.status().num_peers - m_handle.status().num_seeds;
 }
 
 libtorrent::torrent_status::state_t Torrent::getState()
 {
-	return m_handle.status().state;
+    return m_handle.status().state;
 }
 
 string Torrent::getTextState()
@@ -258,7 +258,7 @@ string Torrent::getCurrentTrackerURL()
 
 unsigned int Torrent::getUploadRate()
 {
-	return m_handle.status().upload_rate;
+    return m_handle.status().upload_rate;
 }
 
 string Torrent::getTextUploadRate()
@@ -268,7 +268,7 @@ string Torrent::getTextUploadRate()
 
 unsigned int Torrent::getDownloadRate()
 {
-	return m_handle.status().download_rate;
+    return m_handle.status().download_rate;
 }
 
 string Torrent::getTextDownloadRate()
@@ -278,7 +278,7 @@ string Torrent::getTextDownloadRate()
 
 boost::int64_t Torrent::getTotalUploaded()
 {
-	return m_handle.status().total_upload;
+    return m_handle.status().total_upload;
 }
 
 string Torrent::getTextTotalUploaded()
@@ -289,7 +289,7 @@ string Torrent::getTextTotalUploaded()
 
 boost::int64_t Torrent::getTotalDownloaded()
 {
-	return m_handle.status().total_download;
+    return m_handle.status().total_download;
 }
 
 string Torrent::getTextTotalDownloaded()
@@ -337,29 +337,54 @@ string Torrent::getTextTimeRemaining()
 
 float Torrent::getTotalRatio()
 {
-	if (getTotalDownloaded() == 0)
-	{
-		return 0.0f;
-	}
-	else
-	{
-		float totalRatio = float(getTotalUploaded()) / float(getTotalDownloaded());
-		return totalRatio;
-	}
+    if (getTotalDownloaded() == 0)
+    {
+        return 0.0f;
+    }
+    else
+    {
+        float totalRatio = float(getTotalUploaded()) / float(getTotalDownloaded());
+        return totalRatio;
+    }
 }
 
 string Torrent::getTextTotalRatio()
 {
 	stringstream ttr (stringstream::in | stringstream::out);
 
-	float ratio = getTotalRatio();
+    float ratio = getTotalRatio();
 
-	ttr << fixed << setprecision(3) << ratio;
+    ttr << fixed << setprecision(3) << ratio;
 
-	return ttr.str();
+    return ttr.str();
 }
 
 void Torrent::setHandle(libtorrent::torrent_handle &h)
 {
-	m_handle = h;
+    m_handle = h;
 }
+
+void Torrent::setPaused(bool isPaused)
+{
+    m_handle.auto_managed(!isPaused);
+    isPaused ?
+    m_handle.pause()
+    :
+    m_handle.resume();
+}
+
+bool Torrent::isPaused()
+{
+    return m_handle.status().paused;
+}
+
+void Torrent::resume()
+{
+    setPaused(false);
+}
+
+void Torrent::pause()
+{
+    setPaused(true);
+}
+

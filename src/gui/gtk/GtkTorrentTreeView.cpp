@@ -5,9 +5,9 @@
 
 GtkTorrentTreeView::GtkTorrentTreeView()
 {
-	m_liststore = Gtk::ListStore::create(m_cols);
-	this->set_model(m_liststore);
-	this->setupColumns();
+    m_liststore = Gtk::ListStore::create(m_cols);
+    this->set_model(m_liststore);
+    this->setupColumns();
 }
 
 void GtkTorrentTreeView::setupColumns()
@@ -114,11 +114,11 @@ void GtkTorrentTreeView::addCell(shared_ptr<Torrent> &t)
 
 void GtkTorrentTreeView::updateCells()
 {
-	unsigned int i = 0;
+    unsigned int i = 0;
 
-	for (auto &c : m_liststore->children())
-	{
-		shared_ptr<Torrent> t = Application::getSingleton()->getCore()->getTorrents()[i];
+    for (auto &c : m_liststore->children())
+    {
+        shared_ptr<Torrent> t = Application::getSingleton()->getCore()->getTorrents()[i];
 
 		c[m_cols.m_col_active] = t->getTextActive();
 		c[m_cols.m_col_eta] = t->getTextEta();
@@ -134,10 +134,29 @@ void GtkTorrentTreeView::updateCells()
 		c[m_cols.m_col_dl_ratio] = t->getTextTotalRatio();
 		c[m_cols.m_col_eta] = t->getTextTimeRemaining();
 
-		// TODO: Handle with events
+        // TODO: Handle with events
 
-		//m_cells[i]->property_text() = t->getTextState();
+        //m_cells[i]->property_text() = t->getTextState();
 
-		++i;
-	}
+        ++i;
+    }
+}
+
+vector<unsigned> GtkTorrentTreeView::selectedIndices()
+{
+    Glib::RefPtr<Gtk::TreeSelection> sel = this->get_selection();
+    sel->set_mode(Gtk::SelectionMode::SELECTION_MULTIPLE);
+    vector<Gtk::TreeModel::Path> path = sel->get_selected_rows();
+    vector<unsigned> indices;
+    for (auto val : path)
+        indices.push_back(val[0]); // we only get the first index because our tree is 1 node deep
+    return indices;
+}
+
+void GtkTorrentTreeView::setSelectedPaused(bool isPaused)
+{
+    vector<shared_ptr<Torrent> > t = Application::getSingleton()->getCore()->getTorrents();
+    for (auto i : selectedIndices())
+        t[i]->setPaused(isPaused);// the pause button switches the status
+
 }

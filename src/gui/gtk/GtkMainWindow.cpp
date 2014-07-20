@@ -1,23 +1,22 @@
 #include "GtkAddMagnetLinkWindow.hpp"
 #include <gtkmm/filechooserdialog.h>
+#include <gtkmm/hvseparator.h>
 #include "GtkMainWindow.hpp"
 #include <Application.hpp>
-#include <gtkmm/button.h>
-#include <gtkmm/hvseparator.h>
 #include <gtkmm/stock.h>
 #include <glibmm.h>
 
 GtkMainWindow::GtkMainWindow() :
-	m_core(Application::getSingleton()->getCore())
+    m_core(Application::getSingleton()->getCore())
 {
-	this->set_position(Gtk::WIN_POS_CENTER);
-	this->set_default_size(800, 500);
+    this->set_position(Gtk::WIN_POS_CENTER);
+    this->set_default_size(800, 500);
 
-	header = Gtk::manage(new Gtk::HeaderBar());
-	header->set_title("gTorrent");
-	header->set_show_close_button(true);
+    header = Gtk::manage(new Gtk::HeaderBar());
+    header->set_title("gTorrent");
+    header->set_show_close_button(true);
 
-	// This needs to be refactored
+    // This needs to be refactored
 
 	Gtk::Button *about_btn = Gtk::manage(new Gtk::Button());
 	about_btn->set_image_from_icon_name("gtk-about");
@@ -30,12 +29,24 @@ GtkMainWindow::GtkMainWindow() :
 	add_torrent_btn->set_image_from_icon_name("gtk-add");
 	add_torrent_btn->signal_clicked().connect(sigc::mem_fun(*this, &GtkMainWindow::onAddBtnClicked));
 	header->add(*add_torrent_btn);
-
-	Gtk::Button *add_link_btn = Gtk::manage(new Gtk::Button());
-	add_link_btn->set_image_from_icon_name("gtk-paste");
+	
+    Gtk::Button *add_link_btn = Gtk::manage(new Gtk::Button());
+	add_link_btn->set_image_from_icon_name("edit-paste");
 	add_link_btn->signal_clicked().connect(sigc::mem_fun(*this, &GtkMainWindow::onAddMagnetBtnClicked));
 	header->add(*add_link_btn);
 
+    Gtk::VSeparator *separator = Gtk::manage(new Gtk::VSeparator());
+    header->add(*separator);
+
+    Gtk::Button *resume_btn = Gtk::manage(new Gtk::Button());
+    resume_btn->set_image_from_icon_name("media-playback-start");
+    resume_btn->signal_clicked().connect(sigc::mem_fun(*this, &GtkMainWindow::onResumeBtnClicked));
+    header->add(*resume_btn);
+
+    Gtk::Button *pause_btn = Gtk::manage(new Gtk::Button());
+    pause_btn->set_image_from_icon_name("media-playback-pause");
+    pause_btn->signal_clicked().connect(sigc::mem_fun(*this, &GtkMainWindow::onPauseBtnClicked));
+    header->add(*pause_btn);
 	Gtk::VSeparator *separator1 = Gtk::manage(new Gtk::VSeparator());
 	header->add(*separator1);
 
@@ -50,9 +61,6 @@ GtkMainWindow::GtkMainWindow() :
 	Gtk::VSeparator *separator2 = Gtk::manage(new Gtk::VSeparator());
 	header->add(*separator2);
 
-	Gtk::Button *pause_btn = Gtk::manage(new Gtk::Button());
-	pause_btn->set_image_from_icon_name("gtk-media-pause");
-	header->add(*pause_btn);
 
 	Gtk::Button *remove_btn = Gtk::manage(new Gtk::Button());
 	remove_btn->set_image_from_icon_name("gtk-cancel");
@@ -73,16 +81,16 @@ GtkMainWindow::GtkMainWindow() :
 	m_treeview = Gtk::manage(new GtkTorrentTreeView());
 	this->add(*m_treeview);
 
-	Glib::signal_timeout().connect(sigc::mem_fun(*this, &GtkMainWindow::onSecTick), 10);
-	this->signal_delete_event().connect(sigc::mem_fun(*this, &GtkMainWindow::onDestroy));
+    Glib::signal_timeout().connect(sigc::mem_fun(*this, &GtkMainWindow::onSecTick), 10);
+    this->signal_delete_event().connect(sigc::mem_fun(*this, &GtkMainWindow::onDestroy));
 
-	this->show_all();
+    this->show_all();
 }
 
 bool GtkMainWindow::onSecTick()
 {
-	m_treeview->updateCells();
-	return true;
+    m_treeview->updateCells();
+    return true;
 }
 
 void GtkMainWindow::onAddBtnClicked()
@@ -135,14 +143,12 @@ void GtkMainWindow::onAddMagnetBtnClicked()
 
 void GtkMainWindow::onPauseBtnClicked()
 {
-	//get the torrent selected in treeview
+    m_treeview->setSelectedPaused(true);
+}
 
-	//toggle pause status
-	//if(torrent.is_paused()) {
-	//	torrent.resume();
-	//} else {
-	//	torrent.pause();
-	//}
+void GtkMainWindow::onResumeBtnClicked()
+{
+    m_treeview->setSelectedPaused(false);
 }
 
 void GtkMainWindow::onRemoveBtnClicked()
@@ -169,6 +175,6 @@ void GtkMainWindow::onPropertiesBtnClicked()
 
 bool GtkMainWindow::onDestroy(GdkEventAny *event)
 {
-	m_core->shutdown();
-	return false;
+    m_core->shutdown();
+    return false;
 }

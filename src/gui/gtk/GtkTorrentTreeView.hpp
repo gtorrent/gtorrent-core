@@ -50,14 +50,15 @@ public:
 class GtkTorrentTreeView : public Gtk::TreeView
 {
 private:
-	GtkTorrentColumns m_cols;
-	Glib::RefPtr<Gtk::ListStore> m_liststore;
-	void setupColumns();
+    GtkTorrentColumns m_cols;
+    Glib::RefPtr<Gtk::ListStore> m_liststore;
+    void setupColumns();
+    vector<unsigned> selectedIndices();
 
 public:
-	GtkTorrentTreeView();
+    GtkTorrentTreeView();
 
-	void addCell(shared_ptr<Torrent> &t);
-	void updateCells();
+    void addCell(shared_ptr<Torrent> &t);
+    void updateCells();
+    void setSelectedPaused(bool isPaused);
 };
-

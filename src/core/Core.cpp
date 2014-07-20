@@ -2,7 +2,7 @@
 #include "Log.hpp"
 
 gt::Core::Core() :
-	m_running(true)
+    m_running(true)
 {
 	// Fuck your deprecated shit, we're going void down in here
 	// tl;dr, figure out something useful to use the error code for,
@@ -15,30 +15,30 @@ gt::Core::Core() :
 
 bool gt::Core::isMagnetLink(string const& url)
 {
-	const string prefix = "magnet:";
-	return url.compare(0, prefix.length(), prefix) == 0;
+    const string prefix = "magnet:";
+    return url.compare(0, prefix.length(), prefix) == 0;
 }
 
 bool gt::Core::isRunning()
 {
-	return m_running;
+    return m_running;
 }
 
 string gt::Core::getDefaultSavePath()
 {
 #ifndef _WIN32
-	char *savepath = getenv("HOME");
-	return savepath == NULL ? string("") : string(savepath) + "/Downloads";
+    char *savepath = getenv("HOME");
+    return savepath == NULL ? string("") : string(savepath) + "/Downloads";
 #else
-	char *savedrive = getenv("HOMEDRIVE");
-	char *savepath = getenv("HOMEPATH");
-	return savepath == NULL ? string("") : string(savedrive) + string(savepath) + "/Downloads";
+    char *savedrive = getenv("HOMEDRIVE");
+    char *savepath = getenv("HOMEPATH");
+    return savepath == NULL ? string("") : string(savedrive) + string(savepath) + "/Downloads";
 #endif
 }
 
 vector<shared_ptr<Torrent> > &gt::Core::getTorrents()
 {
-	return m_torrents;
+    return m_torrents;
 }
 
 shared_ptr<Torrent> gt::Core::addTorrent(string path)
@@ -70,61 +70,61 @@ shared_ptr<Torrent> gt::Core::addTorrent(string path)
 		return t;
 	}
 
-	// TODO: Event polling for magnet update information
-	//libtorrent::file_storage fs = info.files();
-	//libtorrent::torrent_info info = h.get_torrent_info();
+    // TODO: Event polling for magnet update information
+    //libtorrent::file_storage fs = info.files();
+    //libtorrent::torrent_info info = h.get_torrent_info();
 
-	// An Example For Fetching All Files From Torrent:
+    // An Example For Fetching All Files From Torrent:
 
-	/*unsigned int numFiles = fs.num_files();
+    /*unsigned int numFiles = fs.num_files();
 
-	printf("Total Files: %i\n", fs.num_files());
-	printf("=========================================\n");
+    printf("Total Files: %i\n", fs.num_files());
+    printf("=========================================\n");
 
-	for (unsigned int i = 0; i < numFiles; ++i)
-	{
-		libtorrent::file_entry e = fs.at(i);
+    for (unsigned int i = 0; i < numFiles; ++i)
+    {
+    	libtorrent::file_entry e = fs.at(i);
 
-		printf("Name:\t\t%s\n", e.path.c_str());
-		printf("Size:\t\t%i\n", e.size);
-		printf("-----------------------------------------\n");
-	}
+    	printf("Name:\t\t%s\n", e.path.c_str());
+    	printf("Size:\t\t%i\n", e.size);
+    	printf("-----------------------------------------\n");
+    }
 
-	printf("Total Size:\t%Li\n\n", fs.total_size());
+    printf("Total Size:\t%Li\n\n", fs.total_size());
 
-	printf("Downloading data from \"%s\"...\n", path.c_str());*/
+    printf("Downloading data from \"%s\"...\n", path.c_str());*/
 
 }
 
 void gt::Core::update()
 {
-	/*auto iter = begin(m_torrents);
+    /*auto iter = begin(m_torrents);
 
-	while (iter != end(m_torrents))
-	{
-		auto &t = **iter;
+    while (iter != end(m_torrents))
+    {
+    	auto &t = **iter;
 
-		gt::Event event;
+    	gt::Event event;
 
-		if (t.pollEvent(event))
-		{
-			switch (event.type)
-			{
-				case gt::Event::DownloadCompleted:
-					printf("Done!\n");
-					iter = m_torrents.erase(iter);
-				break;
-			}
-		}
-		else
-		{
-			++iter;
-		}
-	}*/
+    	if (t.pollEvent(event))
+    	{
+    		switch (event.type)
+    		{
+    			case gt::Event::DownloadCompleted:
+    				printf("Done!\n");
+    				iter = m_torrents.erase(iter);
+    			break;
+    		}
+    	}
+    	else
+    	{
+    		++iter;
+    	}
+    }*/
 }
 
 void gt::Core::shutdown()
 {
-	gt::Log::Debug("Shutting down core library...");
-	m_running = false;
+    gt::Log::Debug("Shutting down core library...");
+    m_running = false;
 }
