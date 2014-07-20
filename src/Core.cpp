@@ -1,6 +1,11 @@
 #include "Core.hpp"
 #include "Log.hpp"
 #include <fstream>
+#ifdef _WIN32
+#include <direct.h>
+#else
+#include <sys/stat.h>
+#endif
 
 gt::Core::Core() :
 	m_running(true)
@@ -11,6 +16,14 @@ gt::Core::Core() :
 	libtorrent::error_code ec;
 	m_session.listen_on(make_pair(6881, 6889), ec);
     torrentCopyPath = getDefaultTorrentCopyPath();
+    // Make directories for copying files 
+#ifdef _WIN32
+    _mkdir(torrentCopyPath.substr(0,torrentCopyPath.find_last_of("\\/")).c_str());
+    _mkdir(torrentCopyPath.c_str());
+#else
+    mkdir(torrentCopyPath.substr(0,torrentCopyPath.find_last_of("\\/")).c_str(), 0744);
+    mkdir(torrentCopyPath.c_str(), 0744);
+#endif
 }
 
 bool gt::Core::isMagnetLink(string const& url)
@@ -53,7 +66,6 @@ shared_ptr<Torrent> gt::Core::addTorrent(string path)
     int pos;
     pos = path.find_last_of("\\/");
     outpath = torrentCopyPath + "/" + outpath.substr(pos + 1, outpath.size() - pos - 1);
-    gt::Log::Debug("%s", outpath.c_str());
     ofstream dst(outpath, ios::binary);
     // Copy data
     dst << src.rdbuf();
