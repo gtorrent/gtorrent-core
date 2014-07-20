@@ -126,7 +126,7 @@ void GtkTorrentTreeView::addCell(shared_ptr<Torrent> &t)
 
 	Gtk::TreeModel::Row row     = *(m_liststore->append());
 
-	row[m_cols.m_col_age]       = t->getTextAge();
+	row[m_cols.m_col_age]       = t->getTextActiveTime();
 	row[m_cols.m_col_eta]       = t->getTextEta();
 	row[m_cols.m_col_name]      = t->getHandle().name();
 	row[m_cols.m_col_seeders]   = t->getTotalSeeders();
@@ -145,7 +145,7 @@ void GtkTorrentTreeView::updateCells()
 	{
 		shared_ptr<Torrent> t = Application::getSingleton()->getCore()->getTorrents()[i];
 
-		c[m_cols.m_col_age]      = t->getTextAge();
+		c[m_cols.m_col_age]      = t->getTextActiveTime();
 		c[m_cols.m_col_eta]      = t->getTextEta();
 		c[m_cols.m_col_percent]  = t->getTotalProgress();
 		c[m_cols.m_col_seeders]  = t->getTotalSeeders();
