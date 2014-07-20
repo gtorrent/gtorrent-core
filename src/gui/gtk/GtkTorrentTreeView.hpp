@@ -13,10 +13,10 @@ class GtkTorrentColumns : public Gtk::TreeModel::ColumnRecord
 public:
 	GtkTorrentColumns()
 	{
+		add(m_col_name);
 		add(m_col_queue);
 		add(m_col_age);
 		add(m_col_eta);
-		add(m_col_name);
 		add(m_col_seeders);
 		add(m_col_leechers);
 		add(m_col_ul_speed);

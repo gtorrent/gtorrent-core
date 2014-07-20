@@ -81,6 +81,7 @@ bool GtkTorrentTreeView::torrentColumns_onClick(GdkEventButton *event)
 	return true; //The bool that determine if the event has been handled allows to propagete or not a click
 }
 
+// TODO REFACTOR THE LIVING HELL OUT OF THIS ABOMINATION -- nyanpasu
 void GtkTorrentTreeView::setupColumns()
 {
 	unsigned int cid = 0;
@@ -211,17 +212,18 @@ void GtkTorrentTreeView::addCell(shared_ptr<Torrent> &t)
 	{
 		return;
 	}
-	Gtk::TreeModel::Row row = *(m_liststore->append());
-	row[m_cols.m_col_age] = t->getTextAge();
-	row[m_cols.m_col_eta] = t->getTextEta();
-	row[m_cols.m_col_name] = t->getHandle().name();
-	row[m_cols.m_col_seeders] = t->getTotalSeeders();
-	row[m_cols.m_col_leechers] = t->getTotalLeechers();
-	row[m_cols.m_col_ul_total] = t->getTextTotalUploaded();
-	row[m_cols.m_col_dl_total] = t->getTextTotalDownloaded();
-	row[m_cols.m_col_size] = t->getTextSize();
+	Gtk::TreeModel::Row row     = *(m_liststore->append());
+
+	row[m_cols.m_col_age]       = t->getTextAge();
+	row[m_cols.m_col_eta]       = t->getTextEta();
+	row[m_cols.m_col_name]      = t->getHandle().name();
+	row[m_cols.m_col_seeders]   = t->getTotalSeeders();
+	row[m_cols.m_col_leechers]  = t->getTotalLeechers();
+	row[m_cols.m_col_ul_total]  = t->getTextTotalUploaded();
+	row[m_cols.m_col_dl_total]  = t->getTextTotalDownloaded();
+	row[m_cols.m_col_size]      = t->getTextSize();
 	row[m_cols.m_col_remaining] = t->getTextRemaining();
-	row[m_cols.m_col_dl_ratio] = t->getTextTotalRatio();
+	row[m_cols.m_col_dl_ratio]  = t->getTextTotalRatio();
 }
 
 void GtkTorrentTreeView::updateCells()
@@ -231,18 +233,18 @@ void GtkTorrentTreeView::updateCells()
 	{
 		shared_ptr<Torrent> t = Application::getSingleton()->getCore()->getTorrents()[i];
 
-		c[m_cols.m_col_age] = t->getTextAge();
-		c[m_cols.m_col_eta] = t->getTextEta();
-		c[m_cols.m_col_percent] = t->getTotalProgress();
-		c[m_cols.m_col_seeders] = t->getTotalSeeders();
+		c[m_cols.m_col_age]      = t->getTextAge();
+		c[m_cols.m_col_eta]      = t->getTextEta();
+		c[m_cols.m_col_percent]  = t->getTotalProgress();
+		c[m_cols.m_col_seeders]  = t->getTotalSeeders();
 		c[m_cols.m_col_leechers] = t->getTotalLeechers();
 		c[m_cols.m_col_ul_speed] = t->getTextUploadRate();
 		c[m_cols.m_col_dl_speed] = t->getTextDownloadRate();
 		c[m_cols.m_col_ul_total] = t->getTextTotalUploaded();
 		c[m_cols.m_col_dl_total] = t->getTextTotalDownloaded();
-		c[m_cols.m_col_size] = t->getTextSize();
+		c[m_cols.m_col_size]     = t->getTextSize();
 		c[m_cols.m_col_dl_ratio] = t->getTextTotalRatio();
-		c[m_cols.m_col_eta] = t->getTextTimeRemaining();
+		c[m_cols.m_col_eta]      = t->getTextTimeRemaining();
 
 		// TODO: Handle with events
 
