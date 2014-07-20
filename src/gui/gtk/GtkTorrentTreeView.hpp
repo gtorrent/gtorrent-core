@@ -65,6 +65,7 @@ private:
 	Gtk::Menu *m_rcMenu = Gtk::manage(new Gtk::Menu());
 
 	void setupColumns();
+	vector<unsigned> selectedIndices();
 
 	/* Event handlers for clicks on the controls */
 	bool       torrentView_onClick(GdkEventButton *event);
@@ -84,4 +85,5 @@ public:
 
 	void addCell(shared_ptr<Torrent> &t);
 	void updateCells();
+	void setSelectedPaused(bool isPaused);
 };

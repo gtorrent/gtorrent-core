@@ -237,6 +237,7 @@ void GtkTorrentTreeView::addCell(shared_ptr<Torrent> &t)
 void GtkTorrentTreeView::updateCells()
 {
 	unsigned int i = 0;
+
 	for (auto &c : m_liststore->children())
 	{
 		shared_ptr<Torrent> t = Application::getSingleton()->getCore()->getTorrents()[i];
@@ -263,9 +264,46 @@ void GtkTorrentTreeView::updateCells()
 	}
 }
 
-void GtkTorrentTreeView::    stopView_onClick() { /* Doesn't do nuffin wrong */ }
-void GtkTorrentTreeView::    openView_onClick() { /* Doesn't do nuffin wrong */ }
-void GtkTorrentTreeView::   startView_onClick() { /* Doesn't do nuffin wrong */ }
-void GtkTorrentTreeView::  removeView_onClick() { /* Doesn't do nuffin wrong */ }
-void GtkTorrentTreeView::priorityView_onClick() { /* Doesn't do nuffin wrong */ }
-void GtkTorrentTreeView::propertyView_onClick() { /* Doesn't do nuffin wrong */ }
+vector<unsigned> GtkTorrentTreeView::selectedIndices()
+{
+	Glib::RefPtr<Gtk::TreeSelection> sel = this->get_selection();
+	sel->set_mode(Gtk::SelectionMode::SELECTION_MULTIPLE);
+	vector<Gtk::TreeModel::Path> path = sel->get_selected_rows();
+	vector<unsigned> indices;
+	for (auto val : path)
+		indices.push_back(val[0]); // we only get the first index because our tree is 1 node deep
+	return indices;
+}
+
+void GtkTorrentTreeView::setSelectedPaused(bool isPaused)
+{
+	vector<shared_ptr<Torrent> > t = Application::getSingleton()->getCore()->getTorrents();
+	for (auto i : selectedIndices())
+		t[i]->setPaused(isPaused);// the pause button switches the status
+
+}
+
+void GtkTorrentTreeView::    stopView_onClick()
+{
+	/* Doesn't do nuffin wrong */
+}
+void GtkTorrentTreeView::    openView_onClick()
+{
+	/* Doesn't do nuffin wrong */
+}
+void GtkTorrentTreeView::   startView_onClick()
+{
+	/* Doesn't do nuffin wrong */
+}
+void GtkTorrentTreeView::  removeView_onClick()
+{
+	/* Doesn't do nuffin wrong */
+}
+void GtkTorrentTreeView::priorityView_onClick()
+{
+	/* Doesn't do nuffin wrong */
+}
+void GtkTorrentTreeView::propertyView_onClick()
+{
+	/* Doesn't do nuffin wrong */
+}
