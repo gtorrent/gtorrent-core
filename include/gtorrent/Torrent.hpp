@@ -1,10 +1,12 @@
 #pragma once
 
-#include "all.h"
 #include "libtorrent.hpp"
 #include "Event.hpp"
 #include <iomanip>
 #include <sstream>
+#include <string>
+
+using namespace std;
 
 class Torrent
 {

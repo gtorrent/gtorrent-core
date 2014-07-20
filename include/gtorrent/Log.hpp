@@ -1,6 +1,8 @@
 #pragma once
 
-#include "all.h"
+#include <string>
+
+using namespace std;
 
 namespace gt
 {
