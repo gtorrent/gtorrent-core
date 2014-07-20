@@ -57,10 +57,6 @@ private:
 
 	Glib::RefPtr<Gtk::ListStore> m_liststore;
 
-	/* Yeah it's shit. */
-	/* Just a quick way to toggle columns */
-	/* Each bit from the LSB enables or disables a panel */
-	/* You can toggle a bit by XORing with 1 */
 	Gtk::Menu *m_rcMenu = Gtk::manage(new Gtk::Menu());
 
 	void setupColumns();
