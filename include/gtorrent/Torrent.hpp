@@ -4,6 +4,9 @@
 #include "Event.hpp"
 #include <iomanip>
 #include <sstream>
+#include <string>
+
+using namespace std;
 
 class Torrent
 {
