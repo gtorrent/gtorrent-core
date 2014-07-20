@@ -13,12 +13,14 @@ namespace gt
 		vector<shared_ptr<Torrent> > m_torrents;
 		libtorrent::session m_session;
 		bool m_running;
+        string torrentCopyPath;
 	public:
 		Core();
 
 		static bool isMagnetLink(string const& link);
 
 		static string getDefaultSavePath();
+        static string getDefaultTorrentCopyPath();
 		vector<shared_ptr<Torrent> > &getTorrents();
 		shared_ptr<Torrent> addTorrent(string path);
 

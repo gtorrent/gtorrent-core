@@ -9,6 +9,7 @@ endif (COMMAND cmake_policy)
 PROJECT (gtorrent)
 
 SET (GTORRENT_VERSION_MAJOR 0)
+
 SET (GTORRENT_VERSION_MINOR 0)
 SET (GTORRENT_VERSION_PATCH 1)
 
@@ -18,10 +19,11 @@ SET (GTORRENT_VERSION_PATCH 1)
 SET (VERSION ${GTORRENT_VERSION_MAJOR}.${GTORRENT_VERSION_MINOR}.${GTORRENT_VERSION_PATCH})
 configure_file(src/utils/Version.hpp.in Version.hpp @ONLY)
 
+
 # Set compiler flags
 SET (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -g -include all.h -Wall")
 
-# Fuck libboost for not providing boost.pc or fucking something
+# Fuck liboost for not providing boost.pc or fucking something
 SET (Boost_USE_STATIC_LIBS ON) 
 SET (Boost_USE_MULTITHREADED ON)  
 SET (Boost_USE_STATIC_RUNTIME OFF) 
@@ -65,6 +67,7 @@ FOREACH(Torrent ${Torrents})
     ADD_CUSTOM_COMMAND(TARGET copytorrents 
         COMMAND ${CMAKE_COMMAND} -E copy ${Torrent} ${CMAKE_BINARY_DIR}/${Torrent_NAME}
         COMMENT "Copying ${Torrent}"
+        DEPENDS ${Torrents}
     )
 ENDFOREACH()
 ADD_DEPENDENCIES(gTest copytorrents)
@@ -74,7 +77,6 @@ ADD_DEFINITIONS (
 )
 
 INCLUDE_DIRECTORIES (
-    include
     include/gtorrent
 	include
     ${Boost_INCLUDE_DIRS}
