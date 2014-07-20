@@ -108,7 +108,7 @@ string gt::Core::getDefaultTorrentCopyPath()
 {
 #ifndef _WIN32
     char* copyPath = getenv("HOME");
-    return copyPath = NULL ? string("") : string(copyPath) + "/.config/gtorrent/torrents";
+    return copyPath == NULL ? string("") : string(copyPath) + "/.config/gtorrent/torrents";
 #else
 	char *copyPath = getenv("LOCALAPPDATA");
 	return copyPath == NULL ? string("") : string(copyPath) + "/gtorrent/torrents";
