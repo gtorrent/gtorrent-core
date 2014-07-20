@@ -34,11 +34,8 @@ GtkMainWindow::GtkMainWindow() :
 	Gtk::Button *btn_remove      = Gtk::manage(new Gtk::Button());
 	Gtk::Button *btn_resume      = Gtk::manage(new Gtk::Button());
 	Gtk::Button *btn_up          = Gtk::manage(new Gtk::Button());
-	Gtk::VSeparator *separator   = Gtk::manage(new Gtk::VSeparator());
 	Gtk::VSeparator *separator0  = Gtk::manage(new Gtk::VSeparator());
 	Gtk::VSeparator *separator1  = Gtk::manage(new Gtk::VSeparator());
-	Gtk::VSeparator *separator2  = Gtk::manage(new Gtk::VSeparator());
-	Gtk::VSeparator *separator3  = Gtk::manage(new Gtk::VSeparator());
 
 	btn_add_link->signal_clicked().connect(sigc::mem_fun(*this, &GtkMainWindow::onAddMagnetBtnClicked));
 	btn_add_torrent->signal_clicked().connect(sigc::mem_fun(*this, &GtkMainWindow::onAddBtnClicked));
@@ -57,20 +54,18 @@ GtkMainWindow::GtkMainWindow() :
 
 	//TODO:align properties button to right of top bar
 	//btn_properties->set_alignment(1.0f,0.0f);
-	header->add(*btn_add_link);
 	header->add(*btn_add_torrent);
+	header->add(*btn_add_link);
 	header->add(*btn_connect);
-	header->add(*btn_down);
-	header->add(*btn_pause);
-	header->add(*btn_properties);
-	header->add(*btn_remove);
-	header->add(*btn_resume);
-	header->add(*btn_up);
 	header->add(*separator);
+	header->add(*btn_pause);
+	header->add(*btn_resume);
+	header->add(*btn_remove);
 	header->add(*separator0);
+	header->add(*btn_down);
+	header->add(*btn_up);
+	header->add(*btn_properties);
 	header->add(*separator1);
-	header->add(*separator2);
-	header->add(*separator3);
 
 	this->set_titlebar(*header);
 	//status = Gtk::manage(new Gtk::StatusBar());
