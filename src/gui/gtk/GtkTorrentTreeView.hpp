@@ -21,6 +21,8 @@ public:
 		add(m_col_leechers);
 		add(m_col_ul_speed);
 		add(m_col_dl_speed);
+		add(m_col_percent);
+		add(m_col_percent_text);
 		add(m_col_ul_total);
 		add(m_col_dl_total);
 		add(m_col_size);
