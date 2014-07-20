@@ -36,6 +36,7 @@ GtkMainWindow::GtkMainWindow() :
 	Gtk::Button *btn_up          = Gtk::manage(new Gtk::Button());
 	Gtk::VSeparator *separator0  = Gtk::manage(new Gtk::VSeparator());
 	Gtk::VSeparator *separator1  = Gtk::manage(new Gtk::VSeparator());
+	Gtk::VSeparator *separator2  = Gtk::manage(new Gtk::VSeparator());
 
 	btn_add_link->signal_clicked().connect(sigc::mem_fun(*this, &GtkMainWindow::onAddMagnetBtnClicked));
 	btn_add_torrent->signal_clicked().connect(sigc::mem_fun(*this, &GtkMainWindow::onAddBtnClicked));
@@ -57,15 +58,15 @@ GtkMainWindow::GtkMainWindow() :
 	header->add(*btn_add_torrent);
 	header->add(*btn_add_link);
 	header->add(*btn_connect);
-	header->add(*separator);
+	header->add(*separator0);
 	header->add(*btn_pause);
 	header->add(*btn_resume);
 	header->add(*btn_remove);
-	header->add(*separator0);
+	header->add(*separator1);
 	header->add(*btn_down);
 	header->add(*btn_up);
 	header->add(*btn_properties);
-	header->add(*separator1);
+	header->add(*separator2);
 
 	this->set_titlebar(*header);
 	//status = Gtk::manage(new Gtk::StatusBar());
