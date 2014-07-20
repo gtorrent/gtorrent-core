@@ -31,11 +31,6 @@ string gt::Core::getDefaultSavePath()
 #endif
 }
 
-vector<shared_ptr<Torrent> > &gt::Core::getTorrents()
-{
-	return m_torrents;
-}
-
 shared_ptr<Torrent> gt::Core::addTorrent(string path)
 {
 	if (path.empty())
