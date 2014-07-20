@@ -32,27 +32,7 @@ string getTimeString( boost::int64_t time_s )
 string getRateString(boost::int64_t file_rate)
 {
 	ostringstream file_rate_string;
-
-	if (file_rate <= 0)
-	{
-		return string();
-	}
-	if (file_rate >= (1024 * 1024 * 1024))
-	{
-		file_rate_string <<  fixed << setprecision(3) << (file_rate / 1024 / 1024 / 1024) << " GB/s";
-	}
-	if (file_rate >= (1024 * 1024) && file_rate < (1024 * 1024 * 1024))
-	{
-		file_rate_string <<  fixed << setprecision(3) << (file_rate / 1024 / 1024) << " MB/s";
-	}
-	if (file_rate >= 1024 && file_rate < (1024 * 1024))
-	{
-		file_rate_string << fixed << setprecision(3) << (file_rate / 1024) << " KB/s";
-	}
-	if (file_rate > 0 && file_rate < 1024)
-	{
-		file_rate_string << file_rate << " B/s";
-	}
+	file_rate_string << getFileSizeString(file_rate) << "/s";
 	return file_rate_string.str();
 }
 
@@ -158,7 +138,7 @@ string Torrent::getTextState()
 	}
 }
 
-float Torrent::getTotalRatio() const
+float Torrent::getTotalRatio()
 {
 	if ( getTotalDownloaded() > 0 )
 		return float( getTotalUploaded() ) / float( getTotalDownloaded() );
