@@ -1,9 +1,6 @@
 #gTorrent
 [![Build Status](https://travis-ci.org/gtorrent/gTorrent.svg?branch=master)](https://travis-ci.org/gtorrent/gTorrent)
-[![Screenshot](http://puu.sh/afhPf/1224d5367d.png)](http://puu.sh/afhPf/1224d5367d.png)
 [Screencast (old version)](http://a.pomf.se/lkowau.webm)
-
-PULL REQUESTS ARE ENCOURAGED
 
 ## CONTRIBUTING
 ### HOW TO CONTRIBUTE
