@@ -19,7 +19,7 @@ bool GtkTorrentTreeView::torrentView_onClick(GdkEventButton *event)
 {
 	if(event->button == 3)
 	{
-		Gtk::Menu     *m_rcMenu	= Gtk::manage(new Gtk::Menu());
+		               m_rcMenu	= Gtk::manage(new Gtk::Menu());
 		Gtk::MenuItem *rcmItem1 = Gtk::manage(new Gtk::MenuItem("Start"));
 		Gtk::MenuItem *rcmItem2 = Gtk::manage(new Gtk::MenuItem("Stop"));
 		Gtk::MenuItem *rcmItem3 = Gtk::manage(new Gtk::MenuItem("Remove"));
