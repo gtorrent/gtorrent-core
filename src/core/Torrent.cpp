@@ -24,7 +24,7 @@ string getTimeString( boost::int64_t time_s )
 		time_string << time_h << "h ";
 	if ( time_m > 0 )
 		time_string << time_m << "m ";
-	time_string << time_s << "s"
+	time_string << time_s << "s";
 
 	return time_string.str();
 }
