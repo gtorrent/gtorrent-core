@@ -11,18 +11,8 @@ GtkTorrentTreeView::GtkTorrentTreeView()
 	m_liststore = Gtk::ListStore::create(m_cols);
 	signal_button_press_event().connect(sigc::mem_fun(*this, &GtkTorrentTreeView::torrentView_onClick), false);
 
-	int i = 1;
-	for(auto c : get_columns())
-	{
-		Gtk::CheckMenuItem *rcmItem1 = Gtk::manage(new Gtk::CheckMenuItem(c->get_title()));
-		rcmItem1->set_active();
-		rcmItem1->signal_button_press_event().connect(sigc::bind<1>(sigc::mem_fun(*this, &GtkTorrentTreeView::ColumnContextMenu_onClick), c));
-		i <<= 1;
-		m_rcMenu->add(*rcmItem1);
-	}
-
-	this->set_model(m_liststore);
-	this->setupColumns();
+        this->set_model(m_liststore);
+        this->setupColumns();
 }
 
 bool GtkTorrentTreeView::torrentView_onClick(GdkEventButton *event)
@@ -72,8 +62,17 @@ bool GtkTorrentTreeView::torrentColumns_onClick(GdkEventButton *event)
 {
 	if(event->button == 3)
 	{
+                for(auto c : get_columns())
+                {
+                        Gtk::CheckMenuItem *rcmItem1 = Gtk::manage(new Gtk::CheckMenuItem(c->get_title()));
+                        rcmItem1->set_active();
+                        rcmItem1->signal_button_press_event().connect(sigc::bind<1>(sigc::mem_fun(*this, &GtkTorrentTreeView::ColumnContextMenu_onClick), c));
+                        m_rcMenu->add(*rcmItem1);
+                }
+
 		m_rcMenu->show_all();
 		m_rcMenu->popup(event->button, event->time);
+
 	}
 
 	return true; //The bool that determine if the event has been handled allows to propagete or not a click
