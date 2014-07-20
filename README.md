@@ -1,9 +1,31 @@
 #gTorrent
 [![Build Status](https://travis-ci.org/gtorrent/gTorrent.svg?branch=master)](https://travis-ci.org/gtorrent/gTorrent)
+
 [Screencast (old version)](http://a.pomf.se/lkowau.webm)
 
+## About
+A minimalistic lightweight bittorrent client written by some smart people from the 4chan technology board.
+
+### Goals
+ - Support multiple GUIs (Qt, Gtk, Cocoa, node-webkit)
+ - RSS Automation
+ - ......
+
+#### Version specific
+- [0.1.0](https://github.com/gtorrent/gTorrent/issues/41)
+- [0.0.1](https://github.com/gtorrent/gTorrent/issues/16)
+
+## Dependencies
+
+- cmake (make)
+- git (make)
+- boost
+- glibmm
+- gtkmm
+- libtorrent-rasterbar
+
 ## CONTRIBUTING
-### HOW TO CONTRIBUTE
+### How to contribute
 #### Making changes
 **As a non collaborator**
  1. Fork this repository
@@ -44,26 +66,6 @@ We are using our own, loosely based of kernel style. If something's not specifie
 Links to the documentation of each library.
 - [gtkmm](https://developer.gnome.org/gtkmm/3.12/)
 - libtorrent-rasterbar: [Here](http://libtorrent.org/reference.html) and [here](http://libtorrent.org/manual.html).
-
-## About
-A minimalistic lightweight bittorrent client written by some smart people from the 4chan technology board.
-
-### Goals
-1. Support multiple GUIs (Qt, Gtk, Cocoa, node-webkit)
-2. RSS Automation
-3. ......
-
-- [0.1.0](https://github.com/gtorrent/gTorrent/issues/41)
-- [0.0.1](https://github.com/gtorrent/gTorrent/issues/16)
-
-## Dependencies
-
-- cmake (make)
-- git (make)
-- boost
-- glibmm
-- gtkmm
-- libtorrent-rasterbar
 
 ## Compiling/Installing
 ### GNU/Linux or Mac OS X
