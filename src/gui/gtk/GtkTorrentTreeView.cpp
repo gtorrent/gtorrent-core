@@ -132,22 +132,22 @@ void GtkTorrentTreeView::setupColumns()
 
 	if(m_visibleColumns & 64)
 	{
-		cid = this->append_column("Up", m_cols.m_col_ul_speed);
+		cid = this->append_column("Upload Speed", m_cols.m_col_ul_speed);
 		col = this->get_column(cid - 1);
 		col->set_fixed_width(96);
 	}
 
 	if(m_visibleColumns & 128)
 	{
-		cid = this->append_column("Down", m_cols.m_col_dl_speed);
+		cid = this->append_column("Download Speed", m_cols.m_col_dl_speed);
 		col = this->get_column(cid - 1);
 
-		col->set_fixed_width(96);
+		col->set_fixed_width(104);
 	}
 
 	if(m_visibleColumns & 256)
 	{
-		cid = this->append_column("Up", m_cols.m_col_ul_total);
+		cid = this->append_column("Uploaded", m_cols.m_col_ul_total);
 		col = this->get_column(cid - 1);
 
 		col->set_fixed_width(96);
@@ -155,7 +155,7 @@ void GtkTorrentTreeView::setupColumns()
 
 	if(m_visibleColumns & 512)
 	{
-		cid = this->append_column("Down", m_cols.m_col_dl_total);
+		cid = this->append_column("Downloaded", m_cols.m_col_dl_total);
 		col = this->get_column(cid - 1);
 		col->set_alignment(Gtk::Align::ALIGN_CENTER);
 		col->set_fixed_width(96);
