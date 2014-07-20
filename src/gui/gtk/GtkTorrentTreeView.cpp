@@ -184,7 +184,8 @@ void GtkTorrentTreeView::setupColumns()
 		col->set_fixed_width(96);
 	}
 
-	if(m_visibleColumns & 8192) {
+	if(m_visibleColumns & 8192)
+	{
 		cell = Gtk::manage(new Gtk::CellRendererProgress());
 		cid = this->append_column("Progress", *cell);
 		col = this->get_column(cid - 1);
@@ -192,7 +193,7 @@ void GtkTorrentTreeView::setupColumns()
 		col->add_attribute(cell->property_text(), m_cols.m_col_percent_text);
 	}
 
-	for (auto &c : this->get_columns())
+	for (auto & c : this->get_columns())
 	{
 		Gtk::Button *butt = c->get_button();
 		butt->signal_button_press_event().connect(sigc::mem_fun(*this, &GtkTorrentTreeView::torrentColumns_onClick));
@@ -206,7 +207,8 @@ void GtkTorrentTreeView::setupColumns()
 
 void GtkTorrentTreeView::addCell(shared_ptr<Torrent> &t)
 {
-	if (t == NULL){
+	if (t == NULL)
+	{
 		return;
 	}
 	Gtk::TreeModel::Row row = *(m_liststore->append());
@@ -225,7 +227,7 @@ void GtkTorrentTreeView::addCell(shared_ptr<Torrent> &t)
 void GtkTorrentTreeView::updateCells()
 {
 	unsigned int i = 0;
-	for (auto &c : m_liststore->children())
+	for (auto & c : m_liststore->children())
 	{
 		shared_ptr<Torrent> t = Application::getSingleton()->getCore()->getTorrents()[i];
 

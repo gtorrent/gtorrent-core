@@ -103,13 +103,13 @@ public:
 	string getTextTotalDownloaded();
 
 	// Returns a friendly string for the total size of files in torrent
-  string getTextSize();
+	string getTextSize();
 
 	// Returns a the total size of files remaining to download in torrent
-  boost::int64_t getRemaining();
+	boost::int64_t getRemaining();
 
 	// Returns a friendly string for the total size of files remaining to download in torrent
-  string getTextRemaining();
+	string getTextRemaining();
 
 	// Returns a friendly string for the current ratio
 	string getTextTotalRatio();

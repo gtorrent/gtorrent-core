@@ -123,7 +123,7 @@ void GtkMainWindow::onAddBtnClicked()
 	switch (result)
 	{
 	case Gtk::RESPONSE_OK:
-		for (auto &f : fc.get_filenames())
+		for (auto & f : fc.get_filenames())
 		{
 			shared_ptr<Torrent> t = m_core->addTorrent(f.c_str());
 			if (t)//Checks if t is not null
