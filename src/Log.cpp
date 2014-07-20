@@ -44,9 +44,27 @@ string gt::Log::getTimeStamp()
 
 void gt::Log::Debug(const char *fmt, ...)
 {
-	va_list args;
-
+	FILE * pFile = fopen("gtorrent.log", "a");
+	
+	va_list args, fileargs;
+	va_start(args, fmt);
+	va_start(fileargs, fmt); // can't use a varargs twice
+	
+	if (!pFile)
+	{
+		perror("fopen()");
+	}
+	else
+	{
+		fprintf(pFile, "[%s]: ", gt::Log::getTimeStamp().c_str());
+		vfprintf(pFile, fmt, fileargs);
+		fprintf(pFile, "\n");
+	}
+	
 	printf("[%s]: ", gt::Log::getTimeStamp().c_str());
 	vprintf(fmt, args);
 	printf("\n");
+	
+	va_end(args);
+	va_end(fileargs);
 }
