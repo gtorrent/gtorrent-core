@@ -3,8 +3,7 @@
 #include "GtkTorrentTreeView.hpp"
 #include <Application.hpp>
 
-GtkTorrentTreeView::GtkTorrentTreeView() :
-	m_index(0)
+GtkTorrentTreeView::GtkTorrentTreeView()
 {
     m_liststore = Gtk::ListStore::create(m_cols);
     this->set_model(m_liststore);

@@ -73,6 +73,8 @@ public:
 
     // Returns a friendly string for the current ratio
     string getTextTotalRatio();
+	
+    bool getPaused();
 
     // Setters
     void setHandle(libtorrent::torrent_handle &h);
@@ -87,15 +89,5 @@ public:
 	
 	void resume();
 	void pause();
-
-	// Getters
-	libtorrent::add_torrent_params getTorrentParams();
-	libtorrent::torrent_handle &getHandle();
-	string getPath();
-
-	bool getPaused();
-	
-	// Returns percentage of all files downloading
-	float getTotalProgress();
 };
 
