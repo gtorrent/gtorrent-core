@@ -1,5 +1,7 @@
 #pragma once
 
+#include "all.h"
+
 namespace gt
 {
 	class Log

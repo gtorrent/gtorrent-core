@@ -1,5 +1,7 @@
 #pragma once
 
+#include "all.h"
+
 #include <libtorrent/torrent_info.hpp>
 #include <libtorrent/lazy_entry.hpp>
 #include <libtorrent/session.hpp>

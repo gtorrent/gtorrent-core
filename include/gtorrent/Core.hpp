@@ -2,6 +2,7 @@
 
 #include "libtorrent.hpp"
 #include "Torrent.hpp"
+#include "all.h"
 #include <memory>
 #include <string>
 
