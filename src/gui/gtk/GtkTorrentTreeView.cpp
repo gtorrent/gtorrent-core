@@ -66,7 +66,7 @@ bool GtkTorrentTreeView::torrentColumns_onClick(GdkEventButton *event)
                 for(auto c : get_columns())
                 {
                         Gtk::CheckMenuItem *rcmItem1 = Gtk::manage(new Gtk::CheckMenuItem(c->get_title()));
-                        rcmItem1->set_active();
+                        rcmItem1->set_active(c->get_visible());
                         rcmItem1->signal_button_press_event().connect(sigc::bind<1>(sigc::mem_fun(*this, &GtkTorrentTreeView::ColumnContextMenu_onClick), c));
                         m_rcMenu->add(*rcmItem1);
                 }
