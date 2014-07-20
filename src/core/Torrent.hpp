@@ -87,6 +87,9 @@ public:
 	//Returns the URL of the last working tracker
 	string getCurrentTrackerURL();
 
+	//Force a recheck of the torrent
+	void torrentForceRecheck();
+
 	// Returns a friendly string for the torrent state
 	string getTextState();
 
