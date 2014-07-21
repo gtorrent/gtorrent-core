@@ -9,17 +9,14 @@ gt::Core::Core() :
 	// like handling what the fuck might happen if listen_on fails kthnx
 	libtorrent::error_code ec;
 	m_session.listen_on(make_pair(6881, 6889), ec);
+	if (ec.value() != 0)
+		gt::Log::Debug(ec.message().c_str());
 }
 
 bool gt::Core::isMagnetLink(string const& url)
 {
 	const string prefix = "magnet:";
 	return url.compare(0, prefix.length(), prefix) == 0;
-}
-
-bool gt::Core::isRunning()
-{
-	return m_running;
 }
 
 string gt::Core::getDefaultSavePath()
@@ -34,21 +31,34 @@ string gt::Core::getDefaultSavePath()
 #endif
 }
 
-vector<shared_ptr<Torrent> > &gt::Core::getTorrents()
-{
-	return m_torrents;
-}
-
 shared_ptr<Torrent> gt::Core::addTorrent(string path)
 {
 	if (path.empty())
-		return NULL;
-
-	shared_ptr<Torrent> t = make_shared<Torrent>(path);
-	libtorrent::torrent_handle h = m_session.add_torrent(t->getTorrentParams());
-
-	t->setHandle(h);
-	m_torrents.push_back(t);
+		return shared_ptr<Torrent>();//Use default constructor instead of null
+	shared_ptr<Torrent> t;
+	try
+	{
+		t = make_shared<Torrent>(path);
+		//pointer necessary to catch exception as a shared ptr would go out of scope
+	}
+	catch (int exception)
+	{
+		return shared_ptr<Torrent>();
+		//Return null if invalid torrent to be handled by GtkMainWindow
+	}
+	libtorrent::error_code ec;
+	libtorrent::torrent_handle h = m_session.add_torrent(t->getTorrentParams(), ec);
+	if (ec.value() != 0)
+	{
+		gt::Log::Debug(ec.message().c_str());
+		return shared_ptr<Torrent>();
+	}
+	else
+	{
+		t->setHandle(h);
+		m_torrents.push_back(t);
+		return t;
+	}
 
 	// TODO: Event polling for magnet update information
 	//libtorrent::file_storage fs = info.files();
@@ -74,7 +84,6 @@ shared_ptr<Torrent> gt::Core::addTorrent(string path)
 
 	printf("Downloading data from \"%s\"...\n", path.c_str());*/
 
-	return t;
 }
 
 void gt::Core::update()

@@ -1,8 +1,8 @@
 #pragma once
 
-#include <string>
-
 using namespace std;
+
+#include <string>
 
 namespace gt
 {
