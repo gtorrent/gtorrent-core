@@ -1,6 +1,7 @@
 #include "Log.hpp"
 #include <sstream>
 #include <ctime>
+#include <stdarg.h>
 
 string getFullDateNumber(int n)
 {
