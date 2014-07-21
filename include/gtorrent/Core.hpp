@@ -1,10 +1,12 @@
 #pragma once
 
-#include "libtorrent.hpp"
-#include "Torrent.hpp"
+using namespace std;
+
+#include <vector>
 #include <memory>
 #include <string>
-#include <vector>
+#include "libtorrent.hpp"
+#include "Torrent.hpp"
 
 namespace gt
 {
@@ -20,10 +22,16 @@ namespace gt
 		static bool isMagnetLink(string const& link);
 
 		static string getDefaultSavePath();
-		vector<shared_ptr<Torrent> > &getTorrents();
+		inline vector< shared_ptr< Torrent > > &getTorrents()
+		{
+			return m_torrents;
+		};
 		shared_ptr<Torrent> addTorrent(string path);
 
-		bool isRunning();
+		inline bool isRunning() const
+		{
+			return m_running;
+		};
 		void shutdown();
 		void update();
 	};

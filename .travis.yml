@@ -32,7 +32,11 @@ before_install:
 
 install:
         # Install dependancies
+<<<<<<< HEAD
         - sudo apt-get install -f -y libtorrent-rasterbar-dev libboost-all-dev 
+=======
+        - sudo apt-get install -f -y libgtkmm-3.0-dev libglibmm-2.4-dev libtorrent-rasterbar-dev libboost-all-dev 
+>>>>>>> 514ed111fb9f37fdc2b91becf539da26fdaf6883
         # Update g++ to 4.9
         - sudo apt-get install -f -y g++
 
