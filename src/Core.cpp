@@ -1,8 +1,7 @@
 #include "Core.hpp"
 #include "Log.hpp"
 
-gt::Core::Core() :
-	m_running(true)
+gt::Core::Core()
 {
 	// Fuck your deprecated shit, we're going void down in here
 	// tl;dr, figure out something useful to use the error code for,
@@ -21,6 +20,8 @@ bool gt::Core::isMagnetLink(string const& url)
 
 string gt::Core::getDefaultSavePath()
 {
+	// Items like this will _probably_ be a virtual function for each platform
+	// Or handled somewhere else in the core, like Plat class.
 #ifndef _WIN32
 	char *savepath = getenv("HOME");
 	return savepath == NULL ? string("") : string(savepath) + "/Downloads";
@@ -31,19 +32,19 @@ string gt::Core::getDefaultSavePath()
 #endif
 }
 
-shared_ptr<Torrent> gt::Core::addTorrent(string path)
+shared_ptr<gt::Torrent> gt::Core::addTorrent(string path)
 {
 	if (path.empty())
-		return shared_ptr<Torrent>();//Use default constructor instead of null
-	shared_ptr<Torrent> t;
+		return shared_ptr<gt::Torrent>();//Use default constructor instead of null
+	shared_ptr<gt::Torrent> t;
 	try
 	{
-		t = make_shared<Torrent>(path);
+		t = make_shared<gt::Torrent>(path);
 		//pointer necessary to catch exception as a shared ptr would go out of scope
 	}
 	catch (int exception)
 	{
-		return shared_ptr<Torrent>();
+		return shared_ptr<gt::Torrent>();
 		//Return null if invalid torrent to be handled by GtkMainWindow
 	}
 	libtorrent::error_code ec;
@@ -51,7 +52,7 @@ shared_ptr<Torrent> gt::Core::addTorrent(string path)
 	if (ec.value() != 0)
 	{
 		gt::Log::Debug(ec.message().c_str());
-		return shared_ptr<Torrent>();
+		return shared_ptr<gt::Torrent>();
 	}
 	else
 	{
@@ -84,37 +85,5 @@ shared_ptr<Torrent> gt::Core::addTorrent(string path)
 
 	printf("Downloading data from \"%s\"...\n", path.c_str());*/
 
-}
-
-void gt::Core::update()
-{
-	/*auto iter = begin(m_torrents);
-
-	while (iter != end(m_torrents))
-	{
-		auto &t = **iter;
-
-		gt::Event event;
-
-		if (t.pollEvent(event))
-		{
-			switch (event.type)
-			{
-				case gt::Event::DownloadCompleted:
-					printf("Done!\n");
-					iter = m_torrents.erase(iter);
-				break;
-			}
-		}
-		else
-		{
-			++iter;
-		}
-	}*/
-}
-
-void gt::Core::shutdown()
-{
-	gt::Log::Debug("Shutting down core library...");
-	m_running = false;
+	return t;
 }
