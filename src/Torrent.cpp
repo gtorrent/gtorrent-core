@@ -7,8 +7,8 @@ int intPow(int x, int p)
 {
 	if (p == 0) return 1;
 	if (p == 1) return x;
-	int tmp = intPow(x, p/2);
-	if (p%2 == 0) return tmp * tmp;
+	int tmp = intPow(x, p / 2);
+	if (p % 2 == 0) return tmp * tmp;
 	else return x * tmp * tmp;
 }
 
@@ -17,13 +17,13 @@ string getTimeString(boost::int64_t time_s)
 	if ( time_s <= 0 )
 		return "???";
 	ostringstream time_string;
-	int time = time_s,day,hour,min,sec;
-	day=time/(3600*24);
-	hour=time/3600;
-	time=time%3600;
-	min=time/60;
-	time=time%60;
-	sec=time;
+	int time = time_s, day, hour, min, sec;
+	day = time / (3600 * 24);
+	hour = time / 3600;
+	time = time % 3600;
+	min = time / 60;
+	time = time % 60;
+	sec = time;
 	time_string << day << "::" << hour << ":" << min << ":" << sec;
 	return time_string.str();
 }
@@ -36,11 +36,11 @@ string getFileSizeString(boost::int64_t file_size)
 	}
 
 	ostringstream file_size_string;
-	array<string, 4> items   = {" GB"," MB"," KB"," B"};
+	array<string, 4> items   = {" GB", " MB", " KB", " B"};
 
 	for_each(items.begin(), items.end(), [&](string items)
 	{
-		array<int, 4> item_sizes = {intPow(1024,3),intPow(1024,2),1024,1};
+		array<int, 4> item_sizes = {intPow(1024, 3), intPow(1024, 2), 1024, 1};
 
 		for_each(item_sizes.begin(), item_sizes.end(), [&](int item_sizes)
 		{
@@ -127,8 +127,8 @@ string Torrent::getTextState()
 		int precision = 1;
 		if (m_torrent_params.ti != NULL) //m_torrent_params.ti is not initial initialized for magnet links
 			//if (m_torrent_params.ti->total_size() < intPow(1024,3)
-				//precision = 0;//Set 0 decimal places if file is less than 1 gig.
-		o << fixed << setprecision(precision) << getTotalProgress() << " %";
+			//precision = 0;//Set 0 decimal places if file is less than 1 gig.
+			o << fixed << setprecision(precision) << getTotalProgress() << " %";
 		return o.str();
 		break;
 	}
