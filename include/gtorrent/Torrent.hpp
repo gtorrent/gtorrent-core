@@ -8,12 +8,18 @@ using namespace std;
 #include <sstream>
 #include <fstream>
 #include <string>
+#include "Log.hpp"
+#include "Utils.hpp"
 
-string getTimeString(boost::int64_t time_s);
-string getRateString(boost::int64_t file_rate);
-string getFileSizeString(boost::int64_t file_size);
+#define T_PPM 1000000.f
 
-namespace gt {
+namespace gt
+{
+
+	string getTimeString(boost::int64_t time_s);
+	string getRateString(boost::int64_t file_rate);
+	string getFileSizeString(boost::int64_t file_size);
+
 	class Torrent
 	{
 	private:
@@ -25,7 +31,7 @@ namespace gt {
 	public:
 		Torrent(string path);
 
-		bool pollEvent(gt::Event &event);
+		bool pollEvent(Event &event);
 
 		/* Think twice next time before mixing const correctness with inline */
 		// Getters

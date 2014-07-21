@@ -1,8 +1,10 @@
 #pragma once
 
-using namespace std;
-
 #include <string>
+#include <sstream>
+#include <ctime>
+
+using namespace std;
 
 namespace gt
 {

@@ -6,6 +6,7 @@ using namespace std;
 #include <memory>
 #include <string>
 #include "libtorrent.hpp"
+#include "Log.hpp"
 #include "Torrent.hpp"
 
 namespace gt
@@ -13,7 +14,7 @@ namespace gt
 	class Core
 	{
 	private:
-		vector<shared_ptr<Torrent> > m_torrents;
+		vector<shared_ptr<Torrent>> m_torrents;
 		libtorrent::session m_session;
 		bool m_running;
 	public:
@@ -22,16 +23,10 @@ namespace gt
 		static bool isMagnetLink(string const& link);
 
 		static string getDefaultSavePath();
-		inline vector< shared_ptr< Torrent > > &getTorrents()
-		{
-			return m_torrents;
-		};
+		inline vector<shared_ptr<Torrent>> &getTorrents() { return m_torrents; }
 		shared_ptr<Torrent> addTorrent(string path);
 
-		inline bool isRunning() const
-		{
-			return m_running;
-		};
+		inline bool isRunning() const { return m_running; }
 		void shutdown();
 		void update();
 	};
