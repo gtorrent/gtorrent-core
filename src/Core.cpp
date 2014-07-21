@@ -31,19 +31,19 @@ string gt::Core::getDefaultSavePath()
 #endif
 }
 
-shared_ptr<Torrent> gt::Core::addTorrent(string path)
+shared_ptr<gt::Torrent> gt::Core::addTorrent(string path)
 {
 	if (path.empty())
-		return shared_ptr<Torrent>();//Use default constructor instead of null
-	shared_ptr<Torrent> t;
+		return shared_ptr<gt::Torrent>();//Use default constructor instead of null
+	shared_ptr<gt::Torrent> t;
 	try
 	{
-		t = make_shared<Torrent>(path);
+		t = make_shared<gt::Torrent>(path);
 		//pointer necessary to catch exception as a shared ptr would go out of scope
 	}
 	catch (int exception)
 	{
-		return shared_ptr<Torrent>();
+		return shared_ptr<gt::Torrent>();
 		//Return null if invalid torrent to be handled by GtkMainWindow
 	}
 	libtorrent::error_code ec;
@@ -51,7 +51,7 @@ shared_ptr<Torrent> gt::Core::addTorrent(string path)
 	if (ec.value() != 0)
 	{
 		gt::Log::Debug(ec.message().c_str());
-		return shared_ptr<Torrent>();
+		return shared_ptr<gt::Torrent>();
 	}
 	else
 	{

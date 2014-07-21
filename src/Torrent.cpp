@@ -63,7 +63,7 @@ string getFileSizeString(boost::int64_t file_size)
 	return file_size_string.str();
 }
 
-Torrent::Torrent(string path) :
+gt::Torrent::Torrent(string path) :
 	m_path(path)
 {
 	setSavePath(""); //TODO add argument to allow user to override the default save path of $HOME/Downloads
@@ -95,7 +95,7 @@ Torrent::Torrent(string path) :
 	}
 }
 
-void Torrent::setSavePath(string savepath)
+void gt::Torrent::setSavePath(string savepath)
 {
 	if (savepath.empty())
 		savepath = gt::Core::getDefaultSavePath();
@@ -104,7 +104,7 @@ void Torrent::setSavePath(string savepath)
 	m_torrent_params.save_path = savepath;
 }
 
-bool Torrent::pollEvent(gt::Event &event)
+bool gt::Torrent::pollEvent(gt::Event &event)
 {
 	if (getTotalProgress() >= 100)
 	{
@@ -115,7 +115,7 @@ bool Torrent::pollEvent(gt::Event &event)
 	return false;
 }
 
-string Torrent::getTextState()
+string gt::Torrent::getTextState()
 {
 	switch (getState())
 	{
@@ -138,7 +138,7 @@ string Torrent::getTextState()
 	}
 }
 
-float Torrent::getTotalRatio()
+float gt::Torrent::getTotalRatio()
 {
 	if ( getTotalDownloaded() > 0 )
 		return float( getTotalUploaded() ) / float( getTotalDownloaded() );
@@ -146,14 +146,14 @@ float Torrent::getTotalRatio()
 		return 0.0f;
 }
 
-string Torrent::getTextTotalRatio()
+string gt::Torrent::getTextTotalRatio()
 {
 	ostringstream ttr;
 	ttr << fixed << setprecision(3) << getTotalRatio();
 	return ttr.str();
 }
 
-void Torrent::setPaused(bool isPaused)
+void gt::Torrent::setPaused(bool isPaused)
 {
 	m_handle.auto_managed(!isPaused);
 	if ( isPaused )
