@@ -4,9 +4,11 @@
 #include "Event.hpp"
 #include <iomanip>
 #include <sstream>
-#include <string>
+#include <fstream>
 
-using namespace std;
+string getTimeString(boost::int64_t time_s);
+string getRateString(boost::int64_t file_rate);
+string getFileSizeString(boost::int64_t file_size);
 
 class Torrent
 {
