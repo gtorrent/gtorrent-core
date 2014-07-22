@@ -5,6 +5,8 @@
 #include "Core.hpp"
 #include "Log.hpp"
 
+using namespace std;
+
 gt::Core::Core() :
         m_running(true) {
   // Fuck your deprecated shit, we're going void down in here

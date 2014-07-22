@@ -24,7 +24,7 @@ string Torrent::getTextFileSize(boost::int64_t fs) {
   // return tfs.str();
 }
 
-string getTimeString(boost::int64_t t) {
+string getTextTime(boost::int64_t t) {
   if ( t <= 0 ) {
     return string();
   }
