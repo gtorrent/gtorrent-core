@@ -45,6 +45,7 @@ ADD_LIBRARY ( ${PROJECT_NAME}
     src/Core.cpp
     src/Torrent.cpp
     src/Log.cpp
+    src/utils/Utils.cpp
 )
 
 # Create test executable
