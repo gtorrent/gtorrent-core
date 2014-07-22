@@ -1,62 +1,51 @@
-#include "Core.hpp"
+#include <Core.hpp>
 #include "Torrent.hpp"
-#include "Log.hpp"
 #define T_PPM 1000000.f
 
-int intPow(int x, int p)
+string Torrent::getTextFileSize(boost::int64_t fs)
 {
-	if (p == 0) return 1;
-	if (p == 1) return x;
-	int tmp = intPow(x, p / 2);
-	if (p % 2 == 0) return tmp * tmp;
-	else return x * tmp * tmp;
+	//std::ostringstream tfs << fixed << setprecision(1);
+	case fs <= 0:
+		return string();
+		break;
+	case (fs > 0 && fs < 1024):
+		return << fs << " B";
+		break;
+	case (fs >= 1024 && fs < 1048576):
+		return << fs / 1024 << " KB";
+		break;
+	case (fs >= 1048576 && fs < 1073741824):
+		return << fs / 1048576 << " MB";
+		break;
+	case fs >= 1073741824:
+		break;
+		return  << fs / 1073741824 << " GB";
+	//return tfs.str();
 }
 
-string getTimeString(boost::int64_t time_s)
+string getTimeString(boost::int64_t t)
 {
-	if ( time_s <= 0 )
-		return "???";
-	ostringstream time_string;
-	int time = time_s, day, hour, min, sec;
-	day = time / (3600 * 24);
-	hour = time / 3600;
-	time = time % 3600;
-	min = time / 60;
-	time = time % 60;
-	sec = time;
-	time_string << day << "::" << hour << ":" << min << ":" << sec;
-	return time_string.str();
-}
-
-string getFileSizeString(boost::int64_t file_size)
-{
-	if (file_size <= 0)
+	if ( t <= 0 )
 	{
 		return string();
 	}
-
-	ostringstream file_size_string;
-	array<string, 4> items   = {" GB", " MB", " KB", " B"};
-
-	for_each(items.begin(), items.end(), [&](string items)
-	{
-		array<int, 4> item_sizes = {intPow(1024, 3), intPow(1024, 2), 1024, 1};
-
-		for_each(item_sizes.begin(), item_sizes.end(), [&](int item_sizes)
-		{
-			file_size_string << fixed << setprecision(3) << " " << (file_size / item_sizes);
-			file_size_string << items;
-		});
-	});
-
-	return file_size_string.str();
-}
-
-string getRateString(boost::int64_t file_rate)
-{
-	ostringstream file_rate_string;
-	file_rate_string << getFileSizeString(file_rate) << "/s";
-	return file_rate_string.str();
+	//ostringstream ts;
+	case t <= 0:
+		return string();
+		break;
+	case t > 0:
+		return << t << "seconds";
+		break;
+	case t >= 60:
+		return << (t / 60) - (t % 60) << " minutes";
+		break;
+	case t >= 3600:
+		return << (t / 3600) - (t % 3600) << " hours";
+		break;
+	case t >= 86400:
+		return << (t / 86400) - (t % 86400) << " days";
+		break;
+	//return ts.str();
 }
 
 Torrent::Torrent(string path) :
@@ -66,29 +55,9 @@ Torrent::Torrent(string path) :
 	if (gt::Core::isMagnetLink(path))
 		m_torrent_params.url = path;
 	else
-	{
 		//libtorrent::add_torrent_params.ti is an intrusive_ptr in 1.0 and a shared_ptr in svn.
 		//Using decltype allows us to make it compatible with both versions while still properly using the constructor to avoid a compiler error on boost 1.55 when the = operator is used with a pointer.
-		libtorrent::error_code ec;
-		decltype(m_torrent_params.ti) tester = decltype(m_torrent_params.ti)(new libtorrent::torrent_info(path, ec));
-		if (ec.value() == 0)
-		{
-			ifstream torrentcheck(path);
-			bool isempty = torrentcheck.peek() == ifstream::traits_type::eof();
-			torrentcheck.close();
-			if (isempty)
-			{
-				gt::Log::Debug("The torrent file was empty");
-				throw - 1;
-			}
-			m_torrent_params.ti = tester;//If no exception was thrown add the torrent
-		}
-		else
-		{
-			gt::Log::Debug(ec.message().c_str());//Call deconstructor?
-			throw - 1; //Throw error if construction of libtorrent::torrent_info fails.
-		}
-	}
+		m_torrent_params.ti = decltype(m_torrent_params.ti)(new libtorrent::torrent_info(path));
 }
 
 void Torrent::setSavePath(string savepath)
@@ -102,58 +71,98 @@ void Torrent::setSavePath(string savepath)
 
 bool Torrent::pollEvent(gt::Event &event)
 {
-	if (getTotalProgress() >= 100)
+	if (getTotalProgress() < 100)
+	{
+		return false;
+	}
+	else
 	{
 		event.type = gt::Event::DownloadCompleted;
 		return true;
 	}
+}
 
-	return false;
+float Torrent::getTotalProgress()
+{
+	return ((float) m_handle.status().progress_ppm / (float) T_PPM) * 100;
 }
 
 string Torrent::getTextState()
 {
-	switch (getState())
+	switch (return m_handle.status().state)
 	{
+	case libtorrent::torrent_status::downloading_metadata:
+		return "Leeching Metadata";
+		break;
+	case libtorrent::torrent_status::queued_for_checking:
+		return "Queued For Check";
+		break;
+	case libtorrent::torrent_status::finished:
+		return "Finished";
+		break;
+	case libtorrent::torrent_status::allocating:
+		return "Allocating";
+		break;
+	case libtorrent::torrent_status::checking_resume_data:
+		return "Checking Resume";
+		break;
 	case libtorrent::torrent_status::checking_files:
-		return "Checking";
+		return "Checking Files";
 		break;
 	case libtorrent::torrent_status::seeding:
 		return "Seeding";
 		break;
 	case libtorrent::torrent_status::downloading:
-	default:
-		ostringstream o;
-		int precision = 1;
-		if (m_torrent_params.ti != NULL) //m_torrent_params.ti is not initial initialized for magnet links
-			//if (m_torrent_params.ti->total_size() < intPow(1024,3)
-			//precision = 0;//Set 0 decimal places if file is less than 1 gig.
-			o << fixed << setprecision(precision) << getTotalProgress() << " %";
-		return o.str();
+		return "Leeching";
 		break;
 	}
 }
 
+string Torrent::getTextUploadRate()
+{
+	std::ostringstream tur;
+	tur << getTextFileSize(m_handle.status().upload_rate) << "/s";
+	return tur.str();
+}
+
+string Torrent::getTextDownloadRate()
+{
+	std::ostringstream tdr;
+	tdr << getTextFileSize(m_handle.status().download_rate) << "/s";
+	return tdr.str();
+}
+
+string Torrent::getTextTotalUploaded()
+{
+	std::ostringstream ttu;
+	ttu << getTextFileSize(m_handle.status().total_upload) << "/s";
+	return ttu.str();
+}
+
+string Torrent::getTextTotalDownloaded()
+{
+	return getTextFileSize(m_handle.status().total_download);
+}
+
 float Torrent::getTotalRatio()
 {
-	if ( getTotalDownloaded() > 0 )
-		return float( getTotalUploaded() ) / float( getTotalDownloaded() );
-	else
+	if (getTotalDownloaded() == 0)
+	{
 		return 0.0f;
+	}
+	else
+	{
+		return float(getTotalUploaded()) / float(getTotalDownloaded());
+	}
 }
 
 string Torrent::getTextTotalRatio()
 {
-	ostringstream ttr;
-	ttr << fixed << setprecision(3) << getTotalRatio();
-	return ttr.str();
-}
+	std::stringstream ttr (stringstream::in | stringstream::out);
 
-void Torrent::setPaused(bool isPaused)
-{
-	m_handle.auto_managed(!isPaused);
-	if ( isPaused )
-		m_handle.pause();
-	else
-		m_handle.resume();
+	float ratio = getTotalRatio();
+
+	ttr << fixed << setprecision(1) << ratio;
+
+	return ttr.str();
 }

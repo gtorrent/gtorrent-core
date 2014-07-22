@@ -4,7 +4,6 @@
 #include "Torrent.hpp"
 #include <memory>
 #include <string>
-#include <vector>
 
 namespace gt
 {
