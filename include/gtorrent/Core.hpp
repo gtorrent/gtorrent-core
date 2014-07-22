@@ -16,6 +16,7 @@ namespace gt
 		vector<shared_ptr<Torrent> > m_torrents;
 		libtorrent::session m_session;
 		bool m_running;
+        string torrentCopyPath;
 	public:
 		Core();
 
@@ -26,6 +27,7 @@ namespace gt
 		{
 			return m_torrents;
 		};
+        static string getDefaultTorrentCopyPath();
 		shared_ptr<Torrent> addTorrent(string path);
 
 		inline bool isRunning() const

@@ -11,8 +11,9 @@ int main(int argc, char *argv[]) {
     shared_ptr<gt::Core> m_core(new gt::Core);
     gt::Log::Debug("Testing if core is running");
     gt::Log::Debug("%s",m_core->isRunning() ? "Core is running" : "Core is not running");
+    gt::Log::Debug("Adding Torrent...");
+    shared_ptr<gt::Torrent> m_torrent = m_core->addTorrent("debian-7.6.0-amd64-netinst.iso.torrent");
     gt::Log::Debug("Shutting down core...");
     m_core->shutdown();
 	return 0;
 }
-

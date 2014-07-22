@@ -36,3 +36,6 @@ gTorrent
 
 # ctag files
 tags
+
+# Ignore torrents
+.torrent

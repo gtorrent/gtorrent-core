@@ -1,5 +1,11 @@
 #include "Core.hpp"
 #include "Log.hpp"
+#include <fstream>
+#ifdef _WIN32
+#include <direct.h>
+#else
+#include <sys/stat.h>
+#endif
 
 gt::Core::Core() :
 	m_running(true)
@@ -11,6 +17,15 @@ gt::Core::Core() :
 	m_session.listen_on(make_pair(6881, 6889), ec);
 	if (ec.value() != 0)
 		gt::Log::Debug(ec.message().c_str());
+    torrentCopyPath = getDefaultTorrentCopyPath();
+    // Make directories for copying files 
+#ifdef _WIN32
+    _mkdir(torrentCopyPath.substr(0,torrentCopyPath.find_last_of("\\/")).c_str());
+    _mkdir(torrentCopyPath.c_str());
+#else
+    mkdir(torrentCopyPath.substr(0,torrentCopyPath.find_last_of("\\/")).c_str(), 0744);
+    mkdir(torrentCopyPath.c_str(), 0744);
+#endif
 }
 
 bool gt::Core::isMagnetLink(string const& url)
@@ -60,6 +75,17 @@ shared_ptr<gt::Torrent> gt::Core::addTorrent(string path)
 		return t;
 	}
 
+    // Copy torrent file to torrentcopypath
+    ifstream src(path, ios::binary);
+    // Set the output filename
+    string outpath = path;
+    int pos;
+    pos = path.find_last_of("\\/");
+    outpath = torrentCopyPath + "/" + outpath.substr(pos + 1, outpath.size() - pos - 1);
+    ofstream dst(outpath, ios::binary);
+    // Copy data
+    dst << src.rdbuf();
+
 	// TODO: Event polling for magnet update information
 	//libtorrent::file_storage fs = info.files();
 	//libtorrent::torrent_info info = h.get_torrent_info();
@@ -86,6 +112,16 @@ shared_ptr<gt::Torrent> gt::Core::addTorrent(string path)
 
 }
 
+string gt::Core::getDefaultTorrentCopyPath()
+{
+#ifndef _WIN32
+    char* copyPath = getenv("HOME");
+    return copyPath == NULL ? string("") : string(copyPath) + "/.config/gtorrent/torrents";
+#else
+	char *copyPath = getenv("LOCALAPPDATA");
+	return copyPath == NULL ? string("") : string(copyPath) + "/gtorrent/torrents";
+#endif
+}
 void gt::Core::update()
 {
 	/*auto iter = begin(m_torrents);
