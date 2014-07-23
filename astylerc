@@ -1,6 +1,3 @@
---style=allman
---indent=tab
---indent-namespaces
---pad-oper
+--style=google
 --recursive
 --suffix=none
