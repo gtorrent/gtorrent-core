@@ -1,1 +1,1 @@
-astyle --options=astylerc "src/*"
+astyle --options=google "../src/*"

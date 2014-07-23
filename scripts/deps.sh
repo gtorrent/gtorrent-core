@@ -1,4 +1,5 @@
 #!/bin/bash
+su
 SATISFIED=0
 USER=`whoami`
 if [ "$USER" != "root" ]; then
@@ -18,3 +19,4 @@ else
     echo "Your system isn't supported yet."
   fi
 fi
+exit
