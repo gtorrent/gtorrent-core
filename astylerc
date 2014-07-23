@@ -1,4 +1,4 @@
---style=allman
+--style=google
 --indent=tab
 --indent-namespaces
 --pad-oper
