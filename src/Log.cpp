@@ -1,5 +1,6 @@
 // Copyright 2014 gtorrent team, GNU GPLv3
 
+#include <string>
 #include <ctime>
 #include <sstream>
 #include "Log.hpp"
@@ -21,7 +22,7 @@ string gt::Log::getTimeStamp() {
   struct tm *lt = localtime(&t);
 
   // TODO(general): Maybe convert this stream string structure
-  //into something else.
+  // into something else.
 
   stringstream oss;
 

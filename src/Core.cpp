@@ -53,7 +53,7 @@ shared_ptr<gt::Torrent> gt::Core::addTorrent(string path) {
     gt::Log::Debug(ec.message().c_str());
     return shared_ptr<gt::Torrent>();
   } else {
-    t->setHandle(h);
+    t->m_handle = h;
     m_torrents.push_back(t);
     return t;
   }
