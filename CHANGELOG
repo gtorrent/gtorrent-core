@@ -1,2 +1,23 @@
+[0.0.2]
+* GENERAL
+- Big fucking merge clusterfuck here so I'm going to do my best documenting the fucking changes and fix every new bug I find.
+* CHANGES
+infoburp
+- Added various columns
+fuyukaidesu
+- Added ability to enable/disable columns via context menu
+- Added various placeholder context menus throughout TreeView
+IGI-111
+- Added pause/resume buttons
+- Added pause/resume functionality
+Quaker762
+- Added ETA function
+- Added ETA column
+- Added force recheck function
+AndrewBerry
+- Inlined some functions
+Explouad
+- Added astyle config to project root.
+
 [0.0.1]
  - Base written.
