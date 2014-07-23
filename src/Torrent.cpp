@@ -1,4 +1,19 @@
-// Copyright 2014 gtorrent team, GNU GPLv3
+
+/* gtorrent - torrent client
+    Copyright (C) 2014  gtorrent team
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.*/
 
 #include <string>
 #include "Core.hpp"
@@ -124,17 +139,20 @@ string gt::Torrent::getTextState() {
   default:
     ostringstream o;
     int precision = 1;
-    if (m_torrent_params.ti != NULL) //m_torrent_params.ti is not initial initialized for magnet links
-      if (m_torrent_params.ti->total_size() < 1024 * 1024 * 1024)
-        precision = 0;//Set 0 decimal places if file is less than 1 gig.
+    // m_torrent_params.ti is not initial initialized for magnet links
+    if (m_torrent_params.ti != NULL) {
+      if (m_torrent_params.ti->total_size() < 1024 * 1024 * 1024) {
+        // Set 0 decimal places if file is less than 1 gig.
+        precision = 0;
+      }
+    }
     o << fixed << setprecision(precision) << getTotalProgress() << " %";
     return o.str();
     break;
   }
 }
 
-float gt::Torrent::getTotalRatio()
-{
+float gt::Torrent::getTotalRatio() {
   if ( getTotalDownloaded() > 0 ) {
     return float( getTotalUploaded() ) / float( getTotalDownloaded() );
   } else {
