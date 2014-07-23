@@ -1,10 +1,7 @@
 // Copyright 2014 gtorrent team, GNU GPLv3
 
-#include <stdarg.h>
-#include <string>
-#include <sstream>
-#include <cstdio>
 #include <ctime>
+#include <sstream>
 #include "Log.hpp"
 
 string getFullDateNumber(int n) {
@@ -12,7 +9,7 @@ string getFullDateNumber(int n) {
 
   if (n < 10) {
     oss << "0" << n;
-  }  else {
+  } else {
     oss << n;
   }
 
@@ -21,10 +18,10 @@ string getFullDateNumber(int n) {
 
 string gt::Log::getTimeStamp() {
   time_t t = time(0);
-  struct tm *lt = localtime_r(&t);
+  struct tm *lt = localtime(&t);
 
   // TODO(general): Maybe convert this stream string structure
-  // into something else.
+  //into something else.
 
   stringstream oss;
 
@@ -44,14 +41,9 @@ string gt::Log::getTimeStamp() {
 }
 
 void gt::Log::Debug(const char *fmt, ...) {
-  FILE * pFile = fopen("gtorrent.log", "a");
   va_list args;
-  va_start(args, fmt);
+
   printf("[%s]: ", gt::Log::getTimeStamp().c_str());
-  fprintf(pFile, "[%s]: ", gt::Log::getTimeStamp().c_str());
   vprintf(fmt, args);
-  vfprintf(pFile, fmt, args);
   printf("\n");
-  fprintf(pFile, "\n");
-  va_end(args);
 }
