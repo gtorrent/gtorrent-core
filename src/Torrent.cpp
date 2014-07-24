@@ -40,22 +40,24 @@ string getRateString(boost::int64_t file_rate)
 
 string getFileSizeString(boost::int64_t file_size)
 {
-if (file_size <= 0) {
+	if (file_size <= 0) {
 		return string();
 	}
+	
 	ostringstream fss;
-	fss << fixed << setprecision(3);
-	if (file_size >= (1073741824)) {
-		fss << file_size / 1073741824 << "GB ";
+	fss << setprecision(3);
+	
+	if (file_size >= (1024 * 1024 * 1024)) {
+		fss << file_size / (double)(1024 * 1024 * 1024) << " GB";
 	}
-	if (file_size>= (1048576) && file_size< (1073741824)) {
-		fss << (file_size/ 1048576) << "MB ";
+	else if (file_size >= (1024 * 1024)) {
+		fss << (file_size / (double)(1024 * 1024)) << " MB";
 	}
-	if (file_size>= 1024 && file_size< (1048576)) {
-		fss << (file_size/ 1024) << "KB ";
+	else if (file_size >= 1024) {
+		fss << (file_size / (double)1024) << " KB";
 	}
-	if (file_size> 0 && file_size< 1024) {
-		fss << file_size<< "B";
+	else if (file_size> 0) {
+		fss << file_size<< "B ";
 	}
 	return fss.str();
 }
