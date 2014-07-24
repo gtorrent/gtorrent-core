@@ -45,6 +45,9 @@ namespace gt {
 		// Returns formatted eta as string
 		inline string getTextEta() { return getTimeString( getEta()); }
 
+        // Returns a vector of bools for each piece, true if we have it, false otherwise
+        vector<bool> getPieces();
+
 		// Returns percentage of all files downloading
 		inline float getTotalProgress() { return ((float) getHandle().status().progress_ppm / 1000000.0f) * 100.0f; }
 
