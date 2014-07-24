@@ -41,30 +41,24 @@ string getFileSizeString(boost::int64_t file_size)
 	ostringstream file_size_string;
 
 	if (file_size <= 0)
-	{
 		return string();
-	}
+
 	if (file_size >= (1024 * 1024 * 1024))
-	{
 		file_size_string <<  fixed << setprecision(3) << (file_size / 1024 / 1024 / 1024) << " GB";
-	}
+
 	if (file_size >= (1024 * 1024) && file_size < (1024 * 1024 * 1024))
-	{
 		file_size_string <<  fixed << setprecision(3) << (file_size / 1024 / 1024) << " MB";
-	}
+
 	if (file_size >= 1024 && file_size < (1024 * 1024))
-	{
 		file_size_string << fixed << setprecision(3) << (file_size / 1024) << " KB";
-	}
+
 	if (file_size > 0 && file_size < 1024)
-	{
 		file_size_string << file_size << " B";
-	}
+
 	return file_size_string.str();
 }
 
-gt::Torrent::Torrent(string path) :
-	m_path(path)
+gt::Torrent::Torrent(string path) : m_path(path)
 {
 	setSavePath(""); //TODO add argument to allow user to override the default save path of $HOME/Downloads
 	if (gt::Core::isMagnetLink(path))
@@ -117,25 +111,36 @@ bool gt::Torrent::pollEvent(gt::Event &event)
 
 string gt::Torrent::getTextState()
 {
+	ostringstream o;
+	int precision = 1;
+
 	switch (getState())
 	{
+	case libtorrent::torrent_status::queued_for_checking:
+		return "Queued for checking";
+	case libtorrent::torrent_status::downloading_metadata:
+		return "Downloading metadata...";
+	case libtorrent::torrent_status::finished:
+		return "Finished";
+	case libtorrent::torrent_status::allocating:
+		return "Allocating...";
+	case libtorrent::torrent_status::checking_resume_data:
+		return "Resuming...";
 	case libtorrent::torrent_status::checking_files:
-		return "Checking";
-		break;
+		return "Checking...";
 	case libtorrent::torrent_status::seeding:
 		return "Seeding";
-		break;
-	case libtorrent::torrent_status::downloading:
-	default:
-		ostringstream o;
-		int precision = 1;
-		if (m_torrent_params.ti != NULL) //m_torrent_params.ti is not initial initialized for magnet links
-			if (m_torrent_params.ti->total_size() < 1024 * 1024 * 1024)
-				precision = 0;//Set 0 decimal places if file is less than 1 gig.
-		o << fixed << setprecision(precision) << getTotalProgress() << " %";
-		return o.str();
-		break;
+	case libtorrent::torrent_status::downloading: break;
 	}
+
+	if(isPaused())
+		return "Paused";
+
+	if (m_torrent_params.ti != NULL) //m_torrent_params.ti is not initial initialized for magnet links
+		precision = m_torrent_params.ti->total_size() < 0x2000000;//Set 0 decimal places if file is less than 1 gig.
+	o << fixed << setprecision(precision) << getTotalProgress() << '%';
+	return o.str();
+
 }
 
 float gt::Torrent::getTotalRatio()
