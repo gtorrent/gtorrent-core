@@ -120,7 +120,7 @@ namespace gt {
 		inline string getTextSize() { return getFileSizeString(getSize()); }
 
 		// Returns a the total size of files remaining to download in torrent
-		inline boost::int64_t getRemaining() { return m_handle.status().total_wanted - m_handle.status().total_wanted_done; }
+		inline boost::int64_t getRemaining() { return getSize() - getTotalDownloaded(); }
 
 		// Returns a friendly string for the total size of files remaining to download in torrent
 		inline string getTextRemaining() { return getFileSizeString(getRemaining()); }
