@@ -164,10 +164,10 @@ void gt::Torrent::setPaused(bool isPaused)
 
 vector<bool> gt::Torrent::getPieces()
 {
-    libtorrent::bitfield p = m_handle.status().pieces;
-    int n = m_handle.get_torrent_info().num_pieces();
-    vector<bool> pieces;
-    for(int i = 0;i < n;++i)
-        pieces.push_back(p.get_bit(i));
-    return pieces;
+	libtorrent::bitfield p = m_handle.status().pieces;
+	int n = m_handle.get_torrent_info().num_pieces();
+	vector<bool> pieces;
+	for(int i = 0; i < n; ++i)
+		pieces.push_back(p.get_bit(i));
+	return pieces;
 }
