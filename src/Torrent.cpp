@@ -7,7 +7,7 @@
 string getTimeString( boost::int64_t time_s )
 {
 	if ( time_s <= 0 )
-		return "???";
+		return "∞";
 
 	boost::int64_t time_m = time_s / 60;
 	time_s %= 60;
@@ -31,31 +31,33 @@ string getTimeString( boost::int64_t time_s )
 
 string getRateString(boost::int64_t file_rate)
 {
-	ostringstream file_rate_string;
-	file_rate_string << getFileSizeString(file_rate) << "/s";
-	return file_rate_string.str();
+	ostringstream frs;
+	if (file_rate> 0) {
+			frs << getFileSizeString(file_rate) << "/s";
+	}
+	return frs.str();
 }
 
 string getFileSizeString(boost::int64_t file_size)
 {
-	ostringstream file_size_string;
-
-	if (file_size <= 0)
+if (file_size <= 0) {
 		return string();
-
-	if (file_size >= (1024 * 1024 * 1024))
-		file_size_string <<  fixed << setprecision(3) << (file_size / 1024 / 1024 / 1024) << " GB";
-
-	if (file_size >= (1024 * 1024) && file_size < (1024 * 1024 * 1024))
-		file_size_string <<  fixed << setprecision(3) << (file_size / 1024 / 1024) << " MB";
-
-	if (file_size >= 1024 && file_size < (1024 * 1024))
-		file_size_string << fixed << setprecision(3) << (file_size / 1024) << " KB";
-
-	if (file_size > 0 && file_size < 1024)
-		file_size_string << file_size << " B";
-
-	return file_size_string.str();
+	}
+	ostringstream fss;
+	fss << fixed << setprecision(3);
+	if (file_size >= (1073741824)) {
+		fss << file_size / 1073741824 << "GB ";
+	}
+	if (file_size>= (1048576) && file_size< (1073741824)) {
+		fss << (file_size/ 1048576) << "MB ";
+	}
+	if (file_size>= 1024 && file_size< (1048576)) {
+		fss << (file_size/ 1024) << "KB ";
+	}
+	if (file_size> 0 && file_size< 1024) {
+		fss << file_size<< "B";
+	}
+	return fss.str();
 }
 
 gt::Torrent::Torrent(string path) : m_path(path)
