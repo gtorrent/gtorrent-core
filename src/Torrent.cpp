@@ -34,26 +34,20 @@ string getRateString(boost::int64_t file_rate) {
     return file_rate_string.str();
 }
 
-string getFileSizeString(boost::int64_t file_size) {
-    ostringstream file_size_string;
+string getFileSizeString( boost::int64_t file_size ) {
+    const string suffixes[] = { " B", " KB", " MB", " GB" };
+    const int maxOffset = sizeof( suffixes ) / sizeof( suffixes[ 0 ] );
 
-    if (file_size <= 0) {
-        return string();
-    }
-    if (file_size >= (1024 * 1024 * 1024)) {
-        file_size_string <<  fixed << setprecision(3) << (file_size / 1024 / 1024 / 1024) << " GB";
-    }
-    if (file_size >= (1024 * 1024) && file_size < (1024 * 1024 * 1024)) {
-        file_size_string <<  fixed << setprecision(3) << (file_size / 1024 / 1024) << " MB";
-    }
-    if (file_size >= 1024 && file_size < (1024 * 1024)) {
-        file_size_string << fixed << setprecision(3) << (file_size / 1024) << " KB";
-    }
-    if (file_size > 0 && file_size < 1024) {
-        file_size_string << file_size << " B";
-    }
-    return file_size_string.str();
-}
+    stringstream sizeStream;
+
+    if ( file_size > 0 ) {
+        int offset = min( ( int ) floor( log( file_size ) / log( 1024 ) ), maxOffset - 1 );
+        sizeStream << fixed << setprecision( 3 ) << ( file_size / pow( 1024, offset ) ) << suffixes[ offset ];
+    } else
+        sizeStream << "???";
+
+    return sizeStream.str();
+};
 
 gt::Torrent::Torrent(string path) :
     m_path(path) {
