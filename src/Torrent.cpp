@@ -34,15 +34,15 @@ string getRateString(boost::int64_t file_rate) {
     return file_rate_string.str();
 }
 
-string getFileSizeString( boost::int64_t file_size ) {
+string getFileSizeString(boost::int64_t file_size) {
     const string suffixes[] = { " B", " KB", " MB", " GB" };
-    const int maxOffset = sizeof( suffixes ) / sizeof( suffixes[ 0 ] );
+    const int maxOffset = sizeof(suffixes) / sizeof(suffixes[0]);
 
     stringstream sizeStream;
 
-    if ( file_size > 0 ) {
-        int offset = min( ( int ) floor( log( file_size ) / log( 1024 ) ), maxOffset - 1 );
-        sizeStream << fixed << setprecision( 3 ) << ( file_size / pow( 1024, offset ) ) << suffixes[ offset ];
+    if (file_size > 0) {
+        int offset = min((int) floor(log(file_size) / log(1024)), maxOffset - 1);
+        sizeStream << fixed << setprecision(3) << (file_size / pow(1024, offset)) << suffixes[offset];
     } else
         sizeStream << "???";
 
