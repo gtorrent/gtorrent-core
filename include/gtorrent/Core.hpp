@@ -27,6 +27,7 @@ namespace gt
 			return m_torrents;
 		};
 		shared_ptr<Torrent> addTorrent(string path);
+		void removeTorrent(shared_ptr<Torrent>);
 
 		inline bool isRunning() const
 		{

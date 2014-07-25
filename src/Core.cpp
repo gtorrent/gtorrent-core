@@ -76,6 +76,12 @@ shared_ptr<gt::Torrent> gt::Core::addTorrent(string path) {
 
 }
 
+void gt::Core::removeTorrent(shared_ptr<Torrent> t) {
+    //TODO : add removal of files on request
+    m_session.remove_torrent(t->getHandle());
+}
+
+
 void gt::Core::update() {
     /*auto iter = begin(m_torrents);
 
