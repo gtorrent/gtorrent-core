@@ -9,7 +9,7 @@ gt::Core::Core() :
     libtorrent::error_code ec;
     m_session.listen_on(make_pair(6881, 6889), ec);
     if (ec.value() != 0)
-        gt::Log::Debug(ec.message().c_str());
+        gt::Log::Debug() << ec.message();
 }
 
 bool gt::Core::isMagnetLink(string const& url) {
@@ -42,7 +42,7 @@ shared_ptr<gt::Torrent> gt::Core::addTorrent(string path) {
     libtorrent::error_code ec;
     libtorrent::torrent_handle h = m_session.add_torrent(t->getTorrentParams(), ec);
     if (ec.value() != 0) {
-        gt::Log::Debug(ec.message().c_str());
+        gt::Log::Debug() << ec.message();
         return shared_ptr<gt::Torrent>();
     } else {
         t->setHandle(h);
@@ -109,6 +109,6 @@ void gt::Core::update() {
 }
 
 void gt::Core::shutdown() {
-    gt::Log::Debug("Shutting down core library...");
+    gt::Log::Debug() << "Shutting down core library...";
     m_running = false;
 }
