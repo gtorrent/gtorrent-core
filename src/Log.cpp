@@ -3,7 +3,7 @@
 #include <ctime>
 #include <stdarg.h>
 
-static string gt::Log::getFullDateNumber(int n) {
+static string getFullDateNumber(int n) {
     ostringstream oss;
 
     if (n < 10) {
