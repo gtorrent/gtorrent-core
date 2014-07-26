@@ -173,6 +173,7 @@ int gt::Core::loadSession(string folder) {
 	}
 
 	m_session.resume();
+	return 0;
 }
 
 void gt::Core::update() {

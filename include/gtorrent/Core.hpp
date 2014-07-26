@@ -28,7 +28,7 @@ namespace gt
 			return m_torrents;
 		};
 
-		void loadSession(string path);
+		int loadSession(string path);
 		void saveSession(string path);
 		shared_ptr<Torrent> addTorrent(string path, vector<char> *resumedata = nullptr);
 
