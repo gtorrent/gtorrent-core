@@ -73,7 +73,6 @@ gt::Torrent::Torrent(string path) : m_path(path) {
                 gt::Log::Debug("The torrent file was empty");
                 throw - 1;
             }
-			cout << "no probs here" << endl;
             m_torrent_params.ti = tester;//If no exception was thrown add the torrent
         } else {
             gt::Log::Debug(ec.message().c_str());//Call deconstructor?
