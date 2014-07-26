@@ -73,6 +73,7 @@ gt::Torrent::Torrent(string path) : m_path(path) {
                 gt::Log::Debug("The torrent file was empty");
                 throw - 1;
             }
+			cout << "no probs here" << endl;
             m_torrent_params.ti = tester;//If no exception was thrown add the torrent
         } else {
             gt::Log::Debug(ec.message().c_str());//Call deconstructor?
@@ -146,7 +147,7 @@ string gt::Torrent::getTextTotalRatio() {
 
 void gt::Torrent::setPaused(bool isPaused) {
     m_handle.auto_managed(!isPaused);
-    if ( isPaused )
+    if (isPaused)
         m_handle.pause();
     else
         m_handle.resume();
