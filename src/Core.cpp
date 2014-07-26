@@ -9,13 +9,9 @@ gt::Core::Core() :
     // Fuck your deprecated shit, we're going void down in here
     // tl;dr, figure out something useful to use the error code for,
     // like handling what the fuck might happen if listen_on fails kthnx
-	try {
-		gt::Log::Debug("Loading State...");
-		loadSession(".config");
-		gt::Log::Debug("Done !");
-	} catch (...) { 
-		gt::Log::Debug("Didn't load state (file not found or not enough permissions)...");
-	}
+	if(loadSession(".config"))
+		gt::Log::Debug("Didn't load state (file not found or not enough permissions)... Skipping...");
+
     libtorrent::error_code ec;
     m_session.listen_on(make_pair(6881, 6889), ec);
     if (ec.value() != 0)
@@ -41,7 +37,9 @@ string gt::Core::getDefaultSavePath() {
 shared_ptr<gt::Torrent> gt::Core::addTorrent(string path, vector<char> *resumedata) {
     if (path.empty())
         return shared_ptr<gt::Torrent>();//Use default constructor instead of null
+
     shared_ptr<gt::Torrent> t;
+
     try {
         t = make_shared<gt::Torrent>(path);
         //pointer necessary to catch exception as a shared ptr would go out of scope
@@ -49,10 +47,12 @@ shared_ptr<gt::Torrent> gt::Core::addTorrent(string path, vector<char> *resumeda
         return shared_ptr<gt::Torrent>();
         //Return null if invalid torrent to be handled by GtkMainWindow
     }
+
     libtorrent::error_code ec;
 	auto params = t->getTorrentParams();
-	params.resume_data = resumedata;
+	params.resume_data = resumedata; //TODO: Look if fast resume data exists for this torrent
     libtorrent::torrent_handle h = m_session.add_torrent(params, ec);
+
     if (ec.value() != 0) {
         gt::Log::Debug(ec.message().c_str());
         return shared_ptr<gt::Torrent>();
@@ -65,6 +65,7 @@ shared_ptr<gt::Torrent> gt::Core::addTorrent(string path, vector<char> *resumeda
 
 void gt::Core::removeTorrent(shared_ptr<Torrent> t) {
     //TODO : add removal of files on request
+	//Todo : Remove fast resume data associated to file
     m_session.remove_torrent(t->getHandle());
 }
 
@@ -76,14 +77,15 @@ void gt::Core::saveSession(string folder) {
 	m_session.pause();
 	m_session.save_state(ent);
 	
+
+	//Todo: make a plateform independant version of the following
 	struct stat st;
-	if(stat(folder.c_str(), &st))
+	if(stat(folder.c_str(), &st)) //stat() returns 0 if the folder exist
 		mkdir(folder.c_str(), 0755); 
 
 	if(stat(string(folder + "/meta").c_str(), &st))
 		mkdir(string(folder + "/meta").c_str(), 0755); 
 
-	gt::Log::Debug(string("Opening " + folder + "/state.gts").c_str());
 	ofstream file(folder + "/state.gts");
 	ofstream list(folder + "/list.gts");
 	
@@ -97,6 +99,7 @@ void gt::Core::saveSession(string folder) {
 	file.close();
 						
 	int count = 0;
+
 	for(auto tor : m_torrents) {
 		if(!tor->getHandle().is_valid()) continue;
 		if(!tor->getHandle().status().has_metadata) continue;
@@ -110,10 +113,12 @@ void gt::Core::saveSession(string folder) {
 		tor->getHandle().save_resume_data();
 		++count;
 	}
+
 	while(count) {
 		libtorrent::alert const *al = m_session.wait_for_alert(libtorrent::seconds(10));
 		unique_ptr<libtorrent::alert> holder = m_session.pop_alert();
 		gt::Log::Debug("Caught alert...");
+
 		switch (al->type()) {
 		case libtorrent::save_resume_data_alert::alert_type: break;
 		case libtorrent::save_resume_data_failed_alert::alert_type:
@@ -124,6 +129,7 @@ void gt::Core::saveSession(string folder) {
 			gt::Log::Debug("Received alert wasn't about resume data. Skipping.");
 			continue;
 		}
+
 		libtorrent::save_resume_data_alert *rd = (libtorrent::save_resume_data_alert*)al;
         libtorrent::torrent_handle h = rd->handle;
         ofstream out((folder + "/meta/" + h.get_torrent_info().name() + ".fastresume").c_str(), std::ios_base::binary);
@@ -132,19 +138,19 @@ void gt::Core::saveSession(string folder) {
         bencode(ostream_iterator<char>(out), *rd->resume_data);
         --count;
 	}
+
 	list.close();
-	cout <<"Done! Saved " << m_session.get_torrents().size() << " torrents." << endl;
 }
 
-void gt::Core::loadSession(string folder) {
-	m_session.pause();
+int gt::Core::loadSession(string folder) {
 	libtorrent::lazy_entry ent;
 	libtorrent::error_code ec;
 
 	ifstream file(folder + "/state.gts");
+	ifstream list(folder + "/list.gts");
 
-	if(!file)
-		throw "Couldn't open the file.";
+	if(!file || !list)
+		return -1;
 	
 	string benfile, tmp;
 
@@ -156,14 +162,8 @@ void gt::Core::loadSession(string folder) {
 	lazy_bdecode(benfile.c_str(), benfile.c_str() + benfile.size(), ent, ec);
 	m_session.load_state(ent);
 
-	gt::Log::Debug(string("Opening " + folder + "/list.gts").c_str());
-
-	ifstream list(folder + "/list.gts");
-	if(!list)
-		throw string("Couldn't open the file...");
 	while(getline(list, tmp))
 	{
-		cout << "Adding " << tmp << " to the list..." << endl;
 		libtorrent::add_torrent_params params;
 		vector<char> resumebuff;
 		ifstream resumedata(folder + "/meta/" + tmp + ".fastresume");
@@ -173,7 +173,6 @@ void gt::Core::loadSession(string folder) {
 	}
 
 	m_session.resume();
-	cout <<"Done! Loaded " << m_session.get_torrents().size() << " torrents." << endl;
 }
 
 void gt::Core::update() {
@@ -204,8 +203,6 @@ void gt::Core::update() {
 
 void gt::Core::shutdown() {
     gt::Log::Debug("Shutting down core library...");
-    gt::Log::Debug("Saving state...");
 	saveSession(".config");
-    gt::Log::Debug("Done !");
     m_running = false;
 }
