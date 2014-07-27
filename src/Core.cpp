@@ -25,24 +25,6 @@ bool gt::Core::isMagnetLink(string const& url)
 	return url.compare(0, prefix.length(), prefix) == 0;
 }
 
-// TODO move to platform specific file and implement
-bool gt::Core::checkDirExist(string dir)
-{
-	return true; // Fake it till you make it -- nyanpasu
-}
-
-string gt::Core::getDefaultSavePath()
-{
-#ifndef _WIN32
-	char *savepath = getenv("HOME");
-	return savepath == NULL ? string("") : string(savepath) + "/Downloads";
-#else
-	char *savedrive = getenv("HOMEDRIVE");
-	char *savepath = getenv("HOMEPATH");
-	return savepath == NULL ? string("") : string(savedrive) + string(savepath) + "/Downloads";
-#endif
-}
-
 shared_ptr<gt::Torrent> gt::Core::addTorrent(string path, vector<char> *resumedata)
 {
 	if (path.empty())
@@ -110,10 +92,10 @@ int gt::Core::saveSession(string folder)
 	//TODO make a plateform independant version of the following
 	//TODO mkdir should be platform specific
 	struct stat st;
-	if(!checkDirExist(folder))
+	if(!Platform::checkDirExist(folder))
 		mkdir(folder.c_str(), 0755);
 
-	if(!checkDirExist(folder + "/meta"))
+	if(!Platform::checkDirExist(folder + "/meta"))
 		mkdir(string(folder + "/meta").c_str(), 0755);
 
 	ofstream state(folder + "/state.gts");
@@ -183,7 +165,7 @@ int gt::Core::loadSession(string folder)
 	libtorrent::lazy_entry ent;
 	libtorrent::error_code ec;
 
-	if (!checkDirExist(folder))
+	if (!Platform::checkDirExist(folder))
 	{
 		// Also creates an empty session.
 		saveSession(folder);

@@ -20,15 +20,12 @@ namespace gt
 	public:
 		Core();
 
-                // These should be platform specific
-		static string getDefaultSavePath();
-                static bool checkDirExist(string);
-		static bool isMagnetLink(string const& link);
-
 		inline vector<shared_ptr<Torrent>> &getTorrents()
 		{
 			return m_torrents;
 		};
+
+		static bool isMagnetLink(string const& link);
 
 		int loadSession(string path);
 		int saveSession(string path);

@@ -13,5 +13,4 @@ namespace gt
 {
 	static string getDefaultSavePath();
 	static bool checkDirExist(string);
-	static bool isMagnetLink(string const& link);
 }
