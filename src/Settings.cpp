@@ -1,4 +1,5 @@
 #include "Settings.hpp"
+#include "Platform.hpp"
 #include <fstream>
 #include <sstream>
 
@@ -6,7 +7,7 @@ std::map<std::string, std::string> gt::Settings::settings;
 
 bool gt::Settings::parse(const std::string &path)
 {
-	std::ifstream configFile(gt::Plateform::getDefaultConfigPath() + path);
+	std::ifstream configFile(gt::Platform::getDefaultConfigPath() + path);
 	if (!configFile)
 		return true;
 	while (!configFile.eof())

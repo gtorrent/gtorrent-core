@@ -1,6 +1,7 @@
 #include "Core.hpp"
 #include "Log.hpp"
 #include "Platform.hpp"
+#include "Settings.hpp"
 #include "libtorrent/alert.hpp"
 #include "libtorrent/alert_types.hpp"
 #include "libtorrent/create_torrent.hpp"
@@ -12,6 +13,7 @@ gt::Core::Core() :
 	// tl;dr, figure out something useful to use the error code for,
 	// like handling what the fuck might happen if listen_on fails kthnx
 	loadSession(gt::Platform::getDefaultConfigPath());
+    gt::Settings::parse("config");
 
 	libtorrent::error_code ec;
 	m_session.listen_on(make_pair(6881, 6889), ec);
