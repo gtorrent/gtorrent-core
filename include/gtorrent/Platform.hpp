@@ -14,6 +14,8 @@ namespace gt
 	namespace Platform
 	{
 		static string getDefaultSavePath();
+		static string getDefaultConfigPath();
+		static string getHomeDir()
 		static bool checkDirExist(string);
 	}
 }

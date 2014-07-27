@@ -1,13 +1,33 @@
 #include "Platform.hpp"
 
+#include <unistd.h>
+#include <sys/types.h>
+#include <pwd.h>
+
 bool gt::Platform::checkDirExist(string dir)
 {
-	return true; // Fake it till you make it -- nyanpasu
+	struct stat st;
+	if(stat(dir.c_str(), &st)) //stat() returns 0 if the dir exist
+		return false;
+
+	return true;
 }
 
 string gt::Platform::getDefaultSavePath()
 {
-	char *savedrive = getenv("HOMEDRIVE");
-	char *savepath = getenv("HOMEPATH");
-	return savepath == NULL ? string("") : string(savedrive) + string(savepath) + "/Downloads";
+	return getHomeDir() + "/Downloads";
+}
+
+string gt::Platform::getDefaultConfigPath()
+{
+	string config_path;
+	string config_home = getenv("XDG_CONFIG_HOME");
+	if (config_home.length() == 0)
+		config_path = getHomeDir() + ".config/";
+}
+
+string gt::Platform::getHomeDir()
+{
+	struct passwd *pw = getpwuid(getuid());
+	return pw->pw_dir + "/";
 }
