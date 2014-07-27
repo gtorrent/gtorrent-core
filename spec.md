@@ -9,6 +9,8 @@ Constructs a torrent object with internal bindings to libtorrent. `path` is a ma
 
 TODO: add description 
 
+#### Getters
+
 - `string& getPath()`
 
 Gets the path passed in to the constructor.
@@ -17,17 +19,9 @@ Gets the path passed in to the constructor.
 
 Returns the number of seconds the torrent has been active.
 
-- `string getTextActiveTime()`
-
-Returns the active time formatted as a string.
-
 - `boost::int64_t getEta()` 
 
 Returns the ETA in seconds for the torrent.
-
-- `string getTextEta()` 
-
-Returns the ETA formatted as string
 
 - `vector<bool> getPieces()` 
 
@@ -41,17 +35,9 @@ Returns percentage of all files downloading in this torrent.
 
 Returns the current upload rate of the torrent.
 
-- `string getTextUploadRate()`
-
-Returns the current upload rate as a string.
-
 - `unsigned int getDownloadRate()`
 
 Returns the current download rate of the torrent
-
-- `string getTextDownloadRate()`
-
-Returns the current download rate as a string.
 
 - `unsigned int getPPMProgress()`
 
@@ -73,33 +59,17 @@ Returns the current number of leechers attached to the torrent.
 
 Returns the current amount of data uploaded for this torrent.
 
-- `string getTextTotalUploaded()`
-
-Returns the current upload total as a string.
-
 - `boost::int64_t getTotalDownloaded()`
 
 Returns the current amount of data downloaded for this torrent.
-
-- `string getTextTotalDownloaded()`
-
-Returns the current download total as a string.
 
 - `boost::int64_t getSize()`
 
 Returns the total size of files in this torrent
 
-- `string getTextSize()`
-
-Returns the total size of files in the torrent as a string.
-
 - `boost::int64_t getTimeRemaining()`
 
 Returns the time remaining in seconds
-
-- `string getTextTimeRemaining()`
-
-Returns the current time remaining as a string.
 
 - `float getTotalRatio()`
 
@@ -125,19 +95,9 @@ Force a recheck of the torrent
 
 Returns the total size of files remaining to download in the torrent.
 
-- `string getTextRemaining()`
-
-Returns the total size of files remaining to download in the torrent as a string.
-
-- `string getTextTotalRatio()`
-
-Returns the current ratio as a string.
-
 - `bool isPaused()`
 
-- `void setSavePath(string savepath)`
-
-Sets the download location for this torrent.
+#### Setters
 
 - `void resume()`
 
@@ -146,4 +106,8 @@ Resumes the torrent.
 - `void pause()`
 
 Pauses the torrent.
+
+- `void setSavePath(string savepath)`
+
+Sets the download location for this torrent.
 
