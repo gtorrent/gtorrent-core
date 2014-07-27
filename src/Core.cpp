@@ -26,7 +26,7 @@ bool gt::Core::isMagnetLink(string const& url)
 }
 
 // TODO move to platform specific file and implement
-bool gt::Core::checkFileExist()
+bool gt::Core::checkDirExist(string dir)
 {
 	return true; // Fake it till you make it -- nyanpasu
 }
@@ -118,7 +118,7 @@ int gt::Core::saveSession(string folder)
 	ofstream state(folder + "/state.gts");
 	ofstream list(folder + "/list.gts");
 
-	if(!(state)
+	if(!state)
 		throw "Couldn't open state.gts";
 
 	if(!list)
@@ -182,16 +182,16 @@ int gt::Core::loadSession(string folder)
 	libtorrent::lazy_entry ent;
 	libtorrent::error_code ec;
 
-	if (!checkFileExist(folder))
+	if (!checkDirExist(folder))
 	{
 		// Also creates an empty session.
-		saveSession(folder):
+		saveSession(folder);
 	}
 
 	ifstream state(folder + "/state.gts");
 	ifstream list(folder + "/list.gts");
 
-	if(!(state)
+	if(!state)
 		throw "Couldn't open state.gts";
 
 	if(!list)
@@ -201,10 +201,10 @@ int gt::Core::loadSession(string folder)
 
 	do
 	{
-		getline(file, tmp);
+		getline(state, tmp);
 		benfile += tmp;
 	}
-	while(file);
+	while(state);
 
 	lazy_bdecode(benfile.c_str(), benfile.c_str() + benfile.size(), ent, ec);
 	m_session.load_state(ent);

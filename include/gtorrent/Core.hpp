@@ -22,7 +22,7 @@ namespace gt
 
                 // These should be platform specific
 		static string getDefaultSavePath();
-                static bool checkFileExist();
+                static bool checkDirExist(string);
 		static bool isMagnetLink(string const& link);
 
 		inline vector<shared_ptr<Torrent>> &getTorrents()
