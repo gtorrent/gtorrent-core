@@ -6,7 +6,7 @@ std::map<std::string, std::string> gt::Settings::settings;
 
 bool gt::Settings::parse(const std::string &path)
 {
-	std::ifstream configFile(path);
+	std::ifstream configFile(gt::Plateform::getDefaultConfigPath() + path);
 	if (!configFile)
 		return true;
 	while (!configFile.eof())
