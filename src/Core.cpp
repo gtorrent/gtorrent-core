@@ -11,8 +11,7 @@ gt::Core::Core() :
 	// Fuck your deprecated shit, we're going void down in here
 	// tl;dr, figure out something useful to use the error code for,
 	// like handling what the fuck might happen if listen_on fails kthnx
-	if(loadSession(".config"))
-		gt::Log::Debug("Didn't load state (file not found or not enough permissions)... Skipping...");
+	loadSession(gt::Platform::getDefaultConfigPath());
 
 	libtorrent::error_code ec;
 	m_session.listen_on(make_pair(6881, 6889), ec);
@@ -91,15 +90,15 @@ int gt::Core::saveSession(string folder)
 
 
 	//TODO make a plateform independant version of the following
-	//TODO mkdir should be platform specific
 	if(!gt::Platform::checkDirExist(folder))
-		mkdir(folder.c_str(), 0755);
+		gt::Platform::makeDir(folder, 0755);
 
-	if(!gt::Platform::checkDirExist(folder + "/meta"))
-		mkdir(string(folder + "/meta").c_str(), 0755);
 
-	ofstream state(folder + "/state.gts");
-	ofstream list(folder + "/list.gts");
+	if(!gt::Platform::checkDirExist(folder + "meta"))
+		gt::Platform::makeDir(folder + "meta", 0755);
+
+	ofstream state(folder + "state.gts");
+	ofstream list(folder + "list.gts");
 
 	if(!state)
 		throw "Couldn't open state.gts";
@@ -168,7 +167,9 @@ int gt::Core::loadSession(string folder)
 	if (!gt::Platform::checkDirExist(folder))
 	{
 		// Also creates an empty session.
+		gt::Log::Debug(string("Creating new session folder in: " + gt::Platform::getDefaultConfigPath()).c_str());
 		saveSession(folder);
+
 	}
 
 	ifstream state(folder + "/state.gts");
@@ -246,6 +247,6 @@ void gt::Core::update()
 void gt::Core::shutdown()
 {
 	gt::Log::Debug("Shutting down core library...");
-	saveSession(".config");
+	saveSession(gt::Platform::getDefaultConfigPath());
 	m_running = false;
 }

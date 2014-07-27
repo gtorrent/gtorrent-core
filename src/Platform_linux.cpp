@@ -1,4 +1,5 @@
 #include "Platform.hpp"
+#include "Log.hpp"
 
 #include <unistd.h>
 #include <sys/types.h>
@@ -16,16 +17,18 @@ bool gt::Platform::checkDirExist(string dir)
 
 string gt::Platform::getDefaultSavePath()
 {
-	return getHomeDir() + "/Downloads";
+	// TODO Use XDG_DOWNLOAD or whatever it's called
+	return getHomeDir() + "/Downloads/";
 }
 
 string gt::Platform::getDefaultConfigPath()
 {
 	string config_home = getenv("XDG_CONFIG_HOME");
+	config_home += "/gtorrent/";
 	if (config_home.length() == 0)
-		config_home = ".config/";
+		config_home = getHomeDir() + ".config/gtorrent/";
 
-	return getHomeDir() + config_home;
+	return config_home;
 }
 
 string gt::Platform::getHomeDir()
@@ -33,4 +36,9 @@ string gt::Platform::getHomeDir()
 	struct passwd *pw = getpwuid(getuid());
 	string dir = pw->pw_dir;
 	return dir + "/";
+}
+
+int gt::Platform::makeDir(std::string dir, mode_t mode)
+{
+	return mkdir(dir.c_str(), mode);
 }

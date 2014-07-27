@@ -1,5 +1,6 @@
 #pragma once
 #include <string>
+#include <sys/stat.h>
 
 using namespace std;
 
@@ -11,6 +12,7 @@ namespace gt
 		string getDefaultSavePath();
 		string getDefaultConfigPath();
 		string getHomeDir();
+		int makeDir(std::string, mode_t);
 		bool checkDirExist(string);
 	}
 }
