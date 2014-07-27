@@ -39,12 +39,20 @@ LINK_DIRECTORIES (
     ${CMAKE_SOURCE_DIRECTORY}
 )
 
+# Platform-specific source file
+IF (${CMAKE_SYSTEM_NAME} MATCHES "Linux")
+        SET(PLATFORM_SRC src/Platform_linux.cpp)
+ELSEIF (${CMAKE_SYSTEM_NAME} MATCHES "Windows")
+        SET(PLATFORM_SRC src/Platform_win.cpp)
+ENDIF ()
+
 # Create static libbrary
 
 ADD_LIBRARY ( ${PROJECT_NAME}
     src/Core.cpp
     src/Torrent.cpp
     src/Log.cpp
+    ${PLATFORM_SRC}
 )
 
 # Create test executable
