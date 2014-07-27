@@ -132,15 +132,15 @@ int gt::Core::saveSession(string folder)
 
 		switch (al->type())
 		{
-			case libtorrent::save_resume_data_alert::alert_type:
-				break;
-			case libtorrent::save_resume_data_failed_alert::alert_type:
-				gt::Log::Debug("Failed to create resume data. Skipping.");
-				--count;
-				continue;
-			default:
-				gt::Log::Debug("Received alert wasn't about resume data. Skipping.");
-				continue;
+		case libtorrent::save_resume_data_alert::alert_type:
+			break;
+		case libtorrent::save_resume_data_failed_alert::alert_type:
+			gt::Log::Debug("Failed to create resume data. Skipping.");
+			--count;
+			continue;
+		default:
+			gt::Log::Debug("Received alert wasn't about resume data. Skipping.");
+			continue;
 		}
 
 		libtorrent::save_resume_data_alert *rd = (libtorrent::save_resume_data_alert*)al;
