@@ -25,6 +25,12 @@ bool gt::Core::isMagnetLink(string const& url)
 	return url.compare(0, prefix.length(), prefix) == 0;
 }
 
+// TODO move to platform specific file and implement
+bool gt::Core::checkFileExist()
+{
+	return true; // Fake it till you make it -- nyanpasu
+}
+
 string gt::Core::getDefaultSavePath()
 {
 #ifndef _WIN32
@@ -175,6 +181,13 @@ int gt::Core::loadSession(string folder)
 {
 	libtorrent::lazy_entry ent;
 	libtorrent::error_code ec;
+
+	// Check if folder exists
+	if (!checkFileExist(folder))
+	{
+		throw "Config folder does not exist.";
+		saveSession(folder):
+	}
 
 	ifstream state(folder + "/state.gts");
 	ifstream list(folder + "/list.gts");
