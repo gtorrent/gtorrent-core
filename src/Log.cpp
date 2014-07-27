@@ -3,7 +3,7 @@
 #include <ctime>
 #include <stdarg.h>
 
-string getFullDateNumber(int n) {
+static string getFullDateNumber(int n) {
     ostringstream oss;
 
     if (n < 10) {
@@ -38,25 +38,13 @@ string gt::Log::getTimeStamp() {
     return oss.str();
 }
 
-void gt::Log::Debug(const char *fmt, ...) {
-    FILE * pFile = fopen("gtorrent.log", "a");
+gt::Log::Debug::Debug() : m_logFile("gtorrent.log", fstream::out | fstream::app) {
+	*this << "[" << gt::Log::getTimeStamp() << "]: ";
+}
 
-    va_list args, fileargs;
-    va_start(args, fmt);
-    va_start(fileargs, fmt); // can't use a varargs twice
-
-    if (!pFile) {
-        perror("fopen()");
-    } else {
-        fprintf(pFile, "[%s]: ", gt::Log::getTimeStamp().c_str());
-        vfprintf(pFile, fmt, fileargs);
-        fprintf(pFile, "\n");
-    }
-
-    printf("[%s]: ", gt::Log::getTimeStamp().c_str());
-    vprintf(fmt, args);
-    printf("\n");
-
-    va_end(args);
-    va_end(fileargs);
+gt::Log::Debug::~Debug() {
+	
+	*this << "\n";
+	
+	m_logFile.close();
 }

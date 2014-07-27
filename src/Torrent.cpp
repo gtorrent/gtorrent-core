@@ -51,7 +51,7 @@ string getFileSizeString(boost::int64_t file_size) {
     } else if (file_size >= 1024) {
         fss << (file_size / (double)1024) << " KB";
     } else if (file_size> 0) {
-        fss << file_size<< "B ";
+        fss << file_size<< " B";
     }
     return fss.str();
 }
@@ -70,12 +70,12 @@ gt::Torrent::Torrent(string path) : m_path(path) {
             bool isempty = torrentcheck.peek() == ifstream::traits_type::eof();
             torrentcheck.close();
             if (isempty) {
-                gt::Log::Debug("The torrent file was empty");
+                gt::Log::Debug() << "The torrent file was empty";
                 throw - 1;
             }
             m_torrent_params.ti = tester;//If no exception was thrown add the torrent
         } else {
-            gt::Log::Debug(ec.message().c_str());//Call deconstructor?
+            gt::Log::Debug() << ec.message().c_str();
             throw - 1; //Throw error if construction of libtorrent::torrent_info fails.
         }
     }
