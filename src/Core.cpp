@@ -1,5 +1,6 @@
 #include "Core.hpp"
 #include "Log.hpp"
+#include "Platform.hpp"
 #include "libtorrent/alert.hpp"
 #include "libtorrent/alert_types.hpp"
 #include "libtorrent/create_torrent.hpp"
@@ -10,8 +11,7 @@ gt::Core::Core() :
 	// Fuck your deprecated shit, we're going void down in here
 	// tl;dr, figure out something useful to use the error code for,
 	// like handling what the fuck might happen if listen_on fails kthnx
-	if(loadSession(".config"))
-		gt::Log::Debug("Didn't load state (file not found or not enough permissions)... Skipping...");
+	loadSession(gt::Platform::getDefaultConfigPath());
 
 	libtorrent::error_code ec;
 	m_session.listen_on(make_pair(6881, 6889), ec);
@@ -23,24 +23,6 @@ bool gt::Core::isMagnetLink(string const& url)
 {
 	const string prefix = "magnet:";
 	return url.compare(0, prefix.length(), prefix) == 0;
-}
-
-// TODO move to platform specific file and implement
-bool gt::Core::checkDirExist(string dir)
-{
-	return true; // Fake it till you make it -- nyanpasu
-}
-
-string gt::Core::getDefaultSavePath()
-{
-#ifndef _WIN32
-	char *savepath = getenv("HOME");
-	return savepath == NULL ? string("") : string(savepath) + "/Downloads";
-#else
-	char *savedrive = getenv("HOMEDRIVE");
-	char *savepath = getenv("HOMEPATH");
-	return savepath == NULL ? string("") : string(savedrive) + string(savepath) + "/Downloads";
-#endif
 }
 
 shared_ptr<gt::Torrent> gt::Core::addTorrent(string path, vector<char> *resumedata)
@@ -106,18 +88,15 @@ int gt::Core::saveSession(string folder)
 	m_session.pause();
 	m_session.save_state(ent);
 
+	if(!gt::Platform::checkDirExist(folder))
+		gt::Platform::makeDir(folder, 0755);
 
-	//TODO make a plateform independant version of the following
-	//TODO mkdir should be platform specific
-	struct stat st;
-	if(!checkDirExist(folder))
-		mkdir(folder.c_str(), 0755);
 
-	if(!checkDirExist(folder + "/meta"))
-		mkdir(string(folder + "/meta").c_str(), 0755);
+	if(!gt::Platform::checkDirExist(folder + "meta/"))
+		gt::Platform::makeDir(folder + "meta/", 0755);
 
-	ofstream state(folder + "/state.gts");
-	ofstream list(folder + "/list.gts");
+	ofstream state(folder + "state.gts");
+	ofstream list(folder + "list.gts");
 
 	if(!state)
 		throw "Couldn't open state.gts";
@@ -137,7 +116,7 @@ int gt::Core::saveSession(string folder)
 		if(!tor->getHandle().need_save_resume_data()) continue;
 
 		auto ent = libtorrent::create_torrent(tor->getHandle().get_torrent_info()).generate();
-		ofstream out((folder + "/meta/" + tor->getHandle().get_torrent_info().name() + ".torrent").c_str(), std::ios_base::binary);
+		ofstream out((folder + "meta/" + tor->getHandle().get_torrent_info().name() + ".torrent").c_str(), std::ios_base::binary);
 		out.unsetf(ios_base::skipws);
 		bencode(ostream_iterator<char>(out), ent);
 
@@ -166,7 +145,7 @@ int gt::Core::saveSession(string folder)
 
 		libtorrent::save_resume_data_alert *rd = (libtorrent::save_resume_data_alert*)al;
 		libtorrent::torrent_handle h = rd->handle;
-		ofstream out((folder + "/meta/" + h.get_torrent_info().name() + ".fastresume").c_str(), std::ios_base::binary);
+		ofstream out((folder + "meta/" + h.get_torrent_info().name() + ".fastresume").c_str(), std::ios_base::binary);
 		out.unsetf(ios_base::skipws);
 		list << h.get_torrent_info().name() << '\n';
 		bencode(ostream_iterator<char>(out), *rd->resume_data);
@@ -183,9 +162,10 @@ int gt::Core::loadSession(string folder)
 	libtorrent::lazy_entry ent;
 	libtorrent::error_code ec;
 
-	if (!checkDirExist(folder))
+	if (!gt::Platform::checkDirExist(folder))
 	{
 		// Also creates an empty session.
+		gt::Log::Debug(string("Creating new session folder in: " + gt::Platform::getDefaultConfigPath()).c_str());
 		saveSession(folder);
 	}
 
@@ -214,15 +194,24 @@ int gt::Core::loadSession(string folder)
 	{
 		libtorrent::add_torrent_params params;
 		vector<char> resumebuff;
-		ifstream resumedata(folder + "/meta/" + tmp + ".fastresume");
+		ifstream resumedata(folder + "meta/" + tmp + ".fastresume");
 		while(resumedata)
 			resumebuff.push_back(resumedata.get());
-		auto t = addTorrent(folder + "/meta/" + tmp + ".torrent", &resumebuff);
+		auto t = addTorrent(folder + "meta/" + tmp + ".torrent", &resumebuff);
 	}
 
 	m_session.resume();
 
 	return 0;
+}
+
+// FIXME : pls halp -- nyanpasu
+// This probably isn't necessary and there's a better way to allow
+// external code to get the save path used by the core.
+// Also, maybe inline this.
+string gt::Core::getDefaultSavePath()
+{
+	return gt::Platform::getDefaultSavePath();
 }
 
 void gt::Core::update()
@@ -255,6 +244,6 @@ void gt::Core::update()
 void gt::Core::shutdown()
 {
 	gt::Log::Debug("Shutting down core library...");
-	saveSession(".config");
+	saveSession(gt::Platform::getDefaultConfigPath());
 	m_running = false;
 }

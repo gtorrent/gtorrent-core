@@ -1,5 +1,6 @@
 #include "Core.hpp"
 #include "Torrent.hpp"
+#include "Platform.hpp"
 #include "Log.hpp"
 #define T_PPM 1000000.f
 
@@ -102,7 +103,7 @@ gt::Torrent::Torrent(string path) : m_path(path)
 void gt::Torrent::setSavePath(string savepath)
 {
 	if (savepath.empty())
-		savepath = gt::Core::getDefaultSavePath();
+		savepath = gt::Platform::getDefaultSavePath();
 	if (savepath.empty())
 		savepath = "./"; //Fall back to ./ if $HOME is not set
 	m_torrent_params.save_path = savepath;
