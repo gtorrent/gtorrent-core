@@ -26,10 +26,15 @@ string gt::Platform::getDefaultSavePath()
 
 string gt::Platform::getDefaultConfigPath()
 {
-	string config_home = getenv("XDG_CONFIG_HOME");
+	const char *c = getenv("XDG_CONFIG_HOME");
+	string config_home;
+
+	if (c == nullptr)
+		config_home = getHomeDir() + ".config";
+	else
+		config_home = c;
+
 	config_home += "/gtorrent/";
-	if (config_home.length() == 0)
-		config_home = getHomeDir() + ".config/gtorrent/";
 
 	return config_home;
 }
