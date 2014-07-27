@@ -2,6 +2,7 @@
 
 #include <unistd.h>
 #include <sys/types.h>
+#include <sys/stat.h>
 #include <pwd.h>
 
 bool gt::Platform::checkDirExist(string dir)
@@ -20,14 +21,16 @@ string gt::Platform::getDefaultSavePath()
 
 string gt::Platform::getDefaultConfigPath()
 {
-	string config_path;
 	string config_home = getenv("XDG_CONFIG_HOME");
 	if (config_home.length() == 0)
-		config_path = getHomeDir() + ".config/";
+		config_home = ".config/";
+
+	return getHomeDir() + config_home;
 }
 
 string gt::Platform::getHomeDir()
 {
 	struct passwd *pw = getpwuid(getuid());
-	return pw->pw_dir + "/";
+	string dir = pw->pw_dir;
+	return dir + "/";
 }

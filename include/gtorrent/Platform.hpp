@@ -1,21 +1,16 @@
 #pragma once
+#include <string>
 
 using namespace std;
-
-#include <vector>
-#include <memory>
-#include <string>
-#include <iostream>
-#include "libtorrent.hpp"
-#include "Torrent.hpp"
 
 namespace gt
 {
 	namespace Platform
 	{
-		static string getDefaultSavePath();
-		static string getDefaultConfigPath();
-		static string getHomeDir()
-		static bool checkDirExist(string);
+		// TODO Better names needed. Suggestions welcome.
+		string getDefaultSavePath();
+		string getDefaultConfigPath();
+		string getHomeDir();
+		bool checkDirExist(string);
 	}
 }
