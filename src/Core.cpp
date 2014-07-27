@@ -182,10 +182,9 @@ int gt::Core::loadSession(string folder)
 	libtorrent::lazy_entry ent;
 	libtorrent::error_code ec;
 
-	// Check if folder exists
 	if (!checkFileExist(folder))
 	{
-		throw "Config folder does not exist.";
+		// Also creates an empty session.
 		saveSession(folder):
 	}
 
