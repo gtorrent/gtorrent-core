@@ -76,7 +76,7 @@ shared_ptr<gt::Torrent> gt::Core::addTorrent(string path, vector<char> *resumeda
 void gt::Core::removeTorrent(shared_ptr<Torrent> t)
 {
 	//TODO : add removal of files on request
-	//Todo : Remove fast resume data associated to file
+	//TODO : Remove fast resume data associated to file
 	m_session.remove_torrent(t->getHandle());
 	unsigned i;
 	for(i = 0; i < m_torrents.size(); ++i)
@@ -94,14 +94,14 @@ void gt::Core::removeTorrent(shared_ptr<Torrent> t)
 /*
  * Where path is relative to the executable
  */
-void gt::Core::saveSession(string folder)
+int gt::Core::saveSession(string folder)
 {
 	libtorrent::entry ent;
 	m_session.pause();
 	m_session.save_state(ent);
 
 
-	//Todo: make a plateform independant version of the following
+	//TODO make a plateform independant version of the following
 	struct stat st;
 	if(stat(folder.c_str(), &st)) //stat() returns 0 if the folder exist
 		mkdir(folder.c_str(), 0755);
@@ -109,17 +109,17 @@ void gt::Core::saveSession(string folder)
 	if(stat(string(folder + "/meta").c_str(), &st))
 		mkdir(string(folder + "/meta").c_str(), 0755);
 
-	ofstream file(folder + "/state.gts");
+	ofstream state(folder + "/state.gts");
 	ofstream list(folder + "/list.gts");
 
-	if(!file)
-		throw "Couldn't open the file.";
+	if(!(state)
+		throw "Couldn't open state.gts";
 
 	if(!list)
-		throw "Couldn't open the file.";
+		throw "Couldn't open list.gts";
 
-	bencode(ostream_iterator<char>(file), ent);
-	file.close();
+	bencode(ostream_iterator<char>(state), ent);
+	state.close();
 
 	int count = 0;
 
@@ -146,15 +146,15 @@ void gt::Core::saveSession(string folder)
 
 		switch (al->type())
 		{
-		case libtorrent::save_resume_data_alert::alert_type:
-			break;
-		case libtorrent::save_resume_data_failed_alert::alert_type:
-			gt::Log::Debug("Failed to create resume data. Skipping.");
-			--count;
-			continue;
-		default:
-			gt::Log::Debug("Received alert wasn't about resume data. Skipping.");
-			continue;
+			case libtorrent::save_resume_data_alert::alert_type:
+				break;
+			case libtorrent::save_resume_data_failed_alert::alert_type:
+				gt::Log::Debug("Failed to create resume data. Skipping.");
+				--count;
+				continue;
+			default:
+				gt::Log::Debug("Received alert wasn't about resume data. Skipping.");
+				continue;
 		}
 
 		libtorrent::save_resume_data_alert *rd = (libtorrent::save_resume_data_alert*)al;
@@ -167,6 +167,8 @@ void gt::Core::saveSession(string folder)
 	}
 
 	list.close();
+
+	return 0;
 }
 
 int gt::Core::loadSession(string folder)
@@ -174,11 +176,14 @@ int gt::Core::loadSession(string folder)
 	libtorrent::lazy_entry ent;
 	libtorrent::error_code ec;
 
-	ifstream file(folder + "/state.gts");
+	ifstream state(folder + "/state.gts");
 	ifstream list(folder + "/list.gts");
 
-	if(!file || !list)
-		return -1;
+	if(!(state)
+		throw "Couldn't open state.gts";
+
+	if(!list)
+		throw "Couldn't open list.gts";
 
 	string benfile, tmp;
 
@@ -203,6 +208,7 @@ int gt::Core::loadSession(string folder)
 	}
 
 	m_session.resume();
+
 	return 0;
 }
 
@@ -210,27 +216,27 @@ void gt::Core::update()
 {
 	/*auto iter = begin(m_torrents);
 
-	while (iter != end(m_torrents))
-	{
-		auto &t = **iter;
+	  while (iter != end(m_torrents))
+	  {
+	  auto &t = **iter;
 
-		gt::Event event;
+	  gt::Event event;
 
-		if (t.pollEvent(event))
-		{
-			switch (event.type)
-			{
-				case gt::Event::DownloadCompleted:
-					printf("Done!\n");
-					iter = m_torrents.erase(iter);
-				break;
-			}
-		}
-		else
-		{
-			++iter;
-		}
-	}*/
+	  if (t.pollEvent(event))
+	  {
+	  switch (event.type)
+	  {
+	  case gt::Event::DownloadCompleted:
+	  printf("Done!\n");
+	  iter = m_torrents.erase(iter);
+	  break;
+	  }
+	  }
+	  else
+	  {
+	  ++iter;
+	  }
+	  }*/
 }
 
 void gt::Core::shutdown()

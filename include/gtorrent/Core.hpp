@@ -29,7 +29,7 @@ namespace gt
 		};
 
 		int loadSession(string path);
-		void saveSession(string path);
+		int saveSession(string path);
 		shared_ptr<Torrent> addTorrent(string path, vector<char> *resumedata = nullptr);
 
 		void removeTorrent(shared_ptr<Torrent>);
