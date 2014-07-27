@@ -14,6 +14,9 @@ SET (GTORRENT_VERSION_PATCH 2)
 
 ############################################################
 
+# Options
+OPTION (ENABLE_TESTEXCUTABLE "Enable the compilation of a simple test" OFF)
+
 # Configure version into utils/Version.hpp
 SET (VERSION ${GTORRENT_VERSION_MAJOR}.${GTORRENT_VERSION_MINOR}.${GTORRENT_VERSION_PATCH})
 configure_file(src/utils/Version.hpp.in Version.hpp @ONLY)
@@ -56,10 +59,12 @@ ADD_LIBRARY ( ${PROJECT_NAME}
 )
 
 # Create test executable
-ADD_EXECUTABLE ( gTest
-    EXCLUDE_FROM_ALL
-    test/main.cpp
-)
+IF (ENABLE_TESTEXCUTABLE)
+	ADD_EXECUTABLE ( gTest
+		EXCLUDE_FROM_ALL
+		test/main.cpp
+		)
+ENDIF (ENABLE_TESTEXCUTABLE)
 
 # Make sure libgtorrent.a is built before gTest.exe
 ADD_DEPENDENCIES(gTest gtorrent)
