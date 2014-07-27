@@ -108,11 +108,12 @@ int gt::Core::saveSession(string folder)
 
 
 	//TODO make a plateform independant version of the following
+	//TODO mkdir should be platform specific
 	struct stat st;
-	if(stat(folder.c_str(), &st)) //stat() returns 0 if the folder exist
+	if(!checkDirExist(folder))
 		mkdir(folder.c_str(), 0755);
 
-	if(stat(string(folder + "/meta").c_str(), &st))
+	if(!checkDirExist(folder + "/meta"))
 		mkdir(string(folder + "/meta").c_str(), 0755);
 
 	ofstream state(folder + "/state.gts");
