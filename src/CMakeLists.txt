@@ -1,8 +1,9 @@
-# Platform-specific source file
+# Select platform specific source file(s)
 IF (${CMAKE_SYSTEM_NAME} MATCHES "Linux")
 	SET(PLATFORM_SRC Platform_linux.cpp)
 ELSEIF (${CMAKE_SYSTEM_NAME} MATCHES "Windows")
 	SET(PLATFORM_SRC Platform_win.cpp)
+# TODO Add Mac OS
 ENDIF ()
 
 # NOTE For now I'll not use ${PROJECT_NAME}
@@ -18,10 +19,10 @@ ADD_DEFINITIONS (
 	)
 
 ADD_LIBRARY ( gtorrent
+	${PLATFORM_SRC}
 	Core.cpp
 	Torrent.cpp
 	Log.cpp
-	${PLATFORM_SRC}
 	)
 
 TARGET_LINK_LIBRARIES ( gtorrent
