@@ -67,6 +67,16 @@ void gt::Core::removeTorrent(shared_ptr<Torrent> t) {
     //TODO : add removal of files on request
 	//Todo : Remove fast resume data associated to file
     m_session.remove_torrent(t->getHandle());
+    unsigned i;
+    for(i = 0; i<m_torrents.size(); ++i)
+        if(m_torrents[i] == t)
+            break;
+    cout <<endl << i << endl <<endl;
+    while(i < m_torrents.size()-1) {
+        m_torrents[i] = m_torrents[i+1];
+        ++i;
+    }
+    m_torrents.resize(m_torrents.size() -1);
 }
 
 /*
