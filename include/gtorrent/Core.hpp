@@ -33,6 +33,9 @@ namespace gt
 
 		void removeTorrent(shared_ptr<Torrent>);
 
+		// Obtains from platform.
+		string getDefaultSavePath();
+
 		inline bool isRunning() const
 		{
 			return m_running;
