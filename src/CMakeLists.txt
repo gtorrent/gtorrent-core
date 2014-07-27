@@ -23,6 +23,7 @@ ADD_LIBRARY ( gtorrent
 	Core.cpp
 	Torrent.cpp
 	Log.cpp
+    Settings.cpp
 	)
 
 TARGET_LINK_LIBRARIES ( gtorrent
