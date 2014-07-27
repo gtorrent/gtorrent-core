@@ -1,5 +1,6 @@
 #include "Core.hpp"
 #include "Log.hpp"
+#cinlude "Platform.hpp"
 #include "libtorrent/alert.hpp"
 #include "libtorrent/alert_types.hpp"
 #include "libtorrent/create_torrent.hpp"
@@ -91,11 +92,10 @@ int gt::Core::saveSession(string folder)
 
 	//TODO make a plateform independant version of the following
 	//TODO mkdir should be platform specific
-	struct stat st;
-	if(!Platform::checkDirExist(folder))
+	if(!gt::Platform::checkDirExist(folder))
 		mkdir(folder.c_str(), 0755);
 
-	if(!Platform::checkDirExist(folder + "/meta"))
+	if(!gt::Platform::checkDirExist(folder + "/meta"))
 		mkdir(string(folder + "/meta").c_str(), 0755);
 
 	ofstream state(folder + "/state.gts");
@@ -165,7 +165,7 @@ int gt::Core::loadSession(string folder)
 	libtorrent::lazy_entry ent;
 	libtorrent::error_code ec;
 
-	if (!Platform::checkDirExist(folder))
+	if (!gt::Platform::checkDirExist(folder))
 	{
 		// Also creates an empty session.
 		saveSession(folder);
