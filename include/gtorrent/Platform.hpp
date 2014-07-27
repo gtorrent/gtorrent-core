@@ -11,6 +11,9 @@ using namespace std;
 
 namespace gt
 {
-	static string getDefaultSavePath();
-	static bool checkDirExist(string);
+	namespace Platform
+	{
+		static string getDefaultSavePath();
+		static bool checkDirExist(string);
+	}
 }
