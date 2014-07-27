@@ -17,7 +17,7 @@ namespace gt
 		libtorrent::session m_session;
 		bool m_running;
 	public:
-		Core();
+		Core(int argc = 0, char **argv = nullptr);
 
 		static bool isMagnetLink(string const& link);
 

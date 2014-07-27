@@ -1,7 +1,7 @@
 #include "Core.hpp"
 #include "Log.hpp"
 
-gt::Core::Core() :
+gt::Core::Core(int argc, char **argv) :
     m_running(true) {
     // Fuck your deprecated shit, we're going void down in here
     // tl;dr, figure out something useful to use the error code for,
@@ -10,6 +10,8 @@ gt::Core::Core() :
     m_session.listen_on(make_pair(6881, 6889), ec);
     if (ec.value() != 0)
         gt::Log::Debug(ec.message().c_str());
+	for(int i = 0; i < argc; ++i)
+		addTorrent(string(argv[i]));
 }
 
 bool gt::Core::isMagnetLink(string const& url) {
