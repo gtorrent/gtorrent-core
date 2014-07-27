@@ -42,67 +42,48 @@ LINK_DIRECTORIES (
     ${CMAKE_SOURCE_DIRECTORY}
 )
 
-# Platform-specific source file
-IF (${CMAKE_SYSTEM_NAME} MATCHES "Linux")
-        SET(PLATFORM_SRC src/Platform_linux.cpp)
-ELSEIF (${CMAKE_SYSTEM_NAME} MATCHES "Windows")
-        SET(PLATFORM_SRC src/Platform_win.cpp)
-ENDIF ()
-
-# Create static libbrary
-
-ADD_LIBRARY ( ${PROJECT_NAME}
-    src/Core.cpp
-    src/Torrent.cpp
-    src/Log.cpp
-    ${PLATFORM_SRC}
-)
-
 # Create test executable
 IF (ENABLE_TESTEXCUTABLE)
 	ADD_EXECUTABLE ( gTest
 		EXCLUDE_FROM_ALL
 		test/main.cpp
 		)
-ENDIF (ENABLE_TESTEXCUTABLE)
 
 # Make sure libgtorrent.a is built before gTest.exe
-ADD_DEPENDENCIES(gTest gtorrent)
+	ADD_DEPENDENCIES(gTest gtorrent)
 
 # Add and move test torrents
-add_custom_target(copytorrents
-    COMMENT "Copying torrents"
-)
-FILE(GLOB Torrents ${PROJECT_SOURCE_DIR}/test/*.torrent)
-FOREACH(Torrent ${Torrents})
-    ADD_CUSTOM_COMMAND(TARGET copytorrents 
-        COMMAND ${CMAKE_COMMAND} -E copy ${Torrent} ${CMAKE_BINARY_DIR}/${Torrent_NAME}
-        COMMENT "Copying ${Torrent}"
-    )
-ENDFOREACH()
-ADD_DEPENDENCIES(gTest copytorrents)
+	add_custom_target(copytorrents
+	    COMMENT "Copying torrents"
+	)
+	FILE(GLOB Torrents ${PROJECT_SOURCE_DIR}/test/*.torrent)
+	FOREACH(Torrent ${Torrents})
+	    ADD_CUSTOM_COMMAND(TARGET copytorrents 
+		COMMAND ${CMAKE_COMMAND} -E copy ${Torrent} ${CMAKE_BINARY_DIR}/${Torrent_NAME}
+		COMMENT "Copying ${Torrent}"
+	    )
+	ENDFOREACH()
+	ADD_DEPENDENCIES(gTest copytorrents)
+ENDIF (ENABLE_TESTEXCUTABLE)
 
 ADD_DEFINITIONS (
     ${LIBTORRENT_CFLAGS}
 )
 
 INCLUDE_DIRECTORIES (
-    include
     include/gtorrent
     ${Boost_INCLUDE_DIRS}
     ${LIBTORRENT_INCLUDE_DIRS}
 )
 
-TARGET_LINK_LIBRARIES ( ${PROJECT_NAME}
-    ${CMAKE_SOURCE_DIRECTORY}/libs/libtorrent.a
-    ${Boost_LIBRARIES}
-    ${LIBTORRENT_LIBRARIES}
-)      
-
+IF (ENABLE_TESTEXCUTABLE)
 TARGET_LINK_LIBRARIES ( gTest
     ${CMAKE_BINARY_DIR}/libgtorrent.a
     ${Boost_LIBRARIES}
     ${LIBTORRENT_LIBRARIES}
 )      
+ENDIF (ENABLE_TESTEXCUTABLE)
+
+ADD_SUBDIRECTORY (src)
 
 INSTALL(TARGETS ${PROJECT_NAME} DESTINATION ${PREFIX}/lib/ PERMISSIONS OWNER_EXECUTE OWNER_WRITE OWNER_READ GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE)
