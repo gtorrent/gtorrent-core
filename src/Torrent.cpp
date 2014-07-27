@@ -111,36 +111,28 @@ bool gt::Torrent::pollEvent(gt::Event &event)
 
 string gt::Torrent::getTextState()
 {
-	ostringstream o;
+	ostringstream progress;
 	int precision = 1;
-
-	switch (getState())
-	{
-	case libtorrent::torrent_status::queued_for_checking:
-		return "Queued for checking";
-	case libtorrent::torrent_status::downloading_metadata:
-		return "Downloading metadata...";
-	case libtorrent::torrent_status::finished:
-		return "Finished";
-	case libtorrent::torrent_status::allocating:
-		return "Allocating...";
-	case libtorrent::torrent_status::checking_resume_data:
-		return "Resuming...";
-	case libtorrent::torrent_status::checking_files:
-		return "Checking...";
-	case libtorrent::torrent_status::seeding:
-		return "Seeding";
-	case libtorrent::torrent_status::downloading: break;
-	}
-
-	if(isPaused())
-		return "Paused";
-
 	if (m_torrent_params.ti != NULL) //m_torrent_params.ti is not initial initialized for magnet links
 		precision = m_torrent_params.ti->total_size() < 0x2000000;//Set 0 decimal places if file is less than 1 gig.
-	o << fixed << setprecision(precision) << getTotalProgress() << '%';
-	return o.str();
-
+	progress << fixed << setprecision(precision) << getTotalProgress() << '%';
+	return progress.str();
+	
+	const string stateText = { 
+		"Queued for checking",
+		"Checking...",
+		"Downloading metadata...",
+		progress.str(),
+		"Finished",
+		"Seeding...",
+		"Allocating...",
+		"Checking resume data..."
+	};
+	
+	if(isPaused())
+		return "Paused";
+	
+	return stateText[getState()];
 }
 
 float gt::Torrent::getTotalRatio()
