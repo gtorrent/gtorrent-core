@@ -43,7 +43,7 @@ namespace gt {
 		inline boost::int64_t getEta() { return (getDownloadRate() <= 0) ? -1 : (getWanted() / getDownloadRate()); }
 
 		// Returns formatted eta as string
-		inline string getTextEta() { return getTimeString( getEta()); }
+		inline string getTextEta() { return getTimeString(getEta()); }
 
         // Returns a vector of bools for each piece, true if we have it, false otherwise
         vector<bool> getPieces();
