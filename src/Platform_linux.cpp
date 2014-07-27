@@ -10,15 +10,19 @@ bool gt::Platform::checkDirExist(string dir)
 {
 	struct stat st;
 	if(stat(dir.c_str(), &st)) //stat() returns 0 if the dir exist
+	{
+		gt::Log::Debug("Directory doesn't exists.");
 		return false;
+	}
 
+	gt::Log::Debug("Directory already exist.");
 	return true;
 }
 
 string gt::Platform::getDefaultSavePath()
 {
 	// TODO Use XDG_DOWNLOAD or whatever it's called
-	return getHomeDir() + "/Downloads/";
+	return getHomeDir() + "Downloads/";
 }
 
 string gt::Platform::getDefaultConfigPath()

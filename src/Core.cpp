@@ -88,14 +88,12 @@ int gt::Core::saveSession(string folder)
 	m_session.pause();
 	m_session.save_state(ent);
 
-
-	//TODO make a plateform independant version of the following
 	if(!gt::Platform::checkDirExist(folder))
 		gt::Platform::makeDir(folder, 0755);
 
 
-	if(!gt::Platform::checkDirExist(folder + "meta"))
-		gt::Platform::makeDir(folder + "meta", 0755);
+	if(!gt::Platform::checkDirExist(folder + "meta/"))
+		gt::Platform::makeDir(folder + "meta/", 0755);
 
 	ofstream state(folder + "state.gts");
 	ofstream list(folder + "list.gts");
@@ -118,7 +116,7 @@ int gt::Core::saveSession(string folder)
 		if(!tor->getHandle().need_save_resume_data()) continue;
 
 		auto ent = libtorrent::create_torrent(tor->getHandle().get_torrent_info()).generate();
-		ofstream out((folder + "/meta/" + tor->getHandle().get_torrent_info().name() + ".torrent").c_str(), std::ios_base::binary);
+		ofstream out((folder + "meta/" + tor->getHandle().get_torrent_info().name() + ".torrent").c_str(), std::ios_base::binary);
 		out.unsetf(ios_base::skipws);
 		bencode(ostream_iterator<char>(out), ent);
 
@@ -147,7 +145,7 @@ int gt::Core::saveSession(string folder)
 
 		libtorrent::save_resume_data_alert *rd = (libtorrent::save_resume_data_alert*)al;
 		libtorrent::torrent_handle h = rd->handle;
-		ofstream out((folder + "/meta/" + h.get_torrent_info().name() + ".fastresume").c_str(), std::ios_base::binary);
+		ofstream out((folder + "meta/" + h.get_torrent_info().name() + ".fastresume").c_str(), std::ios_base::binary);
 		out.unsetf(ios_base::skipws);
 		list << h.get_torrent_info().name() << '\n';
 		bencode(ostream_iterator<char>(out), *rd->resume_data);
@@ -169,7 +167,6 @@ int gt::Core::loadSession(string folder)
 		// Also creates an empty session.
 		gt::Log::Debug(string("Creating new session folder in: " + gt::Platform::getDefaultConfigPath()).c_str());
 		saveSession(folder);
-
 	}
 
 	ifstream state(folder + "/state.gts");
@@ -197,10 +194,10 @@ int gt::Core::loadSession(string folder)
 	{
 		libtorrent::add_torrent_params params;
 		vector<char> resumebuff;
-		ifstream resumedata(folder + "/meta/" + tmp + ".fastresume");
+		ifstream resumedata(folder + "meta/" + tmp + ".fastresume");
 		while(resumedata)
 			resumebuff.push_back(resumedata.get());
-		auto t = addTorrent(folder + "/meta/" + tmp + ".torrent", &resumebuff);
+		auto t = addTorrent(folder + "meta/" + tmp + ".torrent", &resumebuff);
 	}
 
 	m_session.resume();
