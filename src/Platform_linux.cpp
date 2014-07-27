@@ -1,21 +1,20 @@
 #include "Platform.hpp"
-#include "Log.hpp"
 
 #include <unistd.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <pwd.h>
 
+// TODO Rename shit names to more appropriate ones. -- nyanpasu
+
 bool gt::Platform::checkDirExist(string dir)
 {
 	struct stat st;
 	if(stat(dir.c_str(), &st)) //stat() returns 0 if the dir exist
 	{
-		gt::Log::Debug("Directory doesn't exists.");
 		return false;
 	}
 
-	gt::Log::Debug("Directory already exist.");
 	return true;
 }
 
