@@ -79,13 +79,13 @@ namespace gt
 		// Returns the current upload rate of the torrent
 		inline unsigned int getUploadRate()
 		{
-			return getHandle().status().upload_rate;
+			return (isPaused() ? 0 : getHandle().status().upload_rate);
 		}
 
 		// Returns the current download rate of the torrent
 		inline unsigned int getDownloadRate()
 		{
-			return getHandle().status().download_rate;
+			return (isPaused() ? 0 : getHandle().status().download_rate);
 		}
 
 		// Returns the progress in PPM of all files downloading in this torrent

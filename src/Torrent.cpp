@@ -173,10 +173,7 @@ string gt::Torrent::getTextTotalRatio()
 void gt::Torrent::setPaused(bool isPaused)
 {
 	m_handle.auto_managed(!isPaused);
-	if (isPaused)
-		m_handle.pause();
-	else
-		m_handle.resume();
+	isPaused ? m_handle.pause() : m_handle.resume();
 }
 
 vector<bool> gt::Torrent::getPieces()

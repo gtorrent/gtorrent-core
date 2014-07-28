@@ -50,6 +50,11 @@ shared_ptr<gt::Torrent> gt::Core::addTorrent(string path, vector<char> *resumeda
 	params.resume_data = resumedata; //TODO: Look if fast resume data exists for this torrent
 	libtorrent::torrent_handle h = m_session.add_torrent(params, ec);
 
+	//Actually, libtorrent silentely deals with duplicates, we just have to make this function not to return another Torrent to the UI
+	for(auto tor : getTorrents())
+		if(tor->getHandle().info_hash() == t->getTorrentParams().ti->info_hash())
+			return shared_ptr<gt::Torrent>();
+
 	if (ec.value() != 0)
 	{
 		gt::Log::Debug(ec.message().c_str());
@@ -164,20 +169,25 @@ int gt::Core::loadSession(string folder)
 	libtorrent::lazy_entry ent;
 	libtorrent::error_code ec;
 
-	if (!gt::Platform::checkDirExist(folder))
+	if (!(gt::Platform::checkDirExist(folder)               &&
+	        gt::Platform::checkDirExist(folder + "state.gts") &&
+	        gt::Platform::checkDirExist(folder + "list.gts")))
 	{
 		// Also creates an empty session.
 		gt::Log::Debug(string("Creating new session folder in: " + gt::Platform::getDefaultConfigPath()).c_str());
 		saveSession(folder);
 	}
 
-	ifstream state(folder + "/state.gts");
-	ifstream list(folder + "/list.gts");
+	fstream state;
+	fstream list;
 
-	if(!state)
+	state.open(folder + "state.gts");
+	list.open(folder + "list.gts");
+
+	if(!state.is_open())
 		throw "Couldn't open state.gts";
 
-	if(!list)
+	if(!list.is_open())
 		throw "Couldn't open list.gts";
 
 	string benfile, tmp;
@@ -194,6 +204,7 @@ int gt::Core::loadSession(string folder)
 
 	while(getline(list, tmp))
 	{
+		if(!gt::Platform::checkDirExist(folder + "meta/" + tmp + ".torrent")) continue; //eventually delete the associated .fasteresume
 		libtorrent::add_torrent_params params;
 		vector<char> resumebuff;
 		ifstream resumedata(folder + "meta/" + tmp + ".fastresume");
