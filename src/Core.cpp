@@ -77,7 +77,6 @@ void gt::Core::removeTorrent(shared_ptr<Torrent> t)
 	for(i = 0; i < m_torrents.size(); ++i)
 		if(m_torrents[i] == t)
 			break;
-	cout << endl << i << endl << endl;
 	while(i < m_torrents.size() - 1)
 	{
 		m_torrents[i] = m_torrents[i + 1];
@@ -216,15 +215,6 @@ int gt::Core::loadSession(string folder)
 	m_session.resume();
 
 	return 0;
-}
-
-// FIXME : pls halp -- nyanpasu
-// This probably isn't necessary and there's a better way to allow
-// external code to get the save path used by the core.
-// Also, maybe inline this.
-string gt::Core::getDefaultSavePath()
-{
-	return gt::Platform::getDefaultSavePath();
 }
 
 void gt::Core::update()
