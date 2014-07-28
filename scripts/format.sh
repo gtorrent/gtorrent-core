@@ -1,2 +1,1 @@
-astyle --options=astylerc "src/*"
-find src -name \*.orig -exec rm {} \;
+astyle --options=astylerc "src/*.cpp" "include/gtorrent/*.hpp"
