@@ -218,15 +218,6 @@ int gt::Core::loadSession(string folder)
 	return 0;
 }
 
-// FIXME : pls halp -- nyanpasu
-// This probably isn't necessary and there's a better way to allow
-// external code to get the save path used by the core.
-// Also, maybe inline this.
-string gt::Core::getDefaultSavePath()
-{
-	return gt::Platform::getDefaultSavePath();
-}
-
 void gt::Core::update()
 {
 	/*auto iter = begin(m_torrents);
