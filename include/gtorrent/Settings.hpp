@@ -10,6 +10,8 @@ namespace gt
         public:
 
             static bool parse(const std::string &path);
+            static bool save(const std::string &path);
+            static inline bool optionExists(const std::string &key) { return settings.count(key) > 0; }
             template<typename T>
                 static T getOption(const std::string &key);
             template<typename T>
