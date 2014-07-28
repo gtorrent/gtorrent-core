@@ -3,6 +3,8 @@
 #include <map>
 #include <string>
 
+#define SAVEPATH_OPTION_KEY "SavePath"
+
 namespace gt
 {
 	class Settings
@@ -15,10 +17,10 @@ namespace gt
 		{
 			return settings.count(key) > 0;
 		}
-		template<typename T>
-		static T getOption(const std::string &key);
-		template<typename T>
-		static void setOption(const std::string &key, T value);
+		static int getOptionAsInt(const std::string &key);
+		static std::string getOptionAsString(const std::string &key);
+		static void setOption(const std::string &key, int value);
+		static void setOption(const std::string &key, std::string value);
 	private:
 		static std::map<std::string, std::string> settings;
 	};

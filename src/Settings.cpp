@@ -2,6 +2,7 @@
 #include "Platform.hpp"
 #include <fstream>
 #include <sstream>
+#include <stdexcept>
 
 std::map<std::string, std::string> gt::Settings::settings;
 
@@ -47,22 +48,34 @@ bool gt::Settings::save(const std::string &path)
 	return false;
 }
 
-template<typename T>
-T gt::Settings::getOption(const std::string &key)
+
+std::string gt::Settings::getOptionAsString(const std::string &key)
 {
 	auto i = settings.find(key);
 	if(i == settings.end())
-		throw std::exception("No such option.");
-	std::stringstream opt(*i);
-	T value;
+		throw std::runtime_error("No such option.");
+	return i->second;
+}
+
+int gt::Settings::getOptionAsInt(const std::string &key)
+{
+	auto i = settings.find(key);
+	if(i == settings.end())
+		throw std::runtime_error("No such option.");
+	std::stringstream opt(i->second);
+	int value;
 	opt >> value;
 	return value;
 }
 
-template<typename T>
-void gt::Settings::setOption(const std::string &key, T value)
+void gt::Settings::setOption(const std::string &key, int value)
 {
 	std::stringstream opt;
 	opt << value;
 	settings[key] = opt.str();
+}
+
+void gt::Settings::setOption(const std::string &key, std::string value)
+{
+	settings[key] = value;
 }
