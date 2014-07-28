@@ -14,6 +14,11 @@ string gt::Platform::getDefaultSavePath()
 	return savepath == NULL ? string("") : string(savepath) + "/Downloads";
 }
 
+char gt::Platform::getFileSeparator()
+{
+	return '\\';
+}
+
 string getDefaultConfigPath()
 {
 	return "C:\\windowsisshit";

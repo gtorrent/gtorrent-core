@@ -39,6 +39,11 @@ string gt::Platform::getDefaultConfigPath()
 	return config_home;
 }
 
+char gt::Platform::getFileSeparator()
+{
+	return '/';
+}
+
 string gt::Platform::getHomeDir()
 {
 	struct passwd *pw = getpwuid(getuid());

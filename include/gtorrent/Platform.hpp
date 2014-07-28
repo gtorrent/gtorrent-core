@@ -27,6 +27,10 @@ namespace gt
 		 */
 		string getHomeDir();
 		/**
+		 * Gets the OS's file separator
+		 */
+		char getFileSeparator();
+		/**
 		 * Creates a directory
 		 * returns the values of the POSIX syscall.
 		 */
