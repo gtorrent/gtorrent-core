@@ -1,16 +1,10 @@
 #ifdef _WIN32
 #include "Platform.hpp"
 
-#include <cstdlib>
-#include <Windows.h>
-#include <ShlObj.h>
+#include <Windows.h> // General Windows API
+#include <ShlObj.h> // SHGetKnownFolderPath
+#include <direct.h> // _mkdir
 #include <sstream>
-#include <direct.h>
-
-// TODO Implement this shit. None of it is finished and I have no intention of learning
-// how windows is supposed to do these. Feel free to volunteer your implementation.
-
-
 
 
 // Convert a wide Unicode string to a Windows ANSI codepage string.
@@ -31,7 +25,7 @@ string wideToMultiByteString(const wstring &wstr)
 }
 
 // Does NOT return a trailing backslash.
-string getKnownFolder(const REFKNOWNFOLDERID rfid)
+string getKnownFolder(REFKNOWNFOLDERID rfid)
 {
 	wchar_t* dirPath = nullptr;
 
@@ -52,21 +46,21 @@ string getKnownFolder(const REFKNOWNFOLDERID rfid)
 string gt::Platform::getDefaultSavePath()
 {
 	// Example: C:\Users\UserName\Downloads\
-	// Be consistent - always return a leading file separator.
+	// Be consistent - always return a trailing file separator.
 	return getKnownFolder(FOLDERID_Downloads) + getFileSeparator();
 }
 
 string gt::Platform::getDefaultConfigPath()
 {
 	// Example: C:\Users\UserName\.gtorrent\
-	// Be consistent - always return a leading file separator.
+	// Be consistent - always return a trailing file separator.
 	return getHomeDir() + string(".gtorrent") + getFileSeparator();
 }
 
 string gt::Platform::getHomeDir()
 {
 	// Example: C:\Users\UserName\
-	// Be consistent - always return a leading file separator.
+	// Be consistent - always return a trailing file separator.
 	return getKnownFolder(FOLDERID_Profile) + getFileSeparator();
 }
 
