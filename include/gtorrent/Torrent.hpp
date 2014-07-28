@@ -52,10 +52,10 @@ namespace gt {
 		inline float getTotalProgress() { return ((float) getHandle().status().progress_ppm / 1000000.0f) * 100.0f; }
 
 		// Returns the current upload rate of the torrent
-		inline unsigned int getUploadRate() { return getHandle().status().upload_rate; }
+		inline unsigned int getUploadRate() { return (isPaused() ? 0 : getHandle().status().upload_rate); }
 
 		// Returns the current download rate of the torrent
-		inline unsigned int getDownloadRate() { return getHandle().status().download_rate; }
+		inline unsigned int getDownloadRate() { return (isPaused() ? 0 : getHandle().status().download_rate); }
 
 		// Returns the progress in PPM of all files downloading in this torrent
 		inline unsigned int getPPMProgress() { return getHandle().status().progress_ppm; }
