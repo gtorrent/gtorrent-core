@@ -97,11 +97,11 @@ int gt::Core::saveSession(string folder)
 	m_session.pause();
 	m_session.save_state(ent);
 
-	if(!gt::Platform::checkDirExist(folder))
+	if(gt::Platform::checkDirExist(folder))
 		gt::Platform::makeDir(folder, 0755);
 
 
-	if(!gt::Platform::checkDirExist(folder + "meta/"))
+	if(gt::Platform::checkDirExist(folder + "meta/"))
 		gt::Platform::makeDir(folder + "meta/", 0755);
 
 	ofstream state(folder + "state.gts");
@@ -171,9 +171,9 @@ int gt::Core::loadSession(string folder)
 	libtorrent::lazy_entry ent;
 	libtorrent::error_code ec;
 
-	if (!(gt::Platform::checkDirExist(folder)               &&
-	        gt::Platform::checkDirExist(folder + "state.gts") &&
-	        gt::Platform::checkDirExist(folder + "list.gts")))
+	if (gt::Platform::checkDirExist(folder)               ||
+		gt::Platform::checkDirExist(folder + "state.gts") ||
+		gt::Platform::checkDirExist(folder + "list.gts"))
 	{
 		// Also creates an empty session.
 		gt::Log::Debug(string("Creating new session folder in: " + gt::Platform::getDefaultConfigPath()).c_str());
@@ -206,7 +206,7 @@ int gt::Core::loadSession(string folder)
 
 	while(getline(list, tmp))
 	{
-		if(!gt::Platform::checkDirExist(folder + "meta/" + tmp + ".torrent")) continue; //eventually delete the associated .fasteresume
+		if(gt::Platform::checkDirExist(folder + "meta/" + tmp + ".torrent")) continue; //eventually delete the associated .fasteresume
 		libtorrent::add_torrent_params params;
 		vector<char> resumebuff;
 		ifstream resumedata(folder + "meta/" + tmp + ".fastresume");

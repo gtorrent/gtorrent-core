@@ -51,10 +51,7 @@ bool gt::Settings::save(const std::string &path)
 
 std::string gt::Settings::getOptionAsString(const std::string &key)
 {
-	auto i = settings.find(key);
-	if(i == settings.end())
-		throw std::runtime_error("No such option.");
-	return i->second;
+	return settings[key]; // >yfw exceptions are harmful
 }
 
 int gt::Settings::getOptionAsInt(const std::string &key)
