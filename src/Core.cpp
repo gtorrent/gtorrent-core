@@ -164,20 +164,25 @@ int gt::Core::loadSession(string folder)
 	libtorrent::lazy_entry ent;
 	libtorrent::error_code ec;
 
-	if (!gt::Platform::checkDirExist(folder))
+	if (!(gt::Platform::checkDirExist(folder)               &&
+		  gt::Platform::checkDirExist(folder + "state.gts") && 
+		  gt::Platform::checkDirExist(folder + "list.gts")))
 	{
 		// Also creates an empty session.
 		gt::Log::Debug(string("Creating new session folder in: " + gt::Platform::getDefaultConfigPath()).c_str());
 		saveSession(folder);
 	}
 
-	ifstream state(folder + "/state.gts");
-	ifstream list(folder + "/list.gts");
+	fstream state;
+	fstream list;
 
-	if(!state)
+	state.open(folder + "state.gts");
+	list.open(folder + "list.gts");
+
+	if(!state.is_open())
 		throw "Couldn't open state.gts";
 
-	if(!list)
+	if(!list.is_open())
 		throw "Couldn't open list.gts";
 
 	string benfile, tmp;
