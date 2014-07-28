@@ -1,3 +1,4 @@
+#ifndef _WIN32
 #include "Platform.hpp"
 
 #include <cstdlib>
@@ -6,17 +7,6 @@
 #include <sys/stat.h>
 
 // TODO Rename shit names to more appropriate ones. -- nyanpasu
-
-bool gt::Platform::checkDirExist(string dir)
-{
-	struct stat st;
-	if(stat(dir.c_str(), &st)) //stat() returns 0 if the dir exist
-	{
-		return false;
-	}
-
-	return true;
-}
 
 string gt::Platform::getDefaultSavePath()
 {
@@ -39,18 +29,30 @@ string gt::Platform::getDefaultConfigPath()
 	return config_home;
 }
 
-char gt::Platform::getFileSeparator()
-{
-	return '/';
-}
-
 string gt::Platform::getHomeDir()
 {
 	string dir = getenv("HOME");
 	return dir + "/";
 }
 
+char gt::Platform::getFileSeparator()
+{
+	return '/';
+}
+
 int gt::Platform::makeDir(std::string dir, mode_t mode)
 {
 	return mkdir(dir.c_str(), mode);
 }
+
+bool gt::Platform::checkDirExist(string dir)
+{
+	struct stat st;
+	if (stat(dir.c_str(), &st)) //stat() returns 0 if the dir exist
+	{
+		return false;
+	}
+
+	return true;
+}
+#endif
