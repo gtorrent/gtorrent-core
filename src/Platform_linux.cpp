@@ -1,3 +1,4 @@
+#ifndef _WIN32
 #include "Platform.hpp"
 
 #include <cstdlib>
@@ -54,3 +55,4 @@ int gt::Platform::makeDir(std::string dir, mode_t mode)
 {
 	return mkdir(dir.c_str(), mode);
 }
+#endif

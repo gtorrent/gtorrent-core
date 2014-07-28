@@ -1,3 +1,4 @@
+#ifdef _WIN32
 #include "Platform.hpp"
 
 #include <cstdlib>
@@ -31,3 +32,4 @@ string getHomeDir()
 	string dir = getenv("USERPROFILE");
 	return dir + "\\";
 }
+#endif
