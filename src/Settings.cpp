@@ -18,9 +18,9 @@ bool gt::Settings::parse(const std::string &path)
 
 		// split a line
 		getline(configFile, key);
-		unsigned sep = key.find('=');
-		if (sep != std::string::npos)
+		if (key.find('=') != std::string::npos)
 		{
+			unsigned sep = key.find('=');
 			value = key.substr(sep + 1);
 			key = key.substr(0, sep);
 

@@ -258,6 +258,6 @@ void gt::Core::shutdown()
 {
 	gt::Log::Debug("Shutting down core library...");
 	saveSession(gt::Platform::getDefaultConfigPath());
-    gt::Settings::save("config");
+	gt::Settings::save("config");
 	m_running = false;
 }
