@@ -63,6 +63,11 @@ shared_ptr<gt::Torrent> gt::Core::addTorrent(string path, vector<char> *resumeda
 	}
 }
 
+shared_ptr<gt::Torrent> gt::Core::addRss(string rssurl)
+{
+
+}
+
 void gt::Core::removeTorrent(shared_ptr<Torrent> t)
 {
 	//TODO : add removal of files on request
@@ -165,7 +170,7 @@ int gt::Core::loadSession(string folder)
 	libtorrent::error_code ec;
 
 	if (!(gt::Platform::checkDirExist(folder)               &&
-		  gt::Platform::checkDirExist(folder + "state.gts") && 
+		  gt::Platform::checkDirExist(folder + "state.gts") &&
 		  gt::Platform::checkDirExist(folder + "list.gts")))
 	{
 		// Also creates an empty session.
