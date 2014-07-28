@@ -199,6 +199,7 @@ int gt::Core::loadSession(string folder)
 
 	while(getline(list, tmp))
 	{
+		if(!gt::Platform::checkDirExist(folder + "meta/" + tmp + ".torrent")) continue; //eventually delete the associated .fasteresume
 		libtorrent::add_torrent_params params;
 		vector<char> resumebuff;
 		ifstream resumedata(folder + "meta/" + tmp + ".fastresume");
