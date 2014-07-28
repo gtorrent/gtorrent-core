@@ -1,9 +1,9 @@
 #include "Platform.hpp"
 
+#include <cstdlib>
 #include <unistd.h>
 #include <sys/types.h>
 #include <sys/stat.h>
-#include <pwd.h>
 
 // TODO Rename shit names to more appropriate ones. -- nyanpasu
 
@@ -46,8 +46,7 @@ char gt::Platform::getFileSeparator()
 
 string gt::Platform::getHomeDir()
 {
-	struct passwd *pw = getpwuid(getuid());
-	string dir = pw->pw_dir;
+	string dir = getenv("HOME");
 	return dir + "/";
 }
 

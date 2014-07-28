@@ -1,5 +1,7 @@
 #include "Platform.hpp"
 
+#include <cstdlib>
+
 // TODO Implement this shit. None of it is finished and I have no intention of learning
 // how windows is supposed to do these. Feel free to volunteer your implementation.
 
@@ -26,5 +28,6 @@ string getDefaultConfigPath()
 
 string getHomeDir()
 {
-	return "C:\\";
+	string dir = getenv("USERPROFILE");
+	return dir + "\\";
 }
