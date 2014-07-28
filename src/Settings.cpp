@@ -2,6 +2,7 @@
 #include "Platform.hpp"
 #include <fstream>
 #include <sstream>
+#include <stdexcept>
 
 std::map<std::string, std::string> gt::Settings::settings;
 
@@ -17,9 +18,9 @@ bool gt::Settings::parse(const std::string &path)
 
 		// split a line
 		getline(configFile, key);
-		unsigned sep = key.find('=');
-		if (sep != std::string::npos)
+		if (key.find('=') != std::string::npos)
 		{
+			unsigned sep = key.find('=');
 			value = key.substr(sep + 1);
 			key = key.substr(0, sep);
 
@@ -36,19 +37,45 @@ bool gt::Settings::parse(const std::string &path)
 	return false;
 }
 
-template<typename T>
-T gt::Settings::getOption(const std::string &key)
+bool gt::Settings::save(const std::string &path)
 {
-	std::stringstream opt(settings[key]);
-	T value;
+	std::ofstream configFile(gt::Platform::getDefaultConfigPath() + path, ios_base::trunc);// old configfile is destroyed
+	if(!configFile)
+		return true;
+	for(auto i = settings.begin(); i != settings.end(); ++i)
+		configFile << i->first << " = " << i->second << std::endl;
+	configFile.close();
+	return false;
+}
+
+
+std::string gt::Settings::getOptionAsString(const std::string &key)
+{
+	auto i = settings.find(key);
+	if(i == settings.end())
+		throw std::runtime_error("No such option.");
+	return i->second;
+}
+
+int gt::Settings::getOptionAsInt(const std::string &key)
+{
+	auto i = settings.find(key);
+	if(i == settings.end())
+		throw std::runtime_error("No such option.");
+	std::stringstream opt(i->second);
+	int value;
 	opt >> value;
 	return value;
 }
 
-template<typename T>
-void gt::Settings::setOption(const std::string &key, T value)
+void gt::Settings::setOption(const std::string &key, int value)
 {
 	std::stringstream opt;
 	opt << value;
 	settings[key] = opt.str();
+}
+
+void gt::Settings::setOption(const std::string &key, std::string value)
+{
+	settings[key] = value;
 }

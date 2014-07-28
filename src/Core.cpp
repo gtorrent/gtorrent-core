@@ -13,7 +13,7 @@ gt::Core::Core() :
 	// tl;dr, figure out something useful to use the error code for,
 	// like handling what the fuck might happen if listen_on fails kthnx
 	loadSession(gt::Platform::getDefaultConfigPath());
-    gt::Settings::parse("config");
+	gt::Settings::parse("config");
 
 	libtorrent::error_code ec;
 	m_session.listen_on(make_pair(6881, 6889), ec);
@@ -50,8 +50,8 @@ shared_ptr<gt::Torrent> gt::Core::addTorrent(string path, vector<char> *resumeda
 	params.resume_data = resumedata; //TODO: Look if fast resume data exists for this torrent
 	libtorrent::torrent_handle h = m_session.add_torrent(params, ec);
 
-    //Actually, libtorrent silentely deals with duplicates, we just have to make this function not to return another Torrent to the UI
-	for(auto tor : getTorrents()) 
+	//Actually, libtorrent silentely deals with duplicates, we just have to make this function not to return another Torrent to the UI
+	for(auto tor : getTorrents())
 		if(tor->getHandle().info_hash() == t->getTorrentParams().ti->info_hash())
 			return shared_ptr<gt::Torrent>();
 
@@ -82,7 +82,6 @@ void gt::Core::removeTorrent(shared_ptr<Torrent> t)
 	for(i = 0; i < m_torrents.size(); ++i)
 		if(m_torrents[i] == t)
 			break;
-	cout << endl << i << endl << endl;
 	while(i < m_torrents.size() - 1)
 	{
 		m_torrents[i] = m_torrents[i + 1];
@@ -144,15 +143,15 @@ int gt::Core::saveSession(string folder)
 
 		switch (al->type())
 		{
-			case libtorrent::save_resume_data_alert::alert_type:
-				break;
-			case libtorrent::save_resume_data_failed_alert::alert_type:
-				gt::Log::Debug("Failed to create resume data. Skipping.");
-				--count;
-				continue;
-			default:
-				gt::Log::Debug("Received alert wasn't about resume data. Skipping.");
-				continue;
+		case libtorrent::save_resume_data_alert::alert_type:
+			break;
+		case libtorrent::save_resume_data_failed_alert::alert_type:
+			gt::Log::Debug("Failed to create resume data. Skipping.");
+			--count;
+			continue;
+		default:
+			gt::Log::Debug("Received alert wasn't about resume data. Skipping.");
+			continue;
 		}
 
 		libtorrent::save_resume_data_alert *rd = (libtorrent::save_resume_data_alert*)al;
@@ -175,8 +174,8 @@ int gt::Core::loadSession(string folder)
 	libtorrent::error_code ec;
 
 	if (!(gt::Platform::checkDirExist(folder)               &&
-		  gt::Platform::checkDirExist(folder + "state.gts") &&
-		  gt::Platform::checkDirExist(folder + "list.gts")))
+	        gt::Platform::checkDirExist(folder + "state.gts") &&
+	        gt::Platform::checkDirExist(folder + "list.gts")))
 	{
 		// Also creates an empty session.
 		gt::Log::Debug(string("Creating new session folder in: " + gt::Platform::getDefaultConfigPath()).c_str());
@@ -223,15 +222,6 @@ int gt::Core::loadSession(string folder)
 	return 0;
 }
 
-// FIXME : pls halp -- nyanpasu
-// This probably isn't necessary and there's a better way to allow
-// external code to get the save path used by the core.
-// Also, maybe inline this.
-string gt::Core::getDefaultSavePath()
-{
-	return gt::Platform::getDefaultSavePath();
-}
-
 void gt::Core::update()
 {
 	/*auto iter = begin(m_torrents);
@@ -263,5 +253,6 @@ void gt::Core::shutdown()
 {
 	gt::Log::Debug("Shutting down core library...");
 	saveSession(gt::Platform::getDefaultConfigPath());
+	gt::Settings::save("config");
 	m_running = false;
 }

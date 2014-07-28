@@ -8,7 +8,7 @@ namespace gt
 	{
 		enum Type
 		{
-		    DownloadCompleted
+			DownloadCompleted
 		};
 
 		Type type;
