@@ -3,18 +3,25 @@
 #include <map>
 #include <string>
 
+#define SAVEPATH_OPTION_KEY "SavePath"
+
 namespace gt
 {
-    class Settings
-    {
-        public:
+	class Settings
+	{
+	public:
 
-            static bool parse(const std::string &path);
-            template<typename T>
-                static T getOption(const std::string &key);
-            template<typename T>
-                static void setOption(const std::string &key, T value);
-        private:
-                static std::map<std::string, std::string> settings;
-    };
+		static bool parse(const std::string &path);
+		static bool save(const std::string &path);
+		static inline bool optionExists(const std::string &key)
+		{
+			return settings.count(key) > 0;
+		}
+		static int getOptionAsInt(const std::string &key);
+		static std::string getOptionAsString(const std::string &key);
+		static void setOption(const std::string &key, int value);
+		static void setOption(const std::string &key, std::string value);
+	private:
+		static std::map<std::string, std::string> settings;
+	};
 }

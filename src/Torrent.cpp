@@ -1,6 +1,7 @@
 #include "Core.hpp"
 #include "Torrent.hpp"
 #include "Platform.hpp"
+#include "Settings.hpp"
 #include "Log.hpp"
 #define T_PPM 1000000.f
 
@@ -103,9 +104,14 @@ gt::Torrent::Torrent(string path) : m_path(path)
 void gt::Torrent::setSavePath(string savepath)
 {
 	if (savepath.empty())
-		savepath = gt::Platform::getDefaultSavePath();
-	if (savepath.empty())
-		savepath = "./"; //Fall back to ./ if $HOME is not set
+	{
+		if(gt::Settings::optionExists(SAVEPATH_OPTION_KEY))
+			savepath = gt::Settings::getOptionAsString(SAVEPATH_OPTION_KEY);
+		else if(!gt::Platform::getDefaultSavePath().empty())
+			savepath = gt::Platform::getDefaultSavePath();
+		else
+			savepath = "./"; //Fall back to ./ if $HOME is not set
+	}
 	m_torrent_params.save_path = savepath;
 }
 
@@ -173,7 +179,7 @@ string gt::Torrent::getTextTotalRatio()
 void gt::Torrent::setPaused(bool isPaused)
 {
 	m_handle.auto_managed(!isPaused);
-        isPaused ? m_handle.pause() : m_handle.resume();
+	isPaused ? m_handle.pause() : m_handle.resume();
 }
 
 vector<bool> gt::Torrent::getPieces()
