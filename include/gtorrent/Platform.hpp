@@ -4,6 +4,11 @@
 
 using namespace std;
 
+// Windows doesn't use UNIX permissions and has no `mode_t`.
+#ifdef _WIN32
+#define mode_t int
+#endif
+
 namespace gt
 {
 	namespace Platform

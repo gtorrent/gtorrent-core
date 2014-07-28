@@ -28,7 +28,7 @@ char gt::Platform::getFileSeparator()
 	return '\\';
 }
 
-int gt::Platform::makeDir(std::string, mode_t)
+int gt::Platform::makeDir(std::string, mode_t mode = 0)
 {
 	return 0;
 }
