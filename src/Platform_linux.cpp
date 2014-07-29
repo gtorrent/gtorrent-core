@@ -60,22 +60,42 @@ void gt::Platform::associate(bool magnet, bool torrent)
 	char penis[4096] = { 0 };
 	readlink("/proc/self/exe", penis, 4096);
 			
-	bool dirty = false;
+	bool dirtyT = false, dirtyM = false;
 			
-	ifstream file(getHomeDir() + ".local/share/applications/gtorrent.desktop");
-	if(file.is_open())
+	ifstream file;
+	if(torrent)
 	{
-		string tmp;
-		for(int i = 0; i < 6; ++i) getline(file, tmp);
-		dirty = (tmp != string("Exec=") + penis + " %F\n");
+		file.open(getHomeDir() + ".local/share/applications/gtorrentt.desktop");
+		if(file.is_open())
+		{
+			string tmp;
+			for(int i = 0; i < 6; ++i) getline(file, tmp);
+			dirtyT = (tmp != string("Exec=") + penis + " %F\n");
+		}
+		else
+			dirtyT = true;
+		file.close();
 	}
-	else
-		dirty = true;
-	file.close();
 
-	ofstream assFile(getHomeDir() + ".local/share/applications/gtorrent.desktop");
+	if(magnet)
+	{
+		file.open(getHomeDir() + ".local/share/applications/gtorrentm.desktop");
 
-	string assString = 
+		if(file.is_open())
+		{
+			string tmp;
+			for(int i = 0; i < 6; ++i) getline(file, tmp);
+			dirtyM = (tmp != string("Exec=") + penis + " %u\n");
+		}
+		else
+			dirtyM = true;
+		file.close();
+	}
+
+	ofstream TassFile(getHomeDir() + ".local/share/applications/gtorrentt.desktop");
+	ofstream MassFile(getHomeDir() + ".local/share/applications/gtorrentm.desktop");
+
+	string TassString = 
 		string("[Desktop Entry]\n")                          +
 		"Version=1.0\n"                                      +
 		"Encoding=UTF-8\n"                                   + 
@@ -86,16 +106,31 @@ void gt::Platform::associate(bool magnet, bool torrent)
 		"Icon=gtorrent.png\n"                                +
 		"Terminal=false\n"                                   +
 		"Type=Application\n"                                 +
-		"MimeType=application/x-bittorrent;"                 +
-		"x-scheme-handler/magnet;\n"                         +
+		"MimeType=application/x-bittorrent;\n"               +
 		"Categories=Internet;Network;FileTransfer;P2P;GTK;\n";
 
-	if(dirty)
-	{
-		cout << "shits dirty" << endl;
-		assFile << assString << endl;
-	}
-	assFile.close();
-	if(magnet) system("xdg-mime default gtorrent.desktop application/x-bittorrent");
-	if(torrent)system("xdg-mime default gtorrent.desktop x-scheme-handler/magnet");
+	string MassString = 
+		string("[Desktop Entry]\n")                          +
+		"Version=1.0\n"                                      +
+		"Encoding=UTF-8\n"                                   + 
+		"Name=gTorrent\n"                                    +
+		"GenericName=BitTorrent Client\n"                    +
+		"Comment=Share files over BitTorrent\n"              +
+		"Exec=" + penis + " %u\n"                            +
+		"Icon=gtorrent.png\n"                                +
+		"Terminal=false\n"                                   +
+		"Type=Application\n"                                 +
+		"MimeType=x-scheme-handler/magnet;\n;"               +
+		"Categories=Internet;Network;FileTransfer;P2P;GTK;\n";
+
+	if(dirtyT)
+		TassFile << TassString;
+	if(dirtyM)
+		MassFile << MassString;
+
+	TassFile.close();
+	MassFile.close();
+
+	if(magnet) system("xdg-mime default gtorrentt.desktop application/x-bittorrent");
+	if(torrent)system("xdg-mime default gtorrentm.desktop x-scheme-handler/magnet");
 }
