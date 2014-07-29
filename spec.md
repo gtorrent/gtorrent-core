@@ -87,10 +87,6 @@ Returns a the torrent state as a string.
 
 Returns the URL of the last working tracker
 
-- `void torrentForceRecheck()`
-
-Force a recheck of the torrent
-
 - `boost::int64_t getRemaining()`
 
 Returns the total size of files remaining to download in the torrent.
@@ -110,4 +106,8 @@ Pauses the torrent.
 - `void setSavePath(string savepath)`
 
 Sets the download location for this torrent.
+
+- `void torrentForceRecheck()`
+
+Force a recheck of the torrent
 
