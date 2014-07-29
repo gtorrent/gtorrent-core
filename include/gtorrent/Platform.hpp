@@ -43,5 +43,10 @@ namespace gt
 
 		void associate(bool, bool);
 
+		bool sharedDataEnabled();
+		void makeSharedFile();
+		void writeSharedData(string info);
+		string readSharedData();
+		void disableSharedData();
 	}
 }

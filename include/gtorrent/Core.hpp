@@ -36,6 +36,6 @@ namespace gt
 			return m_running;
 		};
 		void shutdown();
-		void update();
+		shared_ptr<Torrent> update();
 	};
 }

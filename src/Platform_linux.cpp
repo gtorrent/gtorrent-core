@@ -5,13 +5,14 @@
 #include <unistd.h>
 #include <sys/types.h>
 #include <sys/stat.h>
+#include <sys/fcntl.h>
 
 // TODO Rename shit names to more appropriate ones. -- nyanpasu
 
 bool gt::Platform::checkDirExist(string dir)
 {
 	struct stat st;
-	return stat(dir.c_str(), &st) != 0; //stat() returns 0 if the dir exist
+	return stat(dir.c_str(), &st) == 0; //stat() returns 0 if the dir exist
 }
 
 string gt::Platform::getDefaultSavePath()
@@ -133,4 +134,38 @@ void gt::Platform::associate(bool magnet, bool torrent)
 
 	if(magnet) system("xdg-mime default gtorrentt.desktop application/x-bittorrent");
 	if(torrent)system("xdg-mime default gtorrentm.desktop x-scheme-handler/magnet");
+}
+
+bool gt::Platform::sharedDataEnabled()
+{
+	return checkDirExist("/tmp/bigfatdick");
+}
+
+static int fd; 
+void gt::Platform::makeSharedFile()
+{
+	if(mkfifo("/tmp/bigfatdick", 0755) == -1) throw "ABORT ABORT ABORT";
+	fd = open("/tmp/bigfatdick", O_RDONLY | O_NONBLOCK); // TODO: use streams
+}
+
+#include "Log.hpp"
+void gt::Platform::writeSharedData(string info)
+{
+	// I used write here but it didn't work.
+	ofstream huehue("/tmp/bigfatdick");
+	huehue << info << endl;
+	huehue.close();
+}
+
+string gt::Platform::readSharedData()
+{
+	string tmp;
+	char temp = '\0';
+	while(read(fd, &temp, 1) && temp != '\n') tmp += temp;;
+	return tmp;
+}
+
+void gt::Platform::disableSharedData()
+{
+	remove("/tmp/bigfatdick");
 }

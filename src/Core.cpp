@@ -11,6 +11,14 @@ using namespace std;
 gt::Core::Core(int argc, char **argv) :
 	m_running(true)
 {
+	if(gt::Platform::sharedDataEnabled()) //TODO: Delete the fifo if there's not other process running because of an unexpected shutdown at last session
+	{
+		gt::Platform::writeSharedData(argv[1]);
+		exit(0);
+	}
+
+	gt::Platform::makeSharedFile();
+
 	// Fuck your deprecated shit, we're going void down in here
 	// tl;dr, figure out something useful to use the error code for,
 	// like handling what the fuck might happen if listen_on fails kthnx
@@ -99,11 +107,11 @@ int gt::Core::saveSession(string folder)
 	m_session.pause();
 	m_session.save_state(ent);
 
-	if(gt::Platform::checkDirExist(folder))
+	if(!gt::Platform::checkDirExist(folder))
 		gt::Platform::makeDir(folder, 0755);
 
 
-	if(gt::Platform::checkDirExist(folder + "meta/"))
+	if(!gt::Platform::checkDirExist(folder + "meta/"))
 		gt::Platform::makeDir(folder + "meta/", 0755);
 
 	ofstream state(folder + "state.gts");
@@ -173,9 +181,9 @@ int gt::Core::loadSession(string folder)
 	libtorrent::lazy_entry ent;
 	libtorrent::error_code ec;
 
-	if (gt::Platform::checkDirExist(folder)               ||
-		gt::Platform::checkDirExist(folder + "state.gts") ||
-		gt::Platform::checkDirExist(folder + "list.gts"))
+	if (!gt::Platform::checkDirExist(folder)               ||
+		!gt::Platform::checkDirExist(folder + "state.gts") ||
+		!gt::Platform::checkDirExist(folder + "list.gts"))
 	{
 		// Also creates an empty session.
 		gt::Log::Debug(string("Creating new session folder in: " + gt::Platform::getDefaultConfigPath()).c_str());
@@ -208,7 +216,7 @@ int gt::Core::loadSession(string folder)
 
 	while(getline(list, tmp))
 	{
-		if(gt::Platform::checkDirExist(folder + "meta/" + tmp + ".torrent")) continue; //eventually delete the associated .fasteresume
+		if(!gt::Platform::checkDirExist(folder + "meta/" + tmp + ".torrent")) continue; //eventually delete the associated .fasteresume
 		libtorrent::add_torrent_params params;
 		vector<char> resumebuff;
 		ifstream resumedata(folder + "meta/" + tmp + ".fastresume");
@@ -222,36 +230,18 @@ int gt::Core::loadSession(string folder)
 	return 0;
 }
 
-void gt::Core::update()
+shared_ptr<gt::Torrent> gt::Core::update()
 {
-	/*auto iter = begin(m_torrents);
-
-	  while (iter != end(m_torrents))
-	  {
-	  auto &t = **iter;
-
-	  gt::Event event;
-
-	  if (t.pollEvent(event))
-	  {
-	  switch (event.type)
-	  {
-	  case gt::Event::DownloadCompleted:
-	  printf("Done!\n");
-	  iter = m_torrents.erase(iter);
-	  break;
-	  }
-	  }
-	  else
-	  {
-	  ++iter;
-	  }
-	  }*/
+	string str = gt::Platform::readSharedData();
+	gt::Log::Debug(str.c_str());
+	return addTorrent(str);
 }
 
+//TODO: Catch some signals to make sure this function is called
 void gt::Core::shutdown()
 {
 	gt::Log::Debug("Shutting down core library...");
+	gt::Platform::disableSharedData();
 	saveSession(gt::Platform::getDefaultConfigPath());
 	gt::Settings::save("config");
 	m_running = false;
