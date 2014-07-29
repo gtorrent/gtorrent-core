@@ -1,7 +1,5 @@
 #pragma once
 
-using namespace std;
-
 #include <vector>
 #include <memory>
 #include <string>
@@ -14,24 +12,24 @@ namespace gt
 	class Core
 	{
 	private:
-		vector<shared_ptr<Torrent>> m_torrents;
+		std::vector<std::shared_ptr<Torrent>> m_torrents;
 		libtorrent::session m_session;
 		bool m_running;
 	public:
 		Core(int argc = 0, char **argv = nullptr);
 
-		inline vector<shared_ptr<Torrent>> &getTorrents()
+		inline vector<std::shared_ptr<Torrent>> &getTorrents()
 		{
 			return m_torrents;
 		};
 
-		static bool isMagnetLink(string const& link);
+		static bool isMagnetLink(std::string const& link);
 
-		int loadSession(string path);
-		int saveSession(string path);
-		shared_ptr<Torrent> addTorrent(string path, vector<char> *resumedata = nullptr);
+		int loadSession(std::string path);
+		int saveSession(std::string path);
+		shared_ptr<Torrent> addTorrent(std::string path, std::vector<char> *resumedata = nullptr);
 
-		void removeTorrent(shared_ptr<Torrent>);
+		void removeTorrent(std::shared_ptr<Torrent>);
 
 		inline bool isRunning() const
 		{

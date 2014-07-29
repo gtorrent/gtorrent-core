@@ -6,6 +6,8 @@
 #include "libtorrent/alert_types.hpp"
 #include "libtorrent/create_torrent.hpp"
 
+using namespace std;
+
 gt::Core::Core(int argc, char **argv) :
 	m_running(true)
 {
@@ -151,7 +153,7 @@ int gt::Core::saveSession(string folder)
 			gt::Log::Debug("Received alert wasn't about resume data. Skipping.");
 			continue;
 		}
-
+		
 		libtorrent::save_resume_data_alert *rd = (libtorrent::save_resume_data_alert*)al;
 		libtorrent::torrent_handle h = rd->handle;
 		ofstream out((folder + "meta/" + h.get_torrent_info().name() + ".fastresume").c_str(), std::ios_base::binary);
