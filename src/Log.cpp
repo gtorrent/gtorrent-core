@@ -3,6 +3,8 @@
 #include <ctime>
 #include <stdarg.h>
 
+using namespace std;
+
 string getFullDateNumber(int n)
 {
 	ostringstream oss;

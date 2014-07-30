@@ -1,5 +1,6 @@
 #pragma once
 #include <string>
+#include <fstream>
 #include <sys/stat.h>
 
 using namespace std;
@@ -39,5 +40,13 @@ namespace gt
 		 * Checks if a directory exists.
 		 */
 		bool checkDirExist(string);
+
+		void associate(bool, bool);
+
+		bool sharedDataEnabled();
+		void makeSharedFile();
+		void writeSharedData(string info);
+		string readSharedData();
+		void disableSharedData();
 	}
 }

@@ -1,7 +1,5 @@
 #pragma once
 
-using namespace std;
-
 #include <string>
 
 namespace gt
@@ -9,7 +7,7 @@ namespace gt
 	class Log
 	{
 	public:
-		static string getTimeStamp();
+		static std::string getTimeStamp();
 		static void Debug(const char *fmt, ...);
 	};
 }
