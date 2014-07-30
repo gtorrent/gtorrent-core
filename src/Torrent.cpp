@@ -72,7 +72,7 @@ string getFileSizeString(boost::int64_t file_size)
 
 gt::Torrent::Torrent(string path) : m_path(path)
 {
-	setSavePath(""); //TODO add argument to allow user to override the default save path of $HOME/Downloads
+	setSavePath(gt::Settings::settings["SavePath"]); //TODO add argument to allow user to override the default save path of $HOME/Downloads
 	if (gt::Core::isMagnetLink(path))
 		m_torrent_params.url = path;
 	else
