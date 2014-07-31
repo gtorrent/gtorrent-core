@@ -26,6 +26,12 @@ before_install:
         - sudo add-apt-repository "deb http://us.archive.ubuntu.com/ubuntu/ trusty main universe"
         - sudo apt-get clean
         - sudo apt-get update
+		- wget http://optimate.dl.sourceforge.net/project/libtorrent/libtorrent/libtorrent-rasterbar-1.0.0.tar.gz
+		- tar -xzf libtorrent-rasterbar-1.0.0.tar.gz
+		- cd libtorrent-rasterbar-1.0.0
+		- ./configure --prefix=/usr
+		- make -j$(nproc)
+		- sudo make install
         # Update dependancies
         #- scripts/deps.sh
 
