@@ -23,7 +23,6 @@ gt::Core::Core(int argc, char **argv) :
 	// tl;dr, figure out something useful to use the error code for,
 	// like handling what the fuck might happen if listen_on fails kthnx
 	loadSession(gt::Platform::getDefaultConfigPath());
-	gt::Settings::parse("config");
 
 	libtorrent::error_code ec;
 	m_session.listen_on(make_pair(6881, 6889), ec);
@@ -180,6 +179,8 @@ int gt::Core::loadSession(string folder)
 {
 	libtorrent::lazy_entry ent;
 	libtorrent::error_code ec;
+
+	gt::Settings::parse("config");
 
 	if (!gt::Platform::checkDirExist(folder)               ||
 		!gt::Platform::checkDirExist(folder + "state.gts") ||
