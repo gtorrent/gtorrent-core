@@ -83,9 +83,9 @@ Returns the current torrent state (downloading, queueing, seeding, etc) as a lib
 
 Returns a the torrent state as a string.
 
-- `string getCurrentTrackerURL()`
+- `vector<string> getTrackers()`
 
-Returns the URL of the last working tracker
+Returns the list of tracker URLs for this torrent.
 
 - `boost::int64_t getRemaining()`
 
@@ -107,7 +107,7 @@ Pauses the torrent.
 
 Sets the download location for this torrent.
 
-- `void torrentForceRecheck()`
+- `void forceRecheck()`
 
 Force a recheck of the torrent
 
