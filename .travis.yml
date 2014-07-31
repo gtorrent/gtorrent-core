@@ -42,7 +42,7 @@ install:
         - ./configure --prefix=/usr
         - make -j$(nproc)
         - sudo make install
-
+		- cd ..
 script:
         - mkdir -p build/
         - cd build/
