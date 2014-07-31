@@ -40,9 +40,9 @@ install:
         - tar -xzf libtorrent-rasterbar-1.0.0.tar.gz
         - cd libtorrent-rasterbar-1.0.0
         - ./configure --prefix=/usr
-        - make -j$(nproc)
+        - make -j
         - sudo make install
-		- cd ..
+        - cd ..
 script:
         - mkdir -p build/
         - cd build/
