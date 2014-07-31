@@ -172,9 +172,9 @@ void gt::Platform::disableSharedData()
 
 void gt::Platform::openTorrent(shared_ptr<gt::Torrent> t)
 {
-	auto files = t->getHandle().get_torrent_info().files();
+	auto files = t->getInfo()->files();
 //	Glib::RefPtr<Gio::AppInfo> fileHandler = Gio::AppInfo::create_from_commandline("xdg-open", "If I knew I wouldn't ask, you turbonerd.", Gio::APP_INFO_CREATE_SUPPORTS_URIS);
-	string path = t->getHandle().save_path() + '/' + t->getHandle().get_torrent_info().file_at(0).path;
+	string path = t->getSavePath() + '/' + t->getInfo()->file_at(0).path;
 
 	if (files.num_files() > 1) // if there's more than a file, we open the containing folder
 		path = path.substr(0, path.find_last_of('/'));

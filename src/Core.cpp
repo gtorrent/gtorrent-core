@@ -2,6 +2,7 @@
 #include "Log.hpp"
 #include "Platform.hpp"
 #include "Settings.hpp"
+#include "libtorrent/session.hpp"
 #include "libtorrent/alert.hpp"
 #include "libtorrent/alert_types.hpp"
 #include "libtorrent/create_torrent.hpp"
@@ -25,7 +26,7 @@ gt::Core::Core(int argc, char **argv) :
 	loadSession(gt::Platform::getDefaultConfigPath());
 
 	libtorrent::error_code ec;
-	m_session.listen_on(make_pair(6881, 6889), ec);
+	m_session.listen_on(make_pair(6881, 6889), ec, (const char *)0, 0); //ambigous between new and deprecated function
 	if (ec.value() != 0)
 		gt::Log::Debug(ec.message().c_str());
 
@@ -59,7 +60,7 @@ shared_ptr<gt::Torrent> gt::Core::addTorrent(string path, vector<char> *resumeda
 
 	libtorrent::error_code ec;
 	auto params = t->getTorrentParams();
-	params.resume_data = resumedata; //TODO: Look if fast resume data exists for this torrent
+	params.resume_data = *resumedata; //TODO: Look if fast resume data exists for this torrent
 	libtorrent::torrent_handle h = m_session.add_torrent(params, ec);
 
 	//Actually, libtorrent silentely deals with duplicates, we just have to make this function not to return another Torrent to the UI
@@ -133,8 +134,8 @@ int gt::Core::saveSession(string folder)
 		if(!tor->getHandle().status().has_metadata) continue;
 		if(!tor->getHandle().need_save_resume_data()) continue;
 
-		auto ent = libtorrent::create_torrent(tor->getHandle().get_torrent_info()).generate();
-		ofstream out((folder + "meta/" + tor->getHandle().get_torrent_info().name() + ".torrent").c_str(), std::ios_base::binary);
+		auto ent = libtorrent::create_torrent(*tor->getInfo()).generate();
+		ofstream out((folder + "meta/" + tor->getName() + ".torrent").c_str(), std::ios_base::binary);
 		out.unsetf(ios_base::skipws);
 		bencode(ostream_iterator<char>(out), ent);
 
@@ -163,9 +164,9 @@ int gt::Core::saveSession(string folder)
 		
 		libtorrent::save_resume_data_alert *rd = (libtorrent::save_resume_data_alert*)al;
 		libtorrent::torrent_handle h = rd->handle;
-		ofstream out((folder + "meta/" + h.get_torrent_info().name() + ".fastresume").c_str(), std::ios_base::binary);
+		ofstream out((folder + "meta/" + h.status().name + ".fastresume").c_str(), std::ios_base::binary);
 		out.unsetf(ios_base::skipws);
-		list << h.get_torrent_info().name() << '\n';
+		list << h.status().name << '\n';
 		bencode(ostream_iterator<char>(out), *rd->resume_data);
 		--count;
 	}
@@ -181,7 +182,7 @@ int gt::Core::loadSession(string folder)
 	libtorrent::error_code ec;
 
 	gt::Settings::parse("config");
-
+	setSessionParameters();
 	if (!gt::Platform::checkDirExist(folder)               ||
 		!gt::Platform::checkDirExist(folder + "state.gts") ||
 		!gt::Platform::checkDirExist(folder + "list.gts"))
@@ -245,4 +246,66 @@ void gt::Core::shutdown()
 	saveSession(gt::Platform::getDefaultConfigPath());
 	gt::Settings::save("config");
 	m_running = false;
+}
+
+
+void gt::Core::setSessionParameters()
+{
+	using namespace gt;
+	libtorrent::session_settings se = m_session.settings();
+
+	if(Settings::settings["OverrideSettings"] != "No")
+	{
+		if(Settings::settings["OverrideSettings"] == "Minimal")
+			se = libtorrent::min_memory_usage();
+		else if(Settings::settings["OverrideSettings"] == "HighPerformanceSeeding")
+			se = libtorrent::high_performance_seed();
+	}
+	// We don't stop there because the user might want to change proxy/DHT Settings::settings
+
+	if(Settings::settings["ProxyHost"] != "")
+	{
+		libtorrent::proxy_settings pe;
+		string user, pass;
+		pe.hostname = Settings::settings["ProxyHost"];
+		if(Settings::settings["ProxyCredentials"] != "")
+		{
+			user = Settings::settings["ProxyCredentials"].substr(0, Settings::settings["ProxyCredentials"].find(':'));
+			pass = Settings::settings["ProxyCredentials"].substr(Settings::settings["ProxyCredentials"].find(':'), string::npos);
+		}
+		pe.username = user;
+
+		if(Settings::settings["ProxyType"] == "HTTP")
+			pe.type = 4;
+		else if(Settings::settings["ProxyType"] == "SOCKS5")
+			pe.type = 2;
+		else if(Settings::settings["ProxyType"] == "SOCKS4")
+			pe.type = 1;
+		else
+			pe.type = 0;
+
+		pe.type += pass != "";
+		pe.password = pass;
+		m_session.set_proxy(pe);
+	}
+
+	if(stoi(Settings::settings["CacheSize"]) > 0) se.cache_size = stoi(Settings::settings["CacheSize"]);
+	if(stoi(Settings::settings["CachedChunks"]) > 0) se.cache_buffer_chunk_size = stoi(Settings::settings["CachedChunks"]);
+	if(stoi(Settings::settings["CacheExpiry"]) > 0) se.cache_expiry = stoi(Settings::settings["CacheExpiry"]);
+	
+	if(Settings::settings["AnonymousMode"] == "Yes") se.anonymous_mode = true;
+/*	if(Settings::settings[""]);
+	if(Settings::settings[""]);
+	if(Settings::settings[""]);
+	if(Settings::settings[""]);
+	if(Settings::settings[""]);
+	if(Settings::settings[""]);
+	if(Settings::settings[""]);
+	if(Settings::settings[""]);
+	if(Settings::settings[""]);
+	if(Settings::settings[""]);
+	if(Settings::settings[""]);
+	if(Settings::settings[""]);
+	if(Settings::settings[""]);
+	if(Settings::settings[""]);*/
 }
