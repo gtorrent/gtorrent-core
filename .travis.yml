@@ -34,14 +34,14 @@ install:
         # Install dependancies
         - sudo apt-get install -f -y libtorrent-rasterbar-dev libboost-all-dev 
         # Update g++ to 4.9
+        - sudo apt-get install -f -y g++
+        - sudo apt-get install -f -y clang
         - wget http://optimate.dl.sourceforge.net/project/libtorrent/libtorrent/libtorrent-rasterbar-1.0.0.tar.gz
         - tar -xzf libtorrent-rasterbar-1.0.0.tar.gz
         - cd libtorrent-rasterbar-1.0.0
         - ./configure --prefix=/usr
         - make -j$(nproc)
         - sudo make install
-        - sudo apt-get install -f -y g++
-        - sudo apt-get install -f -y clang
 
 script:
         - mkdir -p build/
