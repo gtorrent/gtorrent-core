@@ -1,5 +1,6 @@
 #pragma once
 #include <string>
+#include <fstream>
 #include <sys/stat.h>
 
 using namespace std;
@@ -27,6 +28,10 @@ namespace gt
 		 */
 		string getHomeDir();
 		/**
+		 * Gets the OS's file separator
+		 */
+		char getFileSeparator();
+		/**
 		 * Creates a directory
 		 * returns the values of the POSIX syscall.
 		 */
@@ -35,5 +40,13 @@ namespace gt
 		 * Checks if a directory exists.
 		 */
 		bool checkDirExist(string);
+
+		void associate(bool, bool);
+
+		bool sharedDataEnabled();
+		void makeSharedFile();
+		void writeSharedData(string info);
+		string readSharedData();
+		void disableSharedData();
 	}
 }

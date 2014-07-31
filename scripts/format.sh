@@ -1,1 +1,1 @@
-astyle --options=astylerc "src/*"
+astyle --options=astylerc "src/*.cpp" "include/gtorrent/*.hpp"
