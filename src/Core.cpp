@@ -261,7 +261,6 @@ void gt::Core::setSessionParameters()
 		else if(Settings::settings["OverrideSettings"] == "HighPerformanceSeeding")
 			se = libtorrent::high_performance_seed();
 	}
-	// We don't stop there because the user might want to change proxy/DHT Settings::settings
 
 	if(Settings::settings["ProxyHost"] != "")
 	{
@@ -289,10 +288,13 @@ void gt::Core::setSessionParameters()
 		m_session.set_proxy(pe);
 	}
 
-	if(stoi(Settings::settings["CacheSize"]) > 0) se.cache_size = stoi(Settings::settings["CacheSize"]);
-	if(stoi(Settings::settings["CachedChunks"]) > 0) se.cache_buffer_chunk_size = stoi(Settings::settings["CachedChunks"]);
-	if(stoi(Settings::settings["CacheExpiry"]) > 0) se.cache_expiry = stoi(Settings::settings["CacheExpiry"]);
-	
+	try
+	{
+		if(stoi(Settings::settings["CacheSize"]) > 0) se.cache_size = stoi(Settings::settings["CacheSize"]);
+		if(stoi(Settings::settings["CachedChunks"]) > 0) se.cache_buffer_chunk_size = stoi(Settings::settings["CachedChunks"]);
+		if(stoi(Settings::settings["CacheExpiry"]) > 0) se.cache_expiry = stoi(Settings::settings["CacheExpiry"]);
+	}
+	catch(...) {}
 	if(Settings::settings["AnonymousMode"] == "Yes") se.anonymous_mode = true;
 /*	if(Settings::settings[""]);
 	if(Settings::settings[""]);
