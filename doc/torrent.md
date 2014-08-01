@@ -11,7 +11,7 @@ TODO: add description
 
 #### Getters
 
-- `string& getPath()`
+- `string getPath()`
 
 Gets the path passed in to the constructor.
 
@@ -95,13 +95,7 @@ Returns the total size of files remaining to download in the torrent.
 
 #### Setters
 
-- `void resume()`
-
-Resumes the torrent.
-
-- `void pause()`
-
-Pauses the torrent.
+- `void setPaused(bool isPaused)`
 
 - `void setSavePath(string savepath)`
 
@@ -109,5 +103,5 @@ Sets the download location for this torrent.
 
 - `void forceRecheck()`
 
-Force a recheck of the torrent
+Force a recheck of the torrent.
 
