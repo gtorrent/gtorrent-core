@@ -233,7 +233,7 @@ int gt::Core::loadSession(string folder)
 shared_ptr<gt::Torrent> gt::Core::update()
 {
 	string str = gt::Platform::readSharedData();
-	gt::Log::Debug(str.c_str());
+	if(!str.empty()) gt::Log::Debug(str.c_str());
 	return addTorrent(str);
 }
 
