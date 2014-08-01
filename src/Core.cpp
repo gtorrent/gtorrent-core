@@ -27,6 +27,12 @@ bool gt::Core::isMagnetLink(string const& url)
 	return url.compare(0, prefix.length(), prefix) == 0;
 }
 
+bool gt::Core::isRssUrl(string const& url)
+{
+	const string prefix = "http:";
+	return url.compare(0, prefix.length(), prefix) == 0;
+}
+
 shared_ptr<gt::Torrent> gt::Core::addTorrent(string path, vector<char> *resumedata)
 {
 	if (path.empty())
@@ -251,6 +257,7 @@ void gt::Core::update()
 
 void gt::Core::shutdown()
 {
+	//TODO: Make sure the program commits sudoku reliably, so we don't end up with orphan processes.
 	gt::Log::Debug("Shutting down core library...");
 	saveSession(gt::Platform::getDefaultConfigPath());
 	gt::Settings::save("config");

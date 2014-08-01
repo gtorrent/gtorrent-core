@@ -27,6 +27,8 @@ namespace gt
 
 		static bool isMagnetLink(string const& link);
 
+		static bool isRssUrl(string const& rssurl);
+
 		int loadSession(string path);
 		int saveSession(string path);
 		shared_ptr<Torrent> addTorrent(string path, vector<char> *resumedata = nullptr);
