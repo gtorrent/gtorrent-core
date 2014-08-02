@@ -141,20 +141,22 @@ bool gt::Platform::sharedDataEnabled()
 	return checkDirExist("/tmp/gfeed");
 }
 
-static int fd; 
-void gt::Platform::makeSharedFile()
+int fd, ld;
+bool gt::Platform::processIsUnique()
 {
-	if(mkfifo("/tmp/gfeed", 0755) == -1)
-		throw runtime_error("Couldn't create pipe! Check your permissions or if /tmp/gfeed exists");
-	fd = open("/tmp/gfeed", O_RDONLY | O_NONBLOCK); // TODO: use streams
+    struct flock fl = { 0 };
+    fl.l_type = F_WRLCK;
+    fl.l_whence = SEEK_SET;
+    return fcntl(ld, F_SETLK, &fl) == 0;
 }
 
-void gt::Platform::writeSharedData(string info)
+void gt::Platform::makeSharedFile()
 {
-	// I used write here but it didn't work.
-	ofstream file("/tmp/gfeed");
-	file << info << endl;
-	file.close();
+    if(processIsUnique() && !sharedDataEnabled())
+        if(mkfifo("/tmp/gfeed", 0755) == -1)
+            throw runtime_error("Couldn't create pipe! Check your permissions or if /tmp/gfeed exists");
+    fd = open("/tmp/gfeed", O_RDONLY | O_NONBLOCK); // TODO: use streams                                
+    ld = open("/var/lock/gtorrent.lock", O_CREAT | O_RDONLY, 0600);
 }
 
 string gt::Platform::readSharedData()

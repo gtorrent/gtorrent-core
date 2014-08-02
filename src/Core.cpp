@@ -12,7 +12,7 @@ using namespace std;
 gt::Core::Core(int argc, char **argv) :
 	m_running(true)
 {
-	if(gt::Platform::sharedDataEnabled()) //TODO: Delete the fifo if there's not other process running because of an unexpected shutdown at last session
+	if(!gt::Platform::processIsUnique())
 	{
 		gt::Platform::writeSharedData(argv[1]);
 		exit(0);
