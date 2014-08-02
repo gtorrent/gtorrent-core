@@ -49,7 +49,13 @@ bool gt::Settings::save(const std::string &path)
 	return false;
 }
 
-
+// TODO Please, for the love of god, let's not use exceptions.
+// I have no bloody clue what to do in C++, but if I were to do it
+// in C, I would have something like this:
+//  int get_opt_int(const char* key, int* val);
+// where get_opt_int returns 0 on error, and val is the pointer to
+// what you want changed
+// -- inuoppai
 std::string gt::Settings::getOptionAsString(const std::string &key)
 {
 	return settings[key]; // >yfw exceptions are harmful
@@ -57,6 +63,7 @@ std::string gt::Settings::getOptionAsString(const std::string &key)
 
 int gt::Settings::getOptionAsInt(const std::string &key)
 {
+	// FIXME I wrote a function that checks if an option exists. -- inuoppai
 	auto i = settings.find(key);
 	if(i == settings.end())
 		throw std::runtime_error("No such option.");
@@ -78,53 +85,50 @@ void gt::Settings::setOption(const std::string &key, std::string value)
 	settings[key] = value;
 }
 
+bool gt::Settings::checkOptionExist(const std::string key)
+{
+	auto i = settings.find(key);
+	if(i == settings.end())
+		return false;
+	return true;
+}
+
+void gt::Settings::setDefaultOption(const std::string key, const std::string val)
+{
+	if checkOptionExist(key)
+		return;
+
+	settings[key] = val;
+}
+
+// TODO Fix name changes throughout project. i.e key -> core.key
 void gt::Settings::setDefaults()
 {
-	// these will be overwritten if the keys are found in the config file
-
-	settings["SavePath"] = gt::Platform::getDefaultSavePath();
-	settings["FileAssociation"] = "-1";
-
-	settings["PausedForeGroundColor"]      = "#F08080";
-	settings["PausedBackGroundColor"]      = "#800000";
-	settings["QueuedForeGroundColor"]      = "#00BFFF";
-	settings["QueuedBackGroundColor"]      = "#FFFFFF";
-	settings["SeedingForeGroundColor"]     = "#1E90FF";
-	settings["SeedingBackGroundColor"]     = "#ADD8E6";
-	settings["MetadataForeGroundColor"]    = "#228B22";
-	settings["MetadataBackGroundColor"]    = "#7FFFD4";
-	settings["FinishedForeGroundColor"]    = "#ADD8E6";
-	settings["FinishedBackGroundColor"]    = "#483D8B";
-	settings["ResumingForeGroundColor"]    = "#6495ED";
-	settings["ResumingBackGroundColor"]    = "#FAF0E6";
-	settings["CheckingForeGroundColor"]    = "#DAA520";
-	settings["CheckingBackGroundColor"]    = "#FFFACD";
-	settings["AllocatingForeGroundColor"]  = "#FF7F50";
-	settings["AllocatingBackGroundColor"]  = "#FAFAD2";
-	settings["DownloadingForeGroundColor"] = "#228B43";
-	settings["DownloadingBackGroundColor"] = "#FFFFFF";
+	setDefaultOption("core.SavePath"                      , gt::Platform::getDefaultSavePath());
+	setDefaultOption("core.FileAssociation"               , "-1");
 
 	// Below this line, options haven't been tested yet.
-	settings["GraphUploadCurveColor"] = "red";
-	settings["GraphDownloadCurveColor"] = "green";
-	settings["GraphGridColor"] = "grey";
-	settings["ShowLegend"] = "Yes";
+	// TODO Move this out of core
+	setDefaultOption("gtk.GraphUploadCurveColor"          , "red");
+	setDefaultOption("gtk.GraphDownloadCurveColor"        , "green");
+	setDefaultOption("gtk.GraphGridColor"                 , "grey");
+	setDefaultOption("gtk.ShowLegend"                     , "Yes");
 
-	settings["ProxyHost"] = "";
-	settings["ProxyType"] = "None"; // Can be: HTTP, SOCKS4, SOCKS5, I2P
-	settings["ProxyPort"] = "8080";
-	settings["ProxyCredentials"] = "user:pass";
+	setDefaultOption("core.ProxyHost"                     , "");
+	setDefaultOption("core.ProxyType"                     , "None"); // Can be: HTTP, SOCKS4, SOCKS5, I2P
+	setDefaultOption("core.ProxyPort"                     , "8080");
+	setDefaultOption("core.ProxyCredentials"              , "user:pass");
 
-	settings["CacheSize"] = "0"; // Multiple of 16KB blocks // defaults a 1/8 of total RAM !!!
-	settings["CachedChunks"] = ""; // Number of blocks allocated at a time
-	settings["CacheExpiry"] = ""; // Number of second elapsed before flushing to disk
-	settings["AnonymousMode"] = "No";
+	setDefaultOption("core.CacheSize"                     , "0"); // Multiple of 16KB blocks // defaults a 1/8 of total RAM !!!
+	setDefaultOption("core.CachedChunks"                  , ""); // Number of blocks allocated at a time
+	setDefaultOption("core.CacheExpiry"                   , ""); // Number of second elapsed before flushing to disk
+	setDefaultOption("core.AnonymousMode"                 , "No");
 
-    // Below this line, the options aren't implemented into core yet. //
-	settings["DefaultSequentialDownloading"] = "No"; // When is Yes, will set seq by default only if the torrent has a single file that ends in the below list 
-	settings["SequentialDownloadExtensions"] = "mkv|mp3|flac|mp4|mp5|avi";
+	// Below this line, the options aren't implemented into core yet. //
+	setDefaultOption("core.DefaultSequentialDownloading"  , "No"); // When is Yes, will set seq by default only if the torrent has a single file that ends in the below list
+	setDefaultOption("core.SequentialDownloadExtensions"  , "mkv|mp3|flac|mp4|mp5|avi");
 
-	settings["OverrideSettings"] = "No"; // Can be set to Minimal, HighPerformanceSeeding, and No.
+	setDefaultOption("core.OverrideSettings"              , "No"); // Can be set to Minimal, HighPerformanceSeeding, and No.
 
 	/*
 	 * Default: Unchoke slots = Max upload slots
@@ -132,33 +136,31 @@ void gt::Settings::setDefaults()
 	 * RateBased: Unchoke slot determined by the ration of a peer
 	 * BitTyrant: :^) trigger warning: Looks for the best peers to maximize download speed, requires to set up a global upload limit
 	 */
-	settings["ChokingAlgorithm"] = "Default";
+	setDefaultOption("core.ChokingAlgorithm"              , "Default");
+
 	/* Only applies to BitTyrant */
 	// not sure about how it werks concretly
-	settings["DefaultReciprocationRate"] = "14"; // Unit is download speed in KB/s
-	settings["IncreaseReciprocationRate"] = "20"; // In percents
-	settings["DecreaseReciprocationRate"] = "3";
-	
+	setDefaultOption("core.DefaultReciprocationRate"      , "14"); // Unit is download speed in KB/s
+	setDefaultOption("core.IncreaseReciprocationRate"     , "20"); // In percents
+	setDefaultOption("core.DecreaseReciprocationRate"     , "3");
+
 
 	/*
 	 * RoundRobins: Distribute the upload fairly.
 	 * FastestUpload: Unchoke the fastest peers
 	 * AntiLeech: Prioritize peers who just started or about to finish, making leeches in the middle share between them
 	 */
-	settings["SeedChokingAlgorithm"] = "RoundRobin";
+	setDefaultOption("core.SeedChokingAlgorithm" , "RoundRobin");
 
-	//used for the tracker HTTP requests, and also sent to client supporting the useragent extension
-	settings["UserAgent"] = "gTorrent/0.0.2 libtorrent/0.16.17";
+	setDefaultOption("core.UserAgent"            , "gTorrent/0.0.2 libtorrent/0.16.17"); //used for the tracker HTTP requests, and also sent to client supporting the useragent extension
 
-	// suggest piece that are in the disk cache, other supported value is No
-	settings["PieceSuggestion"] = "Yes";
+	setDefaultOption("core.PieceSuggestion"      , "Yes"); // suggest piece that are in the disk cache, other supported value is No
 
 	/* 0 means unlimited, all units are in bytes per second unless specified otherwise */
-	settings["GlobalUploadLimit"] = "0";
-	settings["GlobalDownloadLimit"] = "0";
-	settings["DHTUploadLimit"] = "4000"; // it is the default in libtorrent, should be set higher for seedboxes
-	settings[""] = "";
+	setDefaultOption("core.GlobalUploadLimit"   , "0");
+	setDefaultOption("core.GlobalDownloadLimit" , "0");
+	setDefaultOption("core.DHTUploadLimit"      , "4000"); // it is the default in libtorrent, should be set higher for seedboxes
 
 	// Set to yes if you want to count in the amount of redundant bytes downloaded.
-	settings["ReportTrueDownloaded"] = "No";
+	setDefaultOption("core.ReportTrueDownloaded", "No");
 }
