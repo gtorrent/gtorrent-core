@@ -8,16 +8,22 @@
 #include <sys/fcntl.h>
 
 // TODO Rename shit names to more appropriate ones. -- nyanpasu
-
+#include "Log.hpp"
 bool gt::Platform::checkDirExist(string dir)
 {
 	struct stat st;
-	return stat(dir.c_str(), &st) == 0; //stat() returns 0 if the dir exist
+	int state = stat(dir.c_str(), &st);
+	if(state == 0)
+		gt::Log::Debug(string(dir + " exists,").c_str());
+	if(state != 0)
+		gt::Log::Debug(string(dir + " deoesn't exists,").c_str());
+	return state == 0; //stat() returns 0 if the dir exist
 }
 
 string gt::Platform::getDefaultSavePath()
 {
 	// TODO Use XDG_DOWNLOAD or whatever it's called
+	gt::Log::Debug(string(getHomeDir() + "Downloads/ is the default save path").c_str());
 	return getHomeDir() + "Downloads/";
 }
 
@@ -32,7 +38,6 @@ string gt::Platform::getDefaultConfigPath()
 		config_home = c;
 
 	config_home += "/gtorrent/";
-
 	return config_home;
 }
 
@@ -58,9 +63,9 @@ void gt::Platform::associate(bool magnet, bool torrent)
 	makeDir(getHomeDir() + ".local/share", 0755);
 	makeDir(getHomeDir() + ".local/share/applications", 0755);
 
-	char penis[4096] = { 0 };
-	readlink("/proc/self/exe", penis, 4096);
-			
+	char ExecutablePath[4096] = { 0 };
+	readlink("/proc/self/exe", ExecutablePath, 4096);
+
 	bool dirtyT = false, dirtyM = false;
 			
 	ifstream file;
@@ -71,7 +76,7 @@ void gt::Platform::associate(bool magnet, bool torrent)
 		{
 			string tmp;
 			for(int i = 0; i < 6; ++i) getline(file, tmp);
-			dirtyT = (tmp != string("Exec=") + penis + " %F\n");
+			dirtyT = (tmp != string("Exec=") + ExecutablePath + " %F\n");
 		}
 		else
 			dirtyT = true;
@@ -86,7 +91,7 @@ void gt::Platform::associate(bool magnet, bool torrent)
 		{
 			string tmp;
 			for(int i = 0; i < 6; ++i) getline(file, tmp);
-			dirtyM = (tmp != string("Exec=") + penis + " %u\n");
+			dirtyM = (tmp != string("Exec=") + ExecutablePath + " %u\n");
 		}
 		else
 			dirtyM = true;
@@ -103,7 +108,7 @@ void gt::Platform::associate(bool magnet, bool torrent)
 		"Name=gTorrent\n"									 +
 		"GenericName=BitTorrent Client\n"					 +
 		"Comment=Share files over BitTorrent\n"				 +
-		"Exec=" + penis + " %F\n"							 +
+		"Exec=" + ExecutablePath + " %F\n"					 +
 		"Icon=gtorrent.png\n"								 +
 		"Terminal=false\n"									 +
 		"Type=Application\n"								 +
@@ -117,7 +122,7 @@ void gt::Platform::associate(bool magnet, bool torrent)
 		"Name=gTorrent\n"									 +
 		"GenericName=BitTorrent Client\n"					 +
 		"Comment=Share files over BitTorrent\n"				 +
-		"Exec=" + penis + " %u\n"							 +
+		"Exec=" + ExecutablePath + " %u\n"					 +
 		"Icon=gtorrent.png\n"								 +
 		"Terminal=false\n"									 +
 		"Type=Application\n"								 +
@@ -140,23 +145,43 @@ bool gt::Platform::sharedDataEnabled()
 {
 	return checkDirExist("/tmp/gfeed");
 }
-
-int fd, ld;
+#include <error.h>
+int fd = -1, ld = -1;
 bool gt::Platform::processIsUnique()
 {
+	if(ld == -1)
+	{
+		gt::Log::Debug("The lock wasn't ready, retrying...");
+		ld = open(string(getDefaultConfigPath() + "gtorrent.lock").c_str(), O_CREAT | O_RDWR, 0600);
+		return processIsUnique();
+	}
 	struct flock fl = { 0 };
 	fl.l_type = F_WRLCK;
 	fl.l_whence = SEEK_SET;
-	return fcntl(ld, F_SETLK, &fl) == 0;
+	perror("Failed");
+	int state = fcntl(ld, F_SETLK, &fl);
+	perror("Failed");
+	printf("state = %d\nld = %d\n\n\n\n", state, ld);
+	if(state == 0)
+		gt::Log::Debug("Process is unique");
+	if(state != 0)
+		gt::Log::Debug("Process is not unique");
+	return state == 0;
 }
 
 void gt::Platform::makeSharedFile()
 {
-	if(processIsUnique() && !sharedDataEnabled())
+	if(processIsUnique())
 		if(mkfifo("/tmp/gfeed", 0755) == -1)
 			throw runtime_error("Couldn't create pipe! Check your permissions or if /tmp/gfeed exists");
-	fd = open("/tmp/gfeed", O_RDONLY | O_NONBLOCK); // TODO: use streams								
-	ld = open("/var/lock/gtorrent.lock", O_CREAT | O_RDONLY, 0600);
+	fd = open("/tmp/gfeed", O_RDONLY | O_NONBLOCK); // TODO: use streams
+	if(fd == -1)
+		throw runtime_error("Couldn't open pipe");
+	if(ld == -1)
+		ld = open("/var/lock/gtorrent.lock", O_CREAT | O_RDONLY, 0600);
+	if(ld == -1)
+		throw runtime_error("Couldn't open pipe");
+	processIsUnique(); // a call here to lock the file
 }
 
 void gt::Platform::writeSharedData(string info)

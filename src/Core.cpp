@@ -12,8 +12,10 @@ using namespace std;
 gt::Core::Core(int argc, char **argv) :
 	m_running(true)
 {
+	
 	if(!gt::Platform::processIsUnique())
 	{
+		gt::Log::Debug("An instance is already running");
 		gt::Platform::writeSharedData(argv[1]);
 		exit(0);
 	}
@@ -78,11 +80,17 @@ shared_ptr<gt::Torrent> gt::Core::addTorrent(string path, vector<char> *resumeda
 		t->setHandle(h);
 		m_torrents.push_back(t);
 		if(t->hasMetadata() && gt::Settings::settings["DefaultSequentialDownloading"] == "Yes")
+		{
+			gt::Log::Debug("Torrent has metadata available, and auto-seq is on.");
 			if(t->filenames().size() == 1)
 			{
-				string ext = t->filenames()[0].substr(t->filenames()[0].find_last_of('.'));
+				gt::Log::Debug("Torrent is set to sequential.");
+				string ext = t->filenames()[0].substr(t->filenames()[0].find_last_of('.') + 1);
 				t->setSequentialDownload(gt::Settings::settings["SequentialDownloadExtensions"].find(ext) != string::npos);
+				printf("The extension is %s, and the position in the list is %ld\n", ext.c_str(), gt::Settings::settings["SequentialDownloadExtensions"].find(ext));
+				gt::Log::Debug(t->filenames()[0].c_str());
 			}
+		}
 		return t;
 	}
 }
