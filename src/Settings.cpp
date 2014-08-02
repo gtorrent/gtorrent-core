@@ -82,49 +82,49 @@ void gt::Settings::setDefaults()
 {
 	// these will be overwritten if the keys are found in the config file
 
-	settings["SavePath"] = gt::Platform::getDefaultSavePath();
-	settings["FileAssociation"] = "-1";
+	settings["core.SavePath"                      ] = gt::Platform::getDefaultSavePath();
+	settings["core.FileAssociation"               ] = "-1";
 
-	settings["PausedForeGroundColor"]      = "#F08080";
-	settings["PausedBackGroundColor"]      = "#800000";
-	settings["QueuedForeGroundColor"]      = "#00BFFF";
-	settings["QueuedBackGroundColor"]      = "#FFFFFF";
-	settings["SeedingForeGroundColor"]     = "#1E90FF";
-	settings["SeedingBackGroundColor"]     = "#ADD8E6";
-	settings["MetadataForeGroundColor"]    = "#228B22";
-	settings["MetadataBackGroundColor"]    = "#7FFFD4";
-	settings["FinishedForeGroundColor"]    = "#ADD8E6";
-	settings["FinishedBackGroundColor"]    = "#483D8B";
-	settings["ResumingForeGroundColor"]    = "#6495ED";
-	settings["ResumingBackGroundColor"]    = "#FAF0E6";
-	settings["CheckingForeGroundColor"]    = "#DAA520";
-	settings["CheckingBackGroundColor"]    = "#FFFACD";
-	settings["AllocatingForeGroundColor"]  = "#FF7F50";
-	settings["AllocatingBackGroundColor"]  = "#FAFAD2";
-	settings["DownloadingForeGroundColor"] = "#228B43";
-	settings["DownloadingBackGroundColor"] = "#FFFFFF";
+	settings["ncurses.PausedForeGroundColor"      ] = "#F08080";
+	settings["ncurses.PausedBackGroundColor"      ] = "#800000";
+	settings["ncurses.QueuedForeGroundColor"      ] = "#00BFFF";
+	settings["ncurses.QueuedBackGroundColor"      ] = "#FFFFFF";
+	settings["ncurses.SeedingForeGroundColor"     ] = "#1E90FF";
+	settings["ncurses.SeedingBackGroundColor"     ] = "#ADD8E6";
+	settings["ncurses.MetadataForeGroundColor"    ] = "#228B22";
+	settings["ncurses.MetadataBackGroundColor"    ] = "#7FFFD4";
+	settings["ncurses.FinishedForeGroundColor"    ] = "#ADD8E6";
+	settings["ncurses.FinishedBackGroundColor"    ] = "#483D8B";
+	settings["ncurses.ResumingForeGroundColor"    ] = "#6495ED";
+	settings["ncurses.ResumingBackGroundColor"    ] = "#FAF0E6";
+	settings["ncurses.CheckingForeGroundColor"    ] = "#DAA520";
+	settings["ncurses.CheckingBackGroundColor"    ] = "#FFFACD";
+	settings["ncurses.AllocatingForeGroundColor"  ] = "#FF7F50";
+	settings["ncurses.AllocatingBackGroundColor"  ] = "#FAFAD2";
+	settings["ncurses.DownloadingForeGroundColor" ] = "#228B43";
+	settings["ncurses.DownloadingBackGroundColor" ] = "#FFFFFF";
 
 	// Below this line, options haven't been tested yet.
-	settings["GraphUploadCurveColor"] = "red";
-	settings["GraphDownloadCurveColor"] = "green";
-	settings["GraphGridColor"] = "grey";
-	settings["ShowLegend"] = "Yes";
+	settings["gtk.GraphUploadCurveColor"          ] = "red";
+	settings["gtk.GraphDownloadCurveColor"        ] = "green";
+	settings["gtk.GraphGridColor"                 ] = "grey";
+	settings["gtk.ShowLegend"                     ] = "Yes";
 
-	settings["ProxyHost"] = "";
-	settings["ProxyType"] = "None"; // Can be: HTTP, SOCKS4, SOCKS5, I2P
-	settings["ProxyPort"] = "8080";
-	settings["ProxyCredentials"] = "user:pass";
+	settings["core.ProxyHost"                     ] = "";
+	settings["core.ProxyType"                     ] = "None"; // Can be: HTTP, SOCKS4, SOCKS5, I2P
+	settings["core.ProxyPort"                     ] = "8080";
+	settings["core.ProxyCredentials"              ] = "user:pass";
 
-	settings["CacheSize"] = "0"; // Multiple of 16KB blocks // defaults a 1/8 of total RAM !!!
-	settings["CachedChunks"] = ""; // Number of blocks allocated at a time
-	settings["CacheExpiry"] = ""; // Number of second elapsed before flushing to disk
-	settings["AnonymousMode"] = "No";
+	settings["core.CacheSize"                     ] = "0"; // Multiple of 16KB blocks // defaults a 1/8 of total RAM !!!
+	settings["core.CachedChunks"                  ] = ""; // Number of blocks allocated at a time
+	settings["core.CacheExpiry"                   ] = ""; // Number of second elapsed before flushing to disk
+	settings["core.AnonymousMode"                 ] = "No";
 
-    // Below this line, the options aren't implemented into core yet. //
-	settings["DefaultSequentialDownloading"] = "No"; // When is Yes, will set seq by default only if the torrent has a single file that ends in the below list 
-	settings["SequentialDownloadExtensions"] = "mkv|mp3|flac|mp4|mp5|avi";
+	// Below this line, the options aren't implemented into core yet. //
+	settings["core.DefaultSequentialDownloading"  ] = "No"; // When is Yes, will set seq by default only if the torrent has a single file that ends in the below list
+	settings["core.SequentialDownloadExtensions"  ] = "mkv|mp3|flac|mp4|mp5|avi";
 
-	settings["OverrideSettings"] = "No"; // Can be set to Minimal, HighPerformanceSeeding, and No.
+	settings["core.OverrideSettings"              ] = "No"; // Can be set to Minimal, HighPerformanceSeeding, and No.
 
 	/*
 	 * Default: Unchoke slots = Max upload slots
@@ -132,33 +132,31 @@ void gt::Settings::setDefaults()
 	 * RateBased: Unchoke slot determined by the ration of a peer
 	 * BitTyrant: :^) trigger warning: Looks for the best peers to maximize download speed, requires to set up a global upload limit
 	 */
-	settings["ChokingAlgorithm"] = "Default";
+	settings["core.ChokingAlgorithm"              ] = "Default";
+
 	/* Only applies to BitTyrant */
 	// not sure about how it werks concretly
-	settings["DefaultReciprocationRate"] = "14"; // Unit is download speed in KB/s
-	settings["IncreaseReciprocationRate"] = "20"; // In percents
-	settings["DecreaseReciprocationRate"] = "3";
-	
+	settings["core.DefaultReciprocationRate"      ] = "14"; // Unit is download speed in KB/s
+	settings["core.IncreaseReciprocationRate"     ] = "20"; // In percents
+	settings["core.DecreaseReciprocationRate"     ] = "3";
+
 
 	/*
 	 * RoundRobins: Distribute the upload fairly.
 	 * FastestUpload: Unchoke the fastest peers
 	 * AntiLeech: Prioritize peers who just started or about to finish, making leeches in the middle share between them
 	 */
-	settings["SeedChokingAlgorithm"] = "RoundRobin";
+	settings["core.SeedChokingAlgorithm" ] = "RoundRobin";
 
-	//used for the tracker HTTP requests, and also sent to client supporting the useragent extension
-	settings["UserAgent"] = "gTorrent/0.0.2 libtorrent/0.16.17";
+	settings["core.UserAgent"            ] = "gTorrent/0.0.2 libtorrent/0.16.17"; //used for the tracker HTTP requests, and also sent to client supporting the useragent extension
 
-	// suggest piece that are in the disk cache, other supported value is No
-	settings["PieceSuggestion"] = "Yes";
+	settings["core.PieceSuggestion"      ] = "Yes"; // suggest piece that are in the disk cache, other supported value is No
 
 	/* 0 means unlimited, all units are in bytes per second unless specified otherwise */
-	settings["GlobalUploadLimit"] = "0";
-	settings["GlobalDownloadLimit"] = "0";
-	settings["DHTUploadLimit"] = "4000"; // it is the default in libtorrent, should be set higher for seedboxes
-	settings[""] = "";
+	settings["core.GlobalUploadLimit"   ] = "0";
+	settings["core.GlobalDownloadLimit" ] = "0";
+	settings["core.DHTUploadLimit"      ] = "4000"; // it is the default in libtorrent, should be set higher for seedboxes
 
 	// Set to yes if you want to count in the amount of redundant bytes downloaded.
-	settings["ReportTrueDownloaded"] = "No";
+	settings["core.ReportTrueDownloaded"] = "No";
 }
