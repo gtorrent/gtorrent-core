@@ -81,14 +81,10 @@ shared_ptr<gt::Torrent> gt::Core::addTorrent(string path, vector<char> *resumeda
 		m_torrents.push_back(t);
 		if(t->hasMetadata() && gt::Settings::settings["DefaultSequentialDownloading"] == "Yes")
 		{
-			gt::Log::Debug("Torrent has metadata available, and auto-seq is on.");
 			if(t->filenames().size() == 1)
 			{
-				gt::Log::Debug("Torrent is set to sequential.");
 				string ext = t->filenames()[0].substr(t->filenames()[0].find_last_of('.') + 1);
 				t->setSequentialDownload(gt::Settings::settings["SequentialDownloadExtensions"].find(ext) != string::npos);
-				printf("The extension is %s, and the position in the list is %ld\n", ext.c_str(), gt::Settings::settings["SequentialDownloadExtensions"].find(ext));
-				gt::Log::Debug(t->filenames()[0].c_str());
 			}
 		}
 		return t;
@@ -161,7 +157,6 @@ int gt::Core::saveSession(string folder)
 	{
 		libtorrent::alert const *al = m_session.wait_for_alert(libtorrent::seconds(10));
 		unique_ptr<libtorrent::alert> holder = m_session.pop_alert();
-		gt::Log::Debug("Caught alert...");
 
 		switch (al->type())
 		{

@@ -1,4 +1,5 @@
 #include "Platform.hpp"
+#include "Log.hpp"
 
 #include <iostream>
 #include <cstdlib>
@@ -8,7 +9,6 @@
 #include <sys/fcntl.h>
 
 // TODO Rename shit names to more appropriate ones. -- nyanpasu
-#include "Log.hpp"
 bool gt::Platform::checkDirExist(string dir)
 {
 	struct stat st;
@@ -145,7 +145,7 @@ bool gt::Platform::sharedDataEnabled()
 {
 	return checkDirExist("/tmp/gfeed");
 }
-#include <error.h>
+
 int fd = -1, ld = -1;
 bool gt::Platform::processIsUnique()
 {
@@ -158,13 +158,10 @@ bool gt::Platform::processIsUnique()
 	struct flock fl = { 0 };
 	fl.l_type = F_WRLCK;
 	fl.l_whence = SEEK_SET;
-	perror("Failed");
 	int state = fcntl(ld, F_SETLK, &fl);
-	perror("Failed");
-	printf("state = %d\nld = %d\n\n\n\n", state, ld);
 	if(state == 0)
 		gt::Log::Debug("Process is unique");
-	if(state != 0)
+	if(state)
 		gt::Log::Debug("Process is not unique");
 	return state == 0;
 }
