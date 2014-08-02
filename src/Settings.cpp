@@ -81,30 +81,14 @@ void gt::Settings::setOption(const std::string &key, std::string value)
 void gt::Settings::setDefaults()
 {
 	// these will be overwritten if the keys are found in the config file
+	// TODO Well then, write a function that checks to see if the key is defined
+	// first before attempting to overwrite, baka inu! -- inuoppai
 
 	settings["core.SavePath"                      ] = gt::Platform::getDefaultSavePath();
 	settings["core.FileAssociation"               ] = "-1";
 
-	settings["ncurses.PausedForeGroundColor"      ] = "#F08080";
-	settings["ncurses.PausedBackGroundColor"      ] = "#800000";
-	settings["ncurses.QueuedForeGroundColor"      ] = "#00BFFF";
-	settings["ncurses.QueuedBackGroundColor"      ] = "#FFFFFF";
-	settings["ncurses.SeedingForeGroundColor"     ] = "#1E90FF";
-	settings["ncurses.SeedingBackGroundColor"     ] = "#ADD8E6";
-	settings["ncurses.MetadataForeGroundColor"    ] = "#228B22";
-	settings["ncurses.MetadataBackGroundColor"    ] = "#7FFFD4";
-	settings["ncurses.FinishedForeGroundColor"    ] = "#ADD8E6";
-	settings["ncurses.FinishedBackGroundColor"    ] = "#483D8B";
-	settings["ncurses.ResumingForeGroundColor"    ] = "#6495ED";
-	settings["ncurses.ResumingBackGroundColor"    ] = "#FAF0E6";
-	settings["ncurses.CheckingForeGroundColor"    ] = "#DAA520";
-	settings["ncurses.CheckingBackGroundColor"    ] = "#FFFACD";
-	settings["ncurses.AllocatingForeGroundColor"  ] = "#FF7F50";
-	settings["ncurses.AllocatingBackGroundColor"  ] = "#FAFAD2";
-	settings["ncurses.DownloadingForeGroundColor" ] = "#228B43";
-	settings["ncurses.DownloadingBackGroundColor" ] = "#FFFFFF";
-
 	// Below this line, options haven't been tested yet.
+	// TODO Move this out of core
 	settings["gtk.GraphUploadCurveColor"          ] = "red";
 	settings["gtk.GraphDownloadCurveColor"        ] = "green";
 	settings["gtk.GraphGridColor"                 ] = "grey";
