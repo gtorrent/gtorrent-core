@@ -182,7 +182,7 @@ int gt::Core::loadSession(string folder)
 	libtorrent::error_code ec;
 
 	gt::Settings::parse("config");
-	setSessionParameters();
+
 	if (!gt::Platform::checkDirExist(folder)               ||
 		!gt::Platform::checkDirExist(folder + "state.gts") ||
 		!gt::Platform::checkDirExist(folder + "list.gts"))
@@ -215,7 +215,7 @@ int gt::Core::loadSession(string folder)
 
 	lazy_bdecode(benfile.c_str(), benfile.c_str() + benfile.size(), ent, ec);
 	m_session.load_state(ent);
-
+	setSessionParameters();
 	while(getline(list, tmp))
 	{
 		if(!gt::Platform::checkDirExist(folder + "meta/" + tmp + ".torrent")) continue; //eventually delete the associated .fasteresume
@@ -295,8 +295,46 @@ void gt::Core::setSessionParameters()
 		if(stoi(Settings::settings["CachedChunks"]) > 0) se.cache_buffer_chunk_size = stoi(Settings::settings["CachedChunks"]);
 		if(stoi(Settings::settings["CacheExpiry"]) > 0) se.cache_expiry = stoi(Settings::settings["CacheExpiry"]);
 	}
-	catch(...) {}
+	catch(...)
+	{}
+
 	if(Settings::settings["AnonymousMode"] == "Yes") se.anonymous_mode = true;
+	if(Settings::settings["ChokingAlgorithm"] != "Default")
+	{
+		if(Settings::settings["ChokingAlgorithm"] == "AutoExpand") se.choking_algorithm = 1;
+		else if(Settings::settings["ChokingAlgorithm"] == "RateBased") se.choking_algorithm = 2;
+		else if(Settings::settings["ChokingAlgorithm"] == "BitTyrant")
+		{
+			se.choking_algorithm = 3;
+			try
+			{
+				if(stoi(Settings::settings["DefaultReciprocationRate"]) > 0) se.default_est_reciprocation_rate = stoi(Settings::settings["DefaultReciprocationRate"]);
+				if(stoi(Settings::settings["IncreaseReciprocationRate"]) > 0) se.increase_est_reciprocation_rate = stoi(Settings::settings["IncreaseReciprocationRate"]);
+				if(stoi(Settings::settings["DecreaseReciprocationRate"]) > 0) se.decrease_est_reciprocation_rate = stoi(Settings::settings["DecreaseReciprocationRate"]);
+			}
+			catch(...) {}
+		}
+		else se.choking_algorithm = 0;
+	}
+	if(Settings::settings["SeedChokingAlgorithm"] != "RoundRobin")
+	{
+		if(Settings::settings["SeedChokingAlgorithm"] == "FastestUpload") se.seed_choking_algorithm = 1;
+		else if(Settings::settings["SeedChokingAlgorithm"] == "AntiLeech") se.seed_choking_algorithm = 2;
+		else se.seed_choking_algorithm = 0;
+	}
+
+	se.user_agent = Settings::settings["UserAgent"];
+	if(Settings::settings["PieceSuggestion"] == "No") se.suggest_mode = 0;
+
+	try
+	{
+		if(stoi(Settings::settings["GlobalUploadLimit"]) > 0) se.upload_rate_limit = stoi(Settings::settings["GlobalUploadLimit"]);
+		if(stoi(Settings::settings["DHTUploadLimit"]) > 0) se.dht_upload_rate_limit = stoi(Settings::settings["DHTUploadLimit"]);
+		if(stoi(Settings::settings["GlobalDownloadLimit"]) > 0) se.download_rate_limit = stoi(Settings::settings["GlobalDownloadLimit"]);
+	}
+	catch(...)
+	{}
+
 /*	if(Settings::settings[""]);
 	if(Settings::settings[""]);
 	if(Settings::settings[""]);
@@ -307,8 +345,6 @@ void gt::Core::setSessionParameters()
 	if(Settings::settings[""]);
 	if(Settings::settings[""]);
 	if(Settings::settings[""]);
-	if(Settings::settings[""]);
-	if(Settings::settings[""]);
-	if(Settings::settings[""]);
 	if(Settings::settings[""]);*/
+	m_session.set_settings(se);
 }

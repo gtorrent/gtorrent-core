@@ -97,31 +97,31 @@ void gt::Platform::associate(bool magnet, bool torrent)
 	ofstream MassFile(getHomeDir() + ".local/share/applications/gtorrentm.desktop");
 
 	string TassString = 
-		string("[Desktop Entry]\n")                          +
-		"Version=1.0\n"                                      +
-		"Encoding=UTF-8\n"                                   + 
-		"Name=gTorrent\n"                                    +
-		"GenericName=BitTorrent Client\n"                    +
-		"Comment=Share files over BitTorrent\n"              +
-		"Exec=" + penis + " %F\n"                            +
-		"Icon=gtorrent.png\n"                                +
-		"Terminal=false\n"                                   +
-		"Type=Application\n"                                 +
-		"MimeType=application/x-bittorrent;\n"               +
+		string("[Desktop Entry]\n")							 +
+		"Version=1.0\n"										 +
+		"Encoding=UTF-8\n"									 + 
+		"Name=gTorrent\n"									 +
+		"GenericName=BitTorrent Client\n"					 +
+		"Comment=Share files over BitTorrent\n"				 +
+		"Exec=" + penis + " %F\n"							 +
+		"Icon=gtorrent.png\n"								 +
+		"Terminal=false\n"									 +
+		"Type=Application\n"								 +
+		"MimeType=application/x-bittorrent;\n"				 +
 		"Categories=Internet;Network;FileTransfer;P2P;GTK;\n";
 
 	string MassString = 
-		string("[Desktop Entry]\n")                          +
-		"Version=1.0\n"                                      +
-		"Encoding=UTF-8\n"                                   + 
-		"Name=gTorrent\n"                                    +
-		"GenericName=BitTorrent Client\n"                    +
-		"Comment=Share files over BitTorrent\n"              +
-		"Exec=" + penis + " %u\n"                            +
-		"Icon=gtorrent.png\n"                                +
-		"Terminal=false\n"                                   +
-		"Type=Application\n"                                 +
-		"MimeType=x-scheme-handler/magnet;\n;"               +
+		string("[Desktop Entry]\n")							 +
+		"Version=1.0\n"										 +
+		"Encoding=UTF-8\n"									 + 
+		"Name=gTorrent\n"									 +
+		"GenericName=BitTorrent Client\n"					 +
+		"Comment=Share files over BitTorrent\n"				 +
+		"Exec=" + penis + " %u\n"							 +
+		"Icon=gtorrent.png\n"								 +
+		"Terminal=false\n"									 +
+		"Type=Application\n"								 +
+		"MimeType=x-scheme-handler/magnet;\n;"				 +
 		"Categories=Internet;Network;FileTransfer;P2P;GTK;\n";
 
 	if(dirtyT)
@@ -144,19 +144,27 @@ bool gt::Platform::sharedDataEnabled()
 int fd, ld;
 bool gt::Platform::processIsUnique()
 {
-    struct flock fl = { 0 };
-    fl.l_type = F_WRLCK;
-    fl.l_whence = SEEK_SET;
-    return fcntl(ld, F_SETLK, &fl) == 0;
+	struct flock fl = { 0 };
+	fl.l_type = F_WRLCK;
+	fl.l_whence = SEEK_SET;
+	return fcntl(ld, F_SETLK, &fl) == 0;
 }
 
 void gt::Platform::makeSharedFile()
 {
-    if(processIsUnique() && !sharedDataEnabled())
-        if(mkfifo("/tmp/gfeed", 0755) == -1)
-            throw runtime_error("Couldn't create pipe! Check your permissions or if /tmp/gfeed exists");
-    fd = open("/tmp/gfeed", O_RDONLY | O_NONBLOCK); // TODO: use streams                                
-    ld = open("/var/lock/gtorrent.lock", O_CREAT | O_RDONLY, 0600);
+	if(processIsUnique() && !sharedDataEnabled())
+		if(mkfifo("/tmp/gfeed", 0755) == -1)
+			throw runtime_error("Couldn't create pipe! Check your permissions or if /tmp/gfeed exists");
+	fd = open("/tmp/gfeed", O_RDONLY | O_NONBLOCK); // TODO: use streams								
+	ld = open("/var/lock/gtorrent.lock", O_CREAT | O_RDONLY, 0600);
+}
+
+void gt::Platform::writeSharedData(string info)
+{
+	// I used write here but it didn't work.
+	ofstream file("/tmp/gfeed");
+	file << info << endl;
+	file.close();
 }
 
 string gt::Platform::readSharedData()
