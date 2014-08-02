@@ -49,7 +49,13 @@ bool gt::Settings::save(const std::string &path)
 	return false;
 }
 
-
+// TODO Please, for the love of god, let's not use exceptions.
+// I have no bloody clue what to do in C++, but if I were to do it
+// in C, I would have something like this:
+//  int get_opt_int(const char* key, int* val);
+// where get_opt_int returns 0 on error, and val is the pointer to
+// what you want changed
+// -- inuoppai
 std::string gt::Settings::getOptionAsString(const std::string &key)
 {
 	return settings[key]; // >yfw exceptions are harmful
@@ -57,6 +63,7 @@ std::string gt::Settings::getOptionAsString(const std::string &key)
 
 int gt::Settings::getOptionAsInt(const std::string &key)
 {
+	// FIXME I wrote a function that checks if an option exists. -- inuoppai
 	auto i = settings.find(key);
 	if(i == settings.end())
 		throw std::runtime_error("No such option.");
@@ -78,6 +85,23 @@ void gt::Settings::setOption(const std::string &key, std::string value)
 	settings[key] = value;
 }
 
+bool gt::Settings::checkOptionExist(const std::string key)
+{
+	auto i = settings.find(key);
+	if(i == settings.end())
+		return false;
+	return true;
+}
+
+void gt::Settings::setDefaultOption(const std::string key, const std::string val)
+{
+	if checkOptionExist(key)
+		return;
+
+	settings[key] = val;
+}
+
+// TODO Fix name changes throughout project. i.e key -> core.key
 void gt::Settings::setDefaults()
 {
 	// these will be overwritten if the keys are found in the config file
