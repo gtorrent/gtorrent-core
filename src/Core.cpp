@@ -77,6 +77,12 @@ shared_ptr<gt::Torrent> gt::Core::addTorrent(string path, vector<char> *resumeda
 	{
 		t->setHandle(h);
 		m_torrents.push_back(t);
+		if(t->hasMetadata() && gt::Settings::settings["DefaultSequentialDownloading"] == "Yes")
+			if(t->filenames().size() == 1)
+			{
+				string ext = t->filenames()[0].substr(t->filenames()[0].find_last_of('.'));
+				t->setSequentialDownload(gt::Settings::settings["SequentialDownloadExtensions"].find(ext) != string::npos);
+			}
 		return t;
 	}
 }
@@ -335,8 +341,8 @@ void gt::Core::setSessionParameters()
 	catch(...)
 	{}
 
+	if(Settings::settings["ReportTrueDownloaded"] == "Yes") se.report_redundant_bytes = true;
 /*	if(Settings::settings[""]);
-	if(Settings::settings[""]);
 	if(Settings::settings[""]);
 	if(Settings::settings[""]);
 	if(Settings::settings[""]);
