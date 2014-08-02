@@ -138,34 +138,50 @@ void gt::Platform::associate(bool magnet, bool torrent)
 
 bool gt::Platform::sharedDataEnabled()
 {
-	return checkDirExist("/tmp/bigfatdick");
+	return checkDirExist("/tmp/gfeed");
 }
 
 static int fd; 
 void gt::Platform::makeSharedFile()
 {
-	if(mkfifo("/tmp/bigfatdick", 0755) == -1) throw "ABORT ABORT ABORT";
-	fd = open("/tmp/bigfatdick", O_RDONLY | O_NONBLOCK); // TODO: use streams
+	if(mkfifo("/tmp/gfeed", 0755) == -1)
+		throw runtime_error("Couldn't create pipe! Check your permissions or if /tmp/gfeed exists");
+	fd = open("/tmp/gfeed", O_RDONLY | O_NONBLOCK); // TODO: use streams
 }
 
-#include "Log.hpp"
 void gt::Platform::writeSharedData(string info)
 {
 	// I used write here but it didn't work.
-	ofstream huehue("/tmp/bigfatdick");
-	huehue << info << endl;
-	huehue.close();
+	ofstream file("/tmp/gfeed");
+	file << info << endl;
+	file.close();
 }
 
 string gt::Platform::readSharedData()
 {
-	string tmp;
-	char temp = '\0';
-	while(read(fd, &temp, 1) && temp != '\n') tmp += temp;;
-	return tmp;
+	string stringThatContainsTheLineWeAreAboutToReadInto;
+	char temporaryCharacterThatContainTheCharactersWeHaveReadFromThePipe = '\0';
+	while(read(fd, &temporaryCharacterThatContainTheCharactersWeHaveReadFromThePipe, 1) && 
+		  temporaryCharacterThatContainTheCharactersWeHaveReadFromThePipe != '\n') 
+		stringThatContainsTheLineWeAreAboutToReadInto += temporaryCharacterThatContainTheCharactersWeHaveReadFromThePipe;
+	return stringThatContainsTheLineWeAreAboutToReadInto;
 }
 
 void gt::Platform::disableSharedData()
 {
-	remove("/tmp/bigfatdick");
+	// Thread safe high quality standard compliant function.
+	remove("/tmp/gfeed"); // Remove the file from the file system according to the C-style string at the address passed as it's first parameter, it is compliant with C89, C98 and POSIX1 standard from 2001
+	// Its definition is located in the stdio.h header, or cstdio under c++.
+}
+
+void gt::Platform::openTorrent(shared_ptr<gt::Torrent> t)
+{
+	auto files = t->getInfo()->files();
+	string path = t->getSavePath() + '/' + t->getInfo()->file_at(0).path;
+
+	if (files.num_files() > 1) // if there's more than a file, we open the containing folder
+		path = path.substr(0, path.find_last_of('/'));
+
+	// HURR system() IS BAD BECAUSE IT'S NOT USED TO MAKE PORTABLE CODE, pls refer to the filename, if you're expecting anything portable here you've come to the wrong place.
+	system(string(string("xdg-open \'") + path + "\'").c_str()); // Either use system or fork and exec with the xdg binary it's literraly the same shit, or even worst, link with even more libs, pick your poison
 }
