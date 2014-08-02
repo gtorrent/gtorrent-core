@@ -104,35 +104,31 @@ void gt::Settings::setDefaultOption(const std::string key, const std::string val
 // TODO Fix name changes throughout project. i.e key -> core.key
 void gt::Settings::setDefaults()
 {
-	// these will be overwritten if the keys are found in the config file
-	// TODO Well then, write a function that checks to see if the key is defined
-	// first before attempting to overwrite, baka inu! -- inuoppai
-
-	settings["core.SavePath"                      ] = gt::Platform::getDefaultSavePath();
-	settings["core.FileAssociation"               ] = "-1";
+	setDefaultOption("core.SavePath"                      , gt::Platform::getDefaultSavePath());
+	setDefaultOption("core.FileAssociation"               , "-1");
 
 	// Below this line, options haven't been tested yet.
 	// TODO Move this out of core
-	settings["gtk.GraphUploadCurveColor"          ] = "red";
-	settings["gtk.GraphDownloadCurveColor"        ] = "green";
-	settings["gtk.GraphGridColor"                 ] = "grey";
-	settings["gtk.ShowLegend"                     ] = "Yes";
+	setDefaultOption("gtk.GraphUploadCurveColor"          , "red");
+	setDefaultOption("gtk.GraphDownloadCurveColor"        , "green");
+	setDefaultOption("gtk.GraphGridColor"                 , "grey");
+	setDefaultOption("gtk.ShowLegend"                     , "Yes");
 
-	settings["core.ProxyHost"                     ] = "";
-	settings["core.ProxyType"                     ] = "None"; // Can be: HTTP, SOCKS4, SOCKS5, I2P
-	settings["core.ProxyPort"                     ] = "8080";
-	settings["core.ProxyCredentials"              ] = "user:pass";
+	setDefaultOption("core.ProxyHost"                     , "");
+	setDefaultOption("core.ProxyType"                     , "None"); // Can be: HTTP, SOCKS4, SOCKS5, I2P
+	setDefaultOption("core.ProxyPort"                     , "8080");
+	setDefaultOption("core.ProxyCredentials"              , "user:pass");
 
-	settings["core.CacheSize"                     ] = "0"; // Multiple of 16KB blocks // defaults a 1/8 of total RAM !!!
-	settings["core.CachedChunks"                  ] = ""; // Number of blocks allocated at a time
-	settings["core.CacheExpiry"                   ] = ""; // Number of second elapsed before flushing to disk
-	settings["core.AnonymousMode"                 ] = "No";
+	setDefaultOption("core.CacheSize"                     , "0"); // Multiple of 16KB blocks // defaults a 1/8 of total RAM !!!
+	setDefaultOption("core.CachedChunks"                  , ""); // Number of blocks allocated at a time
+	setDefaultOption("core.CacheExpiry"                   , ""); // Number of second elapsed before flushing to disk
+	setDefaultOption("core.AnonymousMode"                 , "No");
 
 	// Below this line, the options aren't implemented into core yet. //
-	settings["core.DefaultSequentialDownloading"  ] = "No"; // When is Yes, will set seq by default only if the torrent has a single file that ends in the below list
-	settings["core.SequentialDownloadExtensions"  ] = "mkv|mp3|flac|mp4|mp5|avi";
+	setDefaultOption("core.DefaultSequentialDownloading"  , "No"); // When is Yes, will set seq by default only if the torrent has a single file that ends in the below list
+	setDefaultOption("core.SequentialDownloadExtensions"  , "mkv|mp3|flac|mp4|mp5|avi");
 
-	settings["core.OverrideSettings"              ] = "No"; // Can be set to Minimal, HighPerformanceSeeding, and No.
+	setDefaultOption("core.OverrideSettings"              , "No"); // Can be set to Minimal, HighPerformanceSeeding, and No.
 
 	/*
 	 * Default: Unchoke slots = Max upload slots
@@ -140,13 +136,13 @@ void gt::Settings::setDefaults()
 	 * RateBased: Unchoke slot determined by the ration of a peer
 	 * BitTyrant: :^) trigger warning: Looks for the best peers to maximize download speed, requires to set up a global upload limit
 	 */
-	settings["core.ChokingAlgorithm"              ] = "Default";
+	setDefaultOption("core.ChokingAlgorithm"              , "Default");
 
 	/* Only applies to BitTyrant */
 	// not sure about how it werks concretly
-	settings["core.DefaultReciprocationRate"      ] = "14"; // Unit is download speed in KB/s
-	settings["core.IncreaseReciprocationRate"     ] = "20"; // In percents
-	settings["core.DecreaseReciprocationRate"     ] = "3";
+	setDefaultOption("core.DefaultReciprocationRate"      , "14"); // Unit is download speed in KB/s
+	setDefaultOption("core.IncreaseReciprocationRate"     , "20"); // In percents
+	setDefaultOption("core.DecreaseReciprocationRate"     , "3");
 
 
 	/*
@@ -154,17 +150,17 @@ void gt::Settings::setDefaults()
 	 * FastestUpload: Unchoke the fastest peers
 	 * AntiLeech: Prioritize peers who just started or about to finish, making leeches in the middle share between them
 	 */
-	settings["core.SeedChokingAlgorithm" ] = "RoundRobin";
+	setDefaultOption("core.SeedChokingAlgorithm" , "RoundRobin");
 
-	settings["core.UserAgent"            ] = "gTorrent/0.0.2 libtorrent/0.16.17"; //used for the tracker HTTP requests, and also sent to client supporting the useragent extension
+	setDefaultOption("core.UserAgent"            , "gTorrent/0.0.2 libtorrent/0.16.17"); //used for the tracker HTTP requests, and also sent to client supporting the useragent extension
 
-	settings["core.PieceSuggestion"      ] = "Yes"; // suggest piece that are in the disk cache, other supported value is No
+	setDefaultOption("core.PieceSuggestion"      , "Yes"); // suggest piece that are in the disk cache, other supported value is No
 
 	/* 0 means unlimited, all units are in bytes per second unless specified otherwise */
-	settings["core.GlobalUploadLimit"   ] = "0";
-	settings["core.GlobalDownloadLimit" ] = "0";
-	settings["core.DHTUploadLimit"      ] = "4000"; // it is the default in libtorrent, should be set higher for seedboxes
+	setDefaultOption("core.GlobalUploadLimit"   , "0");
+	setDefaultOption("core.GlobalDownloadLimit" , "0");
+	setDefaultOption("core.DHTUploadLimit"      , "4000"); // it is the default in libtorrent, should be set higher for seedboxes
 
 	// Set to yes if you want to count in the amount of redundant bytes downloaded.
-	settings["core.ReportTrueDownloaded"] = "No";
+	setDefaultOption("core.ReportTrueDownloaded", "No");
 }
