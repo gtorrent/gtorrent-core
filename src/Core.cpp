@@ -2,7 +2,6 @@
 #include "Log.hpp"
 #include "Platform.hpp"
 #include "Settings.hpp"
-#include "libtorrent/session.hpp"
 #include "libtorrent/alert.hpp"
 #include "libtorrent/alert_types.hpp"
 #include "libtorrent/create_torrent.hpp"
@@ -12,10 +11,8 @@ using namespace std;
 gt::Core::Core(int argc, char **argv) :
 	m_running(true)
 {
-	
-	if(!gt::Platform::processIsUnique())
+	if(gt::Platform::sharedDataEnabled()) //TODO: Delete the fifo if there's not other process running because of an unexpected shutdown at last session
 	{
-		gt::Log::Debug("An instance is already running");
 		gt::Platform::writeSharedData(argv[1]);
 		exit(0);
 	}
@@ -26,9 +23,10 @@ gt::Core::Core(int argc, char **argv) :
 	// tl;dr, figure out something useful to use the error code for,
 	// like handling what the fuck might happen if listen_on fails kthnx
 	loadSession(gt::Platform::getDefaultConfigPath());
+	gt::Settings::parse("config");
 
 	libtorrent::error_code ec;
-	m_session.listen_on(make_pair(6881, 6889), ec, (const char *)0, 0); //ambigous between new and deprecated function
+	m_session.listen_on(make_pair(6881, 6889), ec);
 	if (ec.value() != 0)
 		gt::Log::Debug(ec.message().c_str());
 
@@ -39,6 +37,14 @@ gt::Core::Core(int argc, char **argv) :
 bool gt::Core::isMagnetLink(string const& url)
 {
 	const string prefix = "magnet:";
+	return url.compare(0, prefix.length(), prefix) == 0;
+}
+
+bool gt::Core::isRssUrl(string const& url)
+{
+	//TODO: make a less tragic validity checker, that actually checks if the
+	//url ends in .rss
+	const string prefix = "http:";
 	return url.compare(0, prefix.length(), prefix) == 0;
 }
 
@@ -62,7 +68,7 @@ shared_ptr<gt::Torrent> gt::Core::addTorrent(string path, vector<char> *resumeda
 
 	libtorrent::error_code ec;
 	auto params = t->getTorrentParams();
-	params.resume_data = resumedata != nullptr ? *resumedata : vector<char>(); //TODO: Look if fast resume data exists for this torrent
+	params.resume_data = resumedata; //TODO: Look if fast resume data exists for this torrent
 	libtorrent::torrent_handle h = m_session.add_torrent(params, ec);
 
 	//Actually, libtorrent silentely deals with duplicates, we just have to make this function not to return another Torrent to the UI
@@ -79,16 +85,35 @@ shared_ptr<gt::Torrent> gt::Core::addTorrent(string path, vector<char> *resumeda
 	{
 		t->setHandle(h);
 		m_torrents.push_back(t);
-		if(t->hasMetadata() && gt::Settings::settings["DefaultSequentialDownloading"] == "Yes")
-		{
-			if(t->filenames().size() == 1)
-			{
-				string ext = t->filenames()[0].substr(t->filenames()[0].find_last_of('.') + 1);
-				t->setSequentialDownload(gt::Settings::settings["SequentialDownloadExtensions"].find(ext) != string::npos);
-			}
-		}
 		return t;
 	}
+}
+
+/*struct feed_item
+{
+   feed_item ();
+   ~feed_item ();
+
+   std::string url;
+   std::string uuid;
+   std::string title;
+   std::string description;
+   std::string comment;
+   std::string category;
+   size_type size;
+   torrent_handle handle;
+   sha1_hash info_hash;
+};*/
+
+shared_ptr<gt::Torrent> gt::Core::addRss(string rssurl)
+{
+	libtorrent::feed_item rssitem;
+	rssitem.url = rssurl;
+	libtorrent::add_torrent_params m_torrent_params;
+
+	libtorrent::torrent_handle add_feed_item (libtorrent::session& m_session,
+	libtorrent::feed_item const& rssitem
+	, libtorrent::add_torrent_params const& m_torrent_params);
 }
 
 void gt::Core::removeTorrent(shared_ptr<Torrent> t)
@@ -144,8 +169,8 @@ int gt::Core::saveSession(string folder)
 		if(!tor->getHandle().status().has_metadata) continue;
 		if(!tor->getHandle().need_save_resume_data()) continue;
 
-		auto ent = libtorrent::create_torrent(*tor->getInfo()).generate();
-		ofstream out((folder + "meta/" + tor->getName() + ".torrent").c_str(), std::ios_base::binary);
+		auto ent = libtorrent::create_torrent(tor->getHandle().get_torrent_info()).generate();
+		ofstream out((folder + "meta/" + tor->getHandle().get_torrent_info().name() + ".torrent").c_str(), std::ios_base::binary);
 		out.unsetf(ios_base::skipws);
 		bencode(ostream_iterator<char>(out), ent);
 
@@ -157,6 +182,7 @@ int gt::Core::saveSession(string folder)
 	{
 		libtorrent::alert const *al = m_session.wait_for_alert(libtorrent::seconds(10));
 		unique_ptr<libtorrent::alert> holder = m_session.pop_alert();
+		gt::Log::Debug("Caught alert...");
 
 		switch (al->type())
 		{
@@ -170,12 +196,12 @@ int gt::Core::saveSession(string folder)
 			gt::Log::Debug("Received alert wasn't about resume data. Skipping.");
 			continue;
 		}
-		
+
 		libtorrent::save_resume_data_alert *rd = (libtorrent::save_resume_data_alert*)al;
 		libtorrent::torrent_handle h = rd->handle;
-		ofstream out((folder + "meta/" + h.status().name + ".fastresume").c_str(), std::ios_base::binary);
+		ofstream out((folder + "meta/" + h.get_torrent_info().name() + ".fastresume").c_str(), std::ios_base::binary);
 		out.unsetf(ios_base::skipws);
-		list << h.status().name << '\n';
+		list << h.get_torrent_info().name() << '\n';
 		bencode(ostream_iterator<char>(out), *rd->resume_data);
 		--count;
 	}
@@ -189,8 +215,6 @@ int gt::Core::loadSession(string folder)
 {
 	libtorrent::lazy_entry ent;
 	libtorrent::error_code ec;
-
-	gt::Settings::parse("config");
 
 	if (!gt::Platform::checkDirExist(folder)               ||
 		!gt::Platform::checkDirExist(folder + "state.gts") ||
@@ -224,7 +248,7 @@ int gt::Core::loadSession(string folder)
 
 	lazy_bdecode(benfile.c_str(), benfile.c_str() + benfile.size(), ent, ec);
 	m_session.load_state(ent);
-	setSessionParameters();
+
 	while(getline(list, tmp))
 	{
 		if(!gt::Platform::checkDirExist(folder + "meta/" + tmp + ".torrent")) continue; //eventually delete the associated .fasteresume
@@ -244,7 +268,7 @@ int gt::Core::loadSession(string folder)
 shared_ptr<gt::Torrent> gt::Core::update()
 {
 	string str = gt::Platform::readSharedData();
-	if(!str.empty()) gt::Log::Debug(str.c_str());
+	//gt::Log::Debug(str.c_str());
 	return addTorrent(str);
 }
 
@@ -256,104 +280,4 @@ void gt::Core::shutdown()
 	saveSession(gt::Platform::getDefaultConfigPath());
 	gt::Settings::save("config");
 	m_running = false;
-}
-
-
-void gt::Core::setSessionParameters()
-{
-	using namespace gt;
-	libtorrent::session_settings se = m_session.settings();
-
-	if(Settings::settings["OverrideSettings"] != "No")
-	{
-		if(Settings::settings["OverrideSettings"] == "Minimal")
-			se = libtorrent::min_memory_usage();
-		else if(Settings::settings["OverrideSettings"] == "HighPerformanceSeeding")
-			se = libtorrent::high_performance_seed();
-	}
-
-	if(Settings::settings["ProxyHost"] != "")
-	{
-		libtorrent::proxy_settings pe;
-		string user, pass;
-		pe.hostname = Settings::settings["ProxyHost"];
-		if(Settings::settings["ProxyCredentials"] != "")
-		{
-			user = Settings::settings["ProxyCredentials"].substr(0, Settings::settings["ProxyCredentials"].find(':'));
-			pass = Settings::settings["ProxyCredentials"].substr(Settings::settings["ProxyCredentials"].find(':'), string::npos);
-		}
-		pe.username = user;
-
-		if(Settings::settings["ProxyType"] == "HTTP")
-			pe.type = 4;
-		else if(Settings::settings["ProxyType"] == "SOCKS5")
-			pe.type = 2;
-		else if(Settings::settings["ProxyType"] == "SOCKS4")
-			pe.type = 1;
-		else
-			pe.type = 0;
-
-		pe.type += pass != "";
-		pe.password = pass;
-		m_session.set_proxy(pe);
-	}
-
-	try
-	{
-		if(stoi(Settings::settings["CacheSize"]) > 0) se.cache_size = stoi(Settings::settings["CacheSize"]);
-		if(stoi(Settings::settings["CachedChunks"]) > 0) se.cache_buffer_chunk_size = stoi(Settings::settings["CachedChunks"]);
-		if(stoi(Settings::settings["CacheExpiry"]) > 0) se.cache_expiry = stoi(Settings::settings["CacheExpiry"]);
-	}
-	catch(...)
-	{}
-
-	if(Settings::settings["AnonymousMode"] == "Yes") se.anonymous_mode = true;
-	if(Settings::settings["ChokingAlgorithm"] != "Default")
-	{
-		if(Settings::settings["ChokingAlgorithm"] == "AutoExpand") se.choking_algorithm = 1;
-		else if(Settings::settings["ChokingAlgorithm"] == "RateBased") se.choking_algorithm = 2;
-		else if(Settings::settings["ChokingAlgorithm"] == "BitTyrant")
-		{
-			se.choking_algorithm = 3;
-			try
-			{
-				if(stoi(Settings::settings["DefaultReciprocationRate"]) > 0) se.default_est_reciprocation_rate = stoi(Settings::settings["DefaultReciprocationRate"]);
-				if(stoi(Settings::settings["IncreaseReciprocationRate"]) > 0) se.increase_est_reciprocation_rate = stoi(Settings::settings["IncreaseReciprocationRate"]);
-				if(stoi(Settings::settings["DecreaseReciprocationRate"]) > 0) se.decrease_est_reciprocation_rate = stoi(Settings::settings["DecreaseReciprocationRate"]);
-			}
-			catch(...) {}
-		}
-		else se.choking_algorithm = 0;
-	}
-	if(Settings::settings["SeedChokingAlgorithm"] != "RoundRobin")
-	{
-		if(Settings::settings["SeedChokingAlgorithm"] == "FastestUpload") se.seed_choking_algorithm = 1;
-		else if(Settings::settings["SeedChokingAlgorithm"] == "AntiLeech") se.seed_choking_algorithm = 2;
-		else se.seed_choking_algorithm = 0;
-	}
-
-	se.user_agent = Settings::settings["UserAgent"];
-	if(Settings::settings["PieceSuggestion"] == "No") se.suggest_mode = 0;
-
-	try
-	{
-		if(stoi(Settings::settings["GlobalUploadLimit"]) > 0) se.upload_rate_limit = stoi(Settings::settings["GlobalUploadLimit"]);
-		if(stoi(Settings::settings["DHTUploadLimit"]) > 0) se.dht_upload_rate_limit = stoi(Settings::settings["DHTUploadLimit"]);
-		if(stoi(Settings::settings["GlobalDownloadLimit"]) > 0) se.download_rate_limit = stoi(Settings::settings["GlobalDownloadLimit"]);
-	}
-	catch(...)
-	{}
-
-	if(Settings::settings["ReportTrueDownloaded"] == "Yes") se.report_redundant_bytes = true;
-/*	if(Settings::settings[""]);
-	if(Settings::settings[""]);
-	if(Settings::settings[""]);
-	if(Settings::settings[""]);
-	if(Settings::settings[""]);
-	if(Settings::settings[""]);
-	if(Settings::settings[""]);
-	if(Settings::settings[""]);
-	if(Settings::settings[""]);
-	if(Settings::settings[""]);*/
-	m_session.set_settings(se);
 }

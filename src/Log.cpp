@@ -7,10 +7,18 @@ using namespace std;
 
 string getFullDateNumber(int n)
 {
+	ostringstream oss;
+
 	if (n < 10)
-		return string("0") + to_string(n);
+	{
+		oss << "0" << n;
+	}
 	else
-		return to_string(n);
+	{
+		oss << n;
+	}
+
+	return oss.str();
 }
 
 string gt::Log::getTimeStamp()
@@ -18,13 +26,23 @@ string gt::Log::getTimeStamp()
 	time_t t = time(0);
 	struct tm *lt = localtime(&t);
 
-	return to_string(1900 + lt->tm_year) + "-"   +
-		getFullDateNumber(lt->tm_mon)    + "-"   +
-		getFullDateNumber(lt->tm_mday)   + " @ " +
-		getFullDateNumber(lt->tm_hour)   + ":"   + 
-		getFullDateNumber(lt->tm_min)    + ":"   +
-		getFullDateNumber(lt->tm_sec);
+	// TODO: Maybe convert this stream string structure into something else.
 
+	stringstream oss;
+
+	oss << (1900 + lt->tm_year);
+	oss << "-";
+	oss << getFullDateNumber(lt->tm_mon);
+	oss << "-";
+	oss << getFullDateNumber(lt->tm_mday);
+	oss << " @ ";
+	oss << getFullDateNumber(lt->tm_hour);
+	oss << ":";
+	oss << getFullDateNumber(lt->tm_min);
+	oss << ":";
+	oss << getFullDateNumber(lt->tm_sec);
+
+	return oss.str();
 }
 
 void gt::Log::Debug(const char *fmt, ...)
@@ -52,5 +70,4 @@ void gt::Log::Debug(const char *fmt, ...)
 
 	va_end(args);
 	va_end(fileargs);
-	fclose(pFile);
 }

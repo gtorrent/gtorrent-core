@@ -3,8 +3,6 @@
 using namespace std;
 
 #include "libtorrent.hpp"
-#include <libtorrent/torrent_handle.hpp>
-#include <libtorrent/torrent_info.hpp>
 #include "Event.hpp"
 #include <iomanip>
 #include <sstream>
@@ -242,34 +240,9 @@ namespace gt
 		{
 			setPaused(false);
 		}
-
 		inline void pause()
 		{
 			setPaused(true);
 		}
-
-		inline string getName()
-		{
-			return getHandle().status().name;
-		}
-
-		inline bool hasMetadata()
-		{
-			return getHandle().status().has_metadata;
-		}
-
-		inline string getSavePath()
-		{
-			return getHandle().status().save_path;
-		}
-
-		inline boost::intrusive_ptr<libtorrent::torrent_info const> getInfo()
-		{
-			return getHandle().torrent_file();
-		}
-
-		void setSequentialDownload(bool seq);
-		bool SequentialDownloadEnabled();
-		vector<string> filenames();
 	};
 }
