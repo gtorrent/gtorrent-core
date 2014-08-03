@@ -89,7 +89,10 @@ shared_ptr<gt::Torrent> gt::Core::addTorrent(string path, vector<char> *resumeda
 
 shared_ptr<gt::Torrent> gt::Core::addRss(string rssurl)
 {
-
+//don't program while drunk, compadres...
+//figure it out in the morning.
+torrent_handle add_feed_item (session& s, feed_item const& fi
+   , add_torrent_params const& p)
 }
 
 void gt::Core::removeTorrent(shared_ptr<Torrent> t)
