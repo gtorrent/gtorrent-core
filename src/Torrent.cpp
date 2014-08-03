@@ -202,3 +202,10 @@ bool gt::Torrent::SequentialDownloadEnabled()
 	return getHandle().status().sequential_download;
 }
 
+vector<string> gt::Torrent::filenames()
+{
+	vector<string> files;
+	for(int i = 0; i < getInfo()->num_files(); ++i)
+		files.push_back(getInfo()->files().file_path(i));
+	return files;
+}

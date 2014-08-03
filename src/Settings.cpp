@@ -104,7 +104,7 @@ void gt::Settings::setDefaults()
 	settings["DownloadingForeGroundColor"] = "#228B43";
 	settings["DownloadingBackGroundColor"] = "#FFFFFF";
 
-	// Below this line, options haven't been tested yet.
+	//////////////////// Below this line, options haven't been tested yet. ////////////////////////////
 	settings["GraphUploadCurveColor"] = "red";
 	settings["GraphDownloadCurveColor"] = "green";
 	settings["GraphGridColor"] = "grey";
@@ -119,16 +119,12 @@ void gt::Settings::setDefaults()
 	settings["CachedChunks"] = ""; // Number of blocks allocated at a time
 	settings["CacheExpiry"] = ""; // Number of second elapsed before flushing to disk
 	settings["AnonymousMode"] = "No";
-
-    // Below this line, the options aren't implemented into core yet. //
-	settings["DefaultSequentialDownloading"] = "No"; // When is Yes, will set seq by default only if the torrent has a single file that ends in the below list 
-	settings["SequentialDownloadExtensions"] = "mkv|mp3|flac|mp4|mp5|avi";
-
 	settings["OverrideSettings"] = "No"; // Can be set to Minimal, HighPerformanceSeeding, and No.
 
+	//Where an upload limit is required, it should be as close as possible to the real upload limit
 	/*
 	 * Default: Unchoke slots = Max upload slots
-	 * AutoExpand: Unchoke slots = Max upload slots, where unchock slots grow as long as upload bandwidth is not saturated
+	 * AutoExpand: Unchoke slots = Max upload slots, where unchock slots grow as long as upload bandwidth is not saturated, , requires to set up a global upload limit
 	 * RateBased: Unchoke slot determined by the ration of a peer
 	 * BitTyrant: :^) trigger warning: Looks for the best peers to maximize download speed, requires to set up a global upload limit
 	 */
@@ -138,7 +134,6 @@ void gt::Settings::setDefaults()
 	settings["DefaultReciprocationRate"] = "14"; // Unit is download speed in KB/s
 	settings["IncreaseReciprocationRate"] = "20"; // In percents
 	settings["DecreaseReciprocationRate"] = "3";
-	
 
 	/*
 	 * RoundRobins: Distribute the upload fairly.
@@ -146,6 +141,7 @@ void gt::Settings::setDefaults()
 	 * AntiLeech: Prioritize peers who just started or about to finish, making leeches in the middle share between them
 	 */
 	settings["SeedChokingAlgorithm"] = "RoundRobin";
+
 
 	//used for the tracker HTTP requests, and also sent to client supporting the useragent extension
 	settings["UserAgent"] = "gTorrent/0.0.2 libtorrent/0.16.17";
@@ -156,9 +152,13 @@ void gt::Settings::setDefaults()
 	/* 0 means unlimited, all units are in bytes per second unless specified otherwise */
 	settings["GlobalUploadLimit"] = "0";
 	settings["GlobalDownloadLimit"] = "0";
-	settings["DHTUploadLimit"] = "4000"; // it is the default in libtorrent, should be set higher for seedboxes
-	settings[""] = "";
 
-	// Set to yes if you want to count in the amount of redundant bytes downloaded.
+	settings["DHTUploadLimit"] = "4000"; // it is the default in libtorrent, should be set higher for seedboxes
+	// Set to yes if you want to count in the amount of redundant bytes downloaded that is sent to the tracker
 	settings["ReportTrueDownloaded"] = "No";
+	settings["DefaultSequentialDownloading"] = "No"; // When is Yes, will set seq by default only if the torrent has a single file that ends in the below list 
+	settings["SequentialDownloadExtensions"] = "mkv/mp3/flac/mp4/mp5/avi";
+
+    //////////////////// Below this line, the options aren't implemented into core yet. ////////////////////////
+
 }

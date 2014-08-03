@@ -270,5 +270,6 @@ namespace gt
 
 		void setSequentialDownload(bool seq);
 		bool SequentialDownloadEnabled();
+		vector<string> filenames();
 	};
 }
