@@ -46,6 +46,7 @@ namespace gt
 
 		bool   sharedDataEnabled();
 		void   makeSharedFile();
+		bool   processIsUnique();
 		void   writeSharedData(string info);
 		string readSharedData();
 		void   disableSharedData();
