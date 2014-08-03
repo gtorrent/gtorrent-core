@@ -25,9 +25,12 @@ namespace gt
 
 		static bool isMagnetLink(std::string const& link);
 
-		int loadSession(std::string path);
-		int saveSession(std::string path);
-		shared_ptr<Torrent> addTorrent(std::string path, std::vector<char> *resumedata = nullptr);
+		static bool isRssUrl(string const& rssurl);
+
+		int loadSession(string path);
+		int saveSession(string path);
+		shared_ptr<Torrent> addTorrent(string path, vector<char> *resumedata = nullptr);
+		shared_ptr<Torrent> addRss(string rssurl);
 
 		void removeTorrent(std::shared_ptr<Torrent>);
 

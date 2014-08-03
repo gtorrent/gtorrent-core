@@ -42,6 +42,12 @@ bool gt::Core::isMagnetLink(string const& url)
 	return url.compare(0, prefix.length(), prefix) == 0;
 }
 
+bool gt::Core::isRssUrl(string const& url)
+{
+	const string prefix = "http:";
+	return url.compare(0, prefix.length(), prefix) == 0;
+}
+
 shared_ptr<gt::Torrent> gt::Core::addTorrent(string path, vector<char> *resumedata)
 {
 	if (path.empty())
@@ -89,6 +95,14 @@ shared_ptr<gt::Torrent> gt::Core::addTorrent(string path, vector<char> *resumeda
 		}
 		return t;
 	}
+}
+
+shared_ptr<gt::Torrent> gt::Core::addRss(string rssurl)
+{
+//don't program while drunk, compadres...
+//figure it out in the morning.
+torrent_handle add_feed_item (session& s, feed_item const& fi
+   , add_torrent_params const& p)
 }
 
 void gt::Core::removeTorrent(shared_ptr<Torrent> t)
@@ -170,7 +184,7 @@ int gt::Core::saveSession(string folder)
 			gt::Log::Debug("Received alert wasn't about resume data. Skipping.");
 			continue;
 		}
-		
+
 		libtorrent::save_resume_data_alert *rd = (libtorrent::save_resume_data_alert*)al;
 		libtorrent::torrent_handle h = rd->handle;
 		ofstream out((folder + "meta/" + h.status().name + ".fastresume").c_str(), std::ios_base::binary);
@@ -251,6 +265,7 @@ shared_ptr<gt::Torrent> gt::Core::update()
 //TODO: Catch some signals to make sure this function is called
 void gt::Core::shutdown()
 {
+	//TODO: Make sure the program commits sudoku reliably, so we don't end up with orphan processes.
 	gt::Log::Debug("Shutting down core library...");
 	gt::Platform::disableSharedData();
 	saveSession(gt::Platform::getDefaultConfigPath());
@@ -346,7 +361,7 @@ void gt::Core::setSessionParameters()
 
 	if(Settings::settings["ReportTrueDownloaded"] == "Yes") se.report_redundant_bytes = true;
 /*	if(Settings::settings[""]);
-	if(Settings::settings[""]);
+	if(Settings::settings[""]);brogrammer /10
 	if(Settings::settings[""]);
 	if(Settings::settings[""]);
 	if(Settings::settings[""]);
