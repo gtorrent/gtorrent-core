@@ -109,6 +109,7 @@ void gt::Core::removeTorrent(shared_ptr<Torrent> t)
 		++i;
 	}
 	m_torrents.resize(m_torrents.size() - 1);
+    statuses.update(&m_torrents);
 }
 
 /*
@@ -362,25 +363,32 @@ void gt::Core::setSessionParameters()
 }
 
 int gt::Core::statusList::update(std::vector<std::shared_ptr<Torrent>> *tl) {
+    downloading.clear();
+    seeding.clear();
+    checking.clear();
+    stopped.clear();
+    finished.clear();
     for(int i = 0; i < tl->size(); i++) {
         if(tl->at(i)->getState() == libtorrent::torrent_status::state_t::downloading) {
             downloading.push_back(tl->at(i));
+            continue;
         }
         if(tl->at(i)->getState() == libtorrent::torrent_status::state_t::seeding) {
             seeding.push_back(tl->at(i));
+            continue;
         }
         if((tl->at(i)->getState() == libtorrent::torrent_status::state_t::checking_files)||(tl->at(i)->getState() == libtorrent::torrent_status::state_t::checking_resume_data)) {
             checking.push_back(tl->at(i));
+            continue;
         }
         if(tl->at(i)->getState() == libtorrent::torrent_status::state_t::finished) {
             finished.push_back(tl->at(i));
+            continue;
         }
         /* if(tl->at(i).getState() == libtorrent::torrent_status::state_t::paused) {
             paused.push_back(tl->at(i));
         } */
-        else {
-            stopped.push_back(tl->at(i));
-        }
+        stopped.push_back(tl->at(i));
     }
     return 1;
 }

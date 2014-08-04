@@ -144,7 +144,7 @@ void gt::Settings::setDefaults()
 
 
 	//used for the tracker HTTP requests, and also sent to client supporting the useragent extension
-	settings["UserAgent"] = "gTorrent/0.0.2 libtorrent/0.16.17";
+	settings["UserAgent"] = "gTorrent/0.0.2 libtorrent/1.0.0";
 
 	// suggest piece that are in the disk cache, other supported value is No
 	settings["PieceSuggestion"] = "Yes";
