@@ -13,6 +13,16 @@ namespace gt
 	{
 	private:
 		std::vector<std::shared_ptr<Torrent>> m_torrents;
+        struct statusList {
+            std::vector<std::shared_ptr<Torrent>> downloading;
+            std::vector<std::shared_ptr<Torrent>> seeding;
+            std::vector<std::shared_ptr<Torrent>> checking;
+            std::vector<std::shared_ptr<Torrent>> finished;
+            std::vector<std::shared_ptr<Torrent>> stopped;
+            std::vector<std::shared_ptr<Torrent>> paused;
+
+            int update();
+        } statuses;
 		libtorrent::session m_session;
 		bool m_running;
 	public:

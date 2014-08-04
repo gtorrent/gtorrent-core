@@ -12,7 +12,7 @@ using namespace std;
 gt::Core::Core(int argc, char **argv) :
 	m_running(true)
 {
-	
+
 	if(!gt::Platform::processIsUnique())
 	{
 		gt::Log::Debug("An instance is already running");
@@ -34,6 +34,8 @@ gt::Core::Core(int argc, char **argv) :
 
 	for(int i = 1; i < argc; ++i)
 		addTorrent(string(argv[i]));
+
+    statuses.update();
 }
 
 bool gt::Core::isMagnetLink(string const& url)
@@ -87,6 +89,7 @@ shared_ptr<gt::Torrent> gt::Core::addTorrent(string path, vector<char> *resumeda
 				t->setSequentialDownload(gt::Settings::settings["SequentialDownloadExtensions"].find(ext) != string::npos);
 			}
 		}
+        statuses.update();
 		return t;
 	}
 }
@@ -170,7 +173,7 @@ int gt::Core::saveSession(string folder)
 			gt::Log::Debug("Received alert wasn't about resume data. Skipping.");
 			continue;
 		}
-		
+
 		libtorrent::save_resume_data_alert *rd = (libtorrent::save_resume_data_alert*)al;
 		libtorrent::torrent_handle h = rd->handle;
 		ofstream out((folder + "meta/" + h.status().name + ".fastresume").c_str(), std::ios_base::binary);
@@ -357,3 +360,30 @@ void gt::Core::setSessionParameters()
 	if(Settings::settings[""]);*/
 	m_session.set_settings(se);
 }
+
+int gt::Core::statusList::update() {
+    for(int i = 0; i < m_torrents.size(); i++) {
+        if(m_torrents[i].getState() == libtorrent::torrent_status::state_t::downloading) {
+            downloading.push_back(m_torrents[i]);
+        }
+        if(m_torrents[i].getState() == libtorrent::torrent_status::state_t::seeding) {
+            seeding.push_back(m_torrents[i]);
+        }
+        if((m_torrents[i].getState() == libtorrent::torrent_status::state_t::checking_files)||(m_torrents[i].getState() == libtorrent::torrent_status::state_t::checking_resume_data)) {
+            checking.push_back(m_torrents[i]);
+        }
+        if(m_torrents[i].getState() == libtorrent::torrent_status::state_t::finished) {
+            finished.push_back(m_torrents[i]);
+        }
+        /* if(m_torrents[i].getState() == libtorrent::torrent_status::state_t::paused) {
+            paused.push_back(m_torrents[i]);
+        } */
+        else {
+            stopped.push_back(m_torrents[i]);
+        }
+    }
+    return 1;
+}
+
+
+
