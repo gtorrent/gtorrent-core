@@ -35,7 +35,7 @@ gt::Core::Core(int argc, char **argv) :
 	for(int i = 1; i < argc; ++i)
 		addTorrent(string(argv[i]));
 
-    statuses.update();
+    statuses.update(&m_torrents);
 }
 
 bool gt::Core::isMagnetLink(string const& url)
@@ -89,7 +89,7 @@ shared_ptr<gt::Torrent> gt::Core::addTorrent(string path, vector<char> *resumeda
 				t->setSequentialDownload(gt::Settings::settings["SequentialDownloadExtensions"].find(ext) != string::npos);
 			}
 		}
-        statuses.update();
+        statuses.update(&m_torrents);
 		return t;
 	}
 }
@@ -361,25 +361,25 @@ void gt::Core::setSessionParameters()
 	m_session.set_settings(se);
 }
 
-int gt::Core::statusList::update() {
-    for(int i = 0; i < m_torrents.size(); i++) {
-        if(m_torrents[i].getState() == libtorrent::torrent_status::state_t::downloading) {
-            downloading.push_back(m_torrents[i]);
+int gt::Core::statusList::update(std::vector<std::shared_ptr<Torrent>> *tl) {
+    for(int i = 0; i < tl->size(); i++) {
+        if(tl->at(i)->getState() == libtorrent::torrent_status::state_t::downloading) {
+            downloading.push_back(tl->at(i));
         }
-        if(m_torrents[i].getState() == libtorrent::torrent_status::state_t::seeding) {
-            seeding.push_back(m_torrents[i]);
+        if(tl->at(i)->getState() == libtorrent::torrent_status::state_t::seeding) {
+            seeding.push_back(tl->at(i));
         }
-        if((m_torrents[i].getState() == libtorrent::torrent_status::state_t::checking_files)||(m_torrents[i].getState() == libtorrent::torrent_status::state_t::checking_resume_data)) {
-            checking.push_back(m_torrents[i]);
+        if((tl->at(i)->getState() == libtorrent::torrent_status::state_t::checking_files)||(tl->at(i)->getState() == libtorrent::torrent_status::state_t::checking_resume_data)) {
+            checking.push_back(tl->at(i));
         }
-        if(m_torrents[i].getState() == libtorrent::torrent_status::state_t::finished) {
-            finished.push_back(m_torrents[i]);
+        if(tl->at(i)->getState() == libtorrent::torrent_status::state_t::finished) {
+            finished.push_back(tl->at(i));
         }
-        /* if(m_torrents[i].getState() == libtorrent::torrent_status::state_t::paused) {
-            paused.push_back(m_torrents[i]);
+        /* if(tl->at(i).getState() == libtorrent::torrent_status::state_t::paused) {
+            paused.push_back(tl->at(i));
         } */
         else {
-            stopped.push_back(m_torrents[i]);
+            stopped.push_back(tl->at(i));
         }
     }
     return 1;

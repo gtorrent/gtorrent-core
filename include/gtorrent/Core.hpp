@@ -21,7 +21,7 @@ namespace gt
             std::vector<std::shared_ptr<Torrent>> stopped;
             std::vector<std::shared_ptr<Torrent>> paused;
 
-            int update();
+            int update(std::vector<std::shared_ptr<Torrent>> *tl);
         } statuses;
 		libtorrent::session m_session;
 		bool m_running;
