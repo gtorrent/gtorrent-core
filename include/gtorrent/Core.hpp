@@ -48,5 +48,6 @@ namespace gt
 		void shutdown();
 		shared_ptr<Torrent> update();
 		void setSessionParameters();
+        statusList* getStatuses();
 	};
 }

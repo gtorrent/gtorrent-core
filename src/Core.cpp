@@ -385,5 +385,9 @@ int gt::Core::statusList::update(std::vector<std::shared_ptr<Torrent>> *tl) {
     return 1;
 }
 
+gt::Core::statusList* gt::Core::getStatuses() {
+    return &statuses;
+}
+
 
 
