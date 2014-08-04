@@ -72,7 +72,7 @@ string getFileSizeString(boost::int64_t file_size)
 
 gt::Torrent::Torrent(string path) : m_path(path)
 {
-	setSavePath(gt::Settings::settings["SavePath"]); //TODO add argument to allow user to override the default save path of $HOME/Downloads
+	setSavePath(""); //TODO add argument to allow user to override the default save path of $HOME/Downloads
 	if (gt::Core::isMagnetLink(path))
 		m_torrent_params.url = path;
 	else
@@ -185,27 +185,9 @@ void gt::Torrent::setPaused(bool isPaused)
 vector<bool> gt::Torrent::getPieces()
 {
 	libtorrent::bitfield p = m_handle.status().pieces;
-	int n = m_handle.torrent_file()->num_pieces();
+	int n = m_handle.get_torrent_info().num_pieces();
 	vector<bool> pieces;
 	for(int i = 0; i < n; ++i)
 		pieces.push_back(p.get_bit(i));
 	return pieces;
-}
-
-void gt::Torrent::setSequentialDownload(bool seq)
-{
-	getHandle().set_sequential_download(seq);
-}
-
-bool gt::Torrent::SequentialDownloadEnabled()
-{
-	return getHandle().status().sequential_download;
-}
-
-vector<string> gt::Torrent::filenames()
-{
-	vector<string> files;
-	for(int i = 0; i < getInfo()->num_files(); ++i)
-		files.push_back(getInfo()->files().file_path(i));
-	return files;
 }

@@ -25,9 +25,12 @@ namespace gt
 
 		static bool isMagnetLink(std::string const& link);
 
+		static bool isRssUrl(string const& rssurl);
+
 		int loadSession(std::string path);
 		int saveSession(std::string path);
 		shared_ptr<Torrent> addTorrent(std::string path, std::vector<char> *resumedata = nullptr);
+		shared_ptr<Torrent> addRss(string rssurl);
 
 		void removeTorrent(std::shared_ptr<Torrent>);
 
@@ -37,6 +40,5 @@ namespace gt
 		};
 		void shutdown();
 		shared_ptr<Torrent> update();
-		void setSessionParameters();
 	};
 }
