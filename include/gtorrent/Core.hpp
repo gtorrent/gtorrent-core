@@ -1,24 +1,24 @@
 #pragma once
 
+#include <string>
 #include <vector>
 #include <memory>
-#include <string>
-#include <iostream>
-#include "libtorrent.hpp"
-#include "Torrent.hpp"
+
+#include <libtorrent/session.hpp>
 
 namespace gt
 {
+	class Torrent;
 	class Core
 	{
 	private:
-		std::vector<std::shared_ptr<Torrent>> m_torrents;
+		std::vector<std::shared_ptr<gt::Torrent>> m_torrents;
 		libtorrent::session m_session;
 		bool m_running;
 	public:
 		Core(int argc = 0, char **argv = nullptr);
 
-		inline vector<std::shared_ptr<Torrent>> &getTorrents()
+		inline std::vector<std::shared_ptr<Torrent>> &getTorrents()
 		{
 			return m_torrents;
 		};
@@ -27,16 +27,16 @@ namespace gt
 
 		int loadSession(std::string path);
 		int saveSession(std::string path);
-		shared_ptr<Torrent> addTorrent(std::string path, std::vector<char> *resumedata = nullptr);
+		std::shared_ptr<gt::Torrent> addTorrent(std::string path, std::vector<char> *resumedata = nullptr);
 
-		void removeTorrent(std::shared_ptr<Torrent>);
+		void removeTorrent(std::shared_ptr<gt::Torrent>);
 
 		inline bool isRunning() const
 		{
 			return m_running;
 		};
 		void shutdown();
-		shared_ptr<Torrent> update();
+		std::shared_ptr<gt::Torrent> update();
 		void setSessionParameters();
 	};
 }

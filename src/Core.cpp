@@ -1,11 +1,13 @@
+#include <libtorrent/session.hpp>
+#include <libtorrent/alert.hpp>
+#include <libtorrent/alert_types.hpp>
+#include <libtorrent/create_torrent.hpp>
+
 #include "Core.hpp"
+#include "Torrent.hpp"
 #include "Log.hpp"
 #include "Platform.hpp"
 #include "Settings.hpp"
-#include "libtorrent/session.hpp"
-#include "libtorrent/alert.hpp"
-#include "libtorrent/alert_types.hpp"
-#include "libtorrent/create_torrent.hpp"
 
 using namespace std;
 

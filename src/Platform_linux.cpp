@@ -1,4 +1,5 @@
 #include "Platform.hpp"
+#include "Torrent.hpp"
 #include "Log.hpp"
 
 #include <iostream>
@@ -68,7 +69,7 @@ void gt::Platform::associate(bool magnet, bool torrent)
 
 	bool dirtyT = false, dirtyM = false;
 			
-	ifstream file;
+        std::ifstream file;
 	if(torrent)
 	{
 		file.open(getHomeDir() + ".local/share/applications/gtorrentt.desktop");
@@ -98,8 +99,8 @@ void gt::Platform::associate(bool magnet, bool torrent)
 		file.close();
 	}
 
-	ofstream TassFile(getHomeDir() + ".local/share/applications/gtorrentt.desktop");
-	ofstream MassFile(getHomeDir() + ".local/share/applications/gtorrentm.desktop");
+        std::ofstream TassFile(getHomeDir() + ".local/share/applications/gtorrentt.desktop");
+        std::ofstream MassFile(getHomeDir() + ".local/share/applications/gtorrentm.desktop");
 
 	string TassString = 
 		string("[Desktop Entry]\n")							 +
@@ -184,7 +185,7 @@ void gt::Platform::makeSharedFile()
 void gt::Platform::writeSharedData(string info)
 {
 	// I used write here but it didn't work.
-	ofstream file("/tmp/gfeed");
+        std::ofstream file("/tmp/gfeed");
 	file << info << endl;
 	file.close();
 }
