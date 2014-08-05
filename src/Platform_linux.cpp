@@ -168,7 +168,7 @@ bool gt::Platform::processIsUnique()
 
 void gt::Platform::makeSharedFile()
 {
-	if(processIsUnique())
+	if(processIsUnique() && !checkDirExist("/tmp/gfeed")) //If the pipe already exists we'll just use it
 		if(mkfifo("/tmp/gfeed", 0755) == -1)
 			throw runtime_error("Couldn't create pipe! Check your permissions or if /tmp/gfeed exists");
 	fd = open("/tmp/gfeed", O_RDONLY | O_NONBLOCK); // TODO: use streams
