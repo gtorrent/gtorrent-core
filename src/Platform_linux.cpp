@@ -152,6 +152,8 @@ bool gt::Platform::processIsUnique()
 	if(ld == -1)
 	{
 		gt::Log::Debug("The lock wasn't ready, retrying...");
+		if(!checkDirExist(getDefaultConfigPath()))
+			makeDir(getDefaultConfigPath(), 0755);
 		ld = open(string(getDefaultConfigPath() + "gtorrent.lock").c_str(), O_CREAT | O_RDWR, 0600);
 		return processIsUnique();
 	}
