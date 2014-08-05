@@ -1,8 +1,19 @@
 #include "Core.hpp"
-#include "Torrent.hpp"
+#include "Event.hpp"
+#include "Log.hpp"
 #include "Platform.hpp"
 #include "Settings.hpp"
-#include "Log.hpp"
+#include "Torrent.hpp"
+
+#include <libtorrent.hpp>
+#include <libtorrent/bencode.hpp>
+#include <libtorrent/entry.hpp>
+#include <libtorrent/lazy_entry.hpp>
+#include <libtorrent/session.hpp>
+#include <libtorrent/torrent_handle.hpp>
+#include <libtorrent/torrent_info.hpp>
+#include <libtorrent/torrent_info.hpp>
+
 #define T_PPM 1000000.f
 
 // format 0d 0h 0m 0s
