@@ -19,11 +19,11 @@ string gt::Log::getTimeStamp()
 	struct tm *lt = localtime(&t);
 
 	return to_string(1900 + lt->tm_year) + "-"   +
-		getFullDateNumber(lt->tm_mon)    + "-"   +
-		getFullDateNumber(lt->tm_mday)   + " @ " +
-		getFullDateNumber(lt->tm_hour)   + ":"   + 
-		getFullDateNumber(lt->tm_min)    + ":"   +
-		getFullDateNumber(lt->tm_sec);
+	       getFullDateNumber(lt->tm_mon)    + "-"   +
+	       getFullDateNumber(lt->tm_mday)   + " @ " +
+	       getFullDateNumber(lt->tm_hour)   + ":"   +
+	       getFullDateNumber(lt->tm_min)    + ":"   +
+	       getFullDateNumber(lt->tm_sec);
 
 }
 
