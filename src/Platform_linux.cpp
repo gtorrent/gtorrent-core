@@ -194,12 +194,11 @@ void gt::Platform::writeSharedData(string info)
 
 string gt::Platform::readSharedData()
 {
-	string stringThatContainsTheLineWeAreAboutToReadInto;
-	char temporaryCharacterThatContainTheCharactersWeHaveReadFromThePipe = '\0';
-	while(read(fd, &temporaryCharacterThatContainTheCharactersWeHaveReadFromThePipe, 1) && 
-		  temporaryCharacterThatContainTheCharactersWeHaveReadFromThePipe != '\n') 
-		stringThatContainsTheLineWeAreAboutToReadInto += temporaryCharacterThatContainTheCharactersWeHaveReadFromThePipe;
-	return stringThatContainsTheLineWeAreAboutToReadInto;
+	string sharedData;
+	char tmp = '\0';
+	while(read(fd, &tmp, 1) && tmp != '\n')
+		sharedData += tmp;
+	return sharedData;
 }
 
 void gt::Platform::disableSharedData()
