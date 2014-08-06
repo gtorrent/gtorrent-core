@@ -194,7 +194,7 @@ void gt::Platform::writeSharedData(string info)
 
 string gt::Platform::readSharedData()
 {
-	string sharedData;
+        std::string sharedData;
 	char tmp = '\0';
 	while(read(fd, &tmp, 1) && tmp != '\n')
 		sharedData += tmp;
