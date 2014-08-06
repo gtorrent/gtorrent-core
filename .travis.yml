@@ -31,7 +31,7 @@ before_install:
 
 
 install:
-        # Install dependancies
+        # Install dependencies
         - sudo apt-get install -f -y libtorrent-rasterbar-dev libboost-all-dev 
         # Update g++ to 4.9
         - sudo apt-get install -f -y g++
@@ -40,7 +40,7 @@ install:
         - tar -xzf libtorrent-rasterbar-1.0.0.tar.gz
         - cd libtorrent-rasterbar-1.0.0
         - ./configure --prefix=/usr
-        - make
+        - make -j`nproc`
         - sudo make install
         - cd ..
 script:
