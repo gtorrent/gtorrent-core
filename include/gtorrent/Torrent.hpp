@@ -1,32 +1,36 @@
 #pragma once
 
-using namespace std;
-
-#include "libtorrent.hpp"
-#include <libtorrent/torrent_handle.hpp>
-#include <libtorrent/torrent_info.hpp>
-#include "Event.hpp"
 #include <iomanip>
 #include <sstream>
 #include <fstream>
 #include <string>
 
-string getTimeString(boost::int64_t time_s);
-string getRateString(boost::int64_t file_rate);
-string getFileSizeString(boost::int64_t file_size);
+#include <libtorrent/session.hpp>
+#include <libtorrent/torrent_handle.hpp>
+
+std::string getTimeString(boost::int64_t time_s);
+std::string getRateString(boost::int64_t file_rate);
+std::string getFileSizeString(boost::int64_t file_size);
+
+namespace libtorrent
+{
+	class add_torrent_params;
+}
 
 namespace gt
 {
+	struct Event;
+
 	class Torrent
 	{
 	private:
 		unsigned int m_id;
 		libtorrent::add_torrent_params m_torrent_params;
 		libtorrent::torrent_handle m_handle;
-		string m_path;
+		std::string m_path;
 
 	public:
-		Torrent(string path);
+		Torrent(std::string path);
 
 		bool pollEvent(gt::Event &event);
 
@@ -40,7 +44,7 @@ namespace gt
 		{
 			return m_handle;
 		}
-		inline string& getPath()
+		inline std::string& getPath()
 		{
 			return m_path;
 		}
@@ -52,7 +56,7 @@ namespace gt
 		}
 
 		// Returns formatted active time as string
-		inline string getTextActiveTime()
+		inline std::string getTextActiveTime()
 		{
 			return getTimeString(getActiveTime());
 		}
@@ -64,13 +68,13 @@ namespace gt
 		}
 
 		// Returns formatted eta as string
-		inline string getTextEta()
+		inline std::string getTextEta()
 		{
 			return getTimeString(getEta());
 		}
 
 		// Returns a vector of bools for each piece, true if we have it, false otherwise
-		vector<bool> getPieces();
+		std::vector<bool> getPieces();
 
 		// Returns percentage of all files downloading
 		inline float getTotalProgress()
@@ -162,7 +166,7 @@ namespace gt
 		}
 
 		//Returns the URL of the last working tracker
-		inline string getCurrentTrackerURL()
+		inline std::string getCurrentTrackerURL()
 		{
 			return m_handle.status().current_tracker;
 		}
@@ -171,34 +175,34 @@ namespace gt
 		void torrentForceRecheck();
 
 		// Returns a friendly string for the torrent state
-		string getTextState();
+		std::string getTextState();
 
 		// Returns a friendly string for the current upload rate
-		inline string getTextUploadRate()
+		inline std::string getTextUploadRate()
 		{
 			return getRateString(getUploadRate());
 		}
 
 		// Returns a friendly string for the current download rate
-		inline string getTextDownloadRate()
+		inline std::string getTextDownloadRate()
 		{
 			return getRateString(getDownloadRate());
 		}
 
 		// Returns a friendly string for the current upload total
-		inline string getTextTotalUploaded()
+		inline std::string getTextTotalUploaded()
 		{
 			return getFileSizeString(getTotalUploaded());
 		}
 
 		// Returns a friendly string for the current download total
-		inline string getTextTotalDownloaded()
+		inline std::string getTextTotalDownloaded()
 		{
 			return getFileSizeString(getTotalDownloaded());
 		}
 
 		// Returns a friendly string for the total size of files in torrent
-		inline string getTextSize()
+		inline std::string getTextSize()
 		{
 			return getFileSizeString(getSize());
 		}
@@ -210,16 +214,16 @@ namespace gt
 		}
 
 		// Returns a friendly string for the total size of files remaining to download in torrent
-		inline string getTextRemaining()
+		inline std::string getTextRemaining()
 		{
 			return getFileSizeString(getRemaining());
 		}
 
 		// Returns a friendly string for the current ratio
-		string getTextTotalRatio();
+		std::string getTextTotalRatio();
 
 		// Returns a friendly string for the current time remaining
-		inline string getTextTimeRemaining()
+		inline std::string getTextTimeRemaining()
 		{
 			return getTimeString(getTimeRemaining());
 		}
@@ -234,7 +238,7 @@ namespace gt
 		{
 			m_handle = h;
 		}
-		void setSavePath(string savepath);
+		void setSavePath(std::string savepath);
 
 		void setPaused(bool isPaused);
 
@@ -248,7 +252,7 @@ namespace gt
 			setPaused(true);
 		}
 
-		inline string getName()
+		inline std::string getName()
 		{
 			return getHandle().status().name;
 		}
@@ -258,7 +262,7 @@ namespace gt
 			return getHandle().status().has_metadata;
 		}
 
-		inline string getSavePath()
+		inline std::string getSavePath()
 		{
 			return getHandle().status().save_path;
 		}
@@ -270,6 +274,6 @@ namespace gt
 
 		void setSequentialDownload(bool seq);
 		bool SequentialDownloadEnabled();
-		vector<string> filenames();
+		std::vector<std::string> filenames();
 	};
 }

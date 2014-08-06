@@ -1,13 +1,14 @@
 #pragma once
+
 #include <string>
-#include <fstream>
-#include <sys/stat.h>
-#include "Torrent.hpp"
+#include <memory>
 
 using namespace std;
 
 namespace gt
 {
+	class Torrent;
+
 	namespace Platform
 	{
 		// TODO Better names needed. Suggestions welcome.
@@ -49,6 +50,6 @@ namespace gt
 		void   writeSharedData(string info);
 		string readSharedData();
 		void   disableSharedData();
-		void   openTorrent(shared_ptr<gt::Torrent> t);
+		void   openTorrent(std::shared_ptr<gt::Torrent> t);
 	}
 }

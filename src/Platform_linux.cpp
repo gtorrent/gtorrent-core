@@ -1,4 +1,5 @@
 #include "Platform.hpp"
+#include "Torrent.hpp"
 #include "Log.hpp"
 
 #include <iostream>
@@ -67,8 +68,8 @@ void gt::Platform::associate(bool magnet, bool torrent)
 	readlink("/proc/self/exe", ExecutablePath, 4096);
 
 	bool dirtyT = false, dirtyM = false;
-			
-	ifstream file;
+
+	std::ifstream file;
 	if(torrent)
 	{
 		file.open(getHomeDir() + ".local/share/applications/gtorrentt.desktop");
@@ -98,36 +99,36 @@ void gt::Platform::associate(bool magnet, bool torrent)
 		file.close();
 	}
 
-	ofstream TassFile(getHomeDir() + ".local/share/applications/gtorrentt.desktop");
-	ofstream MassFile(getHomeDir() + ".local/share/applications/gtorrentm.desktop");
+	std::ofstream TassFile(getHomeDir() + ".local/share/applications/gtorrentt.desktop");
+	std::ofstream MassFile(getHomeDir() + ".local/share/applications/gtorrentm.desktop");
 
-	string TassString = 
-		string("[Desktop Entry]\n")							 +
-		"Version=1.0\n"										 +
-		"Encoding=UTF-8\n"									 + 
-		"Name=gTorrent\n"									 +
-		"GenericName=BitTorrent Client\n"					 +
-		"Comment=Share files over BitTorrent\n"				 +
-		"Exec=" + ExecutablePath + " %F\n"					 +
-		"Icon=gtorrent.png\n"								 +
-		"Terminal=false\n"									 +
-		"Type=Application\n"								 +
-		"MimeType=application/x-bittorrent;\n"				 +
-		"Categories=Internet;Network;FileTransfer;P2P;GTK;\n";
+	string TassString =
+	    string("[Desktop Entry]\n")							 +
+	    "Version=1.0\n"										 +
+	    "Encoding=UTF-8\n"									 +
+	    "Name=gTorrent\n"									 +
+	    "GenericName=BitTorrent Client\n"					 +
+	    "Comment=Share files over BitTorrent\n"				 +
+	    "Exec=" + ExecutablePath + " %F\n"					 +
+	    "Icon=gtorrent.png\n"								 +
+	    "Terminal=false\n"									 +
+	    "Type=Application\n"								 +
+	    "MimeType=application/x-bittorrent;\n"				 +
+	    "Categories=Internet;Network;FileTransfer;P2P;GTK;\n";
 
-	string MassString = 
-		string("[Desktop Entry]\n")							 +
-		"Version=1.0\n"										 +
-		"Encoding=UTF-8\n"									 + 
-		"Name=gTorrent\n"									 +
-		"GenericName=BitTorrent Client\n"					 +
-		"Comment=Share files over BitTorrent\n"				 +
-		"Exec=" + ExecutablePath + " %u\n"					 +
-		"Icon=gtorrent.png\n"								 +
-		"Terminal=false\n"									 +
-		"Type=Application\n"								 +
-		"MimeType=x-scheme-handler/magnet;\n;"				 +
-		"Categories=Internet;Network;FileTransfer;P2P;GTK;\n";
+	string MassString =
+	    string("[Desktop Entry]\n")							 +
+	    "Version=1.0\n"										 +
+	    "Encoding=UTF-8\n"									 +
+	    "Name=gTorrent\n"									 +
+	    "GenericName=BitTorrent Client\n"					 +
+	    "Comment=Share files over BitTorrent\n"				 +
+	    "Exec=" + ExecutablePath + " %u\n"					 +
+	    "Icon=gtorrent.png\n"								 +
+	    "Terminal=false\n"									 +
+	    "Type=Application\n"								 +
+	    "MimeType=x-scheme-handler/magnet;\n;"				 +
+	    "Categories=Internet;Network;FileTransfer;P2P;GTK;\n";
 
 	if(dirtyT)
 		TassFile << TassString;
@@ -147,6 +148,8 @@ bool gt::Platform::processIsUnique()
 	if(ld == -1)
 	{
 		gt::Log::Debug("The lock wasn't ready, retrying...");
+		if(!checkDirExist(getDefaultConfigPath()))
+			makeDir(getDefaultConfigPath(), 0755);
 		ld = open(string(getDefaultConfigPath() + "gtorrent.lock").c_str(), O_CREAT | O_RDWR, 0600);
 		return processIsUnique();
 	}
@@ -179,19 +182,18 @@ void gt::Platform::makeSharedFile()
 void gt::Platform::writeSharedData(string info)
 {
 	// I used write here but it didn't work.
-	ofstream file("/tmp/gfeed");
+	std::ofstream file("/tmp/gfeed");
 	file << info << endl;
 	file.close();
 }
 
 string gt::Platform::readSharedData()
 {
-	string stringThatContainsTheLineWeAreAboutToReadInto;
-	char temporaryCharacterThatContainTheCharactersWeHaveReadFromThePipe = '\0';
-	while(read(fd, &temporaryCharacterThatContainTheCharactersWeHaveReadFromThePipe, 1) && 
-		  temporaryCharacterThatContainTheCharactersWeHaveReadFromThePipe != '\n') 
-		stringThatContainsTheLineWeAreAboutToReadInto += temporaryCharacterThatContainTheCharactersWeHaveReadFromThePipe;
-	return stringThatContainsTheLineWeAreAboutToReadInto;
+	std::string sharedData;
+	char tmp = '\0';
+	while(read(fd, &tmp, 1) && tmp != '\n')
+		sharedData += tmp;
+	return sharedData;
 }
 
 void gt::Platform::disableSharedData()

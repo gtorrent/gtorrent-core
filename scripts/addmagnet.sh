@@ -1,1 +1,1 @@
-echo "$*" > /tmp/bigfatdick
+echo "$*" > /tmp/gfeed
