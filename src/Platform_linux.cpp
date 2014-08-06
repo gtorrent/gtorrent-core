@@ -138,13 +138,8 @@ void gt::Platform::associate(bool magnet, bool torrent)
 	TassFile.close();
 	MassFile.close();
 
-	if(magnet) system("xdg-mime default gtorrentt.desktop application/x-bittorrent");
-	if(torrent)system("xdg-mime default gtorrentm.desktop x-scheme-handler/magnet");
-}
-
-bool gt::Platform::sharedDataEnabled()
-{
-	return checkDirExist("/tmp/gfeed");
+	if(torrent) system("xdg-mime default gtorrentt.desktop application/x-bittorrent");
+	if(magnet)  system("xdg-mime default gtorrentm.desktop x-scheme-handler/magnet");
 }
 
 int fd = -1, ld = -1;
@@ -171,7 +166,7 @@ bool gt::Platform::processIsUnique()
 
 void gt::Platform::makeSharedFile()
 {
-	if(processIsUnique())
+	if(processIsUnique() && !checkDirExist("/tmp/gfeed")) //If the pipe already exists we'll just use it
 		if(mkfifo("/tmp/gfeed", 0755) == -1)
 			throw runtime_error("Couldn't create pipe! Check your permissions or if /tmp/gfeed exists");
 	fd = open("/tmp/gfeed", O_RDONLY | O_NONBLOCK); // TODO: use streams
@@ -194,12 +189,11 @@ void gt::Platform::writeSharedData(string info)
 
 string gt::Platform::readSharedData()
 {
-	string stringThatContainsTheLineWeAreAboutToReadInto;
-	char temporaryCharacterThatContainTheCharactersWeHaveReadFromThePipe = '\0';
-	while(read(fd, &temporaryCharacterThatContainTheCharactersWeHaveReadFromThePipe, 1) &&
-	        temporaryCharacterThatContainTheCharactersWeHaveReadFromThePipe != '\n')
-		stringThatContainsTheLineWeAreAboutToReadInto += temporaryCharacterThatContainTheCharactersWeHaveReadFromThePipe;
-	return stringThatContainsTheLineWeAreAboutToReadInto;
+	std::string sharedData;
+	char tmp = '\0';
+	while(read(fd, &tmp, 1) && tmp != '\n')
+		sharedData += tmp;
+	return sharedData;
 }
 
 void gt::Platform::disableSharedData()

@@ -194,7 +194,7 @@ int gt::Core::loadSession(string folder)
 
 	gt::Settings::parse("config");
 
-	if (!gt::Platform::checkDirExist(folder)               ||
+	if (!gt::Platform::checkDirExist(folder)                   ||
 	        !gt::Platform::checkDirExist(folder + "state.gts") ||
 	        !gt::Platform::checkDirExist(folder + "list.gts"))
 	{
@@ -336,7 +336,6 @@ void gt::Core::setSessionParameters()
 
 	se.user_agent = Settings::settings["UserAgent"];
 	if(Settings::settings["PieceSuggestion"] == "No") se.suggest_mode = 0;
-
 	try
 	{
 		if(stoi(Settings::settings["GlobalUploadLimit"]) > 0) se.upload_rate_limit = stoi(Settings::settings["GlobalUploadLimit"]);
@@ -347,15 +346,5 @@ void gt::Core::setSessionParameters()
 	{}
 
 	if(Settings::settings["ReportTrueDownloaded"] == "Yes") se.report_redundant_bytes = true;
-	/*	if(Settings::settings[""]);
-		if(Settings::settings[""]);
-		if(Settings::settings[""]);
-		if(Settings::settings[""]);
-		if(Settings::settings[""]);
-		if(Settings::settings[""]);
-		if(Settings::settings[""]);
-		if(Settings::settings[""]);
-		if(Settings::settings[""]);
-		if(Settings::settings[""]);*/
 	m_session.set_settings(se);
 }
