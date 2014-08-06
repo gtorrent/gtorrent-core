@@ -14,7 +14,7 @@ using namespace std;
 gt::Core::Core(int argc, char **argv) :
 	m_running(true)
 {
-	
+
 	if(!gt::Platform::processIsUnique())
 	{
 		gt::Log::Debug("An instance is already running");
@@ -36,6 +36,8 @@ gt::Core::Core(int argc, char **argv) :
 
 	for(int i = 1; i < argc; ++i)
 		addTorrent(string(argv[i]));
+
+    statuses.update(&m_torrents);
 }
 
 bool gt::Core::isMagnetLink(string const& url)
@@ -89,6 +91,7 @@ shared_ptr<gt::Torrent> gt::Core::addTorrent(string path, vector<char> *resumeda
 				t->setSequentialDownload(gt::Settings::settings["SequentialDownloadExtensions"].find(ext) != string::npos);
 			}
 		}
+        statuses.update(&m_torrents);
 		return t;
 	}
 }
@@ -108,6 +111,7 @@ void gt::Core::removeTorrent(shared_ptr<Torrent> t)
 		++i;
 	}
 	m_torrents.resize(m_torrents.size() - 1);
+    statuses.update(&m_torrents);
 }
 
 /*
@@ -172,7 +176,7 @@ int gt::Core::saveSession(string folder)
 			gt::Log::Debug("Received alert wasn't about resume data. Skipping.");
 			continue;
 		}
-		
+
 		libtorrent::save_resume_data_alert *rd = (libtorrent::save_resume_data_alert*)al;
 		libtorrent::torrent_handle h = rd->handle;
 		ofstream out((folder + "meta/" + h.status().name + ".fastresume").c_str(), std::ios_base::binary);
@@ -359,3 +363,41 @@ void gt::Core::setSessionParameters()
 	if(Settings::settings[""]);*/
 	m_session.set_settings(se);
 }
+
+int gt::Core::statusList::update(std::vector<std::shared_ptr<Torrent>> *tl) {
+    downloading.clear();
+    seeding.clear();
+    checking.clear();
+    stopped.clear();
+    finished.clear();
+    for(int i = 0; i < tl->size(); i++) {
+        if(tl->at(i)->getState() == libtorrent::torrent_status::state_t::downloading) {
+            downloading.push_back(tl->at(i));
+            continue;
+        }
+        if(tl->at(i)->getState() == libtorrent::torrent_status::state_t::seeding) {
+            seeding.push_back(tl->at(i));
+            continue;
+        }
+        if((tl->at(i)->getState() == libtorrent::torrent_status::state_t::checking_files)||(tl->at(i)->getState() == libtorrent::torrent_status::state_t::checking_resume_data)) {
+            checking.push_back(tl->at(i));
+            continue;
+        }
+        if(tl->at(i)->getState() == libtorrent::torrent_status::state_t::finished) {
+            finished.push_back(tl->at(i));
+            continue;
+        }
+        /* if(tl->at(i).getState() == libtorrent::torrent_status::state_t::paused) {
+            paused.push_back(tl->at(i));
+        } */
+        stopped.push_back(tl->at(i));
+    }
+    return 1;
+}
+
+gt::Core::statusList* gt::Core::getStatuses() {
+    return &statuses;
+}
+
+
+
