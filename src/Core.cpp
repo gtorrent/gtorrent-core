@@ -14,7 +14,7 @@ using namespace std;
 gt::Core::Core(int argc, char **argv) :
 	m_running(true)
 {
-	
+
 	if(!gt::Platform::processIsUnique())
 	{
 		gt::Log::Debug("An instance is already running");
@@ -172,7 +172,7 @@ int gt::Core::saveSession(string folder)
 			gt::Log::Debug("Received alert wasn't about resume data. Skipping.");
 			continue;
 		}
-		
+
 		libtorrent::save_resume_data_alert *rd = (libtorrent::save_resume_data_alert*)al;
 		libtorrent::torrent_handle h = rd->handle;
 		ofstream out((folder + "meta/" + h.status().name + ".fastresume").c_str(), std::ios_base::binary);
@@ -195,8 +195,8 @@ int gt::Core::loadSession(string folder)
 	gt::Settings::parse("config");
 
 	if (!gt::Platform::checkDirExist(folder)               ||
-		!gt::Platform::checkDirExist(folder + "state.gts") ||
-		!gt::Platform::checkDirExist(folder + "list.gts"))
+	        !gt::Platform::checkDirExist(folder + "state.gts") ||
+	        !gt::Platform::checkDirExist(folder + "list.gts"))
 	{
 		// Also creates an empty session.
 		gt::Log::Debug(string("Creating new session folder in: " + gt::Platform::getDefaultConfigPath()).c_str());
@@ -347,15 +347,15 @@ void gt::Core::setSessionParameters()
 	{}
 
 	if(Settings::settings["ReportTrueDownloaded"] == "Yes") se.report_redundant_bytes = true;
-/*	if(Settings::settings[""]);
-	if(Settings::settings[""]);
-	if(Settings::settings[""]);
-	if(Settings::settings[""]);
-	if(Settings::settings[""]);
-	if(Settings::settings[""]);
-	if(Settings::settings[""]);
-	if(Settings::settings[""]);
-	if(Settings::settings[""]);
-	if(Settings::settings[""]);*/
+	/*	if(Settings::settings[""]);
+		if(Settings::settings[""]);
+		if(Settings::settings[""]);
+		if(Settings::settings[""]);
+		if(Settings::settings[""]);
+		if(Settings::settings[""]);
+		if(Settings::settings[""]);
+		if(Settings::settings[""]);
+		if(Settings::settings[""]);
+		if(Settings::settings[""]);*/
 	m_session.set_settings(se);
 }

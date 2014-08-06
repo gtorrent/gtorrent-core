@@ -156,9 +156,9 @@ void gt::Settings::setDefaults()
 	settings["DHTUploadLimit"] = "4000"; // it is the default in libtorrent, should be set higher for seedboxes
 	// Set to yes if you want to count in the amount of redundant bytes downloaded that is sent to the tracker
 	settings["ReportTrueDownloaded"] = "No";
-	settings["DefaultSequentialDownloading"] = "No"; // When is Yes, will set seq by default only if the torrent has a single file that ends in the below list 
+	settings["DefaultSequentialDownloading"] = "No"; // When is Yes, will set seq by default only if the torrent has a single file that ends in the below list
 	settings["SequentialDownloadExtensions"] = "mkv/mp3/flac/mp4/mp5/avi";
 
-    //////////////////// Below this line, the options aren't implemented into core yet. ////////////////////////
+	//////////////////// Below this line, the options aren't implemented into core yet. ////////////////////////
 
 }

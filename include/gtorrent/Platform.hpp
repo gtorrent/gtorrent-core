@@ -7,7 +7,7 @@ using namespace std;
 
 namespace gt
 {
-        class Torrent;
+	class Torrent;
 
 	namespace Platform
 	{
