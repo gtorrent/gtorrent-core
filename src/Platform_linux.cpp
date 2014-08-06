@@ -137,13 +137,8 @@ void gt::Platform::associate(bool magnet, bool torrent)
 	TassFile.close();
 	MassFile.close();
 
-	if(magnet) system("xdg-mime default gtorrentt.desktop application/x-bittorrent");
-	if(torrent)system("xdg-mime default gtorrentm.desktop x-scheme-handler/magnet");
-}
-
-bool gt::Platform::sharedDataEnabled()
-{
-	return checkDirExist("/tmp/gfeed");
+	if(torrent) system("xdg-mime default gtorrentt.desktop application/x-bittorrent");
+	if(magnet)  system("xdg-mime default gtorrentm.desktop x-scheme-handler/magnet");
 }
 
 int fd = -1, ld = -1;

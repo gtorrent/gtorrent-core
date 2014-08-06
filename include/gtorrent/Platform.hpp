@@ -44,7 +44,6 @@ namespace gt
 
 		void   associate(bool, bool);
 
-		bool   sharedDataEnabled();
 		void   makeSharedFile();
 		bool   processIsUnique();
 		void   writeSharedData(string info);
