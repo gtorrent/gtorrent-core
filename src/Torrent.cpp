@@ -99,6 +99,24 @@ gt::Torrent::Torrent(string path) : m_path(path)
 			throw - 1; //Throw error if construction of libtorrent::torrent_info fails.
 		}
 	}
+
+//	onStateChanged = [](int i, shared_ptr<Torrent> j) { std::cout << "State Changed ! Old state was " << i << ", new state is " << j->getHandle().status().state << std::endl; }; // default handler
+	onStateChanged = std::bind(&gt::Torrent::defaultCallback, this, placeholders::_1, placeholders::_2);
+	/*
+	 * To use, for example in GtkMainWindow, let's say tor is a shared_ptr, you would write
+	 * tor->onStateChanged = [](int oldstate, shared_ptr<gt::Torrent> sender) {...}
+	 * oldstate is just the state_t enum, you can't use it to determine if the torrent was paused
+	 * sender is the ptr to the torrent that just changed state.
+	 * You can use std::bind to make it call a member of your class instead of lambdas:
+	 * tor->onStateChanged = std::bind(&GtkMainWindow::torrentStateChangedCallback, this, placeholders::_1, placeholders::_2);
+	 * where torrentStateChangedCallback must take an int parameter and shared_ptr<gt::Torrent> parameter
+	 * Yup placeholders are a special kind of disgusting but even boost has them so it's either that or add deps on libsigc
+	 */
+}
+
+void gt::Torrent::defaultCallback(int i, shared_ptr<Torrent> j)
+{
+	std::cout << "State Changed ! Old state was " << i << ", new state is " << j->getHandle().status().state << std::endl;
 }
 
 void gt::Torrent::setSavePath(string savepath)

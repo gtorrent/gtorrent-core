@@ -245,6 +245,24 @@ shared_ptr<gt::Torrent> gt::Core::update()
 {
 	string str = gt::Platform::readSharedData();
 	if(!str.empty()) gt::Log::Debug(str.c_str());
+	m_session.set_alert_mask(0x00000040);
+	std::deque<libtorrent::alert*> alerts;
+	m_session.pop_alerts(&alerts);
+	while(!alerts.empty())
+	{
+		libtorrent::alert *al = alerts[0];
+		if(al->category() != libtorrent::alert::status_notification) { alerts.pop_front(); continue; }
+		libtorrent::state_changed_alert *scal = static_cast<libtorrent::state_changed_alert *>(al);
+		for(auto tor : m_torrents)
+			if(tor->getHandle() == scal->handle)
+			{
+				tor->onStateChanged(scal->prev_state, tor);
+				break;
+			}
+		alerts.pop_front();
+	}
+
+	m_session.set_alert_mask(0x7FFFFFFF);
 	return addTorrent(str);
 }
 

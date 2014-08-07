@@ -27,9 +27,9 @@ namespace gt
 
 	public:
 		Torrent(string path);
-
+		std::function<void(int, shared_ptr<Torrent>)> onStateChanged;
 		bool pollEvent(gt::Event &event);
-
+		void defaultCallback(int, shared_ptr<Torrent>);
 		/* Think twice next time before mixing const correctness with inline */
 		// Getters
 		inline libtorrent::add_torrent_params getTorrentParams()
