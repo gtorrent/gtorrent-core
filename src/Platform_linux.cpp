@@ -58,14 +58,20 @@ int gt::Platform::makeDir(std::string dir, mode_t mode)
 	return mkdir(dir.c_str(), mode);
 }
 
+string gt::Platform::getExecutablePath()
+{
+	char ExecutablePath[4096] = { 0 };
+	readlink("/proc/self/exe", ExecutablePath, 4096);
+
+	return string(ExecutablePath);
+}
+
 void gt::Platform::associate(bool magnet, bool torrent)
 {
 	makeDir(getHomeDir() + ".local", 0755);
 	makeDir(getHomeDir() + ".local/share", 0755);
 	makeDir(getHomeDir() + ".local/share/applications", 0755);
 
-	char ExecutablePath[4096] = { 0 };
-	readlink("/proc/self/exe", ExecutablePath, 4096);
 
 	bool dirtyT = false, dirtyM = false;
 
@@ -77,7 +83,7 @@ void gt::Platform::associate(bool magnet, bool torrent)
 		{
 			string tmp;
 			for(int i = 0; i < 6; ++i) getline(file, tmp);
-			dirtyT = (tmp != string("Exec=") + ExecutablePath + " %F\n");
+			dirtyT = (tmp != string("Exec=") + getExecutablePath() + " %F\n");
 		}
 		else
 			dirtyT = true;
@@ -92,7 +98,7 @@ void gt::Platform::associate(bool magnet, bool torrent)
 		{
 			string tmp;
 			for(int i = 0; i < 6; ++i) getline(file, tmp);
-			dirtyM = (tmp != string("Exec=") + ExecutablePath + " %u\n");
+			dirtyM = (tmp != string("Exec=") + getExecutablePath() + " %u\n");
 		}
 		else
 			dirtyM = true;
@@ -103,32 +109,32 @@ void gt::Platform::associate(bool magnet, bool torrent)
 	std::ofstream MassFile(getHomeDir() + ".local/share/applications/gtorrentm.desktop");
 
 	string TassString =
-	    string("[Desktop Entry]\n")							 +
-	    "Version=1.0\n"										 +
-	    "Encoding=UTF-8\n"									 +
-	    "Name=gTorrent\n"									 +
-	    "GenericName=BitTorrent Client\n"					 +
-	    "Comment=Share files over BitTorrent\n"				 +
-	    "Exec=" + ExecutablePath + " %F\n"					 +
-	    "Icon=gtorrent.png\n"								 +
-	    "Terminal=false\n"									 +
-	    "Type=Application\n"								 +
-	    "MimeType=application/x-bittorrent;\n"				 +
-	    "Categories=Internet;Network;FileTransfer;P2P;GTK;\n";
+		string("[Desktop Entry]\n")                          +
+		"Version=1.0\n"                                      +
+		"Encoding=UTF-8\n"                                   +
+		"Name=gTorrent\n"                                    +
+		"GenericName=BitTorrent Client\n"                    +
+		"Comment=Share files over BitTorrent\n"              +
+		"Exec=" + getExecutablePath() + " %F\n"              +
+		"Icon=gtorrent.png\n"                                +
+		"Terminal=false\n"                                   +
+		"Type=Application\n"                                 +
+		"MimeType=application/x-bittorrent;\n"               +
+		"Categories=Internet;Network;FileTransfer;P2P;GTK;\n";
 
 	string MassString =
-	    string("[Desktop Entry]\n")							 +
-	    "Version=1.0\n"										 +
-	    "Encoding=UTF-8\n"									 +
-	    "Name=gTorrent\n"									 +
-	    "GenericName=BitTorrent Client\n"					 +
-	    "Comment=Share files over BitTorrent\n"				 +
-	    "Exec=" + ExecutablePath + " %u\n"					 +
-	    "Icon=gtorrent.png\n"								 +
-	    "Terminal=false\n"									 +
-	    "Type=Application\n"								 +
-	    "MimeType=x-scheme-handler/magnet;\n;"				 +
-	    "Categories=Internet;Network;FileTransfer;P2P;GTK;\n";
+		string("[Desktop Entry]\n")                          +
+		"Version=1.0\n"                                      +
+		"Encoding=UTF-8\n"                                   +
+		"Name=gTorrent\n"                                    +
+		"GenericName=BitTorrent Client\n"                    +
+		"Comment=Share files over BitTorrent\n"              +
+		"Exec=" + getExecutablePath() + " %u\n"              +
+		"Icon=gtorrent.png\n"                                +
+		"Terminal=false\n"                                   +
+		"Type=Application\n"                                 +
+		"MimeType=x-scheme-handler/magnet;\n;"               +
+		"Categories=Internet;Network;FileTransfer;P2P;GTK;\n";
 
 	if(dirtyT)
 		TassFile << TassString;
