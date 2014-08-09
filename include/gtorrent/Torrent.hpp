@@ -123,24 +123,11 @@ namespace gt
 		inline std::string getTotalWantedString() { return getFileSizeString(getHandle().status().total_wanted); }
 		inline std::string getAllTimeUploadString() { return getFileSizeString(getHandle().status().all_time_upload); }
 		inline std::string getAllTimeDownloadString() { return getFileSizeString(getHandle().status().all_time_download); }
-		inline std::string getAddedTimeString()
-		{
-			std::stringstream at;
-			at << getHandle().status().added_time;
-			return at.str();
-		}
-		inline std::string getCompletedTimeString()
-		{
-			std::stringstream ct;
-			ct << getHandle().status().completed_time;
-			return ct.str();
-		}
-		inline std::string getLastSeenCompleteString()
-		{
-			std::stringstream lsc;
-			lsc << getHandle().status().last_seen_complete;
-			return lsc.str();
-		}
+
+		inline std::string getAddedTimeString() { return getTimeString(getHandle().status().added_time); }
+		inline std::string getCompletedTimeString() { return getTimeString(getHandle().status().completed_time); }
+		inline std::string getLastSeenCompleteString() { return getTimeString(getHandle().status().last_seen_complete); }
+
 		inline std::string getStorageModeString()
 		{
 			std::stringstream sm;
@@ -280,6 +267,7 @@ namespace gt
 			dbq << getHandle().status().down_bandwidth_queue;
 			return dbq.str();
 		}
+
 		inline std::string getTimeSinceUploadString() { return getTimeString(getHandle().status().time_since_upload); }
 		inline std::string getTimeSinceDownloadString() { return getTimeString(getHandle().status().time_since_download); }
 		inline std::string getActiveTimeString() { return getTimeString(getActiveTime()); }
