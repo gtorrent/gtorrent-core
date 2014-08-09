@@ -24,19 +24,19 @@ Gets the path passed in to the constructor.
 
 Returns the number of seconds the torrent has been active.
 
-- `string getActiveTimeString()`
+- `string getTextActiveTime()`
 
 Returns the active time formatted as a string.
 
-- `boost::int64_t getEta()`
+- `boost::int64_t getEta()` 
 
 Returns the ETA in seconds for the torrent.
 
-- `string getEtaString()`
+- `string getTextEta()` 
 
 Returns the ETA formatted as string
 
-- `vector<bool> getPieces()`
+- `vector<bool> getPieces()` 
 
 Returns a vector of bools representing the pieces - true if we have it and false otherwise.
 
@@ -100,27 +100,27 @@ Returns the URL of the last working tracker
 
 Force a recheck of the torrent
 
-- `string getStateString()`
+- `string getTextState()`
 
 Returns a the torrent state as a string.
 
-- `string getUploadRateString()`
+- `string getTextUploadRate()`
 
 Returns the current upload rate as a string.
 
-- `string getDownloadRateString()`
+- `string getTextDownloadRate()`
 
 Returns the current download rate as a string.
 
-- `string getTotalUploadedString()`
+- `string getTextTotalUploaded()`
 
 Returns the current upload total as a string.
 
-- `string getTotalDownloadedString()`
+- `string getTextTotalDownloaded()`
 
 Returns the current download total as a string.
 
-- `string getSizeString()`
+- `string getTextSize()`
 
 Returns the total size of files in the torrent as a string.
 
@@ -128,15 +128,15 @@ Returns the total size of files in the torrent as a string.
 
 Returns the total size of files remaining to download in the torrent.
 
-- `string getRemainingString()`
+- `string getTextRemaining()`
 
 Returns the total size of files remaining to download in the torrent as a string.
 
-- `string getTotalRatioString()`
+- `string getTextTotalRatio()`
 
 Returns the current ratio as a string.
 
-- `string getTimeRemainingString()`
+- `string getTextTimeRemaining()`
 
 Returns a friendly string for the current time remaining
 
@@ -161,3 +161,4 @@ Resumes the torrent.
 - `void pause()`
 
 Pauses the torrent.
+
