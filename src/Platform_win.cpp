@@ -7,23 +7,23 @@
 
 #include <windows.h>
 
-typedef int mode_t;
-
 // TODO Make sure any of this works. Fix all the pipe garbage (which is still a problem in Platform_linux.cpp) Figure
 // out how to do the file association garbage using the registry.
 
-bool gt::Platform::checkDirExist(string dir)
+// This will be renamed when Platform_linux.cpp and Platform.hpp change
+// Actually checks if file/directory exists.
+bool gt::Platform::checkDirExist(string file)
 {
-    DWORD f_attrib = GetFileAttributes(dir.c_str())
-    if(f_attrib & FILE_ATTRIBUTE_DIRECTORY)
+    DWORD f_attrib = GetFileAttributes(file.c_str())
+    if(f_attrib != INVALID_FILE_ATTRIBUTES)
     {
-        gt::Log::Debug(string(dir + " exists,").c_str());
-        return 0;
+        gt::Log::Debug(string(file + " exists,").c_str());
+        return true;
     }
     else
     {
-        gt::Log::Debug(string(dir + " doesn't exist,").c_str());
-        return 1;
+        gt::Log::Debug(string(file + " doesn't exist,").c_str());
+        return false;
     }
 }
 
@@ -53,7 +53,7 @@ string getTempDir()
     return string(getenv("TMP")) + '\\';
 }
 
-int gt::Platform::makeDir(string dir, mode_t mode)
+int gt::Platform::makeDir(string dir, int mode)
 {
     // TODO Actually use mode? Who really cares about perms in windows?
     return CreateDirectory(dir);
