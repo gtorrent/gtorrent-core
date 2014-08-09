@@ -38,17 +38,7 @@ namespace gt
 
 		bool pollEvent(gt::Event &event);
 
-		std::string YesNo(bool input)
-		{
-			if(input)
-			{
-				return "yes";
-			}
-			else
-			{
-				return "no";
-			}
-		}
+		std::string YesNo(bool input) { return input ? "Yes" : "No"; }
 
 		/* Think twice next time before mixing const correctness with inline */
 		// Getters
