@@ -477,9 +477,7 @@ namespace gt
 		}
 		inline std::string getBlockSizeString()
 		{
-			std::stringstream bs;
-			bs << getHandle().status().block_size;
-			return bs.str();
+			return getFileSizeString(getHandle().status().block_size);
 		}
 		inline std::string getNumUploadsString()
 		{
@@ -519,15 +517,11 @@ namespace gt
 		}
 		inline std::string getTimeSinceUploadString()
 		{
-			std::stringstream tsu;
-			tsu << getHandle().status().time_since_upload;
-			return tsu.str();
+			return getTimeString(getHandle().status().time_since_upload);
 		}
 		inline std::string getTimeSinceDownloadString()
 		{
-			std::stringstream tsd;
-			tsd << getHandle().status().time_since_download;
-			return tsd.str();
+			return getTimeString(getHandle().status().time_since_download);
 		}
 		// Returns formatted active time as std::string
 		inline std::string getActiveTimeString()
@@ -550,9 +544,7 @@ namespace gt
 		}
 		inline std::string getLastScrapeString()
 		{
-			std::stringstream ls;
-			ls << getHandle().status().last_scrape;
-			return ls.str();
+			return getTimeString(getHandle().status().last_scrape);
 		}
 		inline std::string getSparseRegionsString()
 		{
