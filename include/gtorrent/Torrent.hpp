@@ -40,7 +40,6 @@ namespace gt
 
 		std::string YesNo(bool input) { return input ? "Yes" : "No"; }
 
-		/* Think twice next time before mixing const correctness with inline */
 		// Getters
 		inline libtorrent::add_torrent_params getTorrentParams()
 		{
@@ -54,175 +53,144 @@ namespace gt
 		{
 			return m_path;
 		}
-		// Returns number of seconds the torrent has been active
 		inline boost::int64_t getActiveTime()
 		{
 			return m_handle.status().active_time;
 		}
 
-		// Returns number of seconds eta for the torrent
 		inline boost::int64_t getEta()
 		{
 			return (getDownloadRate() <= 0) ? -1 : (getWanted() / getDownloadRate());
 		}
 
-		// Returns formatted eta as std::string
 		inline std::string getEtaString()
 		{
 			return getTimeString(getEta());
 		}
 
-		// Returns astd::vector of bools for each piece, true if we have it, false otherwise
 		std::vector<bool> getPieces();
 
-		// Returns percentage of all files downloading
 		inline float getTotalProgress()
 		{
 			return ((float) getHandle().status().progress_ppm / 1000000.0f) * 100.0f;
 		}
 
-		// Returns the current upload rate of the torrent
 		inline unsigned int getUploadRate()
 		{
 			return (isPaused() ? 0 : getHandle().status().upload_rate);
 		}
 
-		// Returns the current download rate of the torrent
 		inline unsigned int getDownloadRate()
 		{
 			return (isPaused() ? 0 : getHandle().status().download_rate);
 		}
 
-		// Returns the progress in PPM of all files downloading in this torrent
 		inline unsigned int getPPMProgress()
 		{
 			return getHandle().status().progress_ppm;
 		}
 
-		// Returns the current number of seeders attached to the file
 		inline unsigned int getTotalSeeders()
 		{
 			return getHandle().status().num_seeds;
 		}
 
-		// Returns the current number of peers attached to the file
 		inline unsigned int getTotalPeers()
 		{
 			return getHandle().status().num_peers;
 		}
 
-		// Returns the current number of leechers attached to the file
 		inline unsigned int getTotalLeechers()
 		{
 			return getTotalPeers() - getTotalSeeders();
 		}
 
-		// Returns the current amount of data uploaded for this torrent
 		inline boost::int64_t getTotalUploaded()
 		{
 			return getHandle().status().total_upload;
 		}
 
-		// Returns the current amount of data downloaded for this torrent
 		inline boost::int64_t getTotalDownloaded()
 		{
 			return getHandle().status().total_download;
 		}
 
-		// Returns the total size of files in this torrent
 		inline boost::int64_t getSize()
 		{
 			return getHandle().status().total_wanted;
 		}
 
-		// Returns the total size of wanted files in this torrent
 		// TODO: Remove this, duplicate of getSize()
 		inline boost::int64_t getWanted()
 		{
 			return getSize();
 		}
 
-		//Returns the size of the torrent
 		// TODO: Remove this, duplicate of getSize()
 		inline boost::int64_t getTorrentSize()
 		{
 			return getSize();
 		}
 
-		//Returns the elapsed time remaining in seconds
 		inline boost::int64_t getTimeRemaining()
 		{
 			return (getDownloadRate() > 0) ? getTorrentSize() / getDownloadRate() : 0;
 		}
 
-		// Returns the ratio (uploaded/downloaded) for this torrent
 		float getTotalRatio();
 
-		// Returns the current torrent state (downloading, queueing, seeding, etc)
 		inline libtorrent::torrent_status::state_t getState()
 		{
 			return m_handle.status().state;
 		}
 
-		//Returns the URL of the last working tracker
 		inline std::string getCurrentTrackerURL()
 		{
 			return m_handle.status().current_tracker;
 		}
 
-		//Force a recheck of the torrent
 		void torrentForceRecheck();
 
-		// Returns a friendly std::string for the torrent state
 		std::string getStateString();
 
-		// Returns a friendly std::string for the current upload rate
 		inline std::string getUploadRateString()
 		{
 			return getRateString(getUploadRate());
 		}
 
-		// Returns a friendly std::string for the current download rate
 		inline std::string getDownloadRateString()
 		{
 			return getRateString(getDownloadRate());
 		}
 
-		// Returns a friendly std::string for the current upload total
 		inline std::string getTotalUploadedString()
 		{
 			return getFileSizeString(getTotalUploaded());
 		}
 
-		// Returns a friendly std::string for the current download total
 		inline std::string getTotalDownloadedString()
 		{
 			return getFileSizeString(getTotalDownloaded());
 		}
 
-		// Returns a friendly std::string for the total size of files in torrent
 		inline std::string getSizeString()
 		{
 			return getFileSizeString(getSize());
 		}
 
-		// Returns a the total size of files remaining to download in torrent
 		inline boost::int64_t getRemaining()
 		{
 			return getSize() - getTotalDownloaded();
 		}
 
-		// Returns a friendly std::string for the total size of files remaining to download in torrent
 		inline std::string getRemainingString()
 		{
 			return getFileSizeString(getRemaining());
 		}
 
-		// Returns a friendly std::string for the current ratio
 
 		std::string getTotalRatioString();
 
-		// Returns a friendly std::string for the current time remaining
 		inline std::string getTimeRemainingString()
 		{
 			return getTimeString(getTimeRemaining());
