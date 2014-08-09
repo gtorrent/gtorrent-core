@@ -244,21 +244,18 @@ namespace gt
 		}
 		inline std::string getTorrentFileNameString()
 		{
-			//return std::string(getHandle().status().torrent_file);
 			std::stringstream tfn;
 			tfn << "torrent-filename.torrent";
 			return tfn.str();
 		}
 		inline std::string getNextAnnounceString()
 		{
-			//boost::posix_time::time_duration next_announce;
 			std::stringstream na;
 			na << getHandle().status().next_announce;
 			return na.str();
 		}
 		inline std::string getAnnounceIntervalString()
 		{
-			//boost::posix_time::time_duration announce_interval;
 			return to_simple_string(getHandle().status().announce_interval);
 		}
 		inline std::string getCurrentTrackerString()
@@ -267,66 +264,54 @@ namespace gt
 		}
 		inline std::string getTotalPayloadDownloadString()
 		{
-			//size_type total_payload_download;
 			return getFileSizeString(getHandle().status().total_payload_download);
 		}
 		inline std::string getTotalPayloadUploadString()
 		{
-			//size_type total_payload_upload;
 			return getFileSizeString(getHandle().status().total_payload_upload);
 		}
 		inline std::string getFailedBytesString()
 		{
-			//size_type total_failed_bytes;
 			return getFileSizeString(getHandle().status().total_failed_bytes);
 		}
 		inline std::string getRedundantBytesString()
 		{
-			//size_type total_redundant_bytes;
 			return getFileSizeString(getHandle().status().total_redundant_bytes);
 		}
 		inline std::string getTotalDoneString()
 		{
-			//size_type total_done;
 			return getFileSizeString(getHandle().status().total_done);
 		}
 		inline std::string getWantedDoneString()
 		{
-			//size_type total_wanted_done;
 			return getFileSizeString(getHandle().status().total_wanted_done);
 		}
 		inline std::string getTotalWantedString()
 		{
-			//size_type total_wanted;
 			return getFileSizeString(getHandle().status().total_wanted);
 		}
 		inline std::string getAllTimeUploadString()
 		{
-			////size_type all_time_upload;
 			return getFileSizeString(getHandle().status().all_time_upload);
 		}
 		inline std::string getAllTimeDownloadString()
 		{
-			//size_type all_time_download;
 			return getFileSizeString(getHandle().status().all_time_download);
 		}
 		inline std::string getAddedTimeString()
 		{
-			//time_t added_time;
 			std::stringstream at;
 			at << getHandle().status().added_time;
 			return at.str();
 		}
 		inline std::string getCompletedTimeString()
 		{
-			//time_t completed_time;
 			std::stringstream ct;
 			ct << getHandle().status().completed_time;
 			return ct.str();
 		}
 		inline std::string getLastSeenCompleteString()
 		{
-			//time_t last_seen_complete;
 			std::stringstream lsc;
 			lsc << getHandle().status().last_seen_complete;
 			return lsc.str();
@@ -481,7 +466,6 @@ namespace gt
 		{
 			return getTimeString(getHandle().status().time_since_download);
 		}
-		// Returns formatted active time as std::string
 		inline std::string getActiveTimeString()
 		{
 			return getTimeString(getActiveTime());
