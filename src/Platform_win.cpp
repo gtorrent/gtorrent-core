@@ -14,7 +14,7 @@
 // Actually checks if file/directory exists.
 bool gt::Platform::checkDirExist(string file)
 {
-    DWORD f_attrib = GetFileAttributes(file.c_str())
+    DWORD f_attrib = GetFileAttributes(file.c_str());
     if(f_attrib != INVALID_FILE_ATTRIBUTES)
     {
         gt::Log::Debug(string(file + " exists,").c_str());
@@ -53,16 +53,17 @@ string getTempDir()
     return string(getenv("TMP")) + '\\';
 }
 
-int gt::Platform::makeDir(string dir, int mode)
+int gt::Platform::makeDir(string dir, mode_t mode)
 {
     // TODO Actually use mode? Who really cares about perms in windows?
-    return CreateDirectory(dir);
+    return CreateDirectory(dir.c_str(), NULL);
 }
 
 string gt::Platform::getExecutablePath()
 {
+    // A path is usually not 4096 chars long, right?
     char ExecutablePath[4096] = { 0 };
-    GetModuleFilename(NULL, ExecutablePath, 4096);
+    GetModuleFileName(NULL, ExecutablePath, 4096);
 
     return string(ExecutablePath);
 }
@@ -88,10 +89,10 @@ bool gt::Platform::processIsUnique()
         gt::Log::Debug("The lock wasn't ready, retrying...");
         if(!checkDirExist(getDefaultConfigPath()))
             makeDir(getDefaultConfigPath(), 0755);
-        ld = CreateFile(string(getDefaultConfigPath() + "gtorrent.lock").c_str(), GENERIC_READ | GENERIC_WRITE, 0, NULL, CREATE_NEW, FILE_ATTRIBUTE_NORMAL);
+        ld = CreateFile(string(getDefaultConfigPath() + "gtorrent.lock").c_str(), GENERIC_READ | GENERIC_WRITE, 0, NULL, CREATE_NEW, FILE_ATTRIBUTE_NORMAL, NULL);
         return processIsUnique();
     }
-    int state = LockFile(ld);
+    int state = LockFile(ld, 0, 0, 1, 0);
     if(state == 0)
         gt::Log::Debug("Process is unique");
     if(state)
@@ -101,14 +102,14 @@ bool gt::Platform::processIsUnique()
 
 void gt::Platform::makeSharedFile()
 {
-    if(processIsUnique() && !checkDirExist(getTempDir() + "gfeed")
-        if(CreateNamedPipe(getTempDir() + "gfeed") == INVALID_HANDLE_VALUE)
-            throw runtime_error("Couldn't create pipe! Check your permissions or if " + string(getenv("TMP") + "\\gfeed exists"));
-    fd = CreateFile((getTempDir() + "gfeed").c_str(), GENERIC_READ, 0, NULL, CREATE_NEW, FILE_ATTRIBUTE_NORMAL);
+    if(processIsUnique() && !checkDirExist(getTempDir() + "gfeed"))
+        if(CreateNamedPipe((getTempDir() + "gfeed").c_str(), PIPE_ACCESS_OUTBOUND, PIPE_TYPE_MESSAGE | PIPE_NOWAIT, 1, 1, 1, 0, NULL) == INVALID_HANDLE_VALUE)
+            throw runtime_error("Couldn't create pipe! Check your permissions or if " + string(getenv("TMP")) + string("\\gfeed exists"));
+    fd = CreateFile((getTempDir() + "gfeed").c_str(), GENERIC_READ | GENERIC_WRITE, 0, NULL, CREATE_NEW, FILE_ATTRIBUTE_NORMAL, NULL);
     if(fd == INVALID_HANDLE_VALUE)
         throw runtime_error("Couldn't open pipe");
     if(ld == INVALID_HANDLE_VALUE)
-        ld = CreateFile((getTempDir() + "gtorrent.lock").c_str(), GENERIC_READ | GENERIC_WRITE, 0, NULL, CREATE_NEW, FILE_ATTRIBUTE_NORMAL);
+        ld = CreateFile((getTempDir() + "gtorrent.lock").c_str(), GENERIC_READ | GENERIC_WRITE, 0, NULL, CREATE_NEW, FILE_ATTRIBUTE_NORMAL, NULL);
     if(ld == INVALID_HANDLE_VALUE)
         throw runtime_error("Couldn't open pipe");
     processIsUnique();
@@ -125,7 +126,7 @@ string gt::Platform::readSharedData()
 {
     std::string sharedData;
     char tmp = '\0';
-    while(read(fd, &tmp, 1) && tmp != '\n')
+    while(ReadFile(fd, &tmp, 1, NULL, NULL) && tmp != '\n')
         sharedData += tmp;
     return sharedData;
 }
@@ -133,7 +134,7 @@ string gt::Platform::readSharedData()
 void gt::Platform::disableSharedData()
 {
     // Just copying the quality code from Platform_linux
-    remove(getTempDir() + "gfeed");
+    remove((getTempDir() + "gfeed").c_str());
 }
 
 void gt::Platform::openTorrent(shared_ptr<gt::Torrent> t)
@@ -143,6 +144,6 @@ void gt::Platform::openTorrent(shared_ptr<gt::Torrent> t)
 
     if(files.num_files() > 1)
         path = path.substr(0, path.find_last_of('\\'));
-
-    // TODO Find out what the fuck xdg-open does because fuck the guy who made the system call in Platform_linux
+    // Windows actually does this better than linux :o
+    ShellExecute(0, 0, path.c_str(), 0, 0, SW_SHOW);
 }
