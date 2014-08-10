@@ -17,7 +17,7 @@ bool gt::Platform::checkDirExist(string dir)
 	if(state == 0)
 		gt::Log::Debug(string(dir + " exists,").c_str());
 	if(state != 0)
-		gt::Log::Debug(string(dir + " deoesn't exists,").c_str());
+		gt::Log::Debug(string(dir + " doesn't exists,").c_str());
 	return state == 0; //stat() returns 0 if the dir exist
 }
 
