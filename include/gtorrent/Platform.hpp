@@ -37,7 +37,7 @@ namespace gt
 		 * Creates a directory
 		 * returns the values of the POSIX syscall.
 		 */
-		int    makeDir(std::string, mode_t);
+		int    makeDir(std::string, unsigned);
 		/**
 		 * Checks if a directory exists.
 		 */

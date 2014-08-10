@@ -53,7 +53,7 @@ string getTempDir()
     return string(getenv("TMP")) + '\\';
 }
 
-int gt::Platform::makeDir(string dir, mode_t mode)
+int gt::Platform::makeDir(string dir, unsigned mode)
 {
     // TODO Actually use mode? Who really cares about perms in windows?
     return CreateDirectory(dir.c_str(), NULL);
