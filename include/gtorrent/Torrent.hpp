@@ -14,7 +14,7 @@ std::string getFileSizeString(boost::int64_t file_size);
 
 namespace libtorrent
 {
-	class add_torrent_params;
+	struct add_torrent_params;
 }
 
 namespace gt
