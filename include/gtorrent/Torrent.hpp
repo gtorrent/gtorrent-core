@@ -7,15 +7,11 @@
 
 #include <libtorrent/session.hpp>
 #include <libtorrent/torrent_handle.hpp>
+#include <libtorrent/add_torrent_params.hpp>
 
 std::string getTimeString(boost::int64_t time_s);
 std::string getRateString(boost::int64_t file_rate);
 std::string getFileSizeString(boost::int64_t file_size);
-
-namespace libtorrent
-{
-	class add_torrent_params;
-}
 
 namespace gt
 {
