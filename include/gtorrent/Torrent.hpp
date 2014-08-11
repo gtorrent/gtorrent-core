@@ -82,7 +82,14 @@ namespace gt
 		// Returns formatted eta as string
 		inline std::string getEtaString()
 		{
-			return getTimeString(getEta());
+			if (getHandle().status().progress_ppm == 1000000)
+			{
+				return "∞";
+			}
+			else
+			{
+				return getTimeString(getEta());
+			}
 		}
 
 		// Returns a vector of bools for each piece, true if we have it, false otherwise
