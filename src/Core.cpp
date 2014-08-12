@@ -69,7 +69,7 @@ shared_ptr<gt::Torrent> gt::Core::addTorrent(string path, vector<char> *resumeda
 
 	//Actually, libtorrent silentely deals with duplicates, we just have to make this function not to return another Torrent to the UI
 	for(auto tor : getTorrents())
-		if(t->getHandle().status().has_metadata && tor->getHandle().info_hash() == t->getTorrentParams().ti->info_hash())
+		if((h.status().has_metadata && tor->getHandle().info_hash() == t->getTorrentParams().ti->info_hash()) || (t->getTorrentParams().url == tor->getTorrentParams().url))
 			return shared_ptr<gt::Torrent>();
 
 	if (ec.value() != 0)
