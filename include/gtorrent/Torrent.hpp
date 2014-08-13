@@ -34,18 +34,6 @@ namespace gt
 
 		bool pollEvent(gt::Event &event);
 
-		std::string YesNo(bool input)
-		{
-			if(input)
-			{
-				return "yes";
-			}
-			else
-			{
-				return "no";
-			}
-		}
-
 		/* Think twice next time before mixing const correctness with inline */
 		// Getters
 		inline libtorrent::add_torrent_params getTorrentParams()
@@ -418,27 +406,39 @@ namespace gt
 		}
 		inline std::string getIpFilterAppliesString()
 		{
-			return YesNo(getHandle().status().ip_filter_applies);
+			std::stringstream ifa;
+			ifa << getHandle().status().ip_filter_applies;
+			return ifa.str();
 		}
 		inline std::string getPausedString()
 		{
-			return YesNo(getHandle().status().paused);
+			std::stringstream pa;
+			pa << getHandle().status().paused;
+			return pa.str();
 		}
 		inline std::string getAutoManagedString()
 		{
-			return YesNo(getHandle().status().auto_managed);
+			std::stringstream am;
+			am << getHandle().status().auto_managed;
+			return am.str();
 		}
 		inline std::string getSequentialDownloadString()
 		{
-			return YesNo(getHandle().status().sequential_download);
+			std::stringstream sd;
+			sd << getHandle().status().sequential_download;
+			return sd.str();
 		}
 		inline std::string getIsSeedingString()
 		{
-			return YesNo(getHandle().status().is_seeding);
+			std::stringstream ise;
+			ise << getHandle().status().is_seeding;
+			return ise.str();
 		}
 		inline std::string getIsFinishedString()
 		{
-			return YesNo(getHandle().status().is_finished);
+			std::stringstream ifi;
+			ifi << getHandle().status().is_finished;
+			return ifi.str();
 		}
 		inline bool hasMetadata()
 		{
@@ -446,11 +446,15 @@ namespace gt
 		}
 		inline std::string getHasMetadataString()
 		{
-			return YesNo(getHandle().status().has_metadata);
+			std::stringstream hm;
+			hm << getHandle().status().has_metadata;
+			return hm.str();
 		}
 		inline std::string getHasIncomingString()
 		{
-			return YesNo(getHandle().status().has_incoming);
+			std::stringstream hi;
+			hi << getHandle().status().has_incoming;
+			return hi.str();
 		}
 		inline std::string getInfoHashString()
 		{
