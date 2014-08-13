@@ -73,11 +73,11 @@ void gt::Platform::associate(bool magnet, bool torrent)
     // TODO Figure out how to do registry keys and stuff.
     if(torrent)
     {
-        
+
     }
     if(magnet)
     {
-        
+
     }
 }
 
