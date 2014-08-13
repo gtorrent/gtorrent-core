@@ -454,7 +454,9 @@ namespace gt
 		}
 		inline std::string getInfoHashString()
 		{
-			return "#";
+			std::stringstream ih;
+			ih << getHandle().status().info_hash;
+			return ih.str();
 		}
 		inline std::string getSavePath()
 		{
