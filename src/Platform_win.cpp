@@ -33,7 +33,7 @@ string gt::Platform::getDefaultSavePath()
     return getHomeDir() + "Downloads";
 }
 
-string getDefaultConfigPath()
+string gt::Platform::getDefaultConfigPath()
 {
     return string(getenv("APPDATA")) + "\\gtorrent";
 }
@@ -43,7 +43,7 @@ char gt::Platform::getFileSeparator()
     return '\\';
 }
 
-string getHomeDir()
+string gt::Platform::getHomeDir()
 {
     return string(getenv("HOMEDRIVE")) + string(getenv("HOMEPATH")) + '\\';
 }
