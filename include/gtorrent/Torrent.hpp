@@ -14,7 +14,7 @@ std::string getFileSizeString(boost::int64_t file_size);
 
 namespace libtorrent
 {
-	struct add_torrent_params;
+	class add_torrent_params;
 }
 
 namespace gt
@@ -33,6 +33,18 @@ namespace gt
 		Torrent(std::string path);
 
 		bool pollEvent(gt::Event &event);
+
+		std::string YesNo(bool input)
+		{
+			if(input)
+			{
+				return "yes";
+			}
+			else
+			{
+				return "no";
+			}
+		}
 
 		/* Think twice next time before mixing const correctness with inline */
 		// Getters
@@ -56,7 +68,7 @@ namespace gt
 		}
 
 		// Returns formatted active time as string
-		inline std::string getTextActiveTime()
+		inline std::string getActiveTimeString()
 		{
 			return getTimeString(getActiveTime());
 		}
@@ -68,9 +80,16 @@ namespace gt
 		}
 
 		// Returns formatted eta as string
-		inline std::string getTextEta()
+		inline std::string getEtaString()
 		{
-			return getTimeString(getEta());
+			if (getHandle().status().progress_ppm == 1000000)
+			{
+				return "∞";
+			}
+			else
+			{
+				return getTimeString(getEta());
+			}
 		}
 
 		// Returns a vector of bools for each piece, true if we have it, false otherwise
@@ -81,6 +100,7 @@ namespace gt
 		{
 			return ((float) getHandle().status().progress_ppm / 1000000.0f) * 100.0f;
 		}
+
 
 		// Returns the current upload rate of the torrent
 		inline unsigned int getUploadRate()
@@ -175,34 +195,34 @@ namespace gt
 		void torrentForceRecheck();
 
 		// Returns a friendly string for the torrent state
-		std::string getTextState();
+		std::string getStateString();
 
 		// Returns a friendly string for the current upload rate
-		inline std::string getTextUploadRate()
+		inline std::string getUploadRateString()
 		{
 			return getRateString(getUploadRate());
 		}
 
 		// Returns a friendly string for the current download rate
-		inline std::string getTextDownloadRate()
+		inline std::string getDownloadRateString()
 		{
 			return getRateString(getDownloadRate());
 		}
 
 		// Returns a friendly string for the current upload total
-		inline std::string getTextTotalUploaded()
+		inline std::string getTotalUploadedString()
 		{
 			return getFileSizeString(getTotalUploaded());
 		}
 
 		// Returns a friendly string for the current download total
-		inline std::string getTextTotalDownloaded()
+		inline std::string getTotalDownloadedString()
 		{
 			return getFileSizeString(getTotalDownloaded());
 		}
 
 		// Returns a friendly string for the total size of files in torrent
-		inline std::string getTextSize()
+		inline std::string getSizeString()
 		{
 			return getFileSizeString(getSize());
 		}
@@ -210,20 +230,21 @@ namespace gt
 		// Returns a the total size of files remaining to download in torrent
 		inline boost::int64_t getRemaining()
 		{
-			return getSize() - getTotalDownloaded();
+			//return getSize() - getTotalDownloaded();
+			return getHandle().status().total_wanted - getHandle().status().total_wanted_done;
 		}
 
 		// Returns a friendly string for the total size of files remaining to download in torrent
-		inline std::string getTextRemaining()
+		inline std::string getRemainingString()
 		{
 			return getFileSizeString(getRemaining());
 		}
 
 		// Returns a friendly string for the current ratio
-		std::string getTextTotalRatio();
+		std::string getTotalRatioString();
 
 		// Returns a friendly string for the current time remaining
-		inline std::string getTextTimeRemaining()
+		inline std::string getTimeRemainingString()
 		{
 			return getTimeString(getTimeRemaining());
 		}
@@ -256,12 +277,185 @@ namespace gt
 		{
 			return getHandle().status().name;
 		}
+		inline std::string getTorrentFileNameString()
+		{
+			//return std::string(getHandle().status().torrent_file);
+			std::stringstream tfn;
+			tfn << "torrent-filename.torrent";
+			return tfn.str();
+		}
 
+		inline std::string getCurrentTrackerString()
+		{
+			return getHandle().status().current_tracker;
+		}
+
+		inline std::string getWantedDoneString()
+		{
+			//size_type total_wanted_done;
+			return getFileSizeString(getHandle().status().total_wanted_done);
+		}
+		inline std::string getTotalWantedString()
+		{
+			//size_type total_wanted;
+			return getFileSizeString(getHandle().status().total_wanted);
+		}
+		inline std::string getAllTimeUploadString()
+		{
+			////size_type all_time_upload;
+			return getFileSizeString(getHandle().status().all_time_upload);
+		}
+		inline std::string getAllTimeDownloadString()
+		{
+			//size_type all_time_download;
+			return getFileSizeString(getHandle().status().all_time_download);
+		}
+		inline std::string getStorageModeString()
+		{
+			std::stringstream sm;
+			sm << getHandle().status().storage_mode;
+			return sm.str();
+		}
+		inline std::string getProgressString()
+		{
+			std::stringstream p;
+			p << getHandle().status().progress;
+			return p.str();
+		}
+		inline std::string getProgressPpmString()
+		{
+			std::stringstream pp;
+			pp << getHandle().status().progress_ppm;
+			return pp.str();
+		}
+
+		inline std::string getNumSeedsString()
+		{
+			std::stringstream ns;
+			ns << getHandle().status().num_seeds;
+			return ns.str();
+		}
+		inline std::string getNumPeersString()
+		{
+			std::stringstream np;
+			np << getHandle().status().num_peers;
+			return np.str();
+		}
+		inline std::string getNumCompleteString()
+		{
+			std::stringstream nc;
+			nc << getHandle().status().num_complete;
+			return nc.str();
+		}
+		inline std::string getNumIncompleteString()
+		{
+			std::stringstream ni;
+			ni << getHandle().status().num_incomplete;
+			return ni.str();
+		}
+		inline std::string getListSeedsString()
+		{
+			std::stringstream ls;
+			ls << getHandle().status().list_seeds;
+			return ls.str();
+		}
+		inline std::string getListPeersString()
+		{
+			std::stringstream lp;
+			lp << getHandle().status().list_peers;
+			return lp.str();
+		}
+		inline std::string getConnectCandidatesString()
+		{
+			std::stringstream cc;
+			cc << getHandle().status().connect_candidates;
+			return cc.str();
+		}
+		inline std::string getDistributedCopiesString()
+		{
+			std::stringstream dc;
+			dc << getHandle().status().distributed_copies;
+			return dc.str();
+		}
+
+		inline std::string getNumUploadsString()
+		{
+			std::stringstream nu;
+			nu << getHandle().status().num_uploads;
+			return nu.str();
+		}
+		inline std::string getNumConnectionsString()
+		{
+			std::stringstream nc;
+			nc << getHandle().status().num_connections;
+			return nc.str();
+		}
+		inline std::string getSeedingTimeString()
+		{
+			return getTimeString(getHandle().status().seeding_time);
+		}
+		inline std::string getSeedRankString()
+		{
+			std::stringstream sr;
+			sr << getHandle().status().seed_rank;
+			return sr.str();
+		}
+		inline std::string getLastScrapeString()
+		{
+			return getTimeString(getHandle().status().last_scrape);
+		}
+		inline std::string getSparseRegionsString()
+		{
+			std::stringstream sr;
+			sr << getHandle().status().sparse_regions;
+			return sr.str();
+		}
+		inline std::string getPriorityString()
+		{
+			std::stringstream p;
+			p << getHandle().status().priority;
+			return p.str();
+		}
+		inline std::string getIpFilterAppliesString()
+		{
+			return YesNo(getHandle().status().ip_filter_applies);
+		}
+		inline std::string getPausedString()
+		{
+			return YesNo(getHandle().status().paused);
+		}
+		inline std::string getAutoManagedString()
+		{
+			return YesNo(getHandle().status().auto_managed);
+		}
+		inline std::string getSequentialDownloadString()
+		{
+			return YesNo(getHandle().status().sequential_download);
+		}
+		inline std::string getIsSeedingString()
+		{
+			return YesNo(getHandle().status().is_seeding);
+		}
+		inline std::string getIsFinishedString()
+		{
+			return YesNo(getHandle().status().is_finished);
+		}
 		inline bool hasMetadata()
 		{
 			return getHandle().status().has_metadata;
 		}
-
+		inline std::string getHasMetadataString()
+		{
+			return YesNo(getHandle().status().has_metadata);
+		}
+		inline std::string getHasIncomingString()
+		{
+			return YesNo(getHandle().status().has_incoming);
+		}
+		inline std::string getInfoHashString()
+		{
+			return "#";
+		}
 		inline std::string getSavePath()
 		{
 			return getHandle().status().save_path;
@@ -269,7 +463,7 @@ namespace gt
 		//libtorrent::add_torrent_params.ti is an intrusive_ptr in 1.0 and a shared_ptr in svn.
 		//Using decltype allows us to make it compatible with both versions while still properly using the constructor to avoid a compiler error on boost 1.55 when the = operator is used with a pointer.
 		//Sorry for the terrible hack, TODO: Find better detection method to cast constness to libtorrent:torrent_info inside shared/intrusive pointer
-#define getInfoReturnType std::conditional<std::is_same<decltype(m_torrent_params.ti), boost::shared_ptr<libtorrent::torrent_info>>::value, boost::shared_ptr<const libtorrent::torrent_info>, boost::intrusive_ptr<const libtorrent::torrent_info>>::type 
+#define getInfoReturnType std::conditional<std::is_same<decltype(m_torrent_params.ti), boost::shared_ptr<libtorrent::torrent_info>>::value, boost::shared_ptr<const libtorrent::torrent_info>, boost::intrusive_ptr<const libtorrent::torrent_info>>::type
 		inline getInfoReturnType getInfo()
 		{
 			return getHandle().torrent_file();
