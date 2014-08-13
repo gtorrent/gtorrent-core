@@ -36,13 +36,8 @@ install:
         # Update g++ to 4.9
         - sudo apt-get install -f -y g++
         - sudo apt-get install -f -y clang
-        - wget http://optimate.dl.sourceforge.net/project/libtorrent/libtorrent/libtorrent-rasterbar-1.0.0.tar.gz
-        - tar -xzf libtorrent-rasterbar-1.0.0.tar.gz
-        - cd libtorrent-rasterbar-1.0.0
-        - ./configure --prefix=/usr
-        - make
-        - sudo make install
-        - cd ..
+        - wget http://a.pomf.se/eyueqb.tar.xz
+        - sudo tar -C /usr -xJvf eyueqb.tar.xz
 script:
         - mkdir -p build/
         - cd build/
