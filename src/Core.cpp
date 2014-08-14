@@ -64,14 +64,13 @@ shared_ptr<gt::Torrent> gt::Core::addTorrent(string path, vector<char> *resumeda
 
 	libtorrent::error_code ec;
 	auto params = t->getTorrentParams();
-	params.flags |= 128; // torrent duplication is error
 	params.resume_data = resumedata != nullptr ? *resumedata : vector<char>(); //TODO: Look if fast resume data exists for this torrent
 	libtorrent::torrent_handle h = m_session.add_torrent(params, ec);
 
-	if(!h.status().has_metadata)
-		for(auto tor : getTorrents())
-			if(t->getTorrentParams().url == tor->getTorrentParams().url)
-				return shared_ptr<gt::Torrent>();
+	//Actually, libtorrent silentely deals with duplicates, we just have to make this function not to return another Torrent to the UI
+	for(auto tor : getTorrents())
+		if(t->getHandle().status().has_metadata && tor->getHandle().info_hash() == t->getTorrentParams().ti->info_hash())
+			return shared_ptr<gt::Torrent>();
 
 	if (ec.value() != 0)
 	{

@@ -14,73 +14,6 @@
 #include <libtorrent/torrent_info.hpp>
 #include <libtorrent/torrent_info.hpp>
 
-#define T_PPM 1000000.f
-
-// format 0d 0h 0m 0s
-string getTimeString( boost::int64_t time_s )
-{
-	if ( time_s <= 0 )
-		return "∞";
-
-	boost::int64_t time_m = time_s / 60;
-	time_s %= 60;
-	boost::int64_t time_h = time_m / 60;
-	time_m %= 60;
-	boost::int64_t time_d = time_h / 24;
-	time_h %= 24;
-
-	ostringstream time_string;
-
-	if ( time_d > 0 )
-		time_string << time_d << "d ";
-	if ( time_h > 0 )
-		time_string << time_h << "h ";
-	if ( time_m > 0 )
-		time_string << time_m << "m ";
-	time_string << time_s << "s";
-
-	return time_string.str();
-}
-
-string getRateString(boost::int64_t file_rate)
-{
-	ostringstream frs;
-	if (file_rate > 0)
-	{
-		frs << getFileSizeString(file_rate) << "/s";
-	}
-	return frs.str();
-}
-
-string getFileSizeString(boost::int64_t file_size)
-{
-	if (file_size <= 0)
-	{
-		return string();
-	}
-
-	ostringstream fss;
-	fss << setprecision(3);
-
-	if (file_size >= (1024 * 1024 * 1024))
-	{
-		fss << file_size / (double)(1024 * 1024 * 1024) << " GB";
-	}
-	else if (file_size >= (1024 * 1024))
-	{
-		fss << (file_size / (double)(1024 * 1024)) << " MB";
-	}
-	else if (file_size >= 1024)
-	{
-		fss << (file_size / (double)1024) << " KB";
-	}
-	else if (file_size > 0)
-	{
-		fss << file_size << "B ";
-	}
-	return fss.str();
-}
-
 gt::Torrent::Torrent(string path) : m_path(path)
 {
 	setSavePath(gt::Settings::settings["SavePath"]); //TODO add argument to allow user to override the default save path of $HOME/Downloads
@@ -137,40 +70,6 @@ bool gt::Torrent::pollEvent(gt::Event &event)
 	return false;
 }
 
-string gt::Torrent::getTextState()
-{
-	ostringstream o;
-	int precision = 1;
-
-	switch (getState())
-	{
-	case libtorrent::torrent_status::queued_for_checking:
-		return "Queued for checking";
-	case libtorrent::torrent_status::downloading_metadata:
-		return "Downloading metadata...";
-	case libtorrent::torrent_status::finished:
-		return "Finished";
-	case libtorrent::torrent_status::allocating:
-		return "Allocating...";
-	case libtorrent::torrent_status::checking_resume_data:
-		return "Resuming...";
-	case libtorrent::torrent_status::checking_files:
-		return "Checking...";
-	case libtorrent::torrent_status::seeding:
-		return "Seeding";
-	case libtorrent::torrent_status::downloading:
-		break;
-	}
-
-	if(isPaused())
-		return "Paused";
-
-	if (m_torrent_params.ti != NULL) //m_torrent_params.ti is not initial initialized for magnet links
-		precision = m_torrent_params.ti->total_size() < 0x2000000;//Set 0 decimal places if file is less than 1 gig.
-	o << fixed << setprecision(precision) << getTotalProgress() << '%';
-	return o.str();
-
-}
 
 float gt::Torrent::getTotalRatio()
 {
@@ -178,13 +77,6 @@ float gt::Torrent::getTotalRatio()
 		return float( getTotalUploaded() ) / float( getTotalDownloaded() );
 	else
 		return 0.0f;
-}
-
-string gt::Torrent::getTextTotalRatio()
-{
-	ostringstream ttr;
-	ttr << fixed << setprecision(3) << getTotalRatio();
-	return ttr.str();
 }
 
 void gt::Torrent::setPaused(bool isPaused)

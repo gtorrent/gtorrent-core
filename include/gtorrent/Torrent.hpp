@@ -14,7 +14,7 @@ std::string getFileSizeString(boost::int64_t file_size);
 
 namespace libtorrent
 {
-	struct add_torrent_params;
+	class add_torrent_params;
 }
 
 namespace gt
@@ -34,7 +34,6 @@ namespace gt
 
 		bool pollEvent(gt::Event &event);
 
-		/* Think twice next time before mixing const correctness with inline */
 		// Getters
 		inline libtorrent::add_torrent_params getTorrentParams()
 		{
@@ -50,15 +49,9 @@ namespace gt
 		}
 
 		// Returns number of seconds the torrent has been active
-		inline boost::int64_t getActiveTime()
+		inline boost::int getActiveTime()
 		{
 			return m_handle.status().active_time;
-		}
-
-		// Returns formatted active time as string
-		inline std::string getTextActiveTime()
-		{
-			return getTimeString(getActiveTime());
 		}
 
 		// Returns number of seconds eta for the torrent
@@ -67,19 +60,13 @@ namespace gt
 			return (getDownloadRate() <= 0) ? -1 : (getWanted() / getDownloadRate());
 		}
 
-		// Returns formatted eta as string
-		inline std::string getTextEta()
-		{
-			return getTimeString(getEta());
-		}
-
 		// Returns a vector of bools for each piece, true if we have it, false otherwise
 		std::vector<bool> getPieces();
 
 		// Returns percentage of all files downloading
 		inline float getTotalProgress()
 		{
-			return ((float) getHandle().status().progress_ppm / 1000000.0f) * 100.0f;
+			return (float) getHandle().status().progress_ppm / 10000.0f;
 		}
 
 		// Returns the current upload rate of the torrent
@@ -101,56 +88,42 @@ namespace gt
 		}
 
 		// Returns the current number of seeders attached to the file
-		inline unsigned int getTotalSeeders()
+		inline unsigned int getNumSeeders()
 		{
 			return getHandle().status().num_seeds;
 		}
 
-		// Returns the current number of peers attached to the file
-		inline unsigned int getTotalPeers()
+		// Returns the current number of peers connected to the torrent
+		inline unsigned int getNumPeers()
 		{
 			return getHandle().status().num_peers;
 		}
 
-		// Returns the current number of leechers attached to the file
+		// Returns the current number of leechers connected to the torrent
 		inline unsigned int getTotalLeechers()
 		{
 			return getTotalPeers() - getTotalSeeders();
 		}
 
-		// Returns the current amount of data uploaded for this torrent
+		// Returns the current amount of data uploaded for this torrent, in bytes
 		inline boost::int64_t getTotalUploaded()
 		{
 			return getHandle().status().total_upload;
 		}
 
-		// Returns the current amount of data downloaded for this torrent
+		// Returns the current amount of data downloaded for this torrent, in bytes
 		inline boost::int64_t getTotalDownloaded()
 		{
 			return getHandle().status().total_download;
 		}
 
-		// Returns the total size of files in this torrent
+		// Returns the total size of files in this torrent, in bytes
 		inline boost::int64_t getSize()
 		{
 			return getHandle().status().total_wanted;
 		}
 
-		// Returns the total size of wanted files in this torrent
-		// TODO: Remove this, duplicate of getSize()
-		inline boost::int64_t getWanted()
-		{
-			return getSize();
-		}
-
-		//Returns the size of the torrent
-		// TODO: Remove this, duplicate of getSize()
-		inline boost::int64_t getTorrentSize()
-		{
-			return getSize();
-		}
-
-		//Returns the elapsed time remaining in seconds
+		// Returns the elapsed time remaining in seconds
 		inline boost::int64_t getTimeRemaining()
 		{
 			return (getDownloadRate() > 0) ? getTorrentSize() / getDownloadRate() : 0;
@@ -165,116 +138,230 @@ namespace gt
 			return m_handle.status().state;
 		}
 
-		//Returns the URL of the last working tracker
+		// Returns the URL of the last working tracker
 		inline std::string getCurrentTrackerURL()
 		{
 			return m_handle.status().current_tracker;
 		}
 
-		//Force a recheck of the torrent
-		void torrentForceRecheck();
-
-		// Returns a friendly string for the torrent state
-		std::string getTextState();
-
-		// Returns a friendly string for the current upload rate
-		inline std::string getTextUploadRate()
-		{
-			return getRateString(getUploadRate());
-		}
-
-		// Returns a friendly string for the current download rate
-		inline std::string getTextDownloadRate()
-		{
-			return getRateString(getDownloadRate());
-		}
-
-		// Returns a friendly string for the current upload total
-		inline std::string getTextTotalUploaded()
-		{
-			return getFileSizeString(getTotalUploaded());
-		}
-
-		// Returns a friendly string for the current download total
-		inline std::string getTextTotalDownloaded()
-		{
-			return getFileSizeString(getTotalDownloaded());
-		}
-
-		// Returns a friendly string for the total size of files in torrent
-		inline std::string getTextSize()
-		{
-			return getFileSizeString(getSize());
-		}
-
 		// Returns a the total size of files remaining to download in torrent
 		inline boost::int64_t getRemaining()
 		{
-			return getSize() - getTotalDownloaded();
+			return getHandle().status().total_wanted - getHandle().status().total_wanted_done;
 		}
 
-		// Returns a friendly string for the total size of files remaining to download in torrent
-		inline std::string getTextRemaining()
-		{
-			return getFileSizeString(getRemaining());
-		}
-
-		// Returns a friendly string for the current ratio
-		std::string getTextTotalRatio();
-
-		// Returns a friendly string for the current time remaining
-		inline std::string getTextTimeRemaining()
-		{
-			return getTimeString(getTimeRemaining());
-		}
-
+		// Returns true if the torrent is paused, otherwise returns false.
 		inline bool isPaused()
 		{
 			return getHandle().status().paused;
 		}
 
-		// Setters
-		inline void setHandle(libtorrent::torrent_handle &h)
-		{
-			m_handle = h;
-		}
-		void setSavePath(std::string savepath);
-
-		void setPaused(bool isPaused);
-
-		inline void resume()
-		{
-			setPaused(false);
-		}
-
-		inline void pause()
-		{
-			setPaused(true);
-		}
-
+		// Returns the name for this torrent
 		inline std::string getName()
 		{
 			return getHandle().status().name;
 		}
 
-		inline bool hasMetadata()
+		// Returns the filename for this torrent
+		inline std::string getTorrentFileNameString()
+		{
+			return getHandle().status().torrent_file;
+		}
+
+		/*
+		inline std::storage_mode_t getStorageMode()
+		{
+			return getHandle().status().storage_mode;
+		}
+		*/
+
+		// Returns a value in the range [0, 1],
+		// that represents the progress of the torrent's current task.
+		// It may be checking files or downloading.
+		inline std::float getProgress()
+		{
+			return getHandle().status().progress;
+		}
+
+		//Returns the number of peers that have finished downloading
+		inline std::int getNumComplete()
+		{
+			return getHandle().status().num_complete;
+		}
+
+		// Returns the number of peers that have not yet finished downloading
+		inline std::int getNumIncomplete()
+		{
+			return getHandle().status().num_incomplete;
+		}
+
+		// Returns the number of seeds in our peer list
+		inline std::int getListSeeds()
+		{
+			return getHandle().status().list_seeds;
+		}
+
+		// Returns the total number of peers (including seeds)
+		// We are not necessarily connected to all the peers in our peer list
+		// This is the number of peers we know of in total,
+		// including banned peers and peers that we have failed to connect to
+		inline std::int getListPeers()
+		{
+			return getHandle().status().list_peers;
+		}
+
+		// Returns the number of peers that are suitable to be connected to
+		inline std::int getConnectCandidates()
+		{
+			return getHandle().status().connect_candidates;
+		}
+
+		//Returns the number of distributed copies of the file
+		//Note that one copy may be spread out among many peers.
+		inline std::float getDistributedCopies()
+		{
+			return getHandle().status().distributed_copies;
+		}
+
+		//Returns the number of unchoked peers in this torrent
+		inline std::int getNumUploads()
+		{
+			return getHandle().status().num_uploads;
+		}
+
+		//Returns the number of peer connections this torrent has,
+		//including half-open connections that haven't completed
+		//the bittorrent handshake yet.
+		inline std::int getNumConnections()
+		{
+			return getHandle().status().num_connections;
+		}
+
+		//Returns the number of seconds this torrent has been seeding for
+		inline std::int getSeedingTime()
+		{
+			return getHandle().status().seeding_time;
+		}
+
+		// Returns a rank of how important it is to seed the torrent,
+		// used to determine which torrents to seed and which to queue
+		inline std::int getSeedRank()
+		{
+			return getHandle().status().seed_rank;
+		}
+
+		// Returns the number of seconds since this torrent acquired scrape data
+		// If it has never done that, this value is -1
+		inline std::int getLastScrape()
+		{
+			return getHandle().status().last_scrape;
+		}
+		inline std::int getSparseRegions()
+		{
+			return getHandle().status().sparse_regions;
+		}
+
+		// Returns the priority assigned to this torrent
+		inline std::int getPriority()
+		{
+			return getHandle().status().priority;
+		}
+
+		// Returns true if the IP filter applies to this torrent
+		inline std::bool getIpFilterApplies()
+		{
+			return getHandle().status().ip_filter_applies;
+		}
+
+		// Returns true if this torrent is being automatically managed
+		inline std::bool getAutoManaged()
+		{
+			getHandle().status().auto_managed;
+		}
+
+		// Returns true if this torrent is set to download sequentially
+		inline std::bool getSequentialDownload()
+		{
+			getHandle().status().sequential_download;
+		}
+
+		// Returns true if this torrent is seeding
+		inline std::bool getIsSeeding()
+		{
+			return getHandle().status().is_seeding;
+		}
+
+		// Returns true if this torrent has finished downloading
+		inline std::bool getIsFinished()
+		{
+			return getHandle().status().is_finished;
+		}
+
+		// Returns true if this torrent has metadata
+		inline std::bool getHasMetadata()
 		{
 			return getHandle().status().has_metadata;
 		}
 
+		// Returns true if this torrent has incoming data
+		inline std::bool getHasIncoming()
+		{
+			return getHandle().status().has_incoming;
+		}
+
+		// Returns the info hash for this torrent
+		inline std::sha1_hash getInfoHash()
+		{
+			return getHandle().status().info_hash;
+		}
+
+		// Returns the path to which this torrent is / will be saved
 		inline std::string getSavePath()
 		{
 			return getHandle().status().save_path;
 		}
+
 		//libtorrent::add_torrent_params.ti is an intrusive_ptr in 1.0 and a shared_ptr in svn.
-		//Using decltype allows us to make it compatible with both versions.
-		typedef decltype(boost::const_pointer_cast<const libtorrent::torrent_info>(m_torrent_params.ti)) getInfoReturnType;
+		//Using decltype allows us to make it compatible with both versions while still properly using the constructor to avoid a compiler error on boost 1.55 when the = operator is used with a pointer.
+		//Sorry for the terrible hack, TODO: Find better detection method to cast constness to libtorrent:torrent_info inside shared/intrusive pointer
+		#define getInfoReturnType std::conditional<std::is_same<decltype(m_torrent_params.ti), boost::shared_ptr<libtorrent::torrent_info>>::value, boost::shared_ptr<const libtorrent::torrent_info>, boost::intrusive_ptr<const libtorrent::torrent_info>>::type
 		inline getInfoReturnType getInfo()
 		{
 			return getHandle().torrent_file();
 		}
 
+		//Force a recheck of the torrent
+		void torrentForceRecheck();
+
+		// Setters
+
+		// Sets the handle for this torrent
+		inline void setHandle(libtorrent::torrent_handle &h)
+		{
+			m_handle = h;
+		}
+
+		// Sets the save path for this torrent
+		void setSavePath(std::string savepath);
+
+		// Sets the paused status for this torrent
+		void setPaused(bool isPaused);
+
+		// Pauses this torrent
+		inline void pause()
+		{
+			setPaused(true);
+		}
+		
+		// Un-pauses this torrent
+		inline void resume()
+		{
+			setPaused(false);
+		}
+
+		// Sets this torrent to download sequentially
 		void setSequentialDownload(bool seq);
+
 		bool SequentialDownloadEnabled();
 		std::vector<std::string> filenames();
 	};
