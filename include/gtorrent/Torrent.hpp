@@ -267,9 +267,8 @@ namespace gt
 			return getHandle().status().save_path;
 		}
 		//libtorrent::add_torrent_params.ti is an intrusive_ptr in 1.0 and a shared_ptr in svn.
-		//Using decltype allows us to make it compatible with both versions while still properly using the constructor to avoid a compiler error on boost 1.55 when the = operator is used with a pointer.
-		//Sorry for the terrible hack, TODO: Find better detection method to cast constness to libtorrent:torrent_info inside shared/intrusive pointer
-#define getInfoReturnType std::conditional<std::is_same<decltype(m_torrent_params.ti), boost::shared_ptr<libtorrent::torrent_info>>::value, boost::shared_ptr<const libtorrent::torrent_info>, boost::intrusive_ptr<const libtorrent::torrent_info>>::type 
+		//Using decltype allows us to make it compatible with both versions.
+		typedef decltype(boost::const_pointer_cast<const libtorrent::torrent_info>(m_torrent_params.ti)) getInfoReturnType;
 		inline getInfoReturnType getInfo()
 		{
 			return getHandle().torrent_file();
