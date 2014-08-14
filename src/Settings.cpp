@@ -49,6 +49,10 @@ bool gt::Settings::save(const std::string &path)
 	return false;
 }
 
+bool gt::Settings::optionExists(const std::string &key)
+{
+	return settings.count(key) > 0;
+}
 
 std::string gt::Settings::getOptionAsString(const std::string &key)
 {
