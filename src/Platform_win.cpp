@@ -33,7 +33,7 @@ string gt::Platform::getDefaultSavePath()
     return getHomeDir() + "Downloads";
 }
 
-string gt::Platform::getDefaultConfigPath()
+string getDefaultConfigPath()
 {
     return string(getenv("APPDATA")) + "\\gtorrent";
 }
@@ -43,7 +43,7 @@ char gt::Platform::getFileSeparator()
     return '\\';
 }
 
-string gt::Platform::getHomeDir()
+string getHomeDir()
 {
     return string(getenv("HOMEDRIVE")) + string(getenv("HOMEPATH")) + '\\';
 }
@@ -73,11 +73,11 @@ void gt::Platform::associate(bool magnet, bool torrent)
     // TODO Figure out how to do registry keys and stuff.
     if(torrent)
     {
-        
+
     }
     if(magnet)
     {
-        
+
     }
 }
 

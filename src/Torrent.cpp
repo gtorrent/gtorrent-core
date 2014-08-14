@@ -76,7 +76,7 @@ string getFileSizeString(boost::int64_t file_size)
 	}
 	else if (file_size > 0)
 	{
-		fss << file_size << "B ";
+		fss << file_size << " B";
 	}
 	return fss.str();
 }
@@ -137,7 +137,7 @@ bool gt::Torrent::pollEvent(gt::Event &event)
 	return false;
 }
 
-string gt::Torrent::getTextState()
+string gt::Torrent::getStateString()
 {
 	ostringstream o;
 	int precision = 1;
@@ -180,7 +180,7 @@ float gt::Torrent::getTotalRatio()
 		return 0.0f;
 }
 
-string gt::Torrent::getTextTotalRatio()
+string gt::Torrent::getTotalRatioString()
 {
 	ostringstream ttr;
 	ttr << fixed << setprecision(3) << getTotalRatio();
