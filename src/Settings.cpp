@@ -40,7 +40,7 @@ bool gt::Settings::parse(const std::string &path)
 
 bool gt::Settings::save(const std::string &path)
 {
-	std::ofstream configFile(gt::Platform::getDefaultConfigPath() + path, ios_base::trunc);// old configfile is destroyed
+	std::ofstream configFile(gt::Platform::getDefaultConfigPath() + path, std::ios_base::trunc);// old configfile is destroyed
 	if(!configFile)
 		return true;
 	for(auto i = settings.begin(); i != settings.end(); ++i)

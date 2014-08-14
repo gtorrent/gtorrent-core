@@ -12,12 +12,11 @@
 #include <libtorrent/session.hpp>
 #include <libtorrent/torrent_handle.hpp>
 #include <libtorrent/torrent_info.hpp>
-#include <libtorrent/torrent_info.hpp>
 
 #define T_PPM 1000000.f
 
 // format 0d 0h 0m 0s
-string getTimeString( boost::int64_t time_s )
+std::string getTimeString( boost::int64_t time_s )
 {
 	if ( time_s <= 0 )
 		return "∞";
@@ -29,7 +28,7 @@ string getTimeString( boost::int64_t time_s )
 	boost::int64_t time_d = time_h / 24;
 	time_h %= 24;
 
-	ostringstream time_string;
+	std::ostringstream time_string;
 
 	if ( time_d > 0 )
 		time_string << time_d << "d ";
@@ -42,9 +41,9 @@ string getTimeString( boost::int64_t time_s )
 	return time_string.str();
 }
 
-string getRateString(boost::int64_t file_rate)
+std::string getRateString(boost::int64_t file_rate)
 {
-	ostringstream frs;
+	std::ostringstream frs;
 	if (file_rate > 0)
 	{
 		frs << getFileSizeString(file_rate) << "/s";
@@ -52,15 +51,15 @@ string getRateString(boost::int64_t file_rate)
 	return frs.str();
 }
 
-string getFileSizeString(boost::int64_t file_size)
+std::string getFileSizeString(boost::int64_t file_size)
 {
 	if (file_size <= 0)
 	{
-		return string();
+		return std::string();
 	}
 
-	ostringstream fss;
-	fss << setprecision(3);
+	std::ostringstream fss;
+	fss << std::setprecision(3);
 
 	if (file_size >= (1024 * 1024 * 1024))
 	{
@@ -81,7 +80,7 @@ string getFileSizeString(boost::int64_t file_size)
 	return fss.str();
 }
 
-gt::Torrent::Torrent(string path) : m_path(path)
+gt::Torrent::Torrent(std::string path) : m_path(path)
 {
 	setSavePath(gt::Settings::settings["SavePath"]); //TODO add argument to allow user to override the default save path of $HOME/Downloads
 	if (gt::Core::isMagnetLink(path))
@@ -94,8 +93,8 @@ gt::Torrent::Torrent(string path) : m_path(path)
 		decltype(m_torrent_params.ti) tester = decltype(m_torrent_params.ti)(new libtorrent::torrent_info(path, ec));
 		if (ec.value() == 0)
 		{
-			ifstream torrentcheck(path);
-			bool isempty = torrentcheck.peek() == ifstream::traits_type::eof();
+			std::ifstream torrentcheck(path);
+			bool isempty = torrentcheck.peek() == std::ifstream::traits_type::eof();
 			torrentcheck.close();
 			if (isempty)
 			{
@@ -112,7 +111,7 @@ gt::Torrent::Torrent(string path) : m_path(path)
 	}
 }
 
-void gt::Torrent::setSavePath(string savepath)
+void gt::Torrent::setSavePath(std::string savepath)
 {
 	if (savepath.empty())
 	{
@@ -137,9 +136,9 @@ bool gt::Torrent::pollEvent(gt::Event &event)
 	return false;
 }
 
-string gt::Torrent::getTextState()
+std::string gt::Torrent::getTextState()
 {
-	ostringstream o;
+	std::ostringstream o;
 	int precision = 1;
 
 	switch (getState())
@@ -167,7 +166,7 @@ string gt::Torrent::getTextState()
 
 	if (m_torrent_params.ti != NULL) //m_torrent_params.ti is not initial initialized for magnet links
 		precision = m_torrent_params.ti->total_size() < 0x2000000;//Set 0 decimal places if file is less than 1 gig.
-	o << fixed << setprecision(precision) << getTotalProgress() << '%';
+	o << std::fixed << std::setprecision(precision) << getTotalProgress() << '%';
 	return o.str();
 
 }
@@ -180,10 +179,10 @@ float gt::Torrent::getTotalRatio()
 		return 0.0f;
 }
 
-string gt::Torrent::getTextTotalRatio()
+std::string gt::Torrent::getTextTotalRatio()
 {
-	ostringstream ttr;
-	ttr << fixed << setprecision(3) << getTotalRatio();
+	std::ostringstream ttr;
+	ttr << std::fixed << std::setprecision(3) << getTotalRatio();
 	return ttr.str();
 }
 
@@ -193,11 +192,11 @@ void gt::Torrent::setPaused(bool isPaused)
 	isPaused ? m_handle.pause() : m_handle.resume();
 }
 
-vector<bool> gt::Torrent::getPieces()
+std::vector<bool> gt::Torrent::getPieces()
 {
 	libtorrent::bitfield p = m_handle.status().pieces;
 	int n = m_handle.torrent_file()->num_pieces();
-	vector<bool> pieces;
+	std::vector<bool> pieces;
 	for(int i = 0; i < n; ++i)
 		pieces.push_back(p.get_bit(i));
 	return pieces;
@@ -213,9 +212,9 @@ bool gt::Torrent::SequentialDownloadEnabled()
 	return getHandle().status().sequential_download;
 }
 
-vector<string> gt::Torrent::filenames()
+std::vector<std::string> gt::Torrent::filenames()
 {
-	vector<string> files;
+	std::vector<std::string> files;
 	for(int i = 0; i < getInfo()->num_files(); ++i)
 		files.push_back(getInfo()->files().file_path(i));
 	return files;
