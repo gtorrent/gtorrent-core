@@ -36,6 +36,11 @@ gt::Core::Core(int argc, char **argv) :
 		addTorrent(std::string(argv[i]));
 }
 
+std::vector<std::shared_ptr<gt::Torrent>> &gt::Core::getTorrents()
+{
+	return m_torrents;
+}
+
 bool gt::Core::isMagnetLink(std::string const& url)
 {
 	const std::string prefix = "magnet:";
@@ -107,6 +112,11 @@ void gt::Core::removeTorrent(std::shared_ptr<Torrent> t)
 		++i;
 	}
 	m_torrents.resize(m_torrents.size() - 1);
+}
+
+bool gt::Core::isRunning() const
+{
+	return m_running;
 }
 
 /*
