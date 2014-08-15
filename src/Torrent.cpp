@@ -403,3 +403,11 @@ std::vector<std::string> gt::Torrent::filenames()
 		files.push_back(getInfo()->files().file_path(i));
 	return files;
 }
+
+std::string gt::Torrent::getFormattedHash()
+{
+    std::stringstream hash;
+    for(auto val : m_handle.info_hash())
+        hash << std::hex << val;
+    return hash.str();
+}

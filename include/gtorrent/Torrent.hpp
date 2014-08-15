@@ -151,6 +151,8 @@ namespace gt
 
 		std::string getSavePath();
 
+        std::string getFormattedHash();
+
 		//libtorrent::add_torrent_params.ti is an intrusive_ptr in 1.0 and a shared_ptr in svn.
 		//Using decltype allows us to make it compatible with both versions.
 		typedef decltype(boost::const_pointer_cast<const libtorrent::torrent_info>(m_torrent_params.ti)) getInfoReturnType;
