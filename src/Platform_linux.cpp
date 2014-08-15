@@ -10,28 +10,28 @@
 #include <sys/fcntl.h>
 
 // TODO Rename shit names to more appropriate ones. -- nyanpasu
-bool gt::Platform::checkDirExist(string dir)
+bool gt::Platform::checkDirExist(std::string dir)
 {
 	struct stat st;
 	int state = stat(dir.c_str(), &st);
 	if(state == 0)
-		gt::Log::Debug(string(dir + " exists,").c_str());
+		gt::Log::Debug(std::string(dir + " exists,").c_str());
 	if(state != 0)
-		gt::Log::Debug(string(dir + " doesn't exists,").c_str());
+		gt::Log::Debug(std::string(dir + " doesn't exists,").c_str());
 	return state == 0; //stat() returns 0 if the dir exist
 }
 
-string gt::Platform::getDefaultSavePath()
+std::string gt::Platform::getDefaultSavePath()
 {
 	// TODO Use XDG_DOWNLOAD or whatever it's called
-	gt::Log::Debug(string(getHomeDir() + "Downloads/ is the default save path").c_str());
+	gt::Log::Debug(std::string(getHomeDir() + "Downloads/ is the default save path").c_str());
 	return getHomeDir() + "Downloads/";
 }
 
-string gt::Platform::getDefaultConfigPath()
+std::string gt::Platform::getDefaultConfigPath()
 {
 	const char *c = getenv("XDG_CONFIG_HOME");
-	string config_home;
+	std::string config_home;
 
 	if (c == nullptr)
 		config_home = getHomeDir() + ".config";
@@ -47,9 +47,9 @@ char gt::Platform::getFileSeparator()
 	return '/';
 }
 
-string gt::Platform::getHomeDir()
+std::string gt::Platform::getHomeDir()
 {
-	string dir = getenv("HOME");
+	std::string dir = getenv("HOME");
 	return dir + "/";
 }
 
@@ -58,12 +58,12 @@ int gt::Platform::makeDir(std::string dir, mode_t mode)
 	return mkdir(dir.c_str(), mode);
 }
 
-string gt::Platform::getExecutablePath()
+std::string gt::Platform::getExecutablePath()
 {
 	char ExecutablePath[4096] = { 0 };
 	readlink("/proc/self/exe", ExecutablePath, 4096);
 
-	return string(ExecutablePath);
+	return std::string(ExecutablePath);
 }
 
 void gt::Platform::associate(bool magnet, bool torrent)
@@ -81,9 +81,9 @@ void gt::Platform::associate(bool magnet, bool torrent)
 		file.open(getHomeDir() + ".local/share/applications/gtorrentt.desktop");
 		if(file.is_open())
 		{
-			string tmp;
+			std::string tmp;
 			for(int i = 0; i < 6; ++i) getline(file, tmp);
-			dirtyT = (tmp != string("Exec=") + getExecutablePath() + " %F\n");
+			dirtyT = (tmp != std::string("Exec=") + getExecutablePath() + " %F\n");
 		}
 		else
 			dirtyT = true;
@@ -96,9 +96,9 @@ void gt::Platform::associate(bool magnet, bool torrent)
 
 		if(file.is_open())
 		{
-			string tmp;
+			std::string tmp;
 			for(int i = 0; i < 6; ++i) getline(file, tmp);
-			dirtyM = (tmp != string("Exec=") + getExecutablePath() + " %u\n");
+			dirtyM = (tmp != std::string("Exec=") + getExecutablePath() + " %u\n");
 		}
 		else
 			dirtyM = true;
@@ -108,8 +108,8 @@ void gt::Platform::associate(bool magnet, bool torrent)
 	std::ofstream TassFile(getHomeDir() + ".local/share/applications/gtorrentt.desktop");
 	std::ofstream MassFile(getHomeDir() + ".local/share/applications/gtorrentm.desktop");
 
-	string TassString =
-		string("[Desktop Entry]\n")                          +
+	std::string TassString =
+		std::string("[Desktop Entry]\n")                          +
 		"Version=1.0\n"                                      +
 		"Encoding=UTF-8\n"                                   +
 		"Name=gTorrent\n"                                    +
@@ -122,8 +122,8 @@ void gt::Platform::associate(bool magnet, bool torrent)
 		"MimeType=application/x-bittorrent;\n"               +
 		"Categories=Internet;Network;FileTransfer;P2P;GTK;\n";
 
-	string MassString =
-		string("[Desktop Entry]\n")                          +
+	std::string MassString =
+		std::string("[Desktop Entry]\n")                          +
 		"Version=1.0\n"                                      +
 		"Encoding=UTF-8\n"                                   +
 		"Name=gTorrent\n"                                    +
@@ -156,7 +156,7 @@ bool gt::Platform::processIsUnique()
 		gt::Log::Debug("The lock wasn't ready, retrying...");
 		if(!checkDirExist(getDefaultConfigPath()))
 			makeDir(getDefaultConfigPath(), 0755);
-		ld = open(string(getDefaultConfigPath() + "gtorrent.lock").c_str(), O_CREAT | O_RDWR, 0600);
+		ld = open(std::string(getDefaultConfigPath() + "gtorrent.lock").c_str(), O_CREAT | O_RDWR, 0600);
 		return processIsUnique();
 	}
 	struct flock fl = { 0 };
@@ -174,26 +174,26 @@ void gt::Platform::makeSharedFile()
 {
 	if(processIsUnique() && !checkDirExist("/tmp/gfeed")) //If the pipe already exists we'll just use it
 		if(mkfifo("/tmp/gfeed", 0755) == -1)
-			throw runtime_error("Couldn't create pipe! Check your permissions or if /tmp/gfeed exists");
+			throw std::runtime_error("Couldn't create pipe! Check your permissions or if /tmp/gfeed exists");
 	fd = open("/tmp/gfeed", O_RDONLY | O_NONBLOCK); // TODO: use streams
 	if(fd == -1)
-		throw runtime_error("Couldn't open pipe");
+		throw std::runtime_error("Couldn't open pipe");
 	if(ld == -1)
 		ld = open("/var/lock/gtorrent.lock", O_CREAT | O_RDONLY, 0600);
 	if(ld == -1)
-		throw runtime_error("Couldn't open pipe");
+		throw std::runtime_error("Couldn't open pipe");
 	processIsUnique(); // a call here to lock the file
 }
 
-void gt::Platform::writeSharedData(string info)
+void gt::Platform::writeSharedData(std::string info)
 {
 	// I used write here but it didn't work.
 	std::ofstream file("/tmp/gfeed");
-	file << info << endl;
+	file << info << std::endl;
 	file.close();
 }
 
-string gt::Platform::readSharedData()
+std::string gt::Platform::readSharedData()
 {
 	std::string sharedData;
 	char tmp = '\0';
@@ -209,14 +209,14 @@ void gt::Platform::disableSharedData()
 	// Its definition is located in the stdio.h header, or cstdio under c++.
 }
 
-void gt::Platform::openTorrent(shared_ptr<gt::Torrent> t)
+void gt::Platform::openTorrent(std::shared_ptr<gt::Torrent> t)
 {
 	auto files = t->getInfo()->files();
-	string path = t->getSavePath() + '/' + t->getInfo()->file_at(0).path;
+	std::string path = t->getSavePath() + '/' + t->getInfo()->file_at(0).path;
 
 	if (files.num_files() > 1) // if there's more than a file, we open the containing folder
 		path = path.substr(0, path.find_last_of('/'));
 
 	// HURR system() IS BAD BECAUSE IT'S NOT USED TO MAKE PORTABLE CODE, pls refer to the filename, if you're expecting anything portable here you've come to the wrong place.
-	system(string(string("xdg-open \'") + path + "\'").c_str()); // Either use system or fork and exec with the xdg binary it's literraly the same shit, or even worst, link with even more libs, pick your poison
+	system(std::string(std::string("xdg-open \'") + path + "\'").c_str()); // Either use system or fork and exec with the xdg binary it's literraly the same shit, or even worst, link with even more libs, pick your poison
 }

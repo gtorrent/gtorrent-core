@@ -18,10 +18,7 @@ namespace gt
 	public:
 		Core(int argc = 0, char **argv = nullptr);
 
-		inline std::vector<std::shared_ptr<Torrent>> &getTorrents()
-		{
-			return m_torrents;
-		};
+		std::vector<std::shared_ptr<gt::Torrent>> &getTorrents();
 
 		static bool isMagnetLink(std::string const& link);
 
@@ -31,10 +28,7 @@ namespace gt
 
 		void removeTorrent(std::shared_ptr<gt::Torrent>);
 
-		inline bool isRunning() const
-		{
-			return m_running;
-		};
+		bool isRunning() const;
 		void shutdown();
 		std::shared_ptr<gt::Torrent> update();
 		void setSessionParameters();

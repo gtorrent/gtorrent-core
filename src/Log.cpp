@@ -3,22 +3,20 @@
 #include <ctime>
 #include <stdarg.h>
 
-using namespace std;
-
-string getFullDateNumber(int n)
+std::string getFullDateNumber(int n)
 {
 	if (n < 10)
-		return string("0") + to_string(n);
+		return std::string("0") + std::to_string(n);
 	else
-		return to_string(n);
+		return std::to_string(n);
 }
 
-string gt::Log::getTimeStamp()
+std::string gt::Log::getTimeStamp()
 {
 	time_t t = time(0);
 	struct tm *lt = localtime(&t);
 
-	return to_string(1900 + lt->tm_year) + "-"   +
+	return std::to_string(1900 + lt->tm_year) + "-"   +
 	       getFullDateNumber(lt->tm_mon)    + "-"   +
 	       getFullDateNumber(lt->tm_mday)   + " @ " +
 	       getFullDateNumber(lt->tm_hour)   + ":"   +

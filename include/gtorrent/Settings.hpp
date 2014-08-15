@@ -13,10 +13,7 @@ namespace gt
 
 		static bool parse(const std::string &path);
 		static bool save(const std::string &path);
-		static inline bool optionExists(const std::string &key)
-		{
-			return settings.count(key) > 0;
-		}
+		static bool optionExists(const std::string &key);
 		static int getOptionAsInt(const std::string &key);
 		static std::string getOptionAsString(const std::string &key);
 		static void setOption(const std::string &key, int value);

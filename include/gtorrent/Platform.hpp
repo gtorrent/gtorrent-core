@@ -3,8 +3,6 @@
 #include <string>
 #include <memory>
 
-using namespace std;
-
 namespace gt
 {
 	class Torrent;
@@ -18,17 +16,17 @@ namespace gt
 		 * TODO Attempts to use XDG_DESKTOP_DIR if it is defined
 		 * Usually: ~/Downloads
 		 */
-		string getDefaultSavePath();
+		std::string getDefaultSavePath();
 		/**
 		 * Gets default path of where the config and session files should be saved.
 		 * TODO Attempts to use XDG_CONFIG_HOME/gtorrent if it is defined
 		 * Usually: ~/.config/gtorrent
 		 */
-		string getDefaultConfigPath();
+		std::string getDefaultConfigPath();
 		/**
 		 * Gets the home directory of the user.
 		 */
-		string getHomeDir();
+		std::string getHomeDir();
 		/**
 		 * Gets the OS's file separator
 		 */
@@ -41,17 +39,16 @@ namespace gt
 		/**
 		 * Checks if a directory exists.
 		 */
-		bool   checkDirExist(string);
+		bool   checkDirExist(std::string);
 
 		void   associate(bool, bool);
 
 		void   makeSharedFile();
 		bool   processIsUnique();
-		void   writeSharedData(string info);
-		string readSharedData();
+		void   writeSharedData(std::string info);
+		std::string readSharedData();
 		void   disableSharedData();
 		void   openTorrent(std::shared_ptr<gt::Torrent> t);
-		string getExecutablePath();
-
+		std::string getExecutablePath();
 	}
 }

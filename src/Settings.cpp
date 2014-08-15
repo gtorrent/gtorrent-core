@@ -40,7 +40,7 @@ bool gt::Settings::parse(const std::string &path)
 
 bool gt::Settings::save(const std::string &path)
 {
-	std::ofstream configFile(gt::Platform::getDefaultConfigPath() + path, ios_base::trunc);// old configfile is destroyed
+	std::ofstream configFile(gt::Platform::getDefaultConfigPath() + path, std::ios_base::trunc);// old configfile is destroyed
 	if(!configFile)
 		return true;
 	for(auto i = settings.begin(); i != settings.end(); ++i)
@@ -49,6 +49,10 @@ bool gt::Settings::save(const std::string &path)
 	return false;
 }
 
+bool gt::Settings::optionExists(const std::string &key)
+{
+	return settings.count(key) > 0;
+}
 
 std::string gt::Settings::getOptionAsString(const std::string &key)
 {
