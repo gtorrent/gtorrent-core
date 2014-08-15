@@ -23,7 +23,14 @@ gt::Core::Core(int argc, char **argv) :
 		exit(0);
 	}
 
-	gt::Platform::makeSharedFile();
+	try
+	{
+		gt::Platform::makeSharedFile();
+	}
+	catch(std::runtime_error msfError)
+	{
+		gt::Log::Debug(msfError.what());
+	}
 
 	// Fuck your deprecated shit, we're going void down in here
 	// tl;dr, figure out something useful to use the error code for,
