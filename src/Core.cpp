@@ -17,8 +17,8 @@ gt::Core::Core(int argc, char **argv) :
 	{
 		gt::Log::Debug("An instance is already running");
 
-                if (argc>1)
-                        gt::Platform::writeSharedData(argv[1]);
+		if (argc > 1)
+			gt::Platform::writeSharedData(argv[1]);
 
 		exit(0);
 	}

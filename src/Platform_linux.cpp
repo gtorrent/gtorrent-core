@@ -109,32 +109,32 @@ void gt::Platform::associate(bool magnet, bool torrent)
 	std::ofstream MassFile(getHomeDir() + ".local/share/applications/gtorrentm.desktop");
 
 	std::string TassString =
-		std::string("[Desktop Entry]\n")                          +
-		"Version=1.0\n"                                      +
-		"Encoding=UTF-8\n"                                   +
-		"Name=gTorrent\n"                                    +
-		"GenericName=BitTorrent Client\n"                    +
-		"Comment=Share files over BitTorrent\n"              +
-		"Exec=" + getExecutablePath() + " %F\n"              +
-		"Icon=gtorrent.png\n"                                +
-		"Terminal=false\n"                                   +
-		"Type=Application\n"                                 +
-		"MimeType=application/x-bittorrent;\n"               +
-		"Categories=Internet;Network;FileTransfer;P2P;GTK;\n";
+	    std::string("[Desktop Entry]\n")                          +
+	    "Version=1.0\n"                                      +
+	    "Encoding=UTF-8\n"                                   +
+	    "Name=gTorrent\n"                                    +
+	    "GenericName=BitTorrent Client\n"                    +
+	    "Comment=Share files over BitTorrent\n"              +
+	    "Exec=" + getExecutablePath() + " %F\n"              +
+	    "Icon=gtorrent.png\n"                                +
+	    "Terminal=false\n"                                   +
+	    "Type=Application\n"                                 +
+	    "MimeType=application/x-bittorrent;\n"               +
+	    "Categories=Internet;Network;FileTransfer;P2P;GTK;\n";
 
 	std::string MassString =
-		std::string("[Desktop Entry]\n")                          +
-		"Version=1.0\n"                                      +
-		"Encoding=UTF-8\n"                                   +
-		"Name=gTorrent\n"                                    +
-		"GenericName=BitTorrent Client\n"                    +
-		"Comment=Share files over BitTorrent\n"              +
-		"Exec=" + getExecutablePath() + " %u\n"              +
-		"Icon=gtorrent.png\n"                                +
-		"Terminal=false\n"                                   +
-		"Type=Application\n"                                 +
-		"MimeType=x-scheme-handler/magnet;\n;"               +
-		"Categories=Internet;Network;FileTransfer;P2P;GTK;\n";
+	    std::string("[Desktop Entry]\n")                          +
+	    "Version=1.0\n"                                      +
+	    "Encoding=UTF-8\n"                                   +
+	    "Name=gTorrent\n"                                    +
+	    "GenericName=BitTorrent Client\n"                    +
+	    "Comment=Share files over BitTorrent\n"              +
+	    "Exec=" + getExecutablePath() + " %u\n"              +
+	    "Icon=gtorrent.png\n"                                +
+	    "Terminal=false\n"                                   +
+	    "Type=Application\n"                                 +
+	    "MimeType=x-scheme-handler/magnet;\n;"               +
+	    "Categories=Internet;Network;FileTransfer;P2P;GTK;\n";
 
 	if(dirtyT)
 		TassFile << TassString;
