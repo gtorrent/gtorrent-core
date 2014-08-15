@@ -16,16 +16,16 @@
 #define T_PPM 1000000.f
 
 // format 0d 0h 0m 0s
-std::string getTimeString( boost::int64_t time_s )
+std::string getTimeString( int64_t time_s )
 {
 	if ( time_s <= 0 )
 		return "∞";
 
-	boost::int64_t time_m = time_s / 60;
+	int64_t time_m = time_s / 60;
 	time_s %= 60;
-	boost::int64_t time_h = time_m / 60;
+	int64_t time_h = time_m / 60;
 	time_m %= 60;
-	boost::int64_t time_d = time_h / 24;
+	int64_t time_d = time_h / 24;
 	time_h %= 24;
 
 	std::ostringstream time_string;
@@ -41,7 +41,7 @@ std::string getTimeString( boost::int64_t time_s )
 	return time_string.str();
 }
 
-std::string getRateString(boost::int64_t file_rate)
+std::string getRateString(int64_t file_rate)
 {
 	std::ostringstream frs;
 	if (file_rate > 0)
@@ -51,7 +51,7 @@ std::string getRateString(boost::int64_t file_rate)
 	return frs.str();
 }
 
-std::string getFileSizeString(boost::int64_t file_size)
+std::string getFileSizeString(int64_t file_size)
 {
 	if (file_size <= 0)
 	{
@@ -152,7 +152,7 @@ std::string& gt::Torrent::getPath()
 }
 
 // Returns number of seconds the torrent has been active
-boost::int64_t gt::Torrent::getActiveTime()
+int64_t gt::Torrent::getActiveTime()
 {
 	return m_handle.status().active_time;
 }
@@ -164,7 +164,7 @@ std::string gt::Torrent::getTextActiveTime()
 }
 
 // Returns number of seconds eta for the torrent
-boost::int64_t gt::Torrent::getEta()
+int64_t gt::Torrent::getEta()
 {
 	return (getDownloadRate() <= 0) ? -1 : (getSize() / getDownloadRate());
 }
@@ -245,22 +245,22 @@ unsigned int gt::Torrent::getTotalLeechers()
 	return getTotalPeers() - getTotalSeeders();
 }
 
-boost::int64_t gt::Torrent::getTotalUploaded()
+int64_t gt::Torrent::getTotalUploaded()
 {
 	return getHandle().status().total_upload;
 }
 
-boost::int64_t gt::Torrent::getTotalDownloaded()
+int64_t gt::Torrent::getTotalDownloaded()
 {
 	return getHandle().status().total_download;
 }
 
-boost::int64_t gt::Torrent::getSize()
+int64_t gt::Torrent::getSize()
 {
 	return getHandle().status().total_wanted;
 }
 
-boost::int64_t gt::Torrent::getTimeRemaining()
+int64_t gt::Torrent::getTimeRemaining()
 {
 	return (getDownloadRate() > 0) ? getSize() / getDownloadRate() : 0;
 }
@@ -300,7 +300,7 @@ std::string gt::Torrent::getTextSize()
 	return getFileSizeString(getSize());
 }
 
-boost::int64_t gt::Torrent::getRemaining()
+int64_t gt::Torrent::getRemaining()
 {
 	return getSize() - getTotalDownloaded();
 }

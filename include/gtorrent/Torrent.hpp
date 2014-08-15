@@ -4,13 +4,14 @@
 #include <sstream>
 #include <fstream>
 #include <string>
+#include <cstdint>
 
 #include <libtorrent/session.hpp>
 #include <libtorrent/torrent_handle.hpp>
 
-std::string getTimeString(boost::int64_t time_s);
-std::string getRateString(boost::int64_t file_rate);
-std::string getFileSizeString(boost::int64_t file_size);
+std::string getTimeString(int64_t time_s);
+std::string getRateString(int64_t file_rate);
+std::string getFileSizeString(int64_t file_size);
 
 namespace libtorrent
 {
@@ -43,13 +44,13 @@ namespace gt
 		std::string& getPath();
 
 		// Returns number of seconds the torrent has been active
-		boost::int64_t getActiveTime();
+		int64_t getActiveTime();
 
 		// Returns formatted active time as string
 		std::string getTextActiveTime();
 
 		// Returns number of seconds eta for the torrent
-		boost::int64_t getEta();
+		int64_t getEta();
 
 		// Returns formatted eta as string
 		std::string getTextEta();
@@ -79,16 +80,16 @@ namespace gt
 		unsigned int getTotalLeechers();
 
 		// Returns the current amount of data uploaded for this torrent
-		boost::int64_t getTotalUploaded();
+		int64_t getTotalUploaded();
 
 		// Returns the current amount of data downloaded for this torrent
-		boost::int64_t getTotalDownloaded();
+		int64_t getTotalDownloaded();
 
 		// Returns the total size of files in this torrent
-		boost::int64_t getSize();
+		int64_t getSize();
 
 		//Returns the elapsed time remaining in seconds
-		boost::int64_t getTimeRemaining();
+		int64_t getTimeRemaining();
 
 		// Returns the ratio (uploaded/downloaded) for this torrent
 		float getTotalRatio();
@@ -121,7 +122,7 @@ namespace gt
 		std::string getTextSize();
 
 		// Returns a the total size of files remain
-		boost::int64_t getRemaining();
+		int64_t getRemaining();
 
 		// Returns a friendly string for the total size of files remaining to download in torrent
 		std::string getTextRemaining();
