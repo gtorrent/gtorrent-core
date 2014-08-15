@@ -4,6 +4,7 @@
 
 #include <iostream>
 #include <cstdlib>
+#include <sstream>
 
 #include <windows.h>
 
@@ -35,7 +36,7 @@ string gt::Platform::getDefaultSavePath()
 
 string gt::Platform::getDefaultConfigPath()
 {
-    return string(getenv("APPDATA")) + "\\gtorrent";
+    return string(getenv("APPDATA")) + "\\gtorrent\\";
 }
 
 char gt::Platform::getFileSeparator()
@@ -83,58 +84,77 @@ void gt::Platform::associate(bool magnet, bool torrent)
 
 void *ld = nullptr, *fd = nullptr;
 bool gt::Platform::processIsUnique()
-{
+{//Currently locking doesn't work because the program can't delete the file at the end
+	static bool isUnique=false;
+	if(isUnique)
+	{
+		gt::Log::Debug("Process is unique");
+		return true;
+	}
     if(ld == nullptr)
     {
         gt::Log::Debug("The lock wasn't ready, retrying...");
         if(!checkDirExist(getDefaultConfigPath()))
             makeDir(getDefaultConfigPath(), 0755);
-        ld = CreateFile(string(getDefaultConfigPath() + "gtorrent.lock").c_str(), GENERIC_READ | GENERIC_WRITE, 0, NULL, CREATE_NEW, FILE_ATTRIBUTE_NORMAL, NULL);
+        ld = CreateFile(std::string(getDefaultConfigPath() + "gtorrent.lock").c_str(), GENERIC_READ | GENERIC_WRITE, 0, NULL, CREATE_NEW, FILE_ATTRIBUTE_NORMAL, NULL);
         return processIsUnique();
     }
     int state = LockFile(ld, 0, 0, 1, 0);
-    if(state == 0)
+    if(state != 0) //Zero if lock succeeds, Linux != Windows
         gt::Log::Debug("Process is unique");
-    if(state)
+    if(state ==0)
         gt::Log::Debug("Process is not unique");
-    return state == 0;
+    isUnique = state != 0;
+	return isUnique;
 }
 
 void gt::Platform::makeSharedFile()
 {
-    if(processIsUnique() && !checkDirExist(getTempDir() + "gfeed"))
-        if(CreateNamedPipe((getTempDir() + "gfeed").c_str(), PIPE_ACCESS_OUTBOUND, PIPE_TYPE_MESSAGE | PIPE_NOWAIT, 1, 1, 1, 0, NULL) == INVALID_HANDLE_VALUE)
-            throw runtime_error("Couldn't create pipe! Check your permissions or if " + string(getenv("TMP")) + string("\\gfeed exists"));
-    fd = CreateFile((getTempDir() + "gfeed").c_str(), GENERIC_READ | GENERIC_WRITE, 0, NULL, CREATE_NEW, FILE_ATTRIBUTE_NORMAL, NULL);
+    if(processIsUnique() && !checkDirExist("\\\\.\\pipe\\gfeed"))
+        if(CreateNamedPipe("\\\\.\\pipe\\gfeed", PIPE_ACCESS_DUPLEX, PIPE_TYPE_MESSAGE | PIPE_READMODE_MESSAGE | PIPE_NOWAIT, 1, 1, 1, 0, NULL) == INVALID_HANDLE_VALUE)
+            throw std::runtime_error("Couldn't create pipe! Check your permissions or if \\\\.\\pipe\\gfeed exists");
+    fd = CreateFile("\\\\.\\pipe\\gfeed", GENERIC_READ | GENERIC_WRITE , 0, NULL, CREATE_NEW, FILE_ATTRIBUTE_NORMAL, NULL);
     if(fd == INVALID_HANDLE_VALUE)
-        throw runtime_error("Couldn't open pipe");
-    if(ld == INVALID_HANDLE_VALUE)
-        ld = CreateFile((getTempDir() + "gtorrent.lock").c_str(), GENERIC_READ | GENERIC_WRITE, 0, NULL, CREATE_NEW, FILE_ATTRIBUTE_NORMAL, NULL);
-    if(ld == INVALID_HANDLE_VALUE)
-        throw runtime_error("Couldn't open pipe");
+        throw std::runtime_error("Couldn't open feed pipe");
+    if(ld == INVALID_HANDLE_VALUE || ld == nullptr)
+        ld = CreateFile(std::string(getDefaultConfigPath() + "gtorrent.lock").c_str(), GENERIC_READ | GENERIC_WRITE, 0, NULL, CREATE_NEW, FILE_ATTRIBUTE_NORMAL, NULL);
+    if(ld == INVALID_HANDLE_VALUE || ld == nullptr)
+        throw std::runtime_error("Couldn't open lock pipe");
     processIsUnique();
 }
 
-void gt::Platform::writeSharedData(string info)
+void gt::Platform::writeSharedData(std::string info)
 {
-    std::ofstream file(getTempDir() + "gfeed");
-    file << info << endl;
-    file.close();
+	const char* tosend = info.c_str();
+	DWORD bytesWritten;
+	std::ostringstream exceptionStream;
+    if (! WriteFile(fd, tosend, sizeof(tosend), &bytesWritten, NULL))
+	{
+		exceptionStream<<"Write to pipe failed with "<<bytesWritten<<" of "<<sizeof(tosend)<<" in "<<tosend;
+		throw std::runtime_error(exceptionStream.str());
+	}
 }
 
-string gt::Platform::readSharedData()
+std::string gt::Platform::readSharedData()
 {
+	DWORD pipemode = PIPE_READMODE_MESSAGE | PIPE_NOWAIT;
+	SetNamedPipeHandleState(fd,&pipemode, NULL, NULL);
     std::string sharedData;
-    char tmp = '\0';
-    while(ReadFile(fd, &tmp, 1, NULL, NULL) && tmp != '\n')
-        sharedData += tmp;
-    return sharedData;
+    char tmp[2];
+	DWORD cbRead=sizeof(char);
+	if (fd == INVALID_HANDLE_VALUE || fd == nullptr)
+		gt::Log::Debug("fd is invalid handle");
+    while(ReadFile(fd, tmp, sizeof(char), &cbRead, NULL) && ( tmp[cbRead/sizeof(char)]='\0' ) && tmp[1] != '\n') //IMPORTANT: that is assignment, not comparison DO NOT CHANGE = TO == 
+        sharedData += std::string(tmp);
+	return sharedData;
 }
 
 void gt::Platform::disableSharedData()
 {
-    // Just copying the quality code from Platform_linux
-    remove((getTempDir() + "gfeed").c_str());
+	//Windows named pipes should delete when there's nobody with access
+	gt::Log::Debug("Deleting lock file.");//Doesn't work, not called when program exits
+	UnlockFile(ld, 0, 0, 1, 0);
+	DeleteFile(std::string(getDefaultConfigPath() + "gtorrent.lock").c_str());
 }
 
 void gt::Platform::openTorrent(shared_ptr<gt::Torrent> t)
