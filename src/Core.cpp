@@ -46,10 +46,10 @@ std::vector<std::shared_ptr<gt::Torrent>> &gt::Core::getTorrents()
 	return m_torrents;
 }
 
-bool gt::Core::isMagnetLink(std::string const& url)
+bool gt::Core::isLink(std::string const& url)
 {
-	const std::string prefix = "magnet:";
-	return url.compare(0, prefix.length(), prefix) == 0;
+	const std::string magprefix = "magnet:", httpprefix = "http:";
+	return url.compare(0, magprefix.length(), magprefix) == 0 || url.compare(0, httpprefix.length(), httpprefix) == 0;
 }
 
 std::shared_ptr<gt::Torrent> gt::Core::addTorrent(std::string path, std::vector<char> *resumedata)

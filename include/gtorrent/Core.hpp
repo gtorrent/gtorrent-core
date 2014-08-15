@@ -31,7 +31,7 @@ namespace gt
 
 		std::vector<std::shared_ptr<gt::Torrent>> &getTorrents();
 
-		static bool isMagnetLink(std::string const& link);
+		static bool isLink(std::string const& link);
 
 		int loadSession(std::string path);
 		int saveSession(std::string path);
