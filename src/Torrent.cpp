@@ -408,6 +408,9 @@ std::string gt::Torrent::getFormattedHash()
 {
     std::stringstream hash;
     for(auto val : m_handle.info_hash())
-        hash << std::hex << val;
+    {
+        std::cout << hash.str() << std::endl;
+        hash << std::hex << (int)val;
+    }
     return hash.str();
 }
