@@ -121,7 +121,7 @@ namespace gt
 		std::string getTextSize();
 
 		// Returns a the total size of files remain
-                boost::int64_t getRemaining();
+		boost::int64_t getRemaining();
 
 		// Returns a friendly string for the total size of files remaining to download in torrent
 		std::string getTextRemaining();
@@ -150,6 +150,8 @@ namespace gt
 		bool hasMetadata();
 
 		std::string getSavePath();
+
+		std::string getFormattedHash();
 
 		//libtorrent::add_torrent_params.ti is an intrusive_ptr in 1.0 and a shared_ptr in svn.
 		//Using decltype allows us to make it compatible with both versions.
