@@ -17,6 +17,8 @@ SET (GTORRENT_VERSION_PATCH 2)
 # Options
 OPTION (ENABLE_TESTEXCUTABLE "Enable the compilation of a simple test" OFF)
 OPTION (Boost_USE_STATIC_LIBS "Use static version of Boost libraries." ON)
+OPTION (Boost_USE_MULTITHREADED  "Use multithreaded version of Boost."     ON)  
+OPTION (Boost_USE_STATIC_RUNTIME "Use Boost static runtime."               OFF) 
 
 # Configure version into utils/Version.hpp
 SET (VERSION ${GTORRENT_VERSION_MAJOR}.${GTORRENT_VERSION_MINOR}.${GTORRENT_VERSION_PATCH})
@@ -26,8 +28,6 @@ CONFIGURE_FILE (src/utils/Version.hpp.in Version.hpp @ONLY)
 SET (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -g -Wall")
 
 # Fuck libboost for not providing boost.pc or fucking something
-SET (Boost_USE_MULTITHREADED ON)  
-SET (Boost_USE_STATIC_RUNTIME OFF) 
 FIND_PACKAGE(Boost COMPONENTS system REQUIRED)
 
 # Find libraries the proper way
