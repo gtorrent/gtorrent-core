@@ -15,10 +15,13 @@ SET (GTORRENT_VERSION_PATCH 2)
 ############################################################
 
 # Options
-OPTION (ENABLE_TESTEXCUTABLE "Enable the compilation of a simple test" OFF)
-OPTION (Boost_USE_STATIC_LIBS "Use static version of Boost libraries." ON)
+OPTION (ENABLE_TESTEXCUTABLE     "Enable the compilation of a simple test" OFF)
+OPTION (USE_LOGGING              "Turns logging on/off"                    ON)
+OPTION (Boost_USE_STATIC_LIBS    "Use static version of Boost libraries."  ON)
 OPTION (Boost_USE_MULTITHREADED  "Use multithreaded version of Boost."     ON)  
 OPTION (Boost_USE_STATIC_RUNTIME "Use Boost static runtime."               OFF) 
+
+ADD_DEFINITIONS(-DUSE_LOGGING=${USE_LOGGING})
 
 # Configure version into utils/Version.hpp
 SET (VERSION ${GTORRENT_VERSION_MAJOR}.${GTORRENT_VERSION_MINOR}.${GTORRENT_VERSION_PATCH})

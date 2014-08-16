@@ -27,6 +27,7 @@ std::string gt::Log::getTimeStamp()
 
 void gt::Log::Debug(const char *fmt, ...)
 {
+#if USE_LOGGING
 	FILE * pFile = fopen("gtorrent.log", "a");
 
 	va_list args, fileargs;
@@ -51,4 +52,7 @@ void gt::Log::Debug(const char *fmt, ...)
 	va_end(args);
 	va_end(fileargs);
 	fclose(pFile);
+#else
+        return;
+#endif
 }
