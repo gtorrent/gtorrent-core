@@ -16,7 +16,7 @@ bool gt::Platform::checkDirExist(std::string dir)
 	int state = stat(dir.c_str(), &st);
 	if(state == 0)
 		gt::Log::Debug(std::string(dir + " exists,").c_str());
-	if(state != 0)
+	else
 		gt::Log::Debug(std::string(dir + " doesn't exists,").c_str());
 	return state == 0; //stat() returns 0 if the dir exist
 }
@@ -165,7 +165,7 @@ bool gt::Platform::processIsUnique()
 	int state = fcntl(ld, F_SETLK, &fl);
 	if(state == 0)
 		gt::Log::Debug("Process is unique");
-	if(state)
+	else
 		gt::Log::Debug("Process is not unique");
 	return state == 0;
 }
