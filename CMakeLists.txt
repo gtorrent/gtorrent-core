@@ -21,7 +21,9 @@ OPTION (Boost_USE_STATIC_LIBS    "Use static version of Boost libraries."  ON)
 OPTION (Boost_USE_MULTITHREADED  "Use multithreaded version of Boost."     ON)  
 OPTION (Boost_USE_STATIC_RUNTIME "Use Boost static runtime."               OFF) 
 
-ADD_DEFINITIONS(-DUSE_LOGGING=${USE_LOGGING})
+IF (USE_LOGGING)
+ADD_DEFINITIONS(-DUSE_LOGGING=1)
+ENDIF()
 
 # Configure version into utils/Version.hpp
 SET (VERSION ${GTORRENT_VERSION_MAJOR}.${GTORRENT_VERSION_MINOR}.${GTORRENT_VERSION_PATCH})
