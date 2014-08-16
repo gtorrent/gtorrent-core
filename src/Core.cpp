@@ -188,7 +188,6 @@ int gt::Core::saveSession(std::string folder)
 			--count;
 			continue;
 		default:
-			gt::Log::Debug("Received alert wasn't about resume data. Skipping.");
 			continue;
 		}
 
