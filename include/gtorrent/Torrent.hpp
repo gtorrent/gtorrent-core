@@ -167,7 +167,8 @@ namespace gt
 
 		std::vector<std::string> getLabels();
 
-		void addLabel(std::string label);
+		// return true if label was successfully inserted
+		bool addLabel(std::string label);
 
 		// return true if the label existed
 		bool removeLabel(std::string label);

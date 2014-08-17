@@ -417,10 +417,9 @@ std::vector<std::string> gt::Torrent::getLabels()
 	return *new std::vector<std::string>(m_labels.begin(), m_labels.end());
 }
 
-void gt::Torrent::addLabel(std::string label)
+bool gt::Torrent::addLabel(std::string label)
 {
-	if (!hasLabel(label))
-		m_labels.insert(label);
+	return std::get<1>(m_labels.insert(label));
 }
 
 bool gt::Torrent::removeLabel(std::string label)
