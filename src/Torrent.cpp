@@ -411,24 +411,3 @@ std::string gt::Torrent::getFormattedHash()
 		hash << std::hex << (int)val;
 	return hash.str();
 }
-
-std::vector<std::string> gt::Torrent::getLabels()
-{
-	return *new std::vector<std::string>(m_labels.begin(), m_labels.end());
-}
-
-bool gt::Torrent::addLabel(std::string label)
-{
-	return std::get<1>(m_labels.insert(label));
-}
-
-bool gt::Torrent::removeLabel(std::string label)
-{
-	return m_labels.erase(label) == 1;
-}
-
-bool gt::Torrent::hasLabel(std::string label)
-{
-	return m_labels.find(label) != m_labels.end();
-}
-
