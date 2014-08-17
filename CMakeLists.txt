@@ -15,7 +15,7 @@ SET (GTORRENT_VERSION_PATCH 2)
 ############################################################
 
 # Options
-OPTION (ENABLE_TESTEXCUTABLE     "Enable the compilation of a simple test" OFF)
+OPTION (ENABLE_TESTEXECUTABLE    "Enable the compilation of a simple test" OFF)
 OPTION (USE_LOGGING              "Turns logging on/off"                    ON)
 OPTION (Boost_USE_STATIC_LIBS    "Use static version of Boost libraries."  ON)
 OPTION (Boost_USE_MULTITHREADED  "Use multithreaded version of Boost."     ON)  

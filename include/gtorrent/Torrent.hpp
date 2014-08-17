@@ -5,6 +5,7 @@
 #include <fstream>
 #include <string>
 #include <cstdint>
+#include <unordered_set>
 
 #include <libtorrent/session.hpp>
 #include <libtorrent/torrent_handle.hpp>
@@ -29,6 +30,7 @@ namespace gt
 		libtorrent::add_torrent_params m_torrent_params;
 		libtorrent::torrent_handle m_handle;
 		std::string m_path;
+		std::unordered_set<std::string> m_labels;
 
 	public:
 		Torrent(std::string path);
@@ -162,5 +164,15 @@ namespace gt
 		void setSequentialDownload(bool seq);
 		bool SequentialDownloadEnabled();
 		std::vector<std::string> filenames();
+
+		std::vector<std::string> getLabels();
+
+		// return true if label was successfully inserted
+		bool addLabel(std::string label);
+
+		// return true if the label existed
+		bool removeLabel(std::string label);
+
+		bool hasLabel(std::string label);
 	};
 }
