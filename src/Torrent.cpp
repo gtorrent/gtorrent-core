@@ -414,7 +414,8 @@ std::string gt::Torrent::getFormattedHash()
 
 std::vector<std::string> gt::Torrent::getLabels()
 {
-	return *new std::vector<std::string>(m_labels.begin(), m_labels.end());
+	std::vector<std::string> veclabels(m_labels.begin(), m_labels.end());
+	return veclabels;
 }
 
 bool gt::Torrent::addLabel(std::string label)
