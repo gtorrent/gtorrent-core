@@ -51,7 +51,8 @@ void gt::Log::Debug(const char *fmt, ...)
 
 	va_end(args);
 	va_end(fileargs);
-	fclose(pFile);
+    if (pFile)
+    	fclose(pFile);
 #else
         return;
 #endif
