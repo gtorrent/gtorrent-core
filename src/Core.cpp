@@ -371,6 +371,10 @@ int gt::Core::statusList::update(std::vector<std::shared_ptr<Torrent>> *tl) {
     stopped.clear();
     finished.clear();
     for(int i = 0; i < tl->size(); i++) {
+      if(tl->at(i)->isPaused()) {
+           paused.push_back(tl->at(i));
+	   continue;
+        }
         if(tl->at(i)->getState() == libtorrent::torrent_status::state_t::downloading) {
             downloading.push_back(tl->at(i));
             continue;
@@ -387,9 +391,6 @@ int gt::Core::statusList::update(std::vector<std::shared_ptr<Torrent>> *tl) {
             finished.push_back(tl->at(i));
             continue;
         }
-        /* if(tl->at(i).getState() == libtorrent::torrent_status::state_t::paused) {
-            paused.push_back(tl->at(i));
-        } */
         stopped.push_back(tl->at(i));
     }
     return 1;
