@@ -43,7 +43,7 @@ gt::Core::Core(int argc, char **argv) :
 		gt::Log::Debug(ec.message().c_str());
 
 	for(int i = 1; i < argc; ++i)
-		addTorrent(string(argv[i]));
+		addTorrent(std::string(argv[i]));
 		statuses.update(&m_torrents);
 }
 
