@@ -109,7 +109,7 @@ void gt::Platform::associate(bool magnet, bool torrent)
 	std::ofstream MassFile(getHomeDir() + ".local/share/applications/gtorrentm.desktop");
 
 	std::string TassString =
-	    std::string("[Desktop Entry]\n")                          +
+	    std::string("[Desktop Entry]\n")                     +
 	    "Version=1.0\n"                                      +
 	    "Encoding=UTF-8\n"                                   +
 	    "Name=gTorrent\n"                                    +
@@ -123,7 +123,7 @@ void gt::Platform::associate(bool magnet, bool torrent)
 	    "Categories=Internet;Network;FileTransfer;P2P;GTK;\n";
 
 	std::string MassString =
-	    std::string("[Desktop Entry]\n")                          +
+	    std::string("[Desktop Entry]\n")                     +
 	    "Version=1.0\n"                                      +
 	    "Encoding=UTF-8\n"                                   +
 	    "Name=gTorrent\n"                                    +
@@ -179,9 +179,7 @@ void gt::Platform::makeSharedFile()
 	if(fd == -1)
 		throw std::runtime_error("Couldn't open pipe");
 	if(ld == -1)
-		ld = open("/var/lock/gtorrent.lock", O_CREAT | O_RDONLY, 0600);
-	if(ld == -1)
-		throw std::runtime_error("Couldn't open pipe");
+		throw std::runtime_error("Couldn't lock");
 	processIsUnique(); // a call here to lock the file
 }
 
@@ -209,6 +207,13 @@ void gt::Platform::disableSharedData()
 	// Its definition is located in the stdio.h header, or cstdio under c++.
 }
 
+std::string escape(std::string str)
+{
+	for(unsigned i = 0; i < str.size(); ++i)
+		if(str[i] == '\'') str.insert((i += 3) - 3, "'\\'");
+	return str;
+}
+
 void gt::Platform::openTorrent(std::shared_ptr<gt::Torrent> t)
 {
 	auto files = t->getInfo()->files();
@@ -216,7 +221,8 @@ void gt::Platform::openTorrent(std::shared_ptr<gt::Torrent> t)
 
 	if (files.num_files() > 1) // if there's more than a file, we open the containing folder
 		path = path.substr(0, path.find_last_of('/'));
-
+	path = escape(path);
+	gt::Log::Debug(path.c_str());
 	// HURR system() IS BAD BECAUSE IT'S NOT USED TO MAKE PORTABLE CODE, pls refer to the filename, if you're expecting anything portable here you've come to the wrong place.
 	system(std::string(std::string("xdg-open \'") + path + "\'").c_str()); // Either use system or fork and exec with the xdg binary it's literraly the same shit, or even worst, link with even more libs, pick your poison
 }

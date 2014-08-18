@@ -16,9 +16,9 @@
 #define T_PPM 1000000.f
 
 // format 0d 0h 0m 0s
-std::string getTimeString( int64_t time_s )
+std::string getTimeString(int64_t time_s)
 {
-	if ( time_s <= 0 )
+	if(time_s <= 0 )
 		return "∞";
 
 	int64_t time_m = time_s / 60;
@@ -43,40 +43,25 @@ std::string getTimeString( int64_t time_s )
 
 std::string getRateString(int64_t file_rate)
 {
-	std::ostringstream frs;
-	if (file_rate > 0)
-	{
-		frs << getFileSizeString(file_rate) << "/s";
-	}
-	return frs.str();
+	return getFileSizeString(file_rate) + (file_rate ? "/s" : "");
 }
 
 std::string getFileSizeString(int64_t file_size)
 {
 	if (file_size <= 0)
-	{
 		return std::string();
-	}
 
 	std::ostringstream fss;
 	fss << std::setprecision(3);
 
 	if (file_size >= (1024 * 1024 * 1024))
-	{
 		fss << file_size / (double)(1024 * 1024 * 1024) << " GB";
-	}
 	else if (file_size >= (1024 * 1024))
-	{
 		fss << (file_size / (double)(1024 * 1024)) << " MB";
-	}
 	else if (file_size >= 1024)
-	{
 		fss << (file_size / (double)1024) << " KB";
-	}
 	else if (file_size > 0)
-	{
 		fss << file_size << "B ";
-	}
 	return fss.str();
 }
 
@@ -179,6 +164,9 @@ std::string gt::Torrent::getTextState()
 {
 	std::ostringstream o;
 	int precision = 1;
+
+	if(getHandle().status().queue_position != -1 && 
+	   getHandle().status().queue_position >= stoi(gt::Settings::settings["ActiveDownloads"])) return "Queued";
 
 	switch (getState())
 	{
