@@ -135,9 +135,13 @@ void gt::Settings::setDefaults()
 	settings["ChokingAlgorithm"] = "Default";
 	/* Only applies to BitTyrant */
 	// not sure about how it werks concretly
-	settings["DefaultReciprocationRate"] = "14"; // Unit is download speed in KB/s
+	settings["DefaultReciprocationRate"]  = "14"; // Unit is download speed in KB/s
 	settings["IncreaseReciprocationRate"] = "20"; // In percents
 	settings["DecreaseReciprocationRate"] = "3";
+
+	// -1 for unlimited
+	settings["ActiveDownloads"] = "8";
+	settings["ActiveSeeds"]     = "5";
 
 	/*
 	 * RoundRobins: Distribute the upload fairly.

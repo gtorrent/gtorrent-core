@@ -12,14 +12,11 @@
 gt::Core::Core(int argc, char **argv) :
 	m_running(true)
 {
-
 	if(!gt::Platform::processIsUnique())
 	{
 		gt::Log::Debug("An instance is already running");
-
 		if (argc > 1)
 			gt::Platform::writeSharedData(argv[1]);
-
 		exit(0);
 	}
 
@@ -32,13 +29,10 @@ gt::Core::Core(int argc, char **argv) :
 		gt::Log::Debug(msfError.what());
 	}
 
-	// Fuck your deprecated shit, we're going void down in here
-	// tl;dr, figure out something useful to use the error code for,
-	// like handling what the fuck might happen if listen_on fails kthnx
 	loadSession(gt::Platform::getDefaultConfigPath());
 
 	libtorrent::error_code ec;
-	m_session.listen_on(std::make_pair(6881, 6889), ec, (const char *)0, 0); //ambigous between new and deprecated function
+	m_session.listen_on(std::make_pair(6881, 6889), ec, (const char *)0, 0);
 	if (ec.value() != 0)
 		gt::Log::Debug(ec.message().c_str());
 
@@ -186,7 +180,6 @@ int gt::Core::saveSession(std::string folder)
 		case libtorrent::save_resume_data_failed_alert::alert_type:
 			gt::Log::Debug("Failed to create resume data. Skipping.");
 			--count;
-			continue;
 		default:
 			continue;
 		}
@@ -257,7 +250,6 @@ int gt::Core::loadSession(std::string folder)
 	}
 
 	m_session.resume();
-
 	return 0;
 }
 
@@ -320,9 +312,9 @@ void gt::Core::setSessionParameters()
 
 	try
 	{
-		if(stoi(Settings::settings["CacheSize"]) > 0) se.cache_size = stoi(Settings::settings["CacheSize"]);
+		if(stoi(Settings::settings["CacheSize"   ]) > 0) se.cache_size              = stoi(Settings::settings["CacheSize"   ]);
+		if(stoi(Settings::settings["CacheExpiry" ]) > 0) se.cache_expiry            = stoi(Settings::settings["CacheExpiry" ]);
 		if(stoi(Settings::settings["CachedChunks"]) > 0) se.cache_buffer_chunk_size = stoi(Settings::settings["CachedChunks"]);
-		if(stoi(Settings::settings["CacheExpiry"]) > 0) se.cache_expiry = stoi(Settings::settings["CacheExpiry"]);
 	}
 	catch(...)
 	{}
@@ -330,14 +322,14 @@ void gt::Core::setSessionParameters()
 	if(Settings::settings["AnonymousMode"] == "Yes") se.anonymous_mode = true;
 	if(Settings::settings["ChokingAlgorithm"] != "Default")
 	{
-		if(Settings::settings["ChokingAlgorithm"] == "AutoExpand") se.choking_algorithm = 1;
+		if     (Settings::settings["ChokingAlgorithm"] == "AutoExpand") se.choking_algorithm = 1;
 		else if(Settings::settings["ChokingAlgorithm"] == "RateBased") se.choking_algorithm = 2;
 		else if(Settings::settings["ChokingAlgorithm"] == "BitTyrant")
 		{
 			se.choking_algorithm = 3;
 			try
 			{
-				if(stoi(Settings::settings["DefaultReciprocationRate"]) > 0) se.default_est_reciprocation_rate = stoi(Settings::settings["DefaultReciprocationRate"]);
+				if(stoi(Settings::settings["DefaultReciprocationRate" ]) > 0) se.default_est_reciprocation_rate  = stoi(Settings::settings["DefaultReciprocationRate" ]);
 				if(stoi(Settings::settings["IncreaseReciprocationRate"]) > 0) se.increase_est_reciprocation_rate = stoi(Settings::settings["IncreaseReciprocationRate"]);
 				if(stoi(Settings::settings["DecreaseReciprocationRate"]) > 0) se.decrease_est_reciprocation_rate = stoi(Settings::settings["DecreaseReciprocationRate"]);
 			}
@@ -356,9 +348,11 @@ void gt::Core::setSessionParameters()
 	if(Settings::settings["PieceSuggestion"] == "No") se.suggest_mode = 0;
 	try
 	{
-		if(stoi(Settings::settings["GlobalUploadLimit"]) > 0) se.upload_rate_limit = stoi(Settings::settings["GlobalUploadLimit"]);
-		if(stoi(Settings::settings["DHTUploadLimit"]) > 0) se.dht_upload_rate_limit = stoi(Settings::settings["DHTUploadLimit"]);
-		if(stoi(Settings::settings["GlobalDownloadLimit"]) > 0) se.download_rate_limit = stoi(Settings::settings["GlobalDownloadLimit"]);
+		if(stoi(Settings::settings["ActiveSeeds"        ]) > 0) se.active_seeds          = stoi(Settings::settings["ActiveSeeds"        ]);
+		if(stoi(Settings::settings["ActiveDownloads"    ]) > 0) se.active_downloads      = stoi(Settings::settings["ActiveDownloads"    ]);
+		if(stoi(Settings::settings["DHTUploadLimit"     ]) > 0) se.dht_upload_rate_limit = stoi(Settings::settings["DHTUploadLimit"     ]);
+		if(stoi(Settings::settings["GlobalUploadLimit"  ]) > 0) se.upload_rate_limit     = stoi(Settings::settings["GlobalUploadLimit"  ]);
+		if(stoi(Settings::settings["GlobalDownloadLimit"]) > 0) se.download_rate_limit   = stoi(Settings::settings["GlobalDownloadLimit"]);
 	}
 	catch(...)
 	{}
