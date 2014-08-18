@@ -283,7 +283,6 @@ void gt::Core::setSessionParameters()
 		else if(Settings::settings["OverrideSettings"] == "HighPerformanceSeeding")
 			se = libtorrent::high_performance_seed();
 	}
-
 	if(Settings::settings["ProxyHost"] != "")
 	{
 		libtorrent::proxy_settings pe;
@@ -348,15 +347,19 @@ void gt::Core::setSessionParameters()
 	if(Settings::settings["PieceSuggestion"] == "No") se.suggest_mode = 0;
 	try
 	{
-		if(stoi(Settings::settings["ActiveSeeds"        ]) > 0) se.active_seeds          = stoi(Settings::settings["ActiveSeeds"        ]);
-		if(stoi(Settings::settings["ActiveDownloads"    ]) > 0) se.active_downloads      = stoi(Settings::settings["ActiveDownloads"    ]);
-		if(stoi(Settings::settings["DHTUploadLimit"     ]) > 0) se.dht_upload_rate_limit = stoi(Settings::settings["DHTUploadLimit"     ]);
-		if(stoi(Settings::settings["GlobalUploadLimit"  ]) > 0) se.upload_rate_limit     = stoi(Settings::settings["GlobalUploadLimit"  ]);
-		if(stoi(Settings::settings["GlobalDownloadLimit"]) > 0) se.download_rate_limit   = stoi(Settings::settings["GlobalDownloadLimit"]);
+		se.active_seeds          = stoi(Settings::settings["ActiveSeeds"        ]);
+		se.active_downloads      = stoi(Settings::settings["ActiveDownloads"    ]);
+		se.dht_upload_rate_limit = stoi(Settings::settings["DHTUploadLimit"     ]);
+		se.upload_rate_limit     = stoi(Settings::settings["GlobalUploadLimit"  ]);
+		se.download_rate_limit   = stoi(Settings::settings["GlobalDownloadLimit"]);
+		se.active_limit = se.active_seeds + se.active_downloads;
 	}
 	catch(...)
 	{}
+	gt::Log::Debug(Settings::settings["ActiveSeeds"        ].c_str());
+	gt::Log::Debug(Settings::settings["ActiveDownloads"    ].c_str());
 
+	se.auto_manage_interval = 1;
 	if(Settings::settings["ReportTrueDownloaded"] == "Yes") se.report_redundant_bytes = true;
 	m_session.set_settings(se);
 }

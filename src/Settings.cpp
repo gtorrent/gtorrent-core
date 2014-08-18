@@ -89,41 +89,35 @@ void gt::Settings::setDefaults()
 	settings["SavePath"] = gt::Platform::getDefaultSavePath();
 	settings["FileAssociation"] = "-1";
 
-	settings["PausedForeGroundColor"]      = "#F08080";
-	settings["PausedBackGroundColor"]      = "#800000";
-	settings["QueuedForeGroundColor"]      = "#00BFFF";
-	settings["QueuedBackGroundColor"]      = "#FFFFFF";
-	settings["SeedingForeGroundColor"]     = "#1E90FF";
-	settings["SeedingBackGroundColor"]     = "#ADD8E6";
-	settings["MetadataForeGroundColor"]    = "#228B22";
-	settings["MetadataBackGroundColor"]    = "#7FFFD4";
-	settings["FinishedForeGroundColor"]    = "#ADD8E6";
-	settings["FinishedBackGroundColor"]    = "#483D8B";
-	settings["ResumingForeGroundColor"]    = "#6495ED";
-	settings["ResumingBackGroundColor"]    = "#FAF0E6";
-	settings["CheckingForeGroundColor"]    = "#DAA520";
-	settings["CheckingBackGroundColor"]    = "#FFFACD";
-	settings["AllocatingForeGroundColor"]  = "#FF7F50";
-	settings["AllocatingBackGroundColor"]  = "#FAFAD2";
-	settings["DownloadingForeGroundColor"] = "#228B43";
-	settings["DownloadingBackGroundColor"] = "#FFFFFF";
+	settings["PausedForeGroundColor"]        = "#F08080";
+	settings["PausedBackGroundColor"]        = "#800000";
+	settings["QueuedForeGroundColor"]        = "#00BFFF";
+	settings["QueuedBackGroundColor"]        = "#FFFFFF";
+	settings["SeedingForeGroundColor"]       = "#1E90FF";
+	settings["SeedingBackGroundColor"]       = "#ADD8E6";
+	settings["MetadataForeGroundColor"]      = "#228B22";
+	settings["MetadataBackGroundColor"]      = "#7FFFD4";
+	settings["FinishedForeGroundColor"]      = "#ADD8E6";
+	settings["FinishedBackGroundColor"]      = "#483D8B";
+	settings["ResumingForeGroundColor"]      = "#6495ED";
+	settings["ResumingBackGroundColor"]      = "#FAF0E6";
+	settings["CheckingForeGroundColor"]      = "#DAA520";
+	settings["CheckingBackGroundColor"]      = "#FFFACD";
+	settings["AllocatingForeGroundColor"]    = "#FF7F50";
+	settings["AllocatingBackGroundColor"]    = "#FAFAD2";
+	settings["DownloadingForeGroundColor"]   = "#228B43";
+	settings["DownloadingBackGroundColor"]   = "#FFFFFF";
+	settings["CheckingQueueForeGroundColor"] = "#DAA520";
+	settings["CheckingQueueBackGroundColor"] = "#FFFACD";
 
-	//////////////////// Below this line, options haven't been tested yet. ////////////////////////////
 	settings["GraphUploadCurveColor"] = "red";
 	settings["GraphDownloadCurveColor"] = "green";
 	settings["GraphGridColor"] = "grey";
 	settings["ShowLegend"] = "Yes";
 
-	settings["ProxyHost"] = "";
-	settings["ProxyType"] = "None"; // Can be: HTTP, SOCKS4, SOCKS5, I2P
-	settings["ProxyPort"] = "8080";
-	settings["ProxyCredentials"] = "user:pass";
-
 	settings["CacheSize"] = "0"; // Multiple of 16KB blocks // defaults a 1/8 of total RAM !!!
 	settings["CachedChunks"] = ""; // Number of blocks allocated at a time
 	settings["CacheExpiry"] = ""; // Number of second elapsed before flushing to disk
-	settings["AnonymousMode"] = "No";
-	settings["OverrideSettings"] = "No"; // Can be set to Minimal, HighPerformanceSeeding, and No.
 
 	//Where an upload limit is required, it should be as close as possible to the real upload limit
 	/*
@@ -143,14 +137,6 @@ void gt::Settings::setDefaults()
 	settings["ActiveDownloads"] = "8";
 	settings["ActiveSeeds"]     = "5";
 
-	/*
-	 * RoundRobins: Distribute the upload fairly.
-	 * FastestUpload: Unchoke the fastest peers
-	 * AntiLeech: Prioritize peers who just started or about to finish, making leeches in the middle share between them
-	 */
-	settings["SeedChokingAlgorithm"] = "RoundRobin";
-
-
 	//used for the tracker HTTP requests, and also sent to client supporting the useragent extension
 	settings["UserAgent"] = "gTorrent/0.0.2 libtorrent/0.16.17";
 
@@ -167,6 +153,22 @@ void gt::Settings::setDefaults()
 	settings["DefaultSequentialDownloading"] = "No"; // When is Yes, will set seq by default only if the torrent has a single file that ends in the below list
 	settings["SequentialDownloadExtensions"] = "mkv/mp3/flac/mp4/mp5/avi";
 
+	/*
+	 * RoundRobins: Distribute the upload fairly.
+	 * FastestUpload: Unchoke the fastest peers
+	 * AntiLeech: Prioritize peers who just started or about to finish, making leeches in the middle share between them
+	 */
+	settings["SeedChokingAlgorithm"] = "RoundRobin";
+
+	//////////////////// Below this line, options haven't been tested yet. ////////////////////////////
+
+	settings["ProxyHost"] = "";
+	settings["ProxyType"] = "None"; // Can be: HTTP, SOCKS4, SOCKS5, I2P
+	settings["ProxyPort"] = "8080";
+	settings["ProxyCredentials"] = "user:pass";
+
+	settings["AnonymousMode"] = "No";
+	settings["OverrideSettings"] = "No"; // Can be set to Minimal, HighPerformanceSeeding, and No.
 	//////////////////// Below this line, the options aren't implemented into core yet. ////////////////////////
 
 }
