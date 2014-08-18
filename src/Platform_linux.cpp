@@ -210,7 +210,6 @@ void gt::Platform::disableSharedData()
 std::string escape(std::string str)
 {
 	for(unsigned i = 0; i < str.size(); ++i)
-		std::cout << str[i] << std::endl;
 		if(str[i] == '\'') str.insert((i += 3) - 3, "'\\'");
 	return str;
 }
