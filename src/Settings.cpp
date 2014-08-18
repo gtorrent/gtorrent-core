@@ -42,7 +42,7 @@ bool gt::Settings::parse(const std::string &path)
 
 bool gt::Settings::save(const std::string &path)
 {
-	std::ofstream configFile(gt::Platform::getDefaultConfigPath() + path, ios_base::trunc);// old configfile is destroyed
+	std::ofstream configFile(gt::Platform::getDefaultConfigPath() + path, std::ios_base::trunc);// old configfile is destroyed
 	if(!configFile)
 		return true;
 	for(auto i = settings.begin(); i != settings.end(); ++i)
@@ -51,6 +51,10 @@ bool gt::Settings::save(const std::string &path)
 	return false;
 }
 
+bool gt::Settings::optionExists(const std::string &key)
+{
+	return settings.count(key) > 0;
+}
 
 std::string gt::Settings::getOptionAsString(const std::string &key)
 {
@@ -158,9 +162,9 @@ void gt::Settings::setDefaults()
 	settings["DHTUploadLimit"] = "4000"; // it is the default in libtorrent, should be set higher for seedboxes
 	// Set to yes if you want to count in the amount of redundant bytes downloaded that is sent to the tracker
 	settings["ReportTrueDownloaded"] = "No";
-	settings["DefaultSequentialDownloading"] = "No"; // When is Yes, will set seq by default only if the torrent has a single file that ends in the below list 
+	settings["DefaultSequentialDownloading"] = "No"; // When is Yes, will set seq by default only if the torrent has a single file that ends in the below list
 	settings["SequentialDownloadExtensions"] = "mkv/mp3/flac/mp4/mp5/avi";
 
-    //////////////////// Below this line, the options aren't implemented into core yet. ////////////////////////
+	//////////////////// Below this line, the options aren't implemented into core yet. ////////////////////////
 
 }

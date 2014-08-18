@@ -9,8 +9,6 @@
 #include "Platform.hpp"
 #include "Settings.hpp"
 
-using namespace std;
-
 gt::Core::Core(int argc, char **argv) :
 	m_running(true)
 {
@@ -18,11 +16,21 @@ gt::Core::Core(int argc, char **argv) :
 	if(!gt::Platform::processIsUnique())
 	{
 		gt::Log::Debug("An instance is already running");
-		gt::Platform::writeSharedData(argv[1]);
+
+		if (argc > 1)
+			gt::Platform::writeSharedData(argv[1]);
+
 		exit(0);
 	}
 
-	gt::Platform::makeSharedFile();
+	try
+	{
+		gt::Platform::makeSharedFile();
+	}
+	catch(std::runtime_error msfError)
+	{
+		gt::Log::Debug(msfError.what());
+	}
 
 	// Fuck your deprecated shit, we're going void down in here
 	// tl;dr, figure out something useful to use the error code for,
@@ -30,54 +38,59 @@ gt::Core::Core(int argc, char **argv) :
 	loadSession(gt::Platform::getDefaultConfigPath());
 
 	libtorrent::error_code ec;
-	m_session.listen_on(make_pair(6881, 6889), ec, (const char *)0, 0); //ambigous between new and deprecated function
+	m_session.listen_on(std::make_pair(6881, 6889), ec, (const char *)0, 0); //ambigous between new and deprecated function
 	if (ec.value() != 0)
 		gt::Log::Debug(ec.message().c_str());
 
 	for(int i = 1; i < argc; ++i)
 		addTorrent(string(argv[i]));
-
-    statuses.update(&m_torrents);
+		statuses.update(&m_torrents);
 }
 
-bool gt::Core::isMagnetLink(string const& url)
+std::vector<std::shared_ptr<gt::Torrent>> &gt::Core::getTorrents()
 {
-	const string prefix = "magnet:";
+	return m_torrents;
+}
+
+bool gt::Core::isMagnetLink(std::string const& url)
+{
+	const std::string prefix = "magnet:";
 	return url.compare(0, prefix.length(), prefix) == 0;
 }
 
-shared_ptr<gt::Torrent> gt::Core::addTorrent(string path, vector<char> *resumedata)
+std::shared_ptr<gt::Torrent> gt::Core::addTorrent(std::string path, std::vector<char> *resumedata)
 {
 	if (path.empty())
-		return shared_ptr<gt::Torrent>();//Use default constructor instead of null
+		return std::shared_ptr<gt::Torrent>();//Use default constructor instead of null
 
-	shared_ptr<gt::Torrent> t;
+	std::shared_ptr<gt::Torrent> t;
 
 	try
 	{
-		t = make_shared<gt::Torrent>(path);
+		t = std::make_shared<gt::Torrent>(path);
 		//pointer necessary to catch exception as a shared ptr would go out of scope
 	}
 	catch (int exception)
 	{
-		return shared_ptr<gt::Torrent>();
+		return std::shared_ptr<gt::Torrent>();
 		//Return null if invalid torrent to be handled by GtkMainWindow
 	}
 
 	libtorrent::error_code ec;
 	auto params = t->getTorrentParams();
-	params.resume_data = resumedata != nullptr ? *resumedata : vector<char>(); //TODO: Look if fast resume data exists for this torrent
+	params.flags |= 128; // torrent duplication is error
+	params.resume_data = resumedata != nullptr ? *resumedata : std::vector<char>(); //TODO: Look if fast resume data exists for this torrent
 	libtorrent::torrent_handle h = m_session.add_torrent(params, ec);
 
-	//Actually, libtorrent silentely deals with duplicates, we just have to make this function not to return another Torrent to the UI
-	for(auto tor : getTorrents())
-		if(t->getHandle().status().has_metadata && tor->getHandle().info_hash() == t->getTorrentParams().ti->info_hash())
-			return shared_ptr<gt::Torrent>();
+	if(!h.status().has_metadata)
+		for(auto tor : getTorrents())
+			if(t->getTorrentParams().url == tor->getTorrentParams().url)
+				return std::shared_ptr<gt::Torrent>();
 
 	if (ec.value() != 0)
 	{
 		gt::Log::Debug(ec.message().c_str());
-		return shared_ptr<gt::Torrent>();
+		return std::shared_ptr<gt::Torrent>();
 	}
 	else
 	{
@@ -87,8 +100,8 @@ shared_ptr<gt::Torrent> gt::Core::addTorrent(string path, vector<char> *resumeda
 		{
 			if(t->filenames().size() == 1)
 			{
-				string ext = t->filenames()[0].substr(t->filenames()[0].find_last_of('.') + 1);
-				t->setSequentialDownload(gt::Settings::settings["SequentialDownloadExtensions"].find(ext) != string::npos);
+				std::string ext = t->filenames()[0].substr(t->filenames()[0].find_last_of('.') + 1);
+				t->setSequentialDownload(gt::Settings::settings["SequentialDownloadExtensions"].find(ext) != std::string::npos);
 			}
 		}
         statuses.update(&m_torrents);
@@ -96,7 +109,7 @@ shared_ptr<gt::Torrent> gt::Core::addTorrent(string path, vector<char> *resumeda
 	}
 }
 
-void gt::Core::removeTorrent(shared_ptr<Torrent> t)
+void gt::Core::removeTorrent(std::shared_ptr<Torrent> t)
 {
 	//TODO : add removal of files on request
 	//TODO : Remove fast resume data associated to file
@@ -114,10 +127,15 @@ void gt::Core::removeTorrent(shared_ptr<Torrent> t)
     statuses.update(&m_torrents);
 }
 
+bool gt::Core::isRunning() const
+{
+	return m_running;
+}
+
 /*
  * Where path is relative to the executable
  */
-int gt::Core::saveSession(string folder)
+int gt::Core::saveSession(std::string folder)
 {
 	libtorrent::entry ent;
 	m_session.pause();
@@ -130,8 +148,8 @@ int gt::Core::saveSession(string folder)
 	if(!gt::Platform::checkDirExist(folder + "meta/"))
 		gt::Platform::makeDir(folder + "meta/", 0755);
 
-	ofstream state(folder + "state.gts");
-	ofstream list(folder + "list.gts");
+	std::ofstream state(folder + "state.gts");
+	std::ofstream list(folder + "list.gts");
 
 	if(!state)
 		throw "Couldn't open state.gts";
@@ -139,7 +157,7 @@ int gt::Core::saveSession(string folder)
 	if(!list)
 		throw "Couldn't open list.gts";
 
-	bencode(ostream_iterator<char>(state), ent);
+	bencode(std::ostream_iterator<char>(state), ent);
 	state.close();
 
 	int count = 0;
@@ -151,9 +169,9 @@ int gt::Core::saveSession(string folder)
 		if(!tor->getHandle().need_save_resume_data()) continue;
 
 		auto ent = libtorrent::create_torrent(*tor->getInfo()).generate();
-		ofstream out((folder + "meta/" + tor->getName() + ".torrent").c_str(), std::ios_base::binary);
-		out.unsetf(ios_base::skipws);
-		bencode(ostream_iterator<char>(out), ent);
+		std::ofstream out((folder + "meta/" + tor->getName() + ".torrent").c_str(), std::ios_base::binary);
+		out.unsetf(std::ios_base::skipws);
+		bencode(std::ostream_iterator<char>(out), ent);
 
 		tor->getHandle().save_resume_data();
 		++count;
@@ -162,7 +180,7 @@ int gt::Core::saveSession(string folder)
 	while(count)
 	{
 		libtorrent::alert const *al = m_session.wait_for_alert(libtorrent::seconds(10));
-		unique_ptr<libtorrent::alert> holder = m_session.pop_alert();
+		std::unique_ptr<libtorrent::alert> holder = m_session.pop_alert();
 
 		switch (al->type())
 		{
@@ -173,16 +191,15 @@ int gt::Core::saveSession(string folder)
 			--count;
 			continue;
 		default:
-			gt::Log::Debug("Received alert wasn't about resume data. Skipping.");
 			continue;
 		}
 
 		libtorrent::save_resume_data_alert *rd = (libtorrent::save_resume_data_alert*)al;
 		libtorrent::torrent_handle h = rd->handle;
-		ofstream out((folder + "meta/" + h.status().name + ".fastresume").c_str(), std::ios_base::binary);
-		out.unsetf(ios_base::skipws);
+		std::ofstream out((folder + "meta/" + h.status().name + ".fastresume").c_str(), std::ios_base::binary);
+		out.unsetf(std::ios_base::skipws);
 		list << h.status().name << '\n';
-		bencode(ostream_iterator<char>(out), *rd->resume_data);
+		bencode(std::ostream_iterator<char>(out), *rd->resume_data);
 		--count;
 	}
 
@@ -191,24 +208,24 @@ int gt::Core::saveSession(string folder)
 	return 0;
 }
 
-int gt::Core::loadSession(string folder)
+int gt::Core::loadSession(std::string folder)
 {
 	libtorrent::lazy_entry ent;
 	libtorrent::error_code ec;
 
 	gt::Settings::parse("config");
 
-	if (!gt::Platform::checkDirExist(folder)               ||
-		!gt::Platform::checkDirExist(folder + "state.gts") ||
-		!gt::Platform::checkDirExist(folder + "list.gts"))
+	if (!gt::Platform::checkDirExist(folder)                   ||
+	        !gt::Platform::checkDirExist(folder + "state.gts") ||
+	        !gt::Platform::checkDirExist(folder + "list.gts"))
 	{
 		// Also creates an empty session.
-		gt::Log::Debug(string("Creating new session folder in: " + gt::Platform::getDefaultConfigPath()).c_str());
+		gt::Log::Debug(std::string("Creating new session folder in: " + gt::Platform::getDefaultConfigPath()).c_str());
 		saveSession(folder);
 	}
 
-	fstream state;
-	fstream list;
+	std::fstream state;
+	std::fstream list;
 
 	state.open(folder + "state.gts");
 	list.open(folder + "list.gts");
@@ -219,7 +236,7 @@ int gt::Core::loadSession(string folder)
 	if(!list.is_open())
 		throw "Couldn't open list.gts";
 
-	string benfile, tmp;
+	std::string benfile, tmp;
 
 	do
 	{
@@ -235,8 +252,8 @@ int gt::Core::loadSession(string folder)
 	{
 		if(!gt::Platform::checkDirExist(folder + "meta/" + tmp + ".torrent")) continue; //eventually delete the associated .fasteresume
 		libtorrent::add_torrent_params params;
-		vector<char> resumebuff;
-		ifstream resumedata(folder + "meta/" + tmp + ".fastresume");
+		std::vector<char> resumebuff;
+		std::ifstream resumedata(folder + "meta/" + tmp + ".fastresume");
 		while(resumedata)
 			resumebuff.push_back(resumedata.get());
 		auto t = addTorrent(folder + "meta/" + tmp + ".torrent", &resumebuff);
@@ -247,9 +264,9 @@ int gt::Core::loadSession(string folder)
 	return 0;
 }
 
-shared_ptr<gt::Torrent> gt::Core::update()
+std::shared_ptr<gt::Torrent> gt::Core::update()
 {
-	string str = gt::Platform::readSharedData();
+	std::string str = gt::Platform::readSharedData();
 	if(!str.empty()) gt::Log::Debug(str.c_str());
 	return addTorrent(str);
 }
@@ -281,12 +298,12 @@ void gt::Core::setSessionParameters()
 	if(Settings::settings["ProxyHost"] != "")
 	{
 		libtorrent::proxy_settings pe;
-		string user, pass;
+		std::string user, pass;
 		pe.hostname = Settings::settings["ProxyHost"];
 		if(Settings::settings["ProxyCredentials"] != "")
 		{
 			user = Settings::settings["ProxyCredentials"].substr(0, Settings::settings["ProxyCredentials"].find(':'));
-			pass = Settings::settings["ProxyCredentials"].substr(Settings::settings["ProxyCredentials"].find(':'), string::npos);
+			pass = Settings::settings["ProxyCredentials"].substr(Settings::settings["ProxyCredentials"].find(':'), std::string::npos);
 		}
 		pe.username = user;
 
@@ -340,7 +357,6 @@ void gt::Core::setSessionParameters()
 
 	se.user_agent = Settings::settings["UserAgent"];
 	if(Settings::settings["PieceSuggestion"] == "No") se.suggest_mode = 0;
-
 	try
 	{
 		if(stoi(Settings::settings["GlobalUploadLimit"]) > 0) se.upload_rate_limit = stoi(Settings::settings["GlobalUploadLimit"]);
@@ -351,16 +367,6 @@ void gt::Core::setSessionParameters()
 	{}
 
 	if(Settings::settings["ReportTrueDownloaded"] == "Yes") se.report_redundant_bytes = true;
-/*	if(Settings::settings[""]);
-	if(Settings::settings[""]);
-	if(Settings::settings[""]);
-	if(Settings::settings[""]);
-	if(Settings::settings[""]);
-	if(Settings::settings[""]);
-	if(Settings::settings[""]);
-	if(Settings::settings[""]);
-	if(Settings::settings[""]);
-	if(Settings::settings[""]);*/
 	m_session.set_settings(se);
 }
 

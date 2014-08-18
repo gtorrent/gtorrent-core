@@ -4,17 +4,18 @@
 #include <sstream>
 #include <fstream>
 #include <string>
+#include <cstdint>
 
 #include <libtorrent/session.hpp>
 #include <libtorrent/torrent_handle.hpp>
 
-std::string getTimeString(boost::int64_t time_s);
-std::string getRateString(boost::int64_t file_rate);
-std::string getFileSizeString(boost::int64_t file_size);
+std::string getTimeString(int64_t time_s);
+std::string getRateString(int64_t file_rate);
+std::string getFileSizeString(int64_t file_size);
 
 namespace libtorrent
 {
-	class add_torrent_params;
+	struct add_torrent_params;
 }
 
 namespace gt
@@ -34,142 +35,70 @@ namespace gt
 
 		bool pollEvent(gt::Event &event);
 
-		/* Think twice next time before mixing const correctness with inline */
+		/* Think twice next time before mixing const correctness with inline*/
 		// Getters
-		inline libtorrent::add_torrent_params getTorrentParams()
-		{
-			return m_torrent_params;
-		}
-		inline libtorrent::torrent_handle& getHandle()
-		{
-			return m_handle;
-		}
-		inline std::string& getPath()
-		{
-			return m_path;
-		}
+		libtorrent::add_torrent_params getTorrentParams();
+
+		libtorrent::torrent_handle& getHandle();
+
+		std::string& getPath();
 
 		// Returns number of seconds the torrent has been active
-		inline boost::int64_t getActiveTime()
-		{
-			return m_handle.status().active_time;
-		}
+		int64_t getActiveTime();
 
 		// Returns formatted active time as string
-		inline std::string getTextActiveTime()
-		{
-			return getTimeString(getActiveTime());
-		}
+		std::string getTextActiveTime();
 
 		// Returns number of seconds eta for the torrent
-		inline boost::int64_t getEta()
-		{
-			return (getDownloadRate() <= 0) ? -1 : (getWanted() / getDownloadRate());
-		}
+		int64_t getEta();
 
 		// Returns formatted eta as string
-		inline std::string getTextEta()
-		{
-			return getTimeString(getEta());
-		}
+		std::string getTextEta();
 
 		// Returns a vector of bools for each piece, true if we have it, false otherwise
 		std::vector<bool> getPieces();
 
 		// Returns percentage of all files downloading
-		inline float getTotalProgress()
-		{
-			return ((float) getHandle().status().progress_ppm / 1000000.0f) * 100.0f;
-		}
+		float getTotalProgress();
 
 		// Returns the current upload rate of the torrent
-		inline unsigned int getUploadRate()
-		{
-			return (isPaused() ? 0 : getHandle().status().upload_rate);
-		}
+		unsigned int getUploadRate();
 
 		// Returns the current download rate of the torrent
-		inline unsigned int getDownloadRate()
-		{
-			return (isPaused() ? 0 : getHandle().status().download_rate);
-		}
+		unsigned int getDownloadRate();
 
 		// Returns the progress in PPM of all files downloading in this torrent
-		inline unsigned int getPPMProgress()
-		{
-			return getHandle().status().progress_ppm;
-		}
+		unsigned int getPPMProgress();
 
 		// Returns the current number of seeders attached to the file
-		inline unsigned int getTotalSeeders()
-		{
-			return getHandle().status().num_seeds;
-		}
+		unsigned int getTotalSeeders();
 
 		// Returns the current number of peers attached to the file
-		inline unsigned int getTotalPeers()
-		{
-			return getHandle().status().num_peers;
-		}
+		unsigned int getTotalPeers();
 
 		// Returns the current number of leechers attached to the file
-		inline unsigned int getTotalLeechers()
-		{
-			return getTotalPeers() - getTotalSeeders();
-		}
+		unsigned int getTotalLeechers();
 
 		// Returns the current amount of data uploaded for this torrent
-		inline boost::int64_t getTotalUploaded()
-		{
-			return getHandle().status().total_upload;
-		}
+		int64_t getTotalUploaded();
 
 		// Returns the current amount of data downloaded for this torrent
-		inline boost::int64_t getTotalDownloaded()
-		{
-			return getHandle().status().total_download;
-		}
+		int64_t getTotalDownloaded();
 
 		// Returns the total size of files in this torrent
-		inline boost::int64_t getSize()
-		{
-			return getHandle().status().total_wanted;
-		}
-
-		// Returns the total size of wanted files in this torrent
-		// TODO: Remove this, duplicate of getSize()
-		inline boost::int64_t getWanted()
-		{
-			return getSize();
-		}
-
-		//Returns the size of the torrent
-		// TODO: Remove this, duplicate of getSize()
-		inline boost::int64_t getTorrentSize()
-		{
-			return getSize();
-		}
+		int64_t getSize();
 
 		//Returns the elapsed time remaining in seconds
-		inline boost::int64_t getTimeRemaining()
-		{
-			return (getDownloadRate() > 0) ? getTorrentSize() / getDownloadRate() : 0;
-		}
+		int64_t getTimeRemaining();
 
 		// Returns the ratio (uploaded/downloaded) for this torrent
 		float getTotalRatio();
 
 		// Returns the current torrent state (downloading, queueing, seeding, etc)
-		inline libtorrent::torrent_status::state_t getState()
-		{
-			return m_handle.status().state;
-		}
+		libtorrent::torrent_status::state_t getState();
 
 		//Returns the URL of the last working tracker
-		inline std::string getCurrentTrackerURL()
-		{
-			return m_handle.status().current_tracker;
-		}
+		std::string getCurrentTrackerURL();
 
 		//Force a recheck of the torrent
 		void torrentForceRecheck();
@@ -178,99 +107,57 @@ namespace gt
 		std::string getTextState();
 
 		// Returns a friendly string for the current upload rate
-		inline std::string getTextUploadRate()
-		{
-			return getRateString(getUploadRate());
-		}
+		std::string getTextUploadRate();
 
 		// Returns a friendly string for the current download rate
-		inline std::string getTextDownloadRate()
-		{
-			return getRateString(getDownloadRate());
-		}
+		std::string getTextDownloadRate();
 
 		// Returns a friendly string for the current upload total
-		inline std::string getTextTotalUploaded()
-		{
-			return getFileSizeString(getTotalUploaded());
-		}
+		std::string getTextTotalUploaded();
 
 		// Returns a friendly string for the current download total
-		inline std::string getTextTotalDownloaded()
-		{
-			return getFileSizeString(getTotalDownloaded());
-		}
+		std::string getTextTotalDownloaded();
 
 		// Returns a friendly string for the total size of files in torrent
-		inline std::string getTextSize()
-		{
-			return getFileSizeString(getSize());
-		}
+		std::string getTextSize();
 
-		// Returns a the total size of files remaining to download in torrent
-		inline boost::int64_t getRemaining()
-		{
-			return getSize() - getTotalDownloaded();
-		}
+		// Returns a the total size of files remain
+		int64_t getRemaining();
 
 		// Returns a friendly string for the total size of files remaining to download in torrent
-		inline std::string getTextRemaining()
-		{
-			return getFileSizeString(getRemaining());
-		}
+		std::string getTextRemaining();
 
 		// Returns a friendly string for the current ratio
 		std::string getTextTotalRatio();
 
 		// Returns a friendly string for the current time remaining
-		inline std::string getTextTimeRemaining()
-		{
-			return getTimeString(getTimeRemaining());
-		}
+		std::string getTextTimeRemaining();
 
-		inline bool isPaused()
-		{
-			return getHandle().status().paused;
-		}
+		bool isPaused();
 
 		// Setters
-		inline void setHandle(libtorrent::torrent_handle &h)
-		{
-			m_handle = h;
-		}
+		void setHandle(libtorrent::torrent_handle &h);
+
 		void setSavePath(std::string savepath);
 
 		void setPaused(bool isPaused);
 
-		inline void resume()
-		{
-			setPaused(false);
-		}
+		void resume();
 
-		inline void pause()
-		{
-			setPaused(true);
-		}
+		void pause();
 
-		inline std::string getName()
-		{
-			return getHandle().status().name;
-		}
+		std::string getName();
 
-		inline bool hasMetadata()
-		{
-			return getHandle().status().has_metadata;
-		}
+		bool hasMetadata();
 
-		inline std::string getSavePath()
-		{
-			return getHandle().status().save_path;
-		}
+		std::string getSavePath();
 
-		inline boost::intrusive_ptr<libtorrent::torrent_info const> getInfo()
-		{
-			return getHandle().torrent_file();
-		}
+		std::string getFormattedHash();
+
+		//libtorrent::add_torrent_params.ti is an intrusive_ptr in 1.0 and a shared_ptr in svn.
+		//Using decltype allows us to make it compatible with both versions.
+		typedef decltype(boost::const_pointer_cast<const libtorrent::torrent_info>(m_torrent_params.ti)) getInfoReturnType;
+		getInfoReturnType getInfo();
 
 		void setSequentialDownload(bool seq);
 		bool SequentialDownloadEnabled();
