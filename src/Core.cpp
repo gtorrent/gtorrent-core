@@ -260,6 +260,7 @@ std::shared_ptr<gt::Torrent> gt::Core::update()
 {
 	std::string str = gt::Platform::readSharedData();
 	if(!str.empty()) gt::Log::Debug(str.c_str());
+
 	m_session.set_alert_mask(0x00000040);
 	std::deque<libtorrent::alert*> alerts;
 	m_session.pop_alerts(&alerts);

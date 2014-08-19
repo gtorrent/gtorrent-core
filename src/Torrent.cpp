@@ -96,7 +96,7 @@ gt::Torrent::Torrent(std::string path) : m_path(path)
 	}
 
 //	onStateChanged = [](int i, shared_ptr<Torrent> j) { std::cout << "State Changed ! Old state was " << i << ", new state is " << j->getHandle().status().state << std::endl; }; // default handler
-	onStateChanged = std::bind(&gt::Torrent::defaultCallback, this, placeholders::_1, placeholders::_2);
+	onStateChanged = std::bind(&gt::Torrent::defaultCallback, this, std::placeholders::_1, std::placeholders::_2);
 	/*
 	 * To use, for example in GtkMainWindow, let's say tor is a shared_ptr, you would write
 	 * tor->onStateChanged = [](int oldstate, shared_ptr<gt::Torrent> sender) {...}
@@ -109,7 +109,7 @@ gt::Torrent::Torrent(std::string path) : m_path(path)
 	 */
 }
 
-void gt::Torrent::defaultCallback(int i, shared_ptr<Torrent> j)
+void gt::Torrent::defaultCallback(int i, std::shared_ptr<gt::Torrent> j)
 {
 	std::cout << "State Changed ! Old state was " << i << ", new state is " << j->getHandle().status().state << std::endl;
 }
@@ -119,7 +119,7 @@ void gt::Torrent::setSavePath(std::string savepath)
 	if (savepath.empty())
 	{
 		if(gt::Settings::optionExists(SAVEPATH_OPTION_KEY))
-			savepath = gt::Settings::getOptionAsString(SAVEPATH_OPTION_KEY);
+			savepath = gt::Settings::settings[SAVEPATH_OPTION_KEY];
 		else if(!gt::Platform::getDefaultSavePath().empty())
 			savepath = gt::Platform::getDefaultSavePath();
 		else
