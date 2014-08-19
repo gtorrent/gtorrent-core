@@ -65,32 +65,6 @@ void gt::Settings::setDefaults()
 	settings["SavePath"] = gt::Platform::getDefaultSavePath();
 	settings["FileAssociation"] = "-1";
 
-	settings["PausedForeGroundColor"]        = "#F08080";
-	settings["PausedBackGroundColor"]        = "#800000";
-	settings["QueuedForeGroundColor"]        = "#00BFFF";
-	settings["QueuedBackGroundColor"]        = "#FFFFFF";
-	settings["SeedingForeGroundColor"]       = "#1E90FF";
-	settings["SeedingBackGroundColor"]       = "#ADD8E6";
-	settings["MetadataForeGroundColor"]      = "#228B22";
-	settings["MetadataBackGroundColor"]      = "#7FFFD4";
-	settings["FinishedForeGroundColor"]      = "#ADD8E6";
-	settings["FinishedBackGroundColor"]      = "#483D8B";
-	settings["ResumingForeGroundColor"]      = "#6495ED";
-	settings["ResumingBackGroundColor"]      = "#FAF0E6";
-	settings["CheckingForeGroundColor"]      = "#DAA520";
-	settings["CheckingBackGroundColor"]      = "#FFFACD";
-	settings["AllocatingForeGroundColor"]    = "#FF7F50";
-	settings["AllocatingBackGroundColor"]    = "#FAFAD2";
-	settings["DownloadingForeGroundColor"]   = "#228B43";
-	settings["DownloadingBackGroundColor"]   = "#FFFFFF";
-	settings["CheckingQueueForeGroundColor"] = "#DAA520";
-	settings["CheckingQueueBackGroundColor"] = "#FFFACD";
-
-	settings["GraphUploadCurveColor"] = "red";
-	settings["GraphDownloadCurveColor"] = "green";
-	settings["GraphGridColor"] = "grey";
-	settings["ShowLegend"] = "Yes";
-
 	settings["CacheSize"] = "0"; // Multiple of 16KB blocks // defaults a 1/8 of total RAM !!!
 	settings["CachedChunks"] = ""; // Number of blocks allocated at a time
 	settings["CacheExpiry"] = ""; // Number of second elapsed before flushing to disk
