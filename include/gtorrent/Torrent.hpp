@@ -31,11 +31,11 @@ namespace gt
 		std::string m_path;
 
 	public:
-		Torrent(std::string path);
-
+		Torrent(string path);
+		std::function<void(int, shared_ptr<Torrent>)> onStateChanged;
 		bool pollEvent(gt::Event &event);
-
-		/* Think twice next time before mixing const correctness with inline*/
+		void defaultCallback(int, shared_ptr<Torrent>);
+		/* Think twice next time before mixing const correctness with inline */
 		// Getters
 		libtorrent::add_torrent_params getTorrentParams();
 

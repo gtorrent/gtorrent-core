@@ -4,8 +4,10 @@
 #include <sstream>
 #include <stdexcept>
 #include <libtorrent/version.hpp>
+
 #define xstrmacro(s) strmacro(s)
 #define strmacro(s) #s
+
 std::map<std::string, std::string> gt::Settings::settings;
 
 bool gt::Settings::parse(const std::string &path)
@@ -54,34 +56,6 @@ bool gt::Settings::save(const std::string &path)
 bool gt::Settings::optionExists(const std::string &key)
 {
 	return settings.count(key) > 0;
-}
-
-std::string gt::Settings::getOptionAsString(const std::string &key)
-{
-	return settings[key]; // >yfw exceptions are harmful
-}
-
-int gt::Settings::getOptionAsInt(const std::string &key)
-{
-	auto i = settings.find(key);
-	if(i == settings.end())
-		throw std::runtime_error("No such option.");
-	std::stringstream opt(i->second);
-	int value;
-	opt >> value;
-	return value;
-}
-
-void gt::Settings::setOption(const std::string &key, int value)
-{
-	std::stringstream opt;
-	opt << value;
-	settings[key] = opt.str();
-}
-
-void gt::Settings::setOption(const std::string &key, std::string value)
-{
-	settings[key] = value;
 }
 
 void gt::Settings::setDefaults()
