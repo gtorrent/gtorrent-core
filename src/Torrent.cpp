@@ -4,7 +4,7 @@
 #include "Platform.hpp"
 #include "Settings.hpp"
 #include "Torrent.hpp"
-
+#include <cmath>
 #include <libtorrent.hpp>
 #include <libtorrent/bencode.hpp>
 #include <libtorrent/entry.hpp>
@@ -48,20 +48,15 @@ std::string getRateString(int64_t file_rate)
 
 std::string getFileSizeString(int64_t file_size)
 {
+	std::ostringstream fss;
+
 	if (file_size <= 0)
 		return std::string();
 
-	std::ostringstream fss;
 	fss << std::setprecision(3);
-
-	if (file_size >= (1024 * 1024 * 1024))
-		fss << file_size / (double)(1024 * 1024 * 1024) << " GB";
-	else if (file_size >= (1024 * 1024))
-		fss << (file_size / (double)(1024 * 1024)) << " MB";
-	else if (file_size >= 1024)
-		fss << (file_size / (double)1024) << " KB";
-	else if (file_size > 0)
-		fss << file_size << "B ";
+	std::string units[] = { "B", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB" };
+	int e = ::floor(::log(file_size) / ::log(1024));
+	fss << (file_size / ::pow(1024, e)) << " " << units[e];
 	return fss.str();
 }
 
