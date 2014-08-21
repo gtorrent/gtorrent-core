@@ -106,7 +106,7 @@ gt::Torrent::Torrent(std::string path) : m_path(path)
 
 void gt::Torrent::defaultCallback(int i, std::shared_ptr<gt::Torrent> j)
 {
-	std::cout << "State Changed ! Old state was " << i << ", new state is " << j->getHandle().status().state << std::endl;
+	/* Do something */
 }
 
 void gt::Torrent::setSavePath(std::string savepath)
@@ -379,9 +379,10 @@ void gt::Torrent::setPaused(bool isPaused)
 
 std::vector<bool> gt::Torrent::getPieces()
 {
+	std::vector<bool> pieces;
+	if(!getHandle().status().has_metadata) return pieces;
 	libtorrent::bitfield p = m_handle.status().pieces;
 	int n = m_handle.torrent_file()->num_pieces();
-	std::vector<bool> pieces;
 	for(int i = 0; i < n; ++i)
 		pieces.push_back(p.get_bit(i));
 	return pieces;
@@ -400,6 +401,7 @@ bool gt::Torrent::SequentialDownloadEnabled()
 std::vector<std::string> gt::Torrent::filenames()
 {
 	std::vector<std::string> files;
+	if(!getInfo()) return files;
 	for(int i = 0; i < getInfo()->num_files(); ++i)
 		files.push_back(getInfo()->files().file_path(i));
 	return files;
@@ -410,5 +412,6 @@ std::string gt::Torrent::getFormattedHash()
 	std::stringstream hash;
 	for(auto val : m_handle.info_hash())
 		hash << std::hex << (int)val;
+
 	return hash.str();
 }
