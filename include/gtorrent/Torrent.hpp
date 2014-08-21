@@ -5,7 +5,7 @@
 #include <fstream>
 #include <string>
 #include <cstdint>
-
+#include <functional>
 #include <libtorrent/session.hpp>
 #include <libtorrent/torrent_handle.hpp>
 
@@ -32,10 +32,10 @@ namespace gt
 
 	public:
 		Torrent(std::string path);
-
+		std::function<void(int, std::shared_ptr<Torrent>)> onStateChanged; // why does this remind me of kirby <('_')>
 		bool pollEvent(gt::Event &event);
-
-		/* Think twice next time before mixing const correctness with inline*/
+		void defaultCallback(int, std::shared_ptr<Torrent>);
+		/* Think twice next time before mixing const correctness with inline */
 		// Getters
 		libtorrent::add_torrent_params getTorrentParams();
 

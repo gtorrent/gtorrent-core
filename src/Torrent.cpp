@@ -4,7 +4,7 @@
 #include "Platform.hpp"
 #include "Settings.hpp"
 #include "Torrent.hpp"
-
+#include <cmath>
 #include <libtorrent.hpp>
 #include <libtorrent/bencode.hpp>
 #include <libtorrent/entry.hpp>
@@ -48,20 +48,15 @@ std::string getRateString(int64_t file_rate)
 
 std::string getFileSizeString(int64_t file_size)
 {
+	std::ostringstream fss;
+
 	if (file_size <= 0)
 		return std::string();
 
-	std::ostringstream fss;
 	fss << std::setprecision(3);
-
-	if (file_size >= (1024 * 1024 * 1024))
-		fss << file_size / (double)(1024 * 1024 * 1024) << " GB";
-	else if (file_size >= (1024 * 1024))
-		fss << (file_size / (double)(1024 * 1024)) << " MB";
-	else if (file_size >= 1024)
-		fss << (file_size / (double)1024) << " KB";
-	else if (file_size > 0)
-		fss << file_size << "B ";
+	std::string units[] = { "B", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB" };
+	int e = ::floor(::log(file_size) / ::log(1024));
+	fss << (file_size / ::pow(1024, e)) << " " << units[e];
 	return fss.str();
 }
 
@@ -94,6 +89,24 @@ gt::Torrent::Torrent(std::string path) : m_path(path)
 			throw - 1; //Throw error if construction of libtorrent::torrent_info fails.
 		}
 	}
+
+//	onStateChanged = [](int i, shared_ptr<Torrent> j) { std::cout << "State Changed ! Old state was " << i << ", new state is " << j->getHandle().status().state << std::endl; }; // default handler
+	onStateChanged = std::bind(&gt::Torrent::defaultCallback, this, std::placeholders::_1, std::placeholders::_2);
+	/*
+	 * To use, for example in GtkMainWindow, let's say tor is a shared_ptr, you would write
+	 * tor->onStateChanged = [](int oldstate, shared_ptr<gt::Torrent> sender) {...}
+	 * oldstate is just the state_t enum, you can't use it to determine if the torrent was paused
+	 * sender is the ptr to the torrent that just changed state.
+	 * You can use std::bind to make it call a member of your class instead of lambdas:
+	 * tor->onStateChanged = std::bind(&GtkMainWindow::torrentStateChangedCallback, this, placeholders::_1, placeholders::_2);
+	 * where torrentStateChangedCallback must take an int parameter and shared_ptr<gt::Torrent> parameter
+	 * Yup placeholders are a special kind of disgusting but even boost has them so it's either that or add deps on libsigc
+	 */
+}
+
+void gt::Torrent::defaultCallback(int i, std::shared_ptr<gt::Torrent> j)
+{
+	/* Do something */
 }
 
 void gt::Torrent::setSavePath(std::string savepath)
@@ -101,7 +114,7 @@ void gt::Torrent::setSavePath(std::string savepath)
 	if (savepath.empty())
 	{
 		if(gt::Settings::optionExists(SAVEPATH_OPTION_KEY))
-			savepath = gt::Settings::getOptionAsString(SAVEPATH_OPTION_KEY);
+			savepath = gt::Settings::settings[SAVEPATH_OPTION_KEY];
 		else if(!gt::Platform::getDefaultSavePath().empty())
 			savepath = gt::Platform::getDefaultSavePath();
 		else
@@ -366,9 +379,10 @@ void gt::Torrent::setPaused(bool isPaused)
 
 std::vector<bool> gt::Torrent::getPieces()
 {
+	std::vector<bool> pieces;
+	if(!getHandle().status().has_metadata) return pieces;
 	libtorrent::bitfield p = m_handle.status().pieces;
 	int n = m_handle.torrent_file()->num_pieces();
-	std::vector<bool> pieces;
 	for(int i = 0; i < n; ++i)
 		pieces.push_back(p.get_bit(i));
 	return pieces;
@@ -387,6 +401,7 @@ bool gt::Torrent::SequentialDownloadEnabled()
 std::vector<std::string> gt::Torrent::filenames()
 {
 	std::vector<std::string> files;
+	if(!getInfo()) return files;
 	for(int i = 0; i < getInfo()->num_files(); ++i)
 		files.push_back(getInfo()->files().file_path(i));
 	return files;
@@ -397,5 +412,6 @@ std::string gt::Torrent::getFormattedHash()
 	std::stringstream hash;
 	for(auto val : m_handle.info_hash())
 		hash << std::hex << (int)val;
+
 	return hash.str();
 }

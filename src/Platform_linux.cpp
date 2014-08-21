@@ -18,6 +18,17 @@ bool gt::Platform::checkDirExist(std::string dir)
 		gt::Log::Debug(std::string(dir + " exists,").c_str());
 	else
 		gt::Log::Debug(std::string(dir + " doesn't exists,").c_str());
+	int permissions =
+		(st.st_mode & S_IRUSR) |
+		(st.st_mode & S_IWUSR) |
+		(st.st_mode & S_IXUSR) |
+		(st.st_mode & S_IRGRP) |
+		(st.st_mode & S_IWGRP) |
+		(st.st_mode & S_IXGRP) |
+		(st.st_mode & S_IROTH) |
+		(st.st_mode & S_IWOTH) |
+		(st.st_mode & S_IXOTH);
+	if(permissions != 0755) chmod(dir.c_str(), 0755); //fix permissions if they are not good
 	return state == 0; //stat() returns 0 if the dir exist
 }
 
@@ -148,10 +159,10 @@ void gt::Platform::associate(bool magnet, bool torrent)
 	if(magnet)  system("xdg-mime default gtorrentm.desktop x-scheme-handler/magnet");
 }
 
-int fd = -1, ld = -1;
+int fd = -1, ld = -2;
 bool gt::Platform::processIsUnique()
 {
-	if(ld == -1)
+	if(ld < -1)
 	{
 		gt::Log::Debug("The lock wasn't ready, retrying...");
 		if(!checkDirExist(getDefaultConfigPath()))

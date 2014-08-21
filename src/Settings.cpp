@@ -4,8 +4,10 @@
 #include <sstream>
 #include <stdexcept>
 #include <libtorrent/version.hpp>
+
 #define xstrmacro(s) strmacro(s)
 #define strmacro(s) #s
+
 std::map<std::string, std::string> gt::Settings::settings;
 
 bool gt::Settings::parse(const std::string &path)
@@ -56,66 +58,12 @@ bool gt::Settings::optionExists(const std::string &key)
 	return settings.count(key) > 0;
 }
 
-std::string gt::Settings::getOptionAsString(const std::string &key)
-{
-	return settings[key]; // >yfw exceptions are harmful
-}
-
-int gt::Settings::getOptionAsInt(const std::string &key)
-{
-	auto i = settings.find(key);
-	if(i == settings.end())
-		throw std::runtime_error("No such option.");
-	std::stringstream opt(i->second);
-	int value;
-	opt >> value;
-	return value;
-}
-
-void gt::Settings::setOption(const std::string &key, int value)
-{
-	std::stringstream opt;
-	opt << value;
-	settings[key] = opt.str();
-}
-
-void gt::Settings::setOption(const std::string &key, std::string value)
-{
-	settings[key] = value;
-}
-
 void gt::Settings::setDefaults()
 {
 	// these will be overwritten if the keys are found in the config file
 
 	settings["SavePath"] = gt::Platform::getDefaultSavePath();
 	settings["FileAssociation"] = "-1";
-
-	settings["PausedForeGroundColor"]        = "#F08080";
-	settings["PausedBackGroundColor"]        = "#800000";
-	settings["QueuedForeGroundColor"]        = "#00BFFF";
-	settings["QueuedBackGroundColor"]        = "#FFFFFF";
-	settings["SeedingForeGroundColor"]       = "#1E90FF";
-	settings["SeedingBackGroundColor"]       = "#ADD8E6";
-	settings["MetadataForeGroundColor"]      = "#228B22";
-	settings["MetadataBackGroundColor"]      = "#7FFFD4";
-	settings["FinishedForeGroundColor"]      = "#ADD8E6";
-	settings["FinishedBackGroundColor"]      = "#483D8B";
-	settings["ResumingForeGroundColor"]      = "#6495ED";
-	settings["ResumingBackGroundColor"]      = "#FAF0E6";
-	settings["CheckingForeGroundColor"]      = "#DAA520";
-	settings["CheckingBackGroundColor"]      = "#FFFACD";
-	settings["AllocatingForeGroundColor"]    = "#FF7F50";
-	settings["AllocatingBackGroundColor"]    = "#FAFAD2";
-	settings["DownloadingForeGroundColor"]   = "#228B43";
-	settings["DownloadingBackGroundColor"]   = "#FFFFFF";
-	settings["CheckingQueueForeGroundColor"] = "#DAA520";
-	settings["CheckingQueueBackGroundColor"] = "#FFFACD";
-
-	settings["GraphUploadCurveColor"] = "red";
-	settings["GraphDownloadCurveColor"] = "green";
-	settings["GraphGridColor"] = "grey";
-	settings["ShowLegend"] = "Yes";
 
 	settings["CacheSize"] = "0"; // Multiple of 16KB blocks // defaults a 1/8 of total RAM !!!
 	settings["CachedChunks"] = ""; // Number of blocks allocated at a time
