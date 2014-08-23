@@ -14,10 +14,6 @@ bool gt::Platform::checkDirExist(std::string dir)
 {
 	struct stat st;
 	int state = stat(dir.c_str(), &st);
-	if(state == 0)
-		gt::Log::Debug(std::string(dir + " exists,").c_str());
-	else
-		gt::Log::Debug(std::string(dir + " doesn't exists,").c_str());
 	int permissions = st.st_mode & (S_IRWXU | S_IRWXG | S_IRWXO);
 	if(permissions != 0755)
 		chmod(dir.c_str(), 0755); //fix permissions if they are not good
