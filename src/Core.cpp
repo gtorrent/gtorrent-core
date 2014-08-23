@@ -36,20 +36,6 @@ gt::Core::Core(int argc, char **argv) :
 	if (ec.value() != 0)
 		gt::Log::Debug(ec.message().c_str());
 
-	if(gt::Settings::settings["DHTEnabled"] == "Yes")
-	{
-		gt::Log::Debug("Starting DHT...");
-		while(!m_session.is_dht_running())
-			m_session.start_dht();
-		std::string tmp = gt::Settings::settings["DHTBootstraps"];
-		while(!tmp.empty())
-		{
-			gt::Log::Debug("Adding " + tmp.substr(0, tmp.find(',')) + " to the DHT node list...");
-			m_session.add_dht_node(std::make_pair(tmp.substr(0, tmp.find(',')), 6881));
-			if(tmp.find(',') == std::string::npos) break;
-			tmp = tmp.substr(tmp.find(',') + 1);
-		}
-	}
 	for(int i = 1; i < argc; ++i)
 		addTorrent(std::string(argv[i]));
 	statuses.update(&m_torrents);
@@ -348,6 +334,7 @@ void gt::Core::setSessionParameters()
 	using namespace gt;
 	libtorrent::session_settings se = m_session.settings();
 
+
 	if(Settings::settings["OverrideSettings"] != "No")
 	{
 		if(Settings::settings["OverrideSettings"] == "Minimal")
@@ -428,8 +415,24 @@ void gt::Core::setSessionParameters()
 	}
 	catch(...)
 	{}
-	gt::Log::Debug(Settings::settings["ActiveSeeds"        ].c_str());
-	gt::Log::Debug(Settings::settings["ActiveDownloads"    ].c_str());
+
+	if(gt::Settings::settings["DHTEnabled"] == "Yes")
+	{
+		gt::Log::Debug("Starting DHT...");
+		while(!m_session.is_dht_running())
+			m_session.start_dht();
+		std::string tmp = gt::Settings::settings["DHTBootstraps"];
+		while(!tmp.empty())
+		{
+			gt::Log::Debug("Adding " + tmp.substr(0, tmp.find(',')) + " to the DHT node list...");
+			m_session.add_dht_node(std::make_pair(tmp.substr(0, tmp.find(',')), 6881));
+			if(tmp.find(',') == std::string::npos) break;
+			tmp = tmp.substr(tmp.find(',') + 1);
+		}
+	}
+	else
+		while(m_session.is_dht_running())
+			m_session.stop_dht();
 
 	se.auto_manage_interval = 1;
 	if(Settings::settings["ReportTrueDownloaded"] == "Yes") se.report_redundant_bytes = true;
