@@ -36,6 +36,20 @@ gt::Core::Core(int argc, char **argv) :
 	if (ec.value() != 0)
 		gt::Log::Debug(ec.message().c_str());
 
+	if(gt::Settings::settings["DHTEnabled"] == "Yes")
+	{
+		gt::Log::Debug("Starting DHT...");
+		while(!m_session.is_dht_running())
+			m_session.start_dht();
+		std::string tmp = gt::Settings::settings["DHTBootstraps"];
+		while(!tmp.empty())
+		{
+			gt::Log::Debug("Adding " + tmp.substr(0, tmp.find(',')) + " to the DHT node list...");
+			m_session.add_dht_node(std::make_pair(tmp.substr(0, tmp.find(',')), 6881));
+			if(tmp.find(',') == std::string::npos) break;
+			tmp = tmp.substr(tmp.find(',') + 1);
+		}
+	}
 	for(int i = 1; i < argc; ++i)
 		addTorrent(std::string(argv[i]));
 	statuses.update(&m_torrents);
@@ -89,6 +103,9 @@ std::shared_ptr<gt::Torrent> gt::Core::addTorrent(std::string path, std::vector<
 	else
 	{
 		t->setHandle(h);
+		if(gt::Settings::settings["DHTEnabled"] == "Yes")
+			h.force_dht_announce();
+
 		m_torrents.push_back(t);
 		if(t->hasMetadata() && gt::Settings::settings["DefaultSequentialDownloading"] == "Yes")
 		{
@@ -138,7 +155,6 @@ int gt::Core::saveSession(std::string folder)
 	if(!gt::Platform::checkDirExist(folder))
 		gt::Platform::makeDir(folder, 0755);
 
-
 	if(!gt::Platform::checkDirExist(folder + "meta/"))
 		gt::Platform::makeDir(folder + "meta/", 0755);
 
@@ -146,10 +162,10 @@ int gt::Core::saveSession(std::string folder)
 	std::ofstream list(folder + "list.gts");
 
 	if(!state)
-		throw "Couldn't open state.gts";
+		throw std::runtime_error("Couldn't open state.gts");
 
 	if(!list)
-		throw "Couldn't open list.gts";
+		throw std::runtime_error("Couldn't open list.gts");
 
 	bencode(std::ostream_iterator<char>(state), ent);
 	state.close();
@@ -267,7 +283,7 @@ std::shared_ptr<gt::Torrent> gt::Core::update()
 	while(!alerts.empty())
 	{
 		libtorrent::alert *al = alerts[0];
-		if(al->category() != libtorrent::alert::status_notification) { alerts.pop_front(); continue; }
+		if(al->type() != libtorrent::state_changed_alert::alert_type) { alerts.pop_front(); continue; } // technically impossible, btw
 		libtorrent::state_changed_alert *scal = static_cast<libtorrent::state_changed_alert *>(al);
 		for(auto tor : m_torrents)
 			if(tor->getHandle() == scal->handle)
@@ -278,6 +294,33 @@ std::shared_ptr<gt::Torrent> gt::Core::update()
 		alerts.pop_front();
 	}
 
+	alerts = std::deque<libtorrent::alert*>();
+	if(m_session.is_dht_running() && gt::Settings::settings["DHTEnabled"] == "Yes")
+	{
+		m_session.set_alert_mask(0x00000400);
+		m_session.pop_alerts(&alerts);
+		while(!alerts.empty())
+		{
+			libtorrent::alert *al = alerts[0];
+			gt::Log::Debug(al->message());
+
+			switch(al->type())
+			{
+			case libtorrent::dht_reply_alert::alert_type:
+			case libtorrent::dht_announce_alert::alert_type:
+			case libtorrent::dht_get_peers_alert::alert_type:
+			case libtorrent::dht_bootstrap_alert::alert_type:
+			case libtorrent::dht_error_alert::alert_type:
+			case libtorrent::dht_immutable_item_alert::alert_type:
+			case libtorrent::dht_mutable_item_alert::alert_type:
+			case libtorrent::dht_put_alert::alert_type:
+			default: 42;
+			}
+
+			alerts.pop_front();
+		}
+		
+	}
 	m_session.set_alert_mask(0x7FFFFFFF);
 	return addTorrent(str);
 }
@@ -287,8 +330,15 @@ void gt::Core::shutdown()
 {
 	gt::Log::Debug("Shutting down core library...");
 	gt::Platform::disableSharedData();
+	gt::Log::Debug("Saving session...");
 	saveSession(gt::Platform::getDefaultConfigPath());
 	gt::Settings::save("config");
+
+	if(m_session.is_dht_running())
+	{
+		gt::Log::Debug("Stopping DHT...");
+		m_session.stop_dht();
+	}
 	m_running = false;
 }
 
@@ -429,6 +479,3 @@ gt::Core::statusList* gt::Core::getStatuses()
 {
 	return &statuses;
 }
-
-
-
