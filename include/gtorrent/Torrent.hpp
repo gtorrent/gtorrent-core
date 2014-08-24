@@ -9,6 +9,8 @@
 #include <libtorrent/session.hpp>
 #include <libtorrent/torrent_handle.hpp>
 
+#include "Peer.hpp"
+
 std::string getTimeString(int64_t time_s);
 std::string getRateString(int64_t file_rate);
 std::string getFileSizeString(int64_t file_size);
@@ -162,5 +164,7 @@ namespace gt
 		void setSequentialDownload(bool seq);
 		bool SequentialDownloadEnabled();
 		std::vector<std::string> filenames();
+
+		std::vector<Peer> getPeers();
 	};
 }

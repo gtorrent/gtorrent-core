@@ -24,6 +24,7 @@ ADD_LIBRARY ( gtorrent
 	Torrent.cpp
 	Log.cpp
     Settings.cpp
+	Peer.cpp
 	)
 
 TARGET_LINK_LIBRARIES (
