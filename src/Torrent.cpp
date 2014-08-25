@@ -178,7 +178,7 @@ std::string gt::Torrent::getTextState()
 	std::ostringstream o;
 	int precision = 1;
 
-	if(getHandle().status().queue_position != -1 && 
+	if(getHandle().status().queue_position != -1 &&
 	   getHandle().status().queue_position >= stoi(gt::Settings::settings["ActiveDownloads"])) return "Queued";
 
 	switch (getState())
@@ -414,6 +414,22 @@ std::string gt::Torrent::getFormattedHash()
 		hash << std::hex << (int)val;
 
 	return hash.str();
+}
+
+std::vector<std::string> gt::Torrent::getLabels()
+{
+	std::vector<std::string> veclabels(m_labels.begin(), m_labels.end());
+	return veclabels;
+}
+
+bool gt::Torrent::addLabel(std::string label)
+{
+	return std::get<1>(m_labels.insert(label));
+}
+
+bool gt::Torrent::removeLabel(std::string label)
+{
+	return m_labels.erase(label) == 1;
 }
 
 std::vector<gt::Peer> gt::Torrent::getPeers()
