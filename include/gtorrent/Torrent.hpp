@@ -27,16 +27,16 @@ namespace gt
 	private:
 		unsigned int m_id;
 		libtorrent::add_torrent_params m_torrent_params;
-		__attribute__((deprecated("use this directly")))
+//		__attribute__((deprecated("use this directly")))
 		libtorrent::torrent_handle m_handle;
 		std::string m_path;
 
 	public:
-		Torrent(libtorrent::torrent_handle h) : libtorrent::torrent_handle(h) { setHandle(h); };
+		Torrent(libtorrent::torrent_handle h) : libtorrent::torrent_handle(h) {  };
 		Torrent(std::string path);
 		std::function<void(int, std::shared_ptr<Torrent>)> onStateChanged; // why does this remind me of kirby <('_')>
 
-		operator libtorrent::torrent_handle() const { return getHandle(); }
+		operator libtorrent::torrent_handle() const { return *dynamic_cast<libtorrent::torrent_handle*>(const_cast<gt::Torrent*>(this)); }
 
 		bool pollEvent(gt::Event &event);
 		void defaultCallback(int, std::shared_ptr<Torrent>);
@@ -151,7 +151,6 @@ namespace gt
 		// Returns a friendly string for the current time remaining
 		std::string getTextTimeRemaining();
 
-		__attribute__((deprecated("use Torrent::status::pause instead")))
 		bool isPaused();
 
 		// Setters

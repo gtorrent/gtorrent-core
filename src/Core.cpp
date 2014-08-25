@@ -93,12 +93,12 @@ std::shared_ptr<gt::Torrent> gt::Core::addTorrent(std::string path, std::vector<
 			h.force_dht_announce();
 
 		m_torrents.push_back(t);
-		if(t->hasMetadata() && gt::Settings::settings["DefaultSequentialDownloading"] == "Yes")
+		if(t->status().has_metadata && gt::Settings::settings["DefaultSequentialDownloading"] == "Yes")
 		{
 			if(t->filenames().size() == 1)
 			{
 				std::string ext = t->filenames()[0].substr(t->filenames()[0].find_last_of('.') + 1);
-				t->setSequentialDownload(gt::Settings::settings["SequentialDownloadExtensions"].find(ext) != std::string::npos);
+				t->set_sequential_download(gt::Settings::settings["SequentialDownloadExtensions"].find(ext) != std::string::npos);
 			}
 		}
 		statuses.update(&m_torrents);
@@ -110,7 +110,7 @@ void gt::Core::removeTorrent(std::shared_ptr<Torrent> t)
 {
 	//TODO : add removal of files on request
 	//TODO : Remove fast resume data associated to file
-	m_session.remove_torrent(t->getHandle());
+	m_session.remove_torrent(libtorrent::torrent_handle(*t)); //explicit cast is required to make a copy of the underlying object
 	unsigned i;
 	for(i = 0; i < m_torrents.size(); ++i)
 		if(m_torrents[i] == t)
@@ -160,16 +160,16 @@ int gt::Core::saveSession(std::string folder)
 
 	for(auto tor : m_torrents)
 	{
-		if(!tor->getHandle().is_valid()) continue;
-		if(!tor->getHandle().status().has_metadata) continue;
-		if(!tor->getHandle().need_save_resume_data()) continue;
+		if(!tor->is_valid()) continue;
+		if(!tor->status().has_metadata) continue;
+		if(!tor->need_save_resume_data()) continue;
 
-		auto ent = libtorrent::create_torrent(*tor->getInfo()).generate();
-		std::ofstream out((folder + "meta/" + tor->getName() + ".torrent").c_str(), std::ios_base::binary);
+		auto ent = libtorrent::create_torrent(*tor->torrent_file()).generate();
+		std::ofstream out((folder + "meta/" + tor->status().name + ".torrent").c_str(), std::ios_base::binary);
 		out.unsetf(std::ios_base::skipws);
 		bencode(std::ostream_iterator<char>(out), ent);
 
-		tor->getHandle().save_resume_data();
+		tor->save_resume_data();
 		++count;
 	}
 
@@ -269,10 +269,10 @@ std::shared_ptr<gt::Torrent> gt::Core::update()
 	while(!alerts.empty())
 	{
 		libtorrent::alert *al = alerts[0];
-		if(al->type() != libtorrent::state_changed_alert::alert_type) { alerts.pop_front(); continue; } // technically impossible, btw
+		if(al->type() != libtorrent::state_changed_alert::alert_type) { alerts.pop_front(); continue; } // should fix the incorrect values passed to onStateChanged
 		libtorrent::state_changed_alert *scal = static_cast<libtorrent::state_changed_alert *>(al);
 		for(auto tor : m_torrents)
-			if(tor->getHandle() == scal->handle)
+			if(*tor == scal->handle)
 			{
 				tor->onStateChanged(scal->prev_state, tor);
 				break;
@@ -290,7 +290,7 @@ std::shared_ptr<gt::Torrent> gt::Core::update()
 			libtorrent::alert *al = alerts[0];
 			gt::Log::Debug(al->message());
 
-			switch(al->type())
+/*			switch(al->type())
 			{
 			case libtorrent::dht_reply_alert::alert_type:
 			case libtorrent::dht_announce_alert::alert_type:
@@ -302,7 +302,7 @@ std::shared_ptr<gt::Torrent> gt::Core::update()
 			case libtorrent::dht_put_alert::alert_type:
 			default: 42;
 			}
-
+*/
 			alerts.pop_front();
 		}
 		
@@ -453,27 +453,24 @@ int gt::Core::statusList::update(std::vector<std::shared_ptr<Torrent>> *tl)
 			paused.push_back(tl->at(i));
 			continue;
 		}
-		if(tl->at(i)->getState() == libtorrent::torrent_status::state_t::downloading)
+		switch(tl->at(i)->status().state)
 		{
+		case libtorrent::torrent_status::state_t::downloading:
 			downloading.push_back(tl->at(i));
 			continue;
-		}
-		if(tl->at(i)->getState() == libtorrent::torrent_status::state_t::seeding)
-		{
+		case libtorrent::torrent_status::state_t::seeding:
 			seeding.push_back(tl->at(i));
 			continue;
-		}
-		if((tl->at(i)->getState() == libtorrent::torrent_status::state_t::checking_files) || (tl->at(i)->getState() == libtorrent::torrent_status::state_t::checking_resume_data))
-		{
+		case libtorrent::torrent_status::state_t::checking_files:
+		case libtorrent::torrent_status::state_t::checking_resume_data:
 			checking.push_back(tl->at(i));
 			continue;
-		}
-		if(tl->at(i)->getState() == libtorrent::torrent_status::state_t::finished)
-		{
+		case libtorrent::torrent_status::state_t::finished:
 			finished.push_back(tl->at(i));
 			continue;
+		default:
+			stopped.push_back(tl->at(i));
 		}
-		stopped.push_back(tl->at(i));
 	}
 	return 1;
 }
