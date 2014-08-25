@@ -267,7 +267,11 @@ std::shared_ptr<gt::Torrent> gt::Core::update()
 	while(!alerts.empty())
 	{
 		libtorrent::alert *al = alerts[0];
-		if(al->category() != libtorrent::alert::status_notification) { alerts.pop_front(); continue; }
+		if(al->category() != libtorrent::alert::status_notification)
+		{
+			alerts.pop_front();
+			continue;
+		}
 		libtorrent::state_changed_alert *scal = static_cast<libtorrent::state_changed_alert *>(al);
 		for(auto tor : m_torrents)
 			if(tor->getHandle() == scal->handle)
