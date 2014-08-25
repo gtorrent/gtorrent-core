@@ -420,8 +420,15 @@ std::vector<gt::Peer> gt::Torrent::getPeers()
 {
 	std::vector<gt::Peer> result;
 	std::vector<libtorrent::peer_info> peers;
+	try
+	{
 	getHandle().get_peer_info(peers);
 	for (auto p : peers)
 		result.push_back(gt::Peer(p));
 	return result;
+	}
+	catch(...)
+	{
+		return std::vector<gt::Peer>();
+	}
 }
