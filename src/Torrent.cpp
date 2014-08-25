@@ -139,9 +139,9 @@ libtorrent::add_torrent_params gt::Torrent::getTorrentParams()
 	return m_torrent_params;
 }
 
-libtorrent::torrent_handle& gt::Torrent::getHandle()
+libtorrent::torrent_handle& gt::Torrent::getHandle() const
 {
-	return m_handle;
+	return *dynamic_cast<libtorrent::torrent_handle*>(const_cast<gt::Torrent*>(this));
 }
 
 std::string& gt::Torrent::getPath()

@@ -88,7 +88,7 @@ std::shared_ptr<gt::Torrent> gt::Core::addTorrent(std::string path, std::vector<
 	}
 	else
 	{
-		t->setHandle(h);
+		*t = h;
 		if(gt::Settings::settings["DHTEnabled"] == "Yes")
 			h.force_dht_announce();
 
