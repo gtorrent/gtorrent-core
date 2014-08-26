@@ -165,8 +165,6 @@ namespace gt
 
 		void resume();
 
-		void pause();
-
 		__attribute__((deprecated("use Torrent::status::name instead")))
 		std::string getName();
 

@@ -331,11 +331,6 @@ void gt::Torrent::resume()
 	setPaused(false);
 }
 
-void gt::Torrent::pause()
-{
-	setPaused(true);
-}
-
 std::string gt::Torrent::getName()
 {
 	return status().name;
