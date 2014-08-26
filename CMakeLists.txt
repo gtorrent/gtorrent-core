@@ -11,6 +11,7 @@ PROJECT (gtorrent)
 SET (GTORRENT_VERSION_MAJOR 0)
 SET (GTORRENT_VERSION_MINOR 0)
 SET (GTORRENT_VERSION_PATCH 2)
+SET (GTORRENT_VERSION ${GTORRENT_VERSION_MAJOR}.${GTORRENT_VERSION_MINOR}.${GTORRENT_VERSION_PATCH})
 
 ############################################################
 
@@ -27,7 +28,6 @@ ENDIF()
 
 # Configure version into utils/Version.hpp
 SET (VERSION ${GTORRENT_VERSION_MAJOR}.${GTORRENT_VERSION_MINOR}.${GTORRENT_VERSION_PATCH})
-CONFIGURE_FILE (src/utils/Version.hpp.in Version.hpp @ONLY)
 
 # Set compiler flags
 SET (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -g -Wall")
@@ -38,9 +38,6 @@ FIND_PACKAGE(Boost COMPONENTS system REQUIRED)
 # Find libraries the proper way
 INCLUDE (FindPkgConfig)
 PKG_SEARCH_MODULE (LIBTORRENT REQUIRED libtorrent-rasterbar)
-
-# To find version
-INCLUDE_DIRECTORIES(${PROJECT_BINARY_DIR})
 
 # Compiler options
 LINK_DIRECTORIES (
