@@ -39,6 +39,7 @@ gt::Core::Core(int argc, char **argv) :
 	for(int i = 1; i < argc; ++i)
 		addTorrent(std::string(argv[i]));
 	statuses.update(&m_torrents);
+	updateTrackers();
 }
 
 std::vector<std::shared_ptr<gt::Torrent>> &gt::Core::getTorrents()
@@ -99,6 +100,7 @@ std::shared_ptr<gt::Torrent> gt::Core::addTorrent(std::string path, std::vector<
 			}
 		}
 		statuses.update(&m_torrents);
+		updateTrackers();
 		return t;
 	}
 }
@@ -119,6 +121,7 @@ void gt::Core::removeTorrent(std::shared_ptr<Torrent> t)
 	}
 	m_torrents.resize(m_torrents.size() - 1);
 	statuses.update(&m_torrents);
+	updateTrackers();
 }
 
 bool gt::Core::isRunning() const
