@@ -60,8 +60,14 @@ std::string getFileSizeString(int64_t file_size)
 	return fss.str();
 }
 
-gt::Torrent::Torrent(std::string path) : m_path(path)
+gt::Torrent::Torrent(std::string path)
 {
+	if(path[0] == '~')
+	{
+		path = gt::Platform::getHomeDir() + path.substr(1, path.size() - 1);
+	}
+	m_path = path;
+
 	setSavePath(gt::Settings::settings["SavePath"]); //TODO add argument to allow user to override the default save path of $HOME/Downloads
 	if (gt::Core::isLink(path))
 		m_torrent_params.url = path;
@@ -178,8 +184,8 @@ std::string gt::Torrent::getTextState()
 	std::ostringstream o;
 	int precision = 1;
 
-	if(getHandle().status().queue_position != -1 && 
-	   getHandle().status().queue_position >= stoi(gt::Settings::settings["ActiveDownloads"])) return "Queued";
+	if(getHandle().status().queue_position != -1 &&
+	        getHandle().status().queue_position >= stoi(gt::Settings::settings["ActiveDownloads"])) return "Queued";
 
 	switch (getState())
 	{

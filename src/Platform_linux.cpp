@@ -213,15 +213,26 @@ std::string escape(std::string str)
 	return str;
 }
 
-void gt::Platform::openTorrent(std::shared_ptr<gt::Torrent> t)
+void gt::Platform::openTorrent(std::shared_ptr<gt::Torrent> t, int index, bool folder)
 {
 	auto files = t->getInfo()->files();
-	std::string path = t->getSavePath() + '/' + t->getInfo()->file_at(0).path;
+	std::string path;
 
-	if (files.num_files() > 1) // if there's more than a file, we open the containing folder
-		path = path.substr(0, path.find_last_of('/'));
-	path = escape(path);
-	gt::Log::Debug(path.c_str());
+	if(index == -1) //file to open wasn't specified, so if theres one file, we open it, or else we open the folder
+	{
+		path = t->getSavePath() + '/' + files.at(0).path;
+		if (files.num_files() > 1) // if there's more than a file, and the file to open wasn't specified, we open the containing folder
+			path = t->getSavePath() + '/' + files.name();
+		path = escape(path);
+	}
+	else //We open the specified file, or its parent
+	{
+		path = t->getSavePath() + '/' + t->getInfo()->file_at(index).path;
+		if(folder)
+			path = path.substr(0, path.find_last_of('/'));
+		path = escape(path);
+	}
+
 	// HURR system() IS BAD BECAUSE IT'S NOT USED TO MAKE PORTABLE CODE, pls refer to the filename, if you're expecting anything portable here you've come to the wrong place.
 	system(std::string(std::string("xdg-open \'") + path + "\'").c_str()); // Either use system or fork and exec with the xdg binary it's literraly the same shit, or even worst, link with even more libs, pick your poison
 }
