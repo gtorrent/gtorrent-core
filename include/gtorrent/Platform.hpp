@@ -48,7 +48,7 @@ namespace gt
 		void   writeSharedData(std::string info);
 		std::string readSharedData();
 		void   disableSharedData();
-		void   openTorrent(std::shared_ptr<gt::Torrent> t);
+		void   openTorrent(std::shared_ptr<gt::Torrent> t, int index = -1, bool folder = false);
 		std::string getExecutablePath();
 	}
 }
