@@ -255,6 +255,7 @@ int gt::Core::loadSession(std::string folder)
 	}
 
 	m_session.resume();
+	m_session.set_alert_mask(0x7FFFFFFF);
 	return 0;
 }
 
@@ -263,13 +264,14 @@ std::shared_ptr<gt::Torrent> gt::Core::update()
 	std::string str = gt::Platform::readSharedData();
 	if(!str.empty()) gt::Log::Debug(str.c_str());
 
-	m_session.set_alert_mask(0x00000040);
 	std::deque<libtorrent::alert*> alerts;
+	std::deque<libtorrent::alert*> unhandledAlerts;
+
 	m_session.pop_alerts(&alerts);
 	while(!alerts.empty())
 	{
 		libtorrent::alert *al = alerts[0];
-		if(al->type() != libtorrent::state_changed_alert::alert_type) { alerts.pop_front(); continue; } // should fix the incorrect values passed to onStateChanged
+		if(al->type() != libtorrent::state_changed_alert::alert_type) { alerts.pop_front(); unhandledAlerts.push_front(al); continue; } // should fix the incorrect values passed to onStateChanged
 		libtorrent::state_changed_alert *scal = static_cast<libtorrent::state_changed_alert *>(al);
 		for(auto tor : m_torrents)
 			if(*tor == scal->handle)
@@ -280,34 +282,50 @@ std::shared_ptr<gt::Torrent> gt::Core::update()
 		alerts.pop_front();
 	}
 
-	alerts = std::deque<libtorrent::alert*>();
+	alerts = unhandledAlerts;
+	unhandledAlerts = std::deque<libtorrent::alert*>();
+
 	if(m_session.is_dht_running() && gt::Settings::settings["DHTEnabled"] == "Yes")
 	{
-		m_session.set_alert_mask(0x00000400);
-		m_session.pop_alerts(&alerts);
 		while(!alerts.empty())
 		{
 			libtorrent::alert *al = alerts[0];
-			gt::Log::Debug(al->message());
-
-/*			switch(al->type())
+			switch(al->type())
 			{
-			case libtorrent::dht_reply_alert::alert_type:
-			case libtorrent::dht_announce_alert::alert_type:
-			case libtorrent::dht_get_peers_alert::alert_type:
-			case libtorrent::dht_bootstrap_alert::alert_type:
-			case libtorrent::dht_error_alert::alert_type:
+			case libtorrent::dht_reply_alert         ::alert_type:         
+			case libtorrent::dht_announce_alert      ::alert_type:      
+			case libtorrent::dht_get_peers_alert     ::alert_type:     
+			case libtorrent::dht_bootstrap_alert     ::alert_type:     
+			case libtorrent::dht_error_alert         ::alert_type:         
 			case libtorrent::dht_immutable_item_alert::alert_type:
-			case libtorrent::dht_mutable_item_alert::alert_type:
-			case libtorrent::dht_put_alert::alert_type:
-			default: 42;
+			case libtorrent::dht_mutable_item_alert  ::alert_type:  
+			case libtorrent::dht_put_alert           ::alert_type:           
+				alerts.pop_front();
+				gt::Log::Debug(al->message());
+				break;
+			default:
+				alerts.pop_front(); 
+				unhandledAlerts.push_front(al);//we won't handle this alert
 			}
-*/
-			alerts.pop_front();
 		}
-		
+
+		/*gt::Log::Debug("\nDHT Upload Rate: "  + std::to_string(m_session.status().dht_upload_rate)          + '\n' +
+					   "DHT Download Rate: "  + std::to_string(m_session.status().dht_download_rate)        + '\n' +
+					   "DHT Upload Total: "   + std::to_string(m_session.status().total_dht_upload)         + '\n' +
+					   "DHT Active Nodes: "   + std::to_string(m_session.status().dht_nodes)                + '\n' +
+					   "DHT Total Nodes: "    + std::to_string(m_session.status().dht_global_nodes)         + '\n' +
+					   "DHT Total Usage: "    + getFileSizeString(m_session.status().dht_total_allocations) + '\n' +
+					   "DHT Download Total: " + std::to_string(m_session.status().total_dht_download)       + '\n');
+		*/
+
+		alerts = unhandledAlerts;
+		unhandledAlerts = std::deque<libtorrent::alert*>();
+		while(!alerts.empty())
+		{
+			gt::Log::Debug(alerts[0]->message());
+			alerts.pop_front(); 
+		}
 	}
-	m_session.set_alert_mask(0x7FFFFFFF);
 	return addTorrent(str);
 }
 
@@ -333,7 +351,6 @@ void gt::Core::setSessionParameters()
 {
 	using namespace gt;
 	libtorrent::session_settings se = m_session.settings();
-
 
 	if(Settings::settings["OverrideSettings"] != "No")
 	{
