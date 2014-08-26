@@ -185,7 +185,7 @@ std::string gt::Torrent::getTextState()
 	int precision = 1;
 
 	if(getHandle().status().queue_position != -1 &&
-	        getHandle().status().queue_position >= stoi(gt::Settings::settings["ActiveDownloads"])) return "Queued";
+	   getHandle().status().queue_position >= stoi(gt::Settings::settings["ActiveDownloads"])) return "Queued";
 
 	switch (getState())
 	{

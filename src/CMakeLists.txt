@@ -14,6 +14,10 @@ INCLUDE_DIRECTORIES (
 	${LIBTORRENT_INCLUDE_DIRS}
 	)
 
+# Set up Version.hpp
+CONFIGURE_FILE (utils/Version.hpp.in ${PROJECT_BINARY_DIR}/Version.hpp @ONLY)
+INCLUDE_DIRECTORIES(${PROJECT_BINARY_DIR})
+
 ADD_DEFINITIONS (
 	${LIBTORRENT_CFLAGS}
 	)
@@ -23,8 +27,8 @@ ADD_LIBRARY ( gtorrent
 	Core.cpp
 	Torrent.cpp
 	Log.cpp
-    Settings.cpp
 	Peer.cpp
+	Settings.cpp
 	)
 
 TARGET_LINK_LIBRARIES (

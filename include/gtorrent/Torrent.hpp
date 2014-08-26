@@ -178,7 +178,6 @@ namespace gt
 		bool hasLabel(std::string label);
 
 		std::vector<Peer> getPeers();
-
 	};
 
 }
