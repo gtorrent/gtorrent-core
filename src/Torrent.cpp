@@ -326,11 +326,6 @@ void gt::Torrent::setHandle(libtorrent::torrent_handle &h)
 	m_handle = h;
 }
 
-void gt::Torrent::resume()
-{
-	setPaused(false);
-}
-
 std::string gt::Torrent::getName()
 {
 	return status().name;

@@ -119,8 +119,11 @@ void gt::Settings::setDefaults()
 
 	settings["AnonymousMode"] = "No";
 	settings["OverrideSettings"] = "No"; // Can be set to Minimal, HighPerformanceSeeding, and No.
-	//////////////////// Below this line, the options aren't implemented into core yet. ////////////////////////
-	settings["EnableDHT"] = "Yes";
+	settings["DHTEnabled"] = "Yes";
 	settings["DHTBootstraps"] = "router.bittorent.com,router.utorent.com,dht.transmissionbt.com";
+	//////////////////// Below this line, the options aren't implemented into core yet. ////////////////////////
+	settings["LSDEnabled"]    = "Yes";
+	settings["UPnPEnabled"]   = "Yes";
+	settings["NATPMPEnabled"] = "Yes";
 
 }

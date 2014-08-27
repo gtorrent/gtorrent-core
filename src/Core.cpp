@@ -10,6 +10,7 @@
 #include "Settings.hpp"
 
 gt::Core::Core(int argc, char **argv) :
+	m_session(libtorrent::fingerprint("GT", 0, 0, 2, 0), 0, 0x7FFFFFFF),
 	m_running(true)
 {
 	if(!gt::Platform::processIsUnique())
@@ -301,7 +302,7 @@ std::shared_ptr<gt::Torrent> gt::Core::update()
 			case libtorrent::dht_mutable_item_alert  ::alert_type:  
 			case libtorrent::dht_put_alert           ::alert_type:           
 				alerts.pop_front();
-				gt::Log::Debug(al->message());
+//				gt::Log::Debug(al->message());
 				break;
 			default:
 				alerts.pop_front(); 
@@ -450,6 +451,33 @@ void gt::Core::setSessionParameters()
 	else
 		while(m_session.is_dht_running())
 			m_session.stop_dht();
+
+	if(gt::Settings::settings["LSDEnabled"] == "Yes")
+	{
+		gt::Log::Debug("Starting LSD...");
+		m_session.start_lsd();
+	}
+	else
+		m_session.stop_lsd();
+
+	if(gt::Settings::settings["NATPMPEnabled"] == "Yes")
+	{
+		gt::Log::Debug("Starting NAT-PMP...");
+		m_session.start_natpmp();
+		m_session.add_port_mapping(libtorrent::session::protocol_type(1 + ((gt::Settings::settings["DHTEnabled"] == "Yes") << 1)), 6881, 6667);
+	}
+	else
+		m_session.stop_natpmp();
+
+
+	if(gt::Settings::settings["UPnPEnabled"] == "Yes")
+	{
+		gt::Log::Debug("Starting UPnP...");
+		m_session.start_upnp();
+		m_session.add_port_mapping(libtorrent::session::protocol_type((1 + ((gt::Settings::settings["DHTEnabled"] == "Yes")) << 1)), 6881, 6666);
+	}
+	else
+		m_session.stop_upnp();
 
 	se.auto_manage_interval = 1;
 	if(Settings::settings["ReportTrueDownloaded"] == "Yes") se.report_redundant_bytes = true;
