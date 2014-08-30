@@ -10,6 +10,11 @@
 #include "Settings.hpp"
 #include <Feed.hpp>
 
+// TODO: Restore RSS feeds on load with their default signal handlers
+// TODO: Create RSS specific settings
+// TODO: Also I think I forgot to implement something important but can't remember what.
+// TODO: Maybe related to the line above: add a blocking method in Feed to block control until feed is up to date ?
+
 gt::Core::Core(int argc, char **argv) :
 	m_session(libtorrent::fingerprint("GT", 0, 0, 2, 0), 0, 0x7FFFFFFF),
 	m_running(true)
@@ -259,6 +264,14 @@ int gt::Core::loadSession(std::string folder)
 	return 0;
 }
 
+/*
+	Feed f("http://feed.url", this);
+	auto lam = [](std::string title) { return title.find("Filter like you want") != std::string::npos; };
+
+	for(auto item : f.getFilteredItems(lam))
+		std::cout << item.title << std::endl;
+
+ */
 std::shared_ptr<gt::Torrent> gt::Core::update()
 {
 	std::string str = gt::Platform::readSharedData();
@@ -271,20 +284,13 @@ std::shared_ptr<gt::Torrent> gt::Core::update()
 	while(!alerts.empty())
 	{
 		libtorrent::alert *al = alerts[0];
-<<<<<<< HEAD
-		if(al->category() != libtorrent::alert::status_notification)
-		{
-			alerts.pop_front();
-			continue;
-		}
-=======
 		if(al->type() != libtorrent::state_changed_alert::alert_type) { alerts.pop_front(); unhandledAlerts.push_front(al); continue; } // should fix the incorrect values passed to onStateChanged
->>>>>>> origin/wip/dht
 		libtorrent::state_changed_alert *scal = static_cast<libtorrent::state_changed_alert *>(al);
 		for(auto tor : m_torrents)
 			if(*tor == scal->handle)
 			{
 				tor->onStateChanged(scal->prev_state, tor);
+				alerts.pop_front();
 				break;
 			}
 		alerts.pop_front();
@@ -309,7 +315,6 @@ std::shared_ptr<gt::Torrent> gt::Core::update()
 			case libtorrent::dht_mutable_item_alert  ::alert_type:  
 			case libtorrent::dht_put_alert           ::alert_type:           
 				alerts.pop_front();
-//				gt::Log::Debug(al->message());
 				break;
 			default:
 				alerts.pop_front(); 
@@ -328,6 +333,23 @@ std::shared_ptr<gt::Torrent> gt::Core::update()
 
 		alerts = unhandledAlerts;
 		unhandledAlerts = std::deque<libtorrent::alert*>();
+
+		while(!alerts.empty())
+		{
+			libtorrent::alert *al = alerts[0];
+			if(al->type() != libtorrent::rss_alert::alert_type) { alerts.pop_front(); unhandledAlerts.push_front(al); continue; } // should fix the incorrect values passed to onStateChanged
+			libtorrent::rss_alert *rssal = static_cast<libtorrent::rss_alert *>(al);
+			for(auto feed : m_feeds)
+				if(*feed == rssal->handle)
+				{
+					feed->onStateChanged(rssal->state, feed);
+					alerts.pop_front();
+					break;
+				}
+			alerts.pop_front();
+		}
+
+
 		while(!alerts.empty())
 		{
 			gt::Log::Debug(alerts[0]->message());
@@ -471,7 +493,8 @@ void gt::Core::setSessionParameters()
 	{
 		gt::Log::Debug("Starting NAT-PMP...");
 		m_session.start_natpmp();
-		m_session.add_port_mapping(libtorrent::session::protocol_type(1 + ((gt::Settings::settings["DHTEnabled"] == "Yes") << 1)), 6881, 6667);
+		int protNum = 1 + ((gt::Settings::settings["DHTEnabled"] == "Yes") << 1);
+		m_session.add_port_mapping(libtorrent::session::protocol_type(protNum), 6881, 6667);
 	}
 	else
 		m_session.stop_natpmp();
@@ -481,7 +504,8 @@ void gt::Core::setSessionParameters()
 	{
 		gt::Log::Debug("Starting UPnP...");
 		m_session.start_upnp();
-		m_session.add_port_mapping(libtorrent::session::protocol_type((1 + ((gt::Settings::settings["DHTEnabled"] == "Yes")) << 1)), 6881, 6666);
+		int protNum = 1 + ((gt::Settings::settings["DHTEnabled"] == "Yes") << 1);
+		m_session.add_port_mapping(libtorrent::session::protocol_type(protNum), 6881, 6666);
 	}
 	else
 		m_session.stop_upnp();
@@ -530,4 +554,22 @@ int gt::Core::statusList::update(std::vector<std::shared_ptr<Torrent>> *tl)
 gt::Core::statusList* gt::Core::getStatuses()
 {
 	return &statuses;
+}
+
+
+std::shared_ptr<gt::Feed> gt::Core::addFeed(std::string Url)
+{
+	auto f = std::make_shared<gt::Feed>(Url, this);
+	// default handler
+	f->onStateChanged = [](int state, std::shared_ptr<gt::Feed> feed)
+		{
+			switch(state)
+			{
+			case 0:  feed->onUpdateStarted(feed); break;
+			case 1: feed->onUpdateFinished(feed); break;
+			default: feed->onUpdateErrored(feed);
+			}
+		};
+	m_feeds.push_back(f);
+	return f;
 }
