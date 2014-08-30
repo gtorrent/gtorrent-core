@@ -4,7 +4,7 @@
 
 namespace gt
 {
-	class Peer
+	class Peer : public libtorrent::peer_info
 	{
 		public:
 			Peer(const libtorrent::peer_info &p);

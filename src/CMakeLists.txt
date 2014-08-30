@@ -28,6 +28,7 @@ ADD_LIBRARY ( gtorrent
 	Torrent.cpp
 	Log.cpp
 	Peer.cpp
+	Feed.cpp
 	Settings.cpp
 	)
 

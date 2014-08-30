@@ -8,6 +8,7 @@
 #include "Log.hpp"
 #include "Platform.hpp"
 #include "Settings.hpp"
+#include <Feed.hpp>
 
 gt::Core::Core(int argc, char **argv) :
 	m_running(true)
@@ -91,13 +92,11 @@ std::shared_ptr<gt::Torrent> gt::Core::addTorrent(std::string path, std::vector<
 		t->setHandle(h);
 		m_torrents.push_back(t);
 		if(t->hasMetadata() && gt::Settings::settings["DefaultSequentialDownloading"] == "Yes")
-		{
 			if(t->filenames().size() == 1)
 			{
 				std::string ext = t->filenames()[0].substr(t->filenames()[0].find_last_of('.') + 1);
 				t->setSequentialDownload(gt::Settings::settings["SequentialDownloadExtensions"].find(ext) != std::string::npos);
 			}
-		}
 		statuses.update(&m_torrents);
 		return t;
 	}

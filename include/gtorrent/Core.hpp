@@ -24,10 +24,10 @@ namespace gt
 
 			int update(std::vector<std::shared_ptr<Torrent>> *tl);
 		} statuses;
-		libtorrent::session m_session;
 		bool m_running;
 	public:
 		Core(int argc = 0, char **argv = nullptr);
+		libtorrent::session m_session;
 
 		std::vector<std::shared_ptr<gt::Torrent>> &getTorrents();
 
