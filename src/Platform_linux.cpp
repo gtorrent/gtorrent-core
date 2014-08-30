@@ -215,7 +215,7 @@ std::string escape(std::string str)
 
 void gt::Platform::openTorrent(std::shared_ptr<gt::Torrent> t, int index, bool folder)
 {
-	auto files = t->getInfo()->files();
+	auto files = t->torrent_file()->files();
 	std::string path;
 
 	if(index == -1) //file to open wasn't specified, so if theres one file, we open it, or else we open the folder
@@ -227,7 +227,7 @@ void gt::Platform::openTorrent(std::shared_ptr<gt::Torrent> t, int index, bool f
 	}
 	else //We open the specified file, or its parent
 	{
-		path = t->getSavePath() + '/' + t->getInfo()->file_at(index).path;
+		path = t->getSavePath() + '/' + t->torrent_file()->file_at(index).path;
 		if(folder)
 			path = path.substr(0, path.find_last_of('/'));
 		path = escape(path);
