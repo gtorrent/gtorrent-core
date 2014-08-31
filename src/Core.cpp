@@ -576,7 +576,14 @@ gt::Core::statusList* gt::Core::getStatuses()
 
 std::shared_ptr<gt::Feed> gt::Core::addFeed(std::string Url)
 {
-	auto f = std::make_shared<gt::Feed>(Url, this);
+	using namespace libtorrent;
+	feed_settings fs;
+	fs.url = Url;
+	fs.auto_download = false;
+	fs.auto_map_handles = true;
+	fs.default_ttl = 5;
+
+	auto f = std::make_shared<gt::Feed>(m_session.add_feed(fs), this);
 	// default handler
 	f->onStateChanged = [](int state, std::shared_ptr<gt::Feed> feed)
 		{

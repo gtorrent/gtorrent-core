@@ -4,20 +4,14 @@
 using namespace std;
 
 // load default feed settings but change them quickly later
-gt::Feed::Feed(string Url, gt::Core *Core, feedCallback startedCallback, feedCallback finishedCallback, feedCallback erroredCallback) : 
-	feed_handle(Core->m_session.add_feed(libtorrent::feed_settings())),
+gt::Feed::Feed(const libtorrent::feed_handle &fe, gt::Core *Core, feedCallback finishedCallback, feedCallback erroredCallback, itemCallback newItemCallback, feedCallback startedCallback) :
+	feed_handle(fe),
 	core(Core),
-	onUpdateStarted(startedCallback),
 	onUpdateFinished(finishedCallback),
-	onUpdateErrored(erroredCallback)
+	onUpdateErrored(erroredCallback),
+	onNewItemAvailable(newItemCallback),
+	onUpdateStarted(startedCallback)
 {
-	using namespace libtorrent;
-	feed_settings fs;
-	fs.url = Url;
-	fs.auto_download = false;
-	fs.auto_map_handles = true;
-	fs.default_ttl = 5;
-	set_settings(fs);
 	update_feed();
 }
 

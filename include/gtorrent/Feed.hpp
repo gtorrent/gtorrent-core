@@ -14,7 +14,7 @@ namespace gt
 		gt::Core *core;
 	public:
 		typedef std::function<void(std::shared_ptr<gt::Feed>)> feedCallback;
-		typedef std::function<void(libtorrent::feed_item, const Feed &)> itemCallback;
+		typedef std::function<void(const libtorrent::feed_item&, std::shared_ptr<gt::Feed>)> itemCallback;
 
 		std::function<void(int, std::shared_ptr<gt::Feed>)> onStateChanged;
 
@@ -24,7 +24,7 @@ namespace gt
 		itemCallback onNewItemAvailable;
 		feedCallback onUpdateStarted;
 
-		Feed(std::string Url, gt::Core *Core, feedCallback finishedCallback = feedCallback(), feedCallback erroredCallback = feedCallback(), itemCallback onNewItemAvailable = itemCallback(), feedCallback startedCallback = feedCallback());
+		Feed(const libtorrent::feed_handle &fe, gt::Core *Core, feedCallback finishedCallback = feedCallback(), feedCallback erroredCallback = feedCallback(), itemCallback newItemCallback = itemCallback(), feedCallback startedCallback = feedCallback());
 
 		std::vector<libtorrent::feed_item> getFilteredItems(std::function<bool(std::string)> filterFun);
 		std::vector<gt::Torrent> addFilteredItems(std::function<bool(std::string)> filterFun);
