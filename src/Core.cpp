@@ -349,6 +349,23 @@ std::shared_ptr<gt::Torrent> gt::Core::update()
 			alerts.pop_front();
 		}
 
+		alerts = unhandledAlerts;
+		unhandledAlerts = std::deque<libtorrent::alert*>();
+
+		while(!alerts.empty())
+		{
+			libtorrent::alert *al = alerts[0];
+			if(al->type() != libtorrent::rss_item_alert::alert_type) { alerts.pop_front(); unhandledAlerts.push_front(al); continue; } // should fix the incorrect values passed to onStateChanged
+			libtorrent::rss_item_alert *rssal = static_cast<libtorrent::rss_item_alert *>(al);
+			for(auto feed : m_feeds)
+				if(*feed == rssal->handle)
+				{
+					feed->onNewItemAvailable(rssal->item, feed);
+					alerts.pop_front();
+					break;
+				}
+			alerts.pop_front();
+		}
 
 		while(!alerts.empty())
 		{
