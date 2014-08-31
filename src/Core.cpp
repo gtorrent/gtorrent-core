@@ -261,7 +261,9 @@ int gt::Core::loadSession(std::string folder)
 		auto t = addTorrent(folder + "meta/" + tmp + ".torrent", &resumebuff);
 	}
 
-	for(auto fh : m_session.get_feeds())
+	std::vector<libtorrent::feed_handle> handles;
+	m_session.get_feeds(handles);
+	for(auto fh : handles)
 	{
 		auto f = std::make_shared<gt::Feed>(fh, this);
 		f->onStateChanged = [](int state, std::shared_ptr<gt::Feed> feed)
@@ -274,9 +276,6 @@ int gt::Core::loadSession(std::string folder)
 				}
 			};
 		m_feeds.push_back(f);
-	}
-	m_feeds.push_back(f);
-
 	}
 
 	m_session.resume();
