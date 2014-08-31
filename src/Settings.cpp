@@ -1,9 +1,12 @@
-#include "Settings.hpp"
-#include "Platform.hpp"
 #include <fstream>
 #include <sstream>
 #include <stdexcept>
+
 #include <libtorrent/version.hpp>
+
+#include "Settings.hpp"
+#include "Platform.hpp"
+#include "Version.hpp"
 
 #define xstrmacro(s) strmacro(s)
 #define strmacro(s) #s
@@ -88,7 +91,7 @@ void gt::Settings::setDefaults()
 	settings["ActiveSeeds"]     = "5";
 
 	//used for the tracker HTTP requests, and also sent to client supporting the useragent extension
-	settings["UserAgent"] = "gTorrent/" xstrmacro(GTORRENT_VERSION_MAJOR) "." xstrmacro(GTORRENT_VERSION_MINOR) "." xstrmacro(GTORRENT_VERSION_PATCH) " libtorrent/" xstrmacro(LIBTORRENT_VERSION_MAJOR)"." xstrmacro(LIBTORRENT_VERSION_MINOR) "." xstrmacro(LIBTORRENT_VERSION_TINY);
+	settings["UserAgent"] = "gTorrent/" GTORRENT_VERSION " libtorrent/" xstrmacro(LIBTORRENT_VERSION_MAJOR)"." xstrmacro(LIBTORRENT_VERSION_MINOR) "." xstrmacro(LIBTORRENT_VERSION_TINY);
 
 	// suggest piece that are in the disk cache, other supported value is No
 	settings["PieceSuggestion"] = "Yes";
