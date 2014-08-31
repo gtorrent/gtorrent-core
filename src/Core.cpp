@@ -10,9 +10,11 @@
 #include "Settings.hpp"
 #include <Feed.hpp>
 
+// -----DONE------- //
 // TODO: Restore RSS feeds on load with their default signal handlers
+
+// -----NOT DONE------- //
 // TODO: Create RSS specific settings
-// TODO: Also I think I forgot to implement something important but can't remember what.
 // TODO: Maybe related to the line above: add a blocking method in Feed to block control until feed is up to date ?
 
 gt::Core::Core(int argc, char **argv) :
@@ -257,6 +259,24 @@ int gt::Core::loadSession(std::string folder)
 		while(resumedata)
 			resumebuff.push_back(resumedata.get());
 		auto t = addTorrent(folder + "meta/" + tmp + ".torrent", &resumebuff);
+	}
+
+	for(auto fh : m_session.get_feeds())
+	{
+		auto f = std::make_shared<gt::Feed>(fh, this);
+		f->onStateChanged = [](int state, std::shared_ptr<gt::Feed> feed)
+			{
+				switch(state)
+				{
+				case 0:  feed->onUpdateStarted (feed); break;
+				case 1:  feed->onUpdateFinished(feed); break;
+				default: feed->onUpdateErrored (feed);
+				}
+			};
+		m_feeds.push_back(f);
+	}
+	m_feeds.push_back(f);
+
 	}
 
 	m_session.resume();
@@ -589,9 +609,9 @@ std::shared_ptr<gt::Feed> gt::Core::addFeed(std::string Url)
 		{
 			switch(state)
 			{
-			case 0:  feed->onUpdateStarted(feed); break;
-			case 1: feed->onUpdateFinished(feed); break;
-			default: feed->onUpdateErrored(feed);
+			case 0:  feed->onUpdateStarted (feed); break;
+			case 1:  feed->onUpdateFinished(feed); break;
+			default: feed->onUpdateErrored (feed);
 			}
 		};
 	m_feeds.push_back(f);

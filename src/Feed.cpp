@@ -17,7 +17,7 @@ gt::Feed::Feed(const libtorrent::feed_handle &fe, gt::Core *Core, feedCallback f
 
 /*void addItem(libtorrent::feed_item &fi)
 {
-	
+	// not implemented yet because considered harmful
 }
 */
 
