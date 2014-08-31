@@ -4,7 +4,12 @@
 using namespace std;
 
 // load default feed settings but change them quickly later
-gt::Feed::Feed(string Url, gt::Core *Core) : feed_handle(Core->m_session.add_feed(libtorrent::feed_settings())), core(Core)
+gt::Feed::Feed(string Url, gt::Core *Core, feedCallback startedCallback, feedCallback finishedCallback, feedCallback erroredCallback) : 
+	feed_handle(Core->m_session.add_feed(libtorrent::feed_settings())),
+	core(Core),
+	onUpdateStarted(startedCallback),
+	onUpdateFinished(finishedCallback),
+	onUpdateErrored(erroredCallback)
 {
 	using namespace libtorrent;
 	feed_settings fs;
