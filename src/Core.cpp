@@ -111,7 +111,7 @@ void gt::Core::removeTorrent(std::shared_ptr<Torrent> t)
 {
 	//TODO : add removal of files on request
 	//TODO : Remove fast resume data associated to file
-	m_session.remove_torrent(libtorrent::torrent_handle(*t)); //explicit cast is required to make a copy of the underlying object
+	m_session.remove_torrent(*t); // explicitly cast this when the argument for a libtorrent function isn't const
 	unsigned i;
 	for(i = 0; i < m_torrents.size(); ++i)
 		if(m_torrents[i] == t)
@@ -464,7 +464,8 @@ void gt::Core::setSessionParameters()
 	{
 		gt::Log::Debug("Starting NAT-PMP...");
 		m_session.start_natpmp();
-		m_session.add_port_mapping(libtorrent::session::protocol_type(1 + ((gt::Settings::settings["DHTEnabled"] == "Yes") << 1)), 6881, 6667);
+		int proType = 1 + ((gt::Settings::settings["DHTEnabled"] == "Yes") << 1);
+		m_session.add_port_mapping(libtorrent::session::protocol_type(proType), 6881, 6667);
 	}
 	else
 		m_session.stop_natpmp();
@@ -474,7 +475,8 @@ void gt::Core::setSessionParameters()
 	{
 		gt::Log::Debug("Starting UPnP...");
 		m_session.start_upnp();
-		m_session.add_port_mapping(libtorrent::session::protocol_type((1 + ((gt::Settings::settings["DHTEnabled"] == "Yes")) << 1)), 6881, 6666);
+		int proType = 1 + ((gt::Settings::settings["DHTEnabled"] == "Yes") << 1);
+		m_session.add_port_mapping(libtorrent::session::protocol_type(proType), 6881, 6666);
 	}
 	else
 		m_session.stop_upnp();
