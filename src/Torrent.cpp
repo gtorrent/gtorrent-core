@@ -30,11 +30,11 @@ std::string getTimeString(int64_t time_s)
 
 	std::ostringstream time_string;
 
-	if ( time_d > 0 )
+	if (time_d > 0)
 		time_string << time_d << "d ";
-	if ( time_h > 0 )
+	if (time_h > 0)
 		time_string << time_h << "h ";
-	if ( time_m > 0 )
+	if (time_m > 0)
 		time_string << time_m << "m ";
 	time_string << time_s << "s";
 
@@ -96,7 +96,7 @@ gt::Torrent::Torrent(std::string path)
 		}
 	}
 
-//	onStateChanged = [](int i, shared_ptr<Torrent> j) { std::cout << "State Changed ! Old state was " << i << ", new state is " << j->getHandle().status().state << std::endl; }; // default handler
+//	onStateChanged = [](int i, shared_ptr<Torrent> j) { std::cout << "State Changed ! Old state was " << i << ", new state is " << j->status().state << std::endl; }; // default handler
 	onStateChanged = std::bind(&gt::Torrent::defaultCallback, this, std::placeholders::_1, std::placeholders::_2);
 	/*
 	 * To use, for example in GtkMainWindow, let's say tor is a shared_ptr, you would write
@@ -145,9 +145,9 @@ libtorrent::add_torrent_params gt::Torrent::getTorrentParams()
 	return m_torrent_params;
 }
 
-libtorrent::torrent_handle& gt::Torrent::getHandle()
+libtorrent::torrent_handle& gt::Torrent::getHandle() const
 {
-	return m_handle;
+	return *dynamic_cast<libtorrent::torrent_handle*>(const_cast<gt::Torrent*>(this));
 }
 
 std::string& gt::Torrent::getPath()
@@ -158,19 +158,19 @@ std::string& gt::Torrent::getPath()
 // Returns number of seconds the torrent has been active
 int64_t gt::Torrent::getActiveTime()
 {
-	return m_handle.status().active_time;
+	return status().active_time;
 }
 
 // Returns formatted active time as string
 std::string gt::Torrent::getTextActiveTime()
 {
-	return getTimeString(getActiveTime());
+	return getTimeString(status().active_time);
 }
 
 // Returns number of seconds eta for the torrent
 int64_t gt::Torrent::getEta()
 {
-	return (getDownloadRate() <= 0) ? -1 : (getSize() / getDownloadRate());
+	return (getDownloadRate() <= 0) ? -1 : (status().total_wanted / getDownloadRate());
 }
 
 // Returns formatted eta as string
@@ -184,10 +184,10 @@ std::string gt::Torrent::getTextState()
 	std::ostringstream o;
 	int precision = 1;
 
-	if(getHandle().status().queue_position != -1 &&
-	        getHandle().status().queue_position >= stoi(gt::Settings::settings["ActiveDownloads"])) return "Queued";
+	if(status().queue_position != -1 && 
+	   status().queue_position >= stoi(gt::Settings::settings["ActiveDownloads"])) return "Queued";
 
-	switch (getState())
+	switch (status().state)
 	{
 	case libtorrent::torrent_status::queued_for_checking:
 		return "Queued for checking";
@@ -219,67 +219,67 @@ std::string gt::Torrent::getTextState()
 
 float gt::Torrent::getTotalProgress()
 {
-	return ((float) getHandle().status().progress_ppm / 1000000.0f) * 100.0f;
+	return ((float) status().progress_ppm / 1000000.0f) * 100.0f;
 }
 
 unsigned int gt::Torrent::getUploadRate()
 {
-	return (isPaused() ? 0 : getHandle().status().upload_rate);
+	return (isPaused() ? 0 : status().upload_rate);
 }
 
 unsigned int gt::Torrent::getDownloadRate()
 {
-	return (isPaused() ? 0 : getHandle().status().download_rate);
+	return (isPaused() ? 0 : status().download_rate);
 }
 
 unsigned int gt::Torrent::getPPMProgress()
 {
-	return getHandle().status().progress_ppm;
+	return status().progress_ppm;
 }
 
 unsigned int gt::Torrent::getTotalSeeders()
 {
-	return getHandle().status().num_seeds;
+	return status().num_seeds;
 }
 
 unsigned int gt::Torrent::getTotalPeers()
 {
-	return getHandle().status().num_peers;
+	return status().num_peers;
 }
 
 unsigned int gt::Torrent::getTotalLeechers()
 {
-	return getTotalPeers() - getTotalSeeders();
+	return status().num_peers - status().num_seeds;
 }
 
 int64_t gt::Torrent::getTotalUploaded()
 {
-	return getHandle().status().total_upload;
+	return status().total_upload;
 }
 
 int64_t gt::Torrent::getTotalDownloaded()
 {
-	return getHandle().status().total_download;
+	return status().total_download;
 }
 
 int64_t gt::Torrent::getSize()
 {
-	return getHandle().status().total_wanted;
+	return status().total_wanted;
 }
 
 int64_t gt::Torrent::getTimeRemaining()
 {
-	return (getDownloadRate() > 0) ? getSize() / getDownloadRate() : 0;
+	return (getDownloadRate() > 0) ? status().total_wanted / getDownloadRate() : 0;
 }
 
 libtorrent::torrent_status::state_t gt::Torrent::getState()
 {
-	return m_handle.status().state;
+	return status().state;
 }
 
 std::string gt::Torrent::getCurrentTrackerURL()
 {
-	return m_handle.status().current_tracker;
+	return status().current_tracker;
 }
 
 std::string gt::Torrent::getTextUploadRate()
@@ -294,37 +294,37 @@ std::string gt::Torrent::getTextDownloadRate()
 
 std::string gt::Torrent::getTextTotalUploaded()
 {
-	return getFileSizeString(getTotalUploaded());
+	return getFileSizeString(status().total_upload);
 }
 
 std::string gt::Torrent::getTextTotalDownloaded()
 {
-	return getFileSizeString(getTotalDownloaded());
+	return getFileSizeString(status().total_download);
 }
 
 std::string gt::Torrent::getTextSize()
 {
-	return getFileSizeString(getSize());
+	return getFileSizeString(status().total_wanted);
 }
 
 int64_t gt::Torrent::getRemaining()
 {
-	return getSize() - getTotalDownloaded();
+	return status().total_wanted - status().total_download;
 }
 
 std::string gt::Torrent::getTextRemaining()
 {
-	return getFileSizeString(getRemaining());
+	return getFileSizeString(status().total_wanted - status().total_download);
 }
 
 std::string gt::Torrent::getTextTimeRemaining()
 {
-	return getTimeString(getTimeRemaining());
+	return getTimeString((getDownloadRate() > 0) ? status().total_wanted / getDownloadRate() : 0);
 }
 
 bool gt::Torrent::isPaused()
 {
-	return getHandle().status().paused;
+	return status().paused;
 }
 
 void gt::Torrent::setHandle(libtorrent::torrent_handle &h)
@@ -332,40 +332,30 @@ void gt::Torrent::setHandle(libtorrent::torrent_handle &h)
 	m_handle = h;
 }
 
-void gt::Torrent::resume()
-{
-	setPaused(false);
-}
-
-void gt::Torrent::pause()
-{
-	setPaused(true);
-}
-
 std::string gt::Torrent::getName()
 {
-	return getHandle().status().name;
+	return status().name;
 }
 
 bool gt::Torrent::hasMetadata()
 {
-	return getHandle().status().has_metadata;
+	return status().has_metadata;
 }
 
 std::string gt::Torrent::getSavePath()
 {
-	return getHandle().status().save_path;
+	return status().save_path;
 }
 
 gt::Torrent::getInfoReturnType gt::Torrent::getInfo()
 {
-	return getHandle().torrent_file();
+	return torrent_file();
 }
 
 float gt::Torrent::getTotalRatio()
 {
-	if ( getTotalDownloaded() > 0 )
-		return float( getTotalUploaded() ) / float( getTotalDownloaded() );
+	if (status().total_download > 0)
+		return float(status().total_upload) / float(status().total_download);
 	else
 		return 0.0f;
 }
@@ -379,16 +369,16 @@ std::string gt::Torrent::getTextTotalRatio()
 
 void gt::Torrent::setPaused(bool isPaused)
 {
-	m_handle.auto_managed(!isPaused);
-	isPaused ? m_handle.pause() : m_handle.resume();
+	auto_managed(!isPaused);
+	isPaused ? pause() : resume();
 }
 
 std::vector<bool> gt::Torrent::getPieces()
 {
 	std::vector<bool> pieces;
-	if(!getHandle().status().has_metadata) return pieces;
-	libtorrent::bitfield p = m_handle.status().pieces;
-	int n = m_handle.torrent_file()->num_pieces();
+	if(!status().has_metadata) return pieces;
+	libtorrent::bitfield p = status().pieces;
+	int n = torrent_file()->num_pieces();
 	for(int i = 0; i < n; ++i)
 		pieces.push_back(p.get_bit(i));
 	return pieces;
@@ -396,27 +386,27 @@ std::vector<bool> gt::Torrent::getPieces()
 
 void gt::Torrent::setSequentialDownload(bool seq)
 {
-	getHandle().set_sequential_download(seq);
+	set_sequential_download(seq);
 }
 
 bool gt::Torrent::SequentialDownloadEnabled()
 {
-	return getHandle().status().sequential_download;
+	return status().sequential_download;
 }
 
 std::vector<std::string> gt::Torrent::filenames()
 {
 	std::vector<std::string> files;
-	if(!getInfo()) return files;
-	for(int i = 0; i < getInfo()->num_files(); ++i)
-		files.push_back(getInfo()->files().file_path(i));
+	if(!torrent_file()) return files;
+	for(int i = 0; i < torrent_file()->num_files(); ++i)
+		files.push_back(torrent_file()->files().file_path(i));
 	return files;
 }
 
 std::string gt::Torrent::getFormattedHash()
 {
 	std::stringstream hash;
-	for(auto val : m_handle.info_hash())
+	for(auto val : info_hash())
 		hash << std::hex << (int)val;
 
 	return hash.str();
@@ -428,10 +418,10 @@ std::vector<gt::Peer> gt::Torrent::getPeers()
 	std::vector<libtorrent::peer_info> peers;
 	try
 	{
-	getHandle().get_peer_info(peers);
-	for (auto p : peers)
-		result.push_back(gt::Peer(p));
-	return result;
+		get_peer_info(peers);
+		for (auto p : peers)
+			result.push_back(gt::Peer(p));
+		return result;
 	}
 	catch(...)
 	{

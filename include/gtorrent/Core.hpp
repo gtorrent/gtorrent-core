@@ -9,10 +9,12 @@
 namespace gt
 {
 	class Torrent;
+	class Feed;
 	class Core
 	{
 	private:
 		std::vector<std::shared_ptr<gt::Torrent>> m_torrents;
+		std::vector<std::shared_ptr<gt::Feed>> m_feeds;
 		struct statusList
 		{
 			std::vector<std::shared_ptr<Torrent>> downloading;
@@ -24,10 +26,10 @@ namespace gt
 
 			int update(std::vector<std::shared_ptr<Torrent>> *tl);
 		} statuses;
-		libtorrent::session m_session;
-		bool m_running;
 	public:
 		Core(int argc = 0, char **argv = nullptr);
+		libtorrent::session m_session;
+		bool m_running;
 
 		std::vector<std::shared_ptr<gt::Torrent>> &getTorrents();
 
@@ -36,6 +38,7 @@ namespace gt
 		int loadSession(std::string path);
 		int saveSession(std::string path);
 		std::shared_ptr<gt::Torrent> addTorrent(std::string path, std::vector<char> *resumedata = nullptr);
+		std::shared_ptr<gt::Feed> addFeed(std::string Url);
 
 		void removeTorrent(std::shared_ptr<gt::Torrent>);
 
