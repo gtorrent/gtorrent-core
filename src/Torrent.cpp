@@ -312,11 +312,6 @@ std::string gt::Torrent::getTextRemaining()
 	return getFileSizeString(getRemaining());
 }
 
-std::string gt::Torrent::getTextTimeRemaining()
-{
-	return getTimeString(getTimeRemaining());
-}
-
 bool gt::Torrent::isPaused()
 {
 	return getHandle().status().paused;
