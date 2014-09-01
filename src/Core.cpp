@@ -256,7 +256,9 @@ int gt::Core::loadSession(std::string folder)
 	}
 
 	m_session.resume();
+	std::deque<libtorrent::alert*> alerts;
 	m_session.set_alert_mask(0x7FFFFFFF);
+	m_session.pop_alerts(&alerts); // empty possible alerts here
 	return 0;
 }
 
@@ -323,7 +325,7 @@ std::shared_ptr<gt::Torrent> gt::Core::update()
 		unhandledAlerts = std::deque<libtorrent::alert*>();
 		while(!alerts.empty())
 		{
-			gt::Log::Debug(alerts[0]->message());
+//			gt::Log::Debug(alerts[0]->message());
 			alerts.pop_front(); 
 		}
 	}
