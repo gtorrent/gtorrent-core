@@ -31,8 +31,8 @@ namespace gt
 	  void updateTrackers();
 
 
-		libtorrent::session m_session;
-		bool m_running;
+		//libtorrent::session m_session;
+		//bool m_running;
 	public:
 		Core(int argc = 0, char **argv = nullptr);
 		libtorrent::session m_session;
