@@ -30,15 +30,13 @@ namespace gt
 		unsigned int m_id;
 		libtorrent::add_torrent_params m_torrent_params;
 //		__attribute__((deprecated("use this directly")))
-		libtorrent::torrent_handle m_handle;
+		libtorrent::torrent_handle m_handle; // this will be removed when -gtk will stop relying on getHandle()
 		std::string m_path;
 
 	public:
 		Torrent(libtorrent::torrent_handle h) : libtorrent::torrent_handle(h) {  };
 		Torrent(std::string path);
 		std::function<void(int, std::shared_ptr<Torrent>)> onStateChanged; // why does this remind me of kirby <('_')>
-
-		operator libtorrent::torrent_handle() const { return *dynamic_cast<libtorrent::torrent_handle*>(const_cast<gt::Torrent*>(this)); }
 
 		bool pollEvent(gt::Event &event);
 		void defaultCallback(int, std::shared_ptr<Torrent>);

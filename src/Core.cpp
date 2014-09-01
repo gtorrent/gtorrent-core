@@ -117,7 +117,7 @@ void gt::Core::removeTorrent(std::shared_ptr<Torrent> t)
 {
 	//TODO : add removal of files on request
 	//TODO : Remove fast resume data associated to file
-	m_session.remove_torrent(libtorrent::torrent_handle(*t)); //explicit cast is required to make a copy of the underlying object
+	m_session.remove_torrent(*t); // explicitly cast this when the argument for a libtorrent function isn't const
 	unsigned i;
 	for(i = 0; i < m_torrents.size(); ++i)
 		if(m_torrents[i] == t)
@@ -325,18 +325,18 @@ std::shared_ptr<gt::Torrent> gt::Core::update()
 			libtorrent::alert *al = alerts[0];
 			switch(al->type())
 			{
-			case libtorrent::dht_reply_alert         ::alert_type:         
-			case libtorrent::dht_announce_alert      ::alert_type:      
-			case libtorrent::dht_get_peers_alert     ::alert_type:     
-			case libtorrent::dht_bootstrap_alert     ::alert_type:     
-			case libtorrent::dht_error_alert         ::alert_type:         
+			case libtorrent::dht_reply_alert         ::alert_type:
+			case libtorrent::dht_announce_alert      ::alert_type:
+			case libtorrent::dht_get_peers_alert     ::alert_type:
+			case libtorrent::dht_bootstrap_alert     ::alert_type:
+			case libtorrent::dht_error_alert         ::alert_type:
 			case libtorrent::dht_immutable_item_alert::alert_type:
-			case libtorrent::dht_mutable_item_alert  ::alert_type:  
-			case libtorrent::dht_put_alert           ::alert_type:           
+			case libtorrent::dht_mutable_item_alert  ::alert_type:
+			case libtorrent::dht_put_alert           ::alert_type:
 				alerts.pop_front();
 				break;
 			default:
-				alerts.pop_front(); 
+				alerts.pop_front();
 				unhandledAlerts.push_front(al);//we won't handle this alert
 			}
 		}
@@ -389,7 +389,7 @@ std::shared_ptr<gt::Torrent> gt::Core::update()
 		while(!alerts.empty())
 		{
 			gt::Log::Debug(alerts[0]->message());
-			alerts.pop_front(); 
+			alerts.pop_front();
 		}
 	}
 	return addTorrent(str);
@@ -529,8 +529,9 @@ void gt::Core::setSessionParameters()
 	{
 		gt::Log::Debug("Starting NAT-PMP...");
 		m_session.start_natpmp();
-		int protNum = 1 + ((gt::Settings::settings["DHTEnabled"] == "Yes") << 1);
-		m_session.add_port_mapping(libtorrent::session::protocol_type(protNum), 6881, 6667);
+
+		int proType = 1 + ((gt::Settings::settings["DHTEnabled"] == "Yes") << 1);
+		m_session.add_port_mapping(libtorrent::session::protocol_type(proType), 6881, 6667);
 	}
 	else
 		m_session.stop_natpmp();
@@ -540,8 +541,9 @@ void gt::Core::setSessionParameters()
 	{
 		gt::Log::Debug("Starting UPnP...");
 		m_session.start_upnp();
-		int protNum = 1 + ((gt::Settings::settings["DHTEnabled"] == "Yes") << 1);
-		m_session.add_port_mapping(libtorrent::session::protocol_type(protNum), 6881, 6666);
+
+		int proType = 1 + ((gt::Settings::settings["DHTEnabled"] == "Yes") << 1);
+		m_session.add_port_mapping(libtorrent::session::protocol_type(proType), 6881, 6666);
 	}
 	else
 		m_session.stop_upnp();
