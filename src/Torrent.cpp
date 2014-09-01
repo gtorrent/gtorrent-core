@@ -267,11 +267,6 @@ int64_t gt::Torrent::getSize()
 	return getHandle().status().total_wanted;
 }
 
-int64_t gt::Torrent::getTimeRemaining()
-{
-	return (getDownloadRate() > 0) ? getSize() / getDownloadRate() : 0;
-}
-
 libtorrent::torrent_status::state_t gt::Torrent::getState()
 {
 	return m_handle.status().state;
@@ -315,11 +310,6 @@ int64_t gt::Torrent::getRemaining()
 std::string gt::Torrent::getTextRemaining()
 {
 	return getFileSizeString(getRemaining());
-}
-
-std::string gt::Torrent::getTextTimeRemaining()
-{
-	return getTimeString(getTimeRemaining());
 }
 
 bool gt::Torrent::isPaused()
