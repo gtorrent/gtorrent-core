@@ -26,6 +26,13 @@ namespace gt
 
 			int update(std::vector<std::shared_ptr<Torrent>> *tl);
 		} statuses;
+
+	  std::map<std::string, std::vector<std::shared_ptr<gt::Torrent>>> trackers;
+	  void updateTrackers();
+
+
+		libtorrent::session m_session;
+		bool m_running;
 	public:
 		Core(int argc = 0, char **argv = nullptr);
 		libtorrent::session m_session;
@@ -47,5 +54,6 @@ namespace gt
 		std::shared_ptr<gt::Torrent> update();
 		void setSessionParameters();
 		statusList* getStatuses();
+	  std::map<std::string, std::vector<std::shared_ptr<Torrent>>> *getTrackers();
 	};
 }
