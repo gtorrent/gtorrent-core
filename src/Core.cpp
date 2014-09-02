@@ -18,7 +18,7 @@
 // TODO: Maybe related to the line above: add a blocking method in Feed to block control until feed is up to date ?
 
 gt::Core::Core(int argc, char **argv) :
-	m_session(libtorrent::fingerprint("GT", 0, 0, 2, 0), 1, 0x7FFFFFFF),
+	m_session(libtorrent::fingerprint("GT", 0, 0, 2, 0), 3, 0x7FFFFFFF),
 	m_running(true)
 {
 	if(!gt::Platform::processIsUnique())
