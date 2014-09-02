@@ -319,7 +319,7 @@ std::string gt::Torrent::getTextRemaining()
 
 std::string gt::Torrent::getTextTimeRemaining()
 {
-	return getTimeString(getTimeRemaining());
+	return getTimeString((getDownloadRate() > 0) ? status().total_wanted / getDownloadRate() : 0);
 }
 
 bool gt::Torrent::isPaused()
