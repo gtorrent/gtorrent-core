@@ -234,5 +234,5 @@ void gt::Platform::openTorrent(std::shared_ptr<gt::Torrent> t, int index, bool f
 	}
 
 	// HURR system() IS BAD BECAUSE IT'S NOT USED TO MAKE PORTABLE CODE, pls refer to the filename, if you're expecting anything portable here you've come to the wrong place.
-	system(std::string(std::string("xdg-open \'") + path + "\'").c_str()); // Either use system or fork and exec with the xdg binary it's literraly the same shit, or even worst, link with even more libs, pick your poison
+	system(std::string(std::string("xdg-open \'") + path + "\'&").c_str()); // Either use system or fork and exec with the xdg binary it's literraly the same shit, or even worst, link with even more libs, pick your poison
 }
