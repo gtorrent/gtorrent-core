@@ -25,35 +25,24 @@ std::string gt::Log::getTimeStamp()
 
 }
 
-void gt::Log::Debug(const char *fmt, ...)
+int gt::DebugLevel = 0;
+
+// 0 = None, 1 = Warning, 2 = Critical, 3 = Severe, 4 = All
+void gt::Log::Debug(std::string debug, int level)
 {
 #if USE_LOGGING
-	FILE * pFile = fopen("gtorrent.log", "a");
-
-	va_list args, fileargs;
-	va_start(args, fmt);
-	va_start(fileargs, fmt); // can't use a varargs twice
+	if(level < DebugLevel) return;
+	FILE *pFile = fopen("gtorrent.log", "a");
 
 	if (!pFile)
-	{
 		perror("fopen()");
-	}
 	else
 	{
-		fprintf(pFile, "[%s]: ", gt::Log::getTimeStamp().c_str());
-		vfprintf(pFile, fmt, fileargs);
-		fprintf(pFile, "\n");
+		fprintf(pFile, "[%s]: %s\n", gt::Log::getTimeStamp().c_str(), debug.c_str());
 	}
+	printf("[%s]: %s\n", gt::Log::getTimeStamp().c_str(), debug.c_str());
 
-	printf("[%s]: ", gt::Log::getTimeStamp().c_str());
-	vprintf(fmt, args);
-	printf("\n");
-
-	va_end(args);
-	va_end(fileargs);
 	if (pFile)
 		fclose(pFile);
-#else
-	return;
 #endif
 }
