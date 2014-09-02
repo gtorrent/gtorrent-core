@@ -9,6 +9,6 @@ gt::Peer::Peer(const libtorrent::peer_info &p) :
 	downloadSpeed(getRateString(p.down_speed)),
 	client(p.client)
 {
-	string str = p.pid.to_string();
+	std::string str = p.pid.to_string();
 	if(str[0] == 'G' && str[1] == 'T') client = "gTorrent"; // Use this until our client is in the supported list of libtorrent
 }
