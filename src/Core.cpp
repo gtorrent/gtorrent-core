@@ -14,6 +14,7 @@
 // TODO: Restore RSS feeds on load with their default signal handlers
 
 // -----NOT DONE------- //
+// TODO: Save And reload rss filters
 // TODO: Create RSS specific settings
 // TODO: Maybe related to the line above: add a blocking method in Feed to block control until feed is up to date ?
 
@@ -40,6 +41,18 @@ gt::Core::Core(int argc, char **argv) :
 
 	loadSession(gt::Platform::getDefaultConfigPath());
 
+	gt::Log::Debug("Starting RSS");
+	auto f = addFeed("http://pomf.fr/rss/feed");
+	f->filters["Episode"] = "\\-\\ ..?";
+	f->functions.push_back("Episode > 3");
+
+	while(f->get_feed_status().updating);
+	for(auto i : f->getFilteredItems())
+		gt::Log::Debug(i.title);
+		
+	gt::Log::Debug("RSS finished");
+
+	
 	libtorrent::error_code ec;
 	m_session.listen_on(std::make_pair(6881, 6889), ec, (const char *)0, 0);
 	if (ec.value() != 0)
@@ -270,9 +283,9 @@ int gt::Core::loadSession(std::string folder)
 			{
 				switch(state)
 				{
-				case 0:  feed->onUpdateStarted (feed); break;
-				case 1:  feed->onUpdateFinished(feed); break;
-				default: feed->onUpdateErrored (feed);
+				case 0:  if(feed->onUpdateStarted) feed->onUpdateStarted (feed); break;
+				case 1:  if(feed->onUpdateFinished)feed->onUpdateFinished(feed); break;
+				default: if(feed->onUpdateErrored) feed->onUpdateErrored (feed);
 				}
 			};
 		m_feeds.push_back(f);
@@ -361,8 +374,9 @@ std::shared_ptr<gt::Torrent> gt::Core::update()
 			for(auto feed : m_feeds)
 				if(*feed == rssal->handle)
 				{
-					feed->onStateChanged(rssal->state, feed);
 					alerts.pop_front();
+					if(!feed->onStateChanged) continue; //why does this pass the check
+					feed->onStateChanged(rssal->state, feed);
 					break;
 				}
 			alerts.pop_front();
