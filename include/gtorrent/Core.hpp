@@ -40,6 +40,7 @@ namespace gt
 		std::shared_ptr<gt::Torrent> addTorrent(std::string path, std::vector<char> *resumedata = nullptr);
 		std::shared_ptr<gt::Feed> addFeed(std::string Url);
 
+		void removeFeed(std::shared_ptr<gt::Feed>);
 		void removeTorrent(std::shared_ptr<gt::Torrent>);
 
 		bool isRunning() const;

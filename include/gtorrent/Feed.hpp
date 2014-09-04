@@ -12,7 +12,6 @@ namespace gt
 	class Feed : public libtorrent::feed_handle
 	{
 		gt::Core *core;
-
 		// this is used only when getFilteredItems is called without arguments
 		// The idea is that you can filter based on "columns" determined by regexes
 		// For example, consider a feed containing titles such as: [xXx] Series - XY [ZZZZp].ext
