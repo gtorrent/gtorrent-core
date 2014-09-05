@@ -16,7 +16,7 @@ gt::Feed::Feed(const libtorrent::feed_handle &fe, gt::Core *Core, feedCallback f
 	update_feed();
 }
 
-void addItem(libtorrent::feed_item &fi)
+void gt::Feed::addItem(const libtorrent::feed_item &fi)
 {
 	gt::Log::Debug("Adding " + fi.title + "\t :^)");
 }
@@ -97,4 +97,16 @@ vector<gt::Torrent> gt::Feed::addFilteredItems(std::function<bool(std::string)> 
 	for(auto item : getFilteredItems(filterFun))
 		core->addTorrent(item.url);
 	return ret;	
+}
+
+void gt::Feed::addFunction(std::string function)
+{
+	if(functions.find(function) == functions.end())
+		return;
+	functions.insert(function);
+}
+
+std::set<std::string> &gt::Feed::getFunctions()
+{
+	return functions;
 }

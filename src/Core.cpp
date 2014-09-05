@@ -40,7 +40,12 @@ gt::Core::Core(int argc, char **argv) :
 	}
 
 	loadSession(gt::Platform::getDefaultConfigPath());
-	
+
+	auto f = addFeed("http://pomf.fr/rss/feed");
+	while(f->get_feed_status().updating);
+	f->filters["Episode"] = " - (..?)";
+	f->addFunction("Episode > 8");
+
 	libtorrent::error_code ec;
 	m_session.listen_on(std::make_pair(6881, 6889), ec, (const char *)0, 0);
 	if (ec.value() != 0)
@@ -220,11 +225,12 @@ int gt::Core::saveSession(std::string folder)
 		for(auto filter : feed->filters)
 			fbuf += filter.first + '|' + filter.second + '\n';
 		fbuf += "Functions:\n";
-		for(auto function : feed->functions)
+		for(auto function : feed->getFunctions())
 			fbuf += function + '\n';
 		fbuf += "-\n\n";
 	}
 
+	std::cout << fbuf << std::endl;
 	std::ofstream feedfile(folder + "feeds.gts");
 	feedfile << fbuf;
 	feedfile.close();
@@ -254,7 +260,7 @@ int gt::Core::loadSession(std::string folder)
 	std::fstream feeds;
 
 	state.open(folder + "state.gts");
-	list.open(folder + "list.gts");
+	list .open(folder + "list.gts");
 	feeds.open(folder + "feeds.gts");
 
 	if(!state.is_open())
@@ -278,6 +284,7 @@ int gt::Core::loadSession(std::string folder)
 	lazy_bdecode(benfile.c_str(), benfile.c_str() + benfile.size(), ent, ec);
 	m_session.load_state(ent);
 	setSessionParameters();
+
 	while(getline(list, tmp))
 	{
 		if(!gt::Platform::checkDirExist(folder + "meta/" + tmp + ".torrent")) continue; //eventually delete the associated .fasteresume
@@ -294,33 +301,30 @@ int gt::Core::loadSession(std::string folder)
 	{
 		std::string url;
 		std::map<std::string, std::string> filters;
-		std::vector<std::string> functions;
+		std::set<std::string> functions;
 	} fi;
-	
+
 	std::vector<feedinfo> fis;
 	// TODO: Fix this
 	while(std::getline(feeds, tmp))
 	{
 		if(tmp[0] == '[')
-		{
 			fi.url = tmp.substr(1, tmp.size() - 2);
-			std::cout << fi.url << std::endl;
-		}
 		if(tmp.find("Filters") != std::string::npos)
 			while(std::getline(feeds, tmp) && tmp.find('|') != std::string::npos)
 			{
 				std::string col = tmp.substr(0, tmp.find('|'));
-				std::cout << col << std::endl;
-				std::string reg = tmp.substr(tmp.find('|'), tmp.size() - tmp.find('|') - 1);
-				std::cout << reg << std::endl;
+				std::string reg = tmp.substr(tmp.find('|') + 1, tmp.size() - tmp.find('|') - 1);
 				fi.filters[col] = reg;
 			}
 		if(tmp.find("Function") != std::string::npos)
 			while(std::getline(feeds, tmp) && tmp.find_first_of("<>=! ") != std::string::npos)
-				fi.functions.push_back(tmp.substr(0, tmp.size() - 1));
-		if(tmp == "-\n")
+			{
+				std::cout << tmp << std::endl;
+				fi.functions.insert(tmp);
+			}
+		if(tmp.find("-") != std::string::npos)
 			fis.push_back(fi);
-		
 	}
 	
 	std::vector<libtorrent::feed_handle> handles;
@@ -331,10 +335,13 @@ int gt::Core::loadSession(std::string folder)
 		std::string url = f->get_feed_status().url;
 		feedinfo info;
 		for(auto fi : fis)
+		{
 			if(fi.url == url)
 			{info = fi; break;}
+		}
+
 		f->filters = info.filters;
-		f->functions = info.functions;
+		f->getFunctions() = info.functions;
 		f->onStateChanged = [](int state, std::shared_ptr<gt::Feed> feed)
 			{
 				switch(state)
@@ -677,6 +684,10 @@ gt::Core::statusList* gt::Core::getStatuses()
 
 std::shared_ptr<gt::Feed> gt::Core::addFeed(std::string Url)
 {
+	for(auto f : m_feeds)
+		if(f->get_feed_status().url == Url)
+			return f;
+
 	using namespace libtorrent;
 	feed_settings fs;
 	fs.url = Url;
@@ -707,3 +718,4 @@ void gt::Core::removeFeed(std::shared_ptr<gt::Feed> feed)
 		if(feed == m_feeds[i]) m_session.remove_feed(*feed);
 	m_feeds.erase(m_feeds.begin() + i);
 }
+
