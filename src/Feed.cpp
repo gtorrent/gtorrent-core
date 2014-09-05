@@ -38,10 +38,7 @@ vector<libtorrent::feed_item> gt::Feed::getFilteredItems()
 
 	if(filters.empty()) return fs.items;
 
-	std::function<bool(string, string)> bcomp[] = // we only need to define < and = to deduce any other comparison
-	{
-		// a is the group matching the column regex, b is the constant in the filter function
-		[](string a, string b)
+	std::function<bool(string&, string&)> bcomp = [](string &a, string &b)
 		{
 			if(a.empty() || b.empty()) return false;
 			if(std::all_of(b.begin(), b.end(), [](char c){ return c >= '0' && c <= '9'; })) // if b is only digits
@@ -51,20 +48,14 @@ vector<libtorrent::feed_item> gt::Feed::getFilteredItems()
 				return stoi(a) < stoi(b);
 			}// I don't know why would people compare rel between string for a filter, but there ya go
 			return a < b;
-		},
-
-		[](string a, string b)
-		{ 
-			return a == b; //equality is way easier since for numbers to be equal, their string representation must be equal 
-		}
-	};
+		};
 
 	std::function<bool(string, string)> comp[]
 	{
-		[bcomp](string a, string b) { return  bcomp[0](a, b); }, // <
-		[bcomp](string a, string b) { return  bcomp[0](b, a); }, // >
-		[bcomp](string a, string b) { return  bcomp[1](a, b); }, // =
-		[bcomp](string a, string b) { return !bcomp[1](a, b); }  // !
+		[bcomp](string a, string b) { return  bcomp(a, b); }, // <
+		[bcomp](string a, string b) { return  bcomp(b, a); }, // >
+		[bcomp](string a, string b) { return !bcomp(b, a) && !bcomp(a, b); }, // =
+		[bcomp](string a, string b) { return !bcomp(b, a) || !bcomp(a, b); }  // !
 	};
 
 	for(auto function : functions)
@@ -72,30 +63,59 @@ vector<libtorrent::feed_item> gt::Feed::getFilteredItems()
 		string comparisonOps = "<>=! ";
 		string columnName = string(function.begin(),
 								   std::find_first_of(function.begin(), function.end(), comparisonOps.begin(), comparisonOps.end())); // yup
+		std::string dbgstr = "Parsed column name is " + columnName;
+		gt::Log::Debug(dbgstr.c_str());
 		std::regex reg(filters[columnName]);
+		dbgstr = "Parsed regex is " + filters[columnName];
+		gt::Log::Debug(dbgstr.c_str());
 		std::smatch s;
 		char op = *std::find_first_of(function.begin(), function.end(), comparisonOps.begin(), comparisonOps.end() - 1);
 		unsigned opIndex = comparisonOps.find(op);
 		if(opIndex == std::string::npos) continue; // function is fucked
+		dbgstr = "Parsed operation is " + op;
+		gt::Log::Debug(dbgstr.c_str());
 
 		std::function<bool(string, string)> compFun = comp[opIndex];
 		string literal = function.substr(function.find_last_of(comparisonOps) + 1);
+		dbgstr = "Parsed argument is " + literal;
+		gt::Log::Debug(dbgstr.c_str());
 		for(auto item : fs.items)
 		{
 			std::regex_search(item.title, s, reg); // only one group should be matched here;
+			dbgstr = string("Matching ") + filters[columnName] + " in " + item.title;
+			gt::Log::Debug(dbgstr.c_str());
+
 			for(auto m : s)
+			{
+				dbgstr = string("Testing ") + string(m) + " " + op + " " + literal;
+				gt::Log::Debug(dbgstr.c_str());
+
 				if(compFun(m, literal))
+				{
+					dbgstr = "Title " + item.title + " matched function " + function;
+					gt::Log::Debug(dbgstr.c_str());
 					ret.push_back(item);
+				}
+			}
 		}
 	}
 	return ret;
 }
 
-vector<gt::Torrent> gt::Feed::addFilteredItems(std::function<bool(std::string)> filterFun)
+/* Do not use these two yet*/
+vector<shared_ptr<gt::Torrent>> gt::Feed::addFilteredItems(std::function<bool(std::string)> filterFun)
 {
-	vector<gt::Torrent> ret;
+	vector<shared_ptr<gt::Torrent>> ret;
 	for(auto item : getFilteredItems(filterFun))
-		core->addTorrent(item.url);
+		ret.push_back(core->addTorrent(item.url));
+	return ret;
+}
+
+vector<shared_ptr<gt::Torrent>> gt::Feed::addFilteredItems()
+{
+	vector<shared_ptr<gt::Torrent>> ret;
+	for(auto item : getFilteredItems())
+		ret.push_back(core->addTorrent(item.url));
 	return ret;	
 }
 

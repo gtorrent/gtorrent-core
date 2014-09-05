@@ -41,11 +41,6 @@ gt::Core::Core(int argc, char **argv) :
 
 	loadSession(gt::Platform::getDefaultConfigPath());
 
-	auto f = addFeed("http://pomf.fr/rss/feed");
-	while(f->get_feed_status().updating);
-	f->filters["Episode"] = " - (..?)";
-	f->addFunction("Episode > 8");
-
 	libtorrent::error_code ec;
 	m_session.listen_on(std::make_pair(6881, 6889), ec, (const char *)0, 0);
 	if (ec.value() != 0)
@@ -329,6 +324,7 @@ int gt::Core::loadSession(std::string folder)
 	
 	std::vector<libtorrent::feed_handle> handles;
 	m_session.get_feeds(handles);
+	std::cout << "Handles: " << handles.size() << std::endl;
 	for(auto fh : handles)
 	{
 		auto f = std::make_shared<gt::Feed>(fh, this);
@@ -351,6 +347,15 @@ int gt::Core::loadSession(std::string folder)
 				default: if(feed->onUpdateErrored) feed->onUpdateErrored (feed);
 				}
 			};
+		f->onNewItemAvailable = [](const libtorrent::feed_item &item, std::shared_ptr<gt::Feed> feed)
+		{
+			if(!feed) return;
+			auto items = feed->getFilteredItems();
+			if(std::find_if(items.begin(), items.end(), [item](libtorrent::feed_item &arg)
+		{ return item.url == arg.url; }
+				   ) != feed->getFilteredItems().end())
+				feed->addItem(item);
+		};
 		m_feeds.push_back(f);
 	}
 
@@ -463,12 +468,7 @@ std::shared_ptr<gt::Torrent> gt::Core::update()
 			for(auto feed : m_feeds)
 				if(*feed == rssal->handle)
 				{
-					try {
-						feed->onNewItemAvailable(rssal->item, feed);
-					} catch (...) {
-						
-					}
- 
+					feed->onNewItemAvailable(rssal->item, feed);
 					alerts.pop_front();
 					break;
 				}
@@ -481,6 +481,9 @@ std::shared_ptr<gt::Torrent> gt::Core::update()
 			alerts.pop_front(); 
 		}
 	}
+	if(str.find("update_feeds") != std::string::npos)
+		for(auto f : m_feeds)
+			f->update_feed();
 	return addTorrent(str);
 }
 
@@ -681,7 +684,6 @@ gt::Core::statusList* gt::Core::getStatuses()
 	return &statuses;
 }
 
-
 std::shared_ptr<gt::Feed> gt::Core::addFeed(std::string Url)
 {
 	for(auto f : m_feeds)
@@ -706,10 +708,15 @@ std::shared_ptr<gt::Feed> gt::Core::addFeed(std::string Url)
 			default: feed->onUpdateErrored (feed);
 			}
 		};
+	f->onNewItemAvailable = [](const libtorrent::feed_item &item, std::shared_ptr<gt::Feed> feed)
+		{
+			if(std::find_if(feed->getFilteredItems().begin(), feed->getFilteredItems().end(), [item](libtorrent::feed_item &arg){ return item.url == arg.url; }) != feed->getFilteredItems().end())
+				feed->addItem(item);
+		};
+
 	m_feeds.push_back(f);
 	return f;
 }
-
 
 void gt::Core::removeFeed(std::shared_ptr<gt::Feed> feed)
 {

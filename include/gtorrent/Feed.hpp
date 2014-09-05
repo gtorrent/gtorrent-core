@@ -45,7 +45,9 @@ namespace gt
 
 		std::vector<libtorrent::feed_item> getFilteredItems(std::function<bool(std::string)> filterFun);
 		std::vector<libtorrent::feed_item> getFilteredItems();
-		std::vector<gt::Torrent> addFilteredItems(std::function<bool(std::string)> filterFun);
+		// jesus christ looks at these return types
+		std::vector<std::shared_ptr<gt::Torrent>> addFilteredItems(std::function<bool(std::string)> filterFun);
+		std::vector<std::shared_ptr<gt::Torrent>> addFilteredItems();
 		bool operator==(const libtorrent::feed_handle& rhs) { return rhs.settings().url == settings().url; }
 	};
 }
