@@ -12,11 +12,14 @@
 
 // -----DONE------- //
 // TODO: Restore RSS feeds on load with their default signal handlers
+// TODO: Save And reload rss filters
 
 // -----NOT DONE------- //
-// TODO: Save And reload rss filters
+// TODO: Rerun the filter/add when a filter/function change
+// TODO: Add unary function
+// TODO: Better file parsing
 // TODO: Create RSS specific settings
-// TODO: Maybe related to the line above: add a blocking method in Feed to block control until feed is up to date ?
+// TODO: Add a blocking method in Feed to block control until feed is up to date ?
 
 gt::Core::Core(int argc, char **argv) :
 	m_session(libtorrent::fingerprint("GT", 0, 0, 2, 0), 3, 0x7FFFFFFF),
@@ -214,6 +217,8 @@ int gt::Core::saveSession(std::string folder)
 	 *[FeedURL]
 	 *...
 	 */
+	std::vector<libtorrent::feed_handle> handles;
+	m_session.get_feeds(handles);
 	for(auto feed : m_feeds)
 	{
 		fbuf += "[" + feed->get_feed_status().url + "]\nFilters:\n";
@@ -225,7 +230,6 @@ int gt::Core::saveSession(std::string folder)
 		fbuf += "-\n\n";
 	}
 
-	std::cout << fbuf << std::endl;
 	std::ofstream feedfile(folder + "feeds.gts");
 	feedfile << fbuf;
 	feedfile.close();
@@ -242,12 +246,19 @@ int gt::Core::loadSession(std::string folder)
 	gt::Settings::parse("config");
 
 	if (!gt::Platform::checkDirExist(folder)                   ||
-	        !gt::Platform::checkDirExist(folder + "state.gts") ||
-	        !gt::Platform::checkDirExist(folder + "list.gts"))
+		!gt::Platform::checkDirExist(folder + "state.gts") ||
+		!gt::Platform::checkDirExist(folder +  "list.gts") ||
+		!gt::Platform::checkDirExist(folder + "feeds.gts"))
 	{
 		// Also creates an empty session.
 		gt::Log::Debug(std::string("Creating new session folder in: " + gt::Platform::getDefaultConfigPath()).c_str());
-		saveSession(folder);
+		std::ofstream state(folder + "state.gts");
+		std::ofstream  list(folder +  "list.gts");
+		std::ofstream feeds(folder + "feeds.gts");
+
+		state.close();
+		list.close();
+		feeds.close();
 	}
 
 	std::fstream state;
@@ -321,23 +332,27 @@ int gt::Core::loadSession(std::string folder)
 		if(tmp.find("-") != std::string::npos)
 			fis.push_back(fi);
 	}
-	
+
 	std::vector<libtorrent::feed_handle> handles;
 	m_session.get_feeds(handles);
-	std::cout << "Handles: " << handles.size() << std::endl;
-	for(auto fh : handles)
-	{
-		auto f = std::make_shared<gt::Feed>(fh, this);
-		std::string url = f->get_feed_status().url;
-		feedinfo info;
-		for(auto fi : fis)
-		{
-			if(fi.url == url)
-			{info = fi; break;}
-		}
 
-		f->filters = info.filters;
-		f->getFunctions() = info.functions;
+	for(auto fi : fis)
+	{
+		std::shared_ptr<gt::Feed> f;
+		std::string url = fi.url;
+
+		for(auto fh : handles)
+			if(fh.get_feed_status().url == url)
+			{
+				f = std::make_shared<gt::Feed>(fh, this);
+				break;
+			}
+		if(!f)
+			f = addFeed(url);
+
+		f->filters = fi.filters;
+		f->getFunctions() = fi.functions;
+
 		f->onStateChanged = [](int state, std::shared_ptr<gt::Feed> feed)
 			{
 				switch(state)
@@ -347,32 +362,24 @@ int gt::Core::loadSession(std::string folder)
 				default: if(feed->onUpdateErrored) feed->onUpdateErrored (feed);
 				}
 			};
+
 		f->onNewItemAvailable = [](const libtorrent::feed_item &item, std::shared_ptr<gt::Feed> feed)
-		{
-			if(!feed) return;
-			auto items = feed->getFilteredItems();
-			if(std::find_if(items.begin(), items.end(), [item](libtorrent::feed_item &arg)
-		{ return item.url == arg.url; }
-				   ) != feed->getFilteredItems().end())
-				feed->addItem(item);
-		};
+			{
+				if(!feed) return;
+				auto items = feed->getFilteredItems();
+				if(std::find_if(items.begin(), items.end(), [item](libtorrent::feed_item &arg){ if(item.title == arg.title) {std::cout << item.title << " Matched with " << arg.title << std::endl; return true;} return false; }) != items.end())
+					feed->addItem(item);
+			};
+
 		m_feeds.push_back(f);
 	}
 
-	
+
 	m_session.resume();
 	m_session.set_alert_mask(0x7FFFFFFF);
 	return 0;
 }
 
-/*
-	Feed f("http://feed.url", this);
-	auto lam = [](std::string title) { return title.find("Filter like you want") != std::string::npos; };
-
-	for(auto item : f.getFilteredItems(lam))
-		std::cout << item.title << std::endl;
-
- */
 std::shared_ptr<gt::Torrent> gt::Core::update()
 {
 	std::string str = gt::Platform::readSharedData();
@@ -391,9 +398,18 @@ std::shared_ptr<gt::Torrent> gt::Core::update()
 			if(*tor == scal->handle)
 			{
 				tor->onStateChanged(scal->prev_state, tor);
+				if(tor->status().has_metadata && gt::Settings::settings["DefaultSequentialDownloading"] == "Yes")
+					if(tor->filenames().size() == 1)
+					{
+						std::string ext = tor->filenames()[0].substr(tor->filenames()[0].find_last_of('.') + 1);
+						tor->set_sequential_download(gt::Settings::settings["SequentialDownloadExtensions"].find(ext) != std::string::npos);
+					}
+
+				assert(alerts.size() != 0);
 				alerts.pop_front();
 				break;
 			}
+		assert(alerts.size() != 0);
 		alerts.pop_front();
 	}
 
@@ -407,30 +423,23 @@ std::shared_ptr<gt::Torrent> gt::Core::update()
 			libtorrent::alert *al = alerts[0];
 			switch(al->type())
 			{
-			case libtorrent::dht_reply_alert         ::alert_type:         
-			case libtorrent::dht_announce_alert      ::alert_type:      
-			case libtorrent::dht_get_peers_alert     ::alert_type:     
-			case libtorrent::dht_bootstrap_alert     ::alert_type:     
-			case libtorrent::dht_error_alert         ::alert_type:         
+			case libtorrent::dht_reply_alert         ::alert_type:
+			case libtorrent::dht_announce_alert      ::alert_type:
+			case libtorrent::dht_get_peers_alert     ::alert_type:
+			case libtorrent::dht_bootstrap_alert     ::alert_type:
+			case libtorrent::dht_error_alert         ::alert_type:
 			case libtorrent::dht_immutable_item_alert::alert_type:
-			case libtorrent::dht_mutable_item_alert  ::alert_type:  
-			case libtorrent::dht_put_alert           ::alert_type:           
+			case libtorrent::dht_mutable_item_alert  ::alert_type:
+			case libtorrent::dht_put_alert           ::alert_type:
+				assert(alerts.size() != 0);
 				alerts.pop_front();
 				break;
 			default:
-				alerts.pop_front(); 
+				assert(alerts.size() != 0);
+				alerts.pop_front();
 				unhandledAlerts.push_front(al);//we won't handle this alert
 			}
 		}
-
-		/*gt::Log::Debug("\nDHT Upload Rate: "  + std::to_string(m_session.status().dht_upload_rate)          + '\n' +
-					   "DHT Download Rate: "  + std::to_string(m_session.status().dht_download_rate)        + '\n' +
-					   "DHT Upload Total: "   + std::to_string(m_session.status().total_dht_upload)         + '\n' +
-					   "DHT Active Nodes: "   + std::to_string(m_session.status().dht_nodes)                + '\n' +
-					   "DHT Total Nodes: "    + std::to_string(m_session.status().dht_global_nodes)         + '\n' +
-					   "DHT Total Usage: "    + getFileSizeString(m_session.status().dht_total_allocations) + '\n' +
-					   "DHT Download Total: " + std::to_string(m_session.status().total_dht_download)       + '\n');
-		*/
 
 		alerts = unhandledAlerts;
 		unhandledAlerts = std::deque<libtorrent::alert*>();
@@ -438,9 +447,11 @@ std::shared_ptr<gt::Torrent> gt::Core::update()
 		while(!alerts.empty())
 		{
 			libtorrent::alert *al = alerts[0];
+			if(!al) { alerts.pop_front(); continue; }
 			//something triggers a crash in the if block below
 			if(al->type() != libtorrent::rss_alert::alert_type)
 			{
+				assert(alerts.size() != 0);
 				alerts.pop_front();
 				unhandledAlerts.push_front(al);
 				continue;
@@ -449,12 +460,12 @@ std::shared_ptr<gt::Torrent> gt::Core::update()
 			for(auto feed : m_feeds)
 				if(*feed == rssal->handle)
 				{
+					assert(alerts.size() != 0);
 					alerts.pop_front();
 					if(!feed->onStateChanged) continue; //why does this pass the check
 					try{feed->onStateChanged(rssal->state, feed);} catch(...){}
 					break;
 				}
-			alerts.pop_front();
 		}
 
 		alerts = unhandledAlerts;
@@ -469,21 +480,29 @@ std::shared_ptr<gt::Torrent> gt::Core::update()
 				if(*feed == rssal->handle)
 				{
 					feed->onNewItemAvailable(rssal->item, feed);
+					assert(alerts.size() != 0);
 					alerts.pop_front();
 					break;
 				}
-			alerts.pop_front();
 		}
 
 		while(!alerts.empty())
 		{
 			gt::Log::Debug(alerts[0]->message());
-			alerts.pop_front(); 
+			assert(alerts.size() != 0);
+			alerts.pop_front();
 		}
 	}
 	if(str.find("update_feeds") != std::string::npos)
 		for(auto f : m_feeds)
-			f->update_feed();
+			gt::Log::Debug(std::to_string(f->get_feed_status().next_update) + " remaining before update");
+
+	if(m_pendingTorrents.size() != 0)
+	{
+		auto tmp = m_pendingTorrents[0];
+		m_pendingTorrents.pop_front();
+		return tmp;
+	}
 	return addTorrent(str);
 }
 
@@ -695,7 +714,7 @@ std::shared_ptr<gt::Feed> gt::Core::addFeed(std::string Url)
 	fs.url = Url;
 	fs.auto_download = false;
 	fs.auto_map_handles = true;
-	fs.default_ttl = 5;
+	fs.default_ttl = 1;
 
 	auto f = std::make_shared<gt::Feed>(m_session.add_feed(fs), this);
 	// default handler
@@ -710,7 +729,8 @@ std::shared_ptr<gt::Feed> gt::Core::addFeed(std::string Url)
 		};
 	f->onNewItemAvailable = [](const libtorrent::feed_item &item, std::shared_ptr<gt::Feed> feed)
 		{
-			if(std::find_if(feed->getFilteredItems().begin(), feed->getFilteredItems().end(), [item](libtorrent::feed_item &arg){ return item.url == arg.url; }) != feed->getFilteredItems().end())
+			auto items = feed->getFilteredItems();
+			if(std::find_if(items.begin(), items.end(), [item](libtorrent::feed_item &arg){ if(item.title == arg.title) {std::cout << item.title << " Matched with " << arg.title << std::endl; return true;} return false; }) != items.end())
 				feed->addItem(item);
 		};
 
@@ -725,4 +745,3 @@ void gt::Core::removeFeed(std::shared_ptr<gt::Feed> feed)
 		if(feed == m_feeds[i]) m_session.remove_feed(*feed);
 	m_feeds.erase(m_feeds.begin() + i);
 }
-

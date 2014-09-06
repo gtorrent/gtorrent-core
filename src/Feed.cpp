@@ -19,6 +19,10 @@ gt::Feed::Feed(const libtorrent::feed_handle &fe, gt::Core *Core, feedCallback f
 void gt::Feed::addItem(const libtorrent::feed_item &fi)
 {
 	gt::Log::Debug("Adding " + fi.title + "\t :^)");
+	std::string str(fi.url); // We remove some html escape codes
+	unsigned i;
+	if((i = str.find("amp;")) != str.size()) str.erase(i, 4);
+	core->m_pendingTorrents.push_front(core->addTorrent(str));
 }
 
 vector<libtorrent::feed_item> gt::Feed::getFilteredItems(std::function<bool(std::string)> filterFun)
@@ -63,40 +67,23 @@ vector<libtorrent::feed_item> gt::Feed::getFilteredItems()
 		string comparisonOps = "<>=! ";
 		string columnName = string(function.begin(),
 								   std::find_first_of(function.begin(), function.end(), comparisonOps.begin(), comparisonOps.end())); // yup
-		std::string dbgstr = "Parsed column name is " + columnName;
-		gt::Log::Debug(dbgstr.c_str());
 		std::regex reg(filters[columnName]);
-		dbgstr = "Parsed regex is " + filters[columnName];
-		gt::Log::Debug(dbgstr.c_str());
+
 		std::smatch s;
 		char op = *std::find_first_of(function.begin(), function.end(), comparisonOps.begin(), comparisonOps.end() - 1);
 		unsigned opIndex = comparisonOps.find(op);
 		if(opIndex == std::string::npos) continue; // function is fucked
-		dbgstr = "Parsed operation is " + op;
-		gt::Log::Debug(dbgstr.c_str());
 
 		std::function<bool(string, string)> compFun = comp[opIndex];
 		string literal = function.substr(function.find_last_of(comparisonOps) + 1);
-		dbgstr = "Parsed argument is " + literal;
-		gt::Log::Debug(dbgstr.c_str());
+
 		for(auto item : fs.items)
 		{
 			std::regex_search(item.title, s, reg); // only one group should be matched here;
-			dbgstr = string("Matching ") + filters[columnName] + " in " + item.title;
-			gt::Log::Debug(dbgstr.c_str());
 
 			for(auto m : s)
-			{
-				dbgstr = string("Testing ") + string(m) + " " + op + " " + literal;
-				gt::Log::Debug(dbgstr.c_str());
-
 				if(compFun(m, literal))
-				{
-					dbgstr = "Title " + item.title + " matched function " + function;
-					gt::Log::Debug(dbgstr.c_str());
 					ret.push_back(item);
-				}
-			}
 		}
 	}
 	return ret;

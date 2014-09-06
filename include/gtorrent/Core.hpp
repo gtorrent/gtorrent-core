@@ -12,9 +12,12 @@ namespace gt
 	class Feed;
 	class Core
 	{
+		friend class Feed;
 	private:
 		std::vector<std::shared_ptr<gt::Torrent>> m_torrents;
 		std::vector<std::shared_ptr<gt::Feed>> m_feeds;
+
+		std::deque<std::shared_ptr<gt::Torrent>> m_pendingTorrents; //Contains torrent that have been added to the session but that haven't been reported to the UI
 		struct statusList
 		{
 			std::vector<std::shared_ptr<Torrent>> downloading;
