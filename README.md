@@ -1,6 +1,6 @@
+[![Build Status](http://jenkins.gtorre.net/buildStatus/icon?job=gtorrent-core)](https://travis-ci.org/gtorrent/gtorrent-core)
 gtorrent-core
 =============
-[![Build Status](https://travis-ci.org/gtorrent/gtorrent-core.svg?branch=wip%2Fcopying-files)](https://travis-ci.org/gtorrent/gtorrent-core)
 
 Core library of gTorrent which handles everything but UI/UX
 
