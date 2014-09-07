@@ -325,10 +325,7 @@ int gt::Core::loadSession(std::string folder)
 			}
 		if(tmp.find("Function") != std::string::npos)
 			while(std::getline(feeds, tmp) && tmp.find_first_of("<>=! ") != std::string::npos)
-			{
-				std::cout << tmp << std::endl;
 				fi.functions.insert(tmp);
-			}
 		if(tmp.find("-") != std::string::npos)
 			fis.push_back(fi);
 	}
@@ -345,6 +342,7 @@ int gt::Core::loadSession(std::string folder)
 			if(fh.get_feed_status().url == url)
 			{
 				f = std::make_shared<gt::Feed>(fh, this);
+				m_feeds.push_back(f);
 				break;
 			}
 		if(!f)
@@ -371,7 +369,6 @@ int gt::Core::loadSession(std::string folder)
 					feed->addItem(item);
 			};
 
-		m_feeds.push_back(f);
 	}
 
 
@@ -397,7 +394,7 @@ std::shared_ptr<gt::Torrent> gt::Core::update()
 		for(auto tor : m_torrents)
 			if(*tor == scal->handle)
 			{
-				tor->onStateChanged(scal->prev_state, tor);
+				if(tor->onStateChanged) tor->onStateChanged(scal->prev_state, tor);
 				if(tor->status().has_metadata && gt::Settings::settings["DefaultSequentialDownloading"] == "Yes")
 					if(tor->filenames().size() == 1)
 					{
@@ -409,8 +406,6 @@ std::shared_ptr<gt::Torrent> gt::Core::update()
 				alerts.pop_front();
 				break;
 			}
-		assert(alerts.size() != 0);
-		alerts.pop_front();
 	}
 
 	alerts = unhandledAlerts;
@@ -722,9 +717,9 @@ std::shared_ptr<gt::Feed> gt::Core::addFeed(std::string Url)
 		{
 			switch(state)
 			{
-			case 0:  feed->onUpdateStarted (feed); break;
-			case 1:  feed->onUpdateFinished(feed); break;
-			default: feed->onUpdateErrored (feed);
+			case 0:  if(feed->onUpdateStarted) feed->onUpdateStarted (feed); break;
+			case 1:  if(feed->onUpdateFinished) feed->onUpdateFinished(feed); break;
+			default: if(feed->onUpdateErrored) feed->onUpdateErrored (feed);
 			}
 		};
 	f->onNewItemAvailable = [](const libtorrent::feed_item &item, std::shared_ptr<gt::Feed> feed)
