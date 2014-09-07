@@ -10,17 +10,17 @@ namespace gt
 	{
 		public:
 			Peer(const libtorrent::peer_info &p);
-			inline std::string getIP() const
+			inline boost::asio::ip::address getIP() const
 			{
-				return ip.address().to_string();
+				return ip.address();
 			}
-			inline std::string getUploadSpeed() const
+			inline int64_t getUploadSpeed() const
 			{
-				return std::to_string(up_speed);
+				return up_speed;
 			}
-			inline std::string getDownloadSpeed() const
+			inline int64_t getDownloadSpeed() const
 			{
-				return std::to_string(down_speed);
+				return down_speed;
 			}
 			std::string getClient() const;
 	};
