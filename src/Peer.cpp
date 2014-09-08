@@ -4,12 +4,19 @@
 
 
 gt::Peer::Peer(const libtorrent::peer_info &p) :
-	peer_info(p),
 	ip(p.ip.address().to_string()),
 	uploadSpeed(getRateString(p.up_speed)),
 	downloadSpeed(getRateString(p.down_speed)),
-	client(p.client)
+	client(p.client),
+	peer_info(p)
 {
-	std::string str = p.pid.to_string();
-	if(str[0] == 'G' && str[1] == 'T') client = "gTorrent"; // Use this until our client is in the supported list of libtorrent
+}
+
+std::string gt::Peer::getClient() const
+{
+	std::string str = pid.to_string();
+	if(str[0] == 'G' && str[1] == 'T')
+		return "gTorrent"; // Use this until our client is in the supported list of libtorrent
+	else
+		return client;
 }

@@ -23,6 +23,7 @@ namespace libtorrent
 namespace gt
 {
 	struct Event;
+	class Peer;
 
 	class Torrent : public libtorrent::torrent_handle
 	{
@@ -183,6 +184,6 @@ namespace gt
 		bool SequentialDownloadEnabled();
 		std::vector<std::string> filenames();
 
-		std::vector<Peer> getPeers();
+		std::vector<gt::Peer> getPeers();
 	};
 }
