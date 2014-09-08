@@ -40,6 +40,7 @@ gt::Core::Core(int argc, char **argv) :
 	for(int i = 1; i < argc; ++i)
 		addTorrent(std::string(argv[i]));
 	statuses.update(&m_torrents);
+	updateTrackers();
 }
 
 std::vector<std::shared_ptr<gt::Torrent>> &gt::Core::getTorrents()
@@ -103,6 +104,7 @@ std::shared_ptr<gt::Torrent> gt::Core::addTorrent(std::string path, std::vector<
 			}
 		}
 		statuses.update(&m_torrents);
+		updateTrackers();
 		return t;
 	}
 }
@@ -123,6 +125,7 @@ void gt::Core::removeTorrent(std::shared_ptr<Torrent> t)
 	}
 	m_torrents.resize(m_torrents.size() - 1);
 	statuses.update(&m_torrents);
+	updateTrackers();
 }
 
 bool gt::Core::isRunning() const
@@ -527,4 +530,28 @@ int gt::Core::statusList::update(std::vector<std::shared_ptr<Torrent>> *tl)
 gt::Core::statusList* gt::Core::getStatuses()
 {
 	return &statuses;
+}
+
+void gt::Core::updateTrackers() {
+  int found = 0;
+  for (unsigned i = 0; i < m_torrents.size(); i++) {
+    if(trackers[m_torrents[i]->getCurrentTrackerURL()].size()) { // Check if this tracker already exists in the map. If it does, iterate through it and make sure the torrent we are adding is unique
+      for(unsigned j = 0; j < trackers[m_torrents[i]->getCurrentTrackerURL()].size(); j++) {
+	if(trackers[m_torrents[i]->getCurrentTrackerURL()][j] == m_torrents[i]) {
+	  found = 1;
+	  break;
+	}
+      }
+      if(!found) { // if nothing was found, add the torrent to the tracker list
+	trackers[m_torrents[i]->getCurrentTrackerURL()].push_back(m_torrents[i]);
+      }
+    }
+    else { // if the tracker doesn't already exist, skip iterating through it and just add the torrent
+      trackers[m_torrents[i]->getCurrentTrackerURL()].push_back(m_torrents[i]);
+    }
+  }
+}
+
+std::map<std::string, std::vector<std::shared_ptr<gt::Torrent>>>* gt::Core::getTrackers() {
+  return &trackers;
 }
