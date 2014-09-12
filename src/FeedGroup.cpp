@@ -1,4 +1,9 @@
 #include <FeedGroup.hpp>
+#include <Log.hpp>
+#include <Feed.hpp>
+#include <regex>
+
+using namespace std;
 
 void gt::FeedGroup::addItem(const libtorrent::feed_item &fi)
 {
@@ -8,7 +13,6 @@ void gt::FeedGroup::addItem(const libtorrent::feed_item &fi)
 	if((i = str.find("amp;")) != str.size()) str.erase(i, 4);
 	core->m_pendingTorrents.push_front(core->addTorrent(str));
 }
-
 
 vector<libtorrent::feed_item> gt::FeedGroup::getFilteredItems(std::function<bool(std::string)> filterFun)
 {
@@ -134,23 +138,22 @@ std::set<std::string> &gt::FeedGroup::getFunctions()
  *
  */
 
-std::vector<std::shared_ptr<gt::FeedGroup>> gt::FeedGroup::fromString(std::string sData)
+std::vector<std::shared_ptr<gt::FeedGroup>> gt::FeedGroup::fromString(std::string sData, gt::Core *m_core)
 {
 	std::vector<std::shared_ptr<gt::FeedGroup>> ret;
-	int i = sData.begin();
-	int l = 1;
+	auto i = sData.begin();
 
-	// maybe it's be bettwe to separate opening tokens and closing tokens
+	// maybe it'd be better to separate opening tokens and closing tokens
 	std::string tokens = "[]{},|";
 	while(*i++ == '[')
 	{
-		auto feedg = std::make_shared<gt::FeedGroup>(new FeedGroup());
+		auto feedg = std::make_shared<gt::FeedGroup>();
 		//parse groupname
 		auto j = std::find_first_of(i, sData.end(), tokens.begin(), tokens.end());
-		feedg.name = string(i, j);
+		feedg->name = string(i, j);
 		if(*j != ']')
 		{
-			gt::Log::Debug("Expected token ] instead of token " + *j);
+			gt::Log::Debug(string("Expected token ] instead of token ") + *j);
 			return std::vector<std::shared_ptr<gt::FeedGroup>>();
 		}
 		i = std::find_first_of(j + 1, sData.end(), tokens.begin(), tokens.end());;
@@ -159,7 +162,7 @@ std::vector<std::shared_ptr<gt::FeedGroup>> gt::FeedGroup::fromString(std::strin
 		j = std::find_first_of(i, sData.end(), tokens.begin(), tokens.end());
 		if(*j != '{')
 		{
-			gt::Log::Debug("Expected token { instead of token " + *j);
+			gt::Log::Debug(std::string("Expected token { instead of token ") + *j);
 			return std::vector<std::shared_ptr<gt::FeedGroup>>();
 		}
 		i = std::find_first_of(j + 1, sData.end(), tokens.begin(), tokens.end());;
@@ -169,8 +172,8 @@ std::vector<std::shared_ptr<gt::FeedGroup>> gt::FeedGroup::fromString(std::strin
 		std::string feedurl;
 		j = std::find_first_of(i, sData.end(), tokens.begin(), tokens.end());
 		feedurl = std::string(i, j);
-		auto feed = core->addFeed(feedurl);
-		feed->owners.insert(feedg);
+		auto feed = m_core->addFeed(feedurl);
+		feed->owners.push_back(feedg);
 		feedg->m_feeds.push_back(feed);
 		
 		j = std::find_first_of(i, sData.end(), tokens.begin(), tokens.end());
@@ -179,8 +182,8 @@ std::vector<std::shared_ptr<gt::FeedGroup>> gt::FeedGroup::fromString(std::strin
 			i = std::find_first_of(j + 1, sData.end(), tokens.begin(), tokens.end());;
 			j = std::find_first_of(i, sData.end(), tokens.begin(), tokens.end());
 			feedurl = std::string(i, j);
-			auto feed = core->addFeed(feedurl);
-			feed->owners.insert(feedg);
+			auto feed = m_core->addFeed(feedurl);
+			feed->owners.push_back(feedg);
 			feedg->m_feeds.push_back(feed);
 			i = std::find_first_of(j + 1, sData.end(), tokens.begin(), tokens.end());;
 			j = std::find_first_of(i, sData.end(), tokens.begin(), tokens.end());
@@ -188,7 +191,7 @@ std::vector<std::shared_ptr<gt::FeedGroup>> gt::FeedGroup::fromString(std::strin
 
 		if(*j != '}')
 		{
-			gt::Log::Debug("Expected token } instead of token " + *j);
+			gt::Log::Debug(std::string("Expected token } instead of token ") + *j);
 			return std::vector<std::shared_ptr<gt::FeedGroup>>();
 		}
 		i = std::find_first_of(j + 1, sData.end(), tokens.begin(), tokens.end());;
@@ -199,7 +202,7 @@ std::vector<std::shared_ptr<gt::FeedGroup>> gt::FeedGroup::fromString(std::strin
 		std::string filtername = std::string(i, j);
 		if(*j != '|')
 		{
-			gt::Log::Debug("Expected token | instead of token " + *j + " in filter expression");
+			gt::Log::Debug(std::string("Expected token | instead of token ") + *j + " in filter expression");
 			return std::vector<std::shared_ptr<gt::FeedGroup>>();
 		}
 		i = j + 1;
@@ -214,20 +217,23 @@ std::vector<std::shared_ptr<gt::FeedGroup>> gt::FeedGroup::fromString(std::strin
 
 		if(*j != '}')
 		{
-			gt::Log::Debug("Expected token } instead of token " + *j + " in filter expression");
+			gt::Log::Debug(std::string("Expected token } instead of token ") + *j + " in filter expression");
 			return std::vector<std::shared_ptr<gt::FeedGroup>>();
 		}
-		
+
 	}
+
+	return ret;
 }
 bool gt::FeedGroup::contains(libtorrent::feed_handle fh)
 {
 	for(auto f : m_feeds)
-		if(f == fh)
+		if(*f == fh)
 			return true;
+	return false;
 }
 
-operator gt::FeedGroup::string()
+gt::FeedGroup::operator string()
 {
 	// TODO: check if it works
 	std::string str;
@@ -236,10 +242,10 @@ operator gt::FeedGroup::string()
 	auto i = m_feeds.begin();
 
 	// feed urls
-	str += '{\n\t';
+	str += "{\n\t";
 	while(1)
 	{
-		str += m_feeds[i]->settings().url;
+		str += (*i)->settings().url;
 		if(++i == m_feeds.end()) break;
 		str += ",\n\t";
 	}
@@ -247,10 +253,10 @@ operator gt::FeedGroup::string()
 
 	//filters
 	auto pair = filters.begin();
-	str += '{\n\t';
+	str += "{\n\t";
 	while(1)
 	{
-		str += pair->first + "|" + pair.second;
+		str += pair->first + "|" + pair->second;
 		if(++pair == filters.end()) break;
 		str += ",\n\t";
 	}
@@ -258,10 +264,10 @@ operator gt::FeedGroup::string()
 
 	//functions
 	auto fun = functions.begin();
-	str += '{\n\t';
+	str += "{\n\t";
 	while(1)
 	{
-		str += fun;
+		str += *fun;
 		if(++fun == functions.end()) break;
 		str += ",\n\t";
 	}

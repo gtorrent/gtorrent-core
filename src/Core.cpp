@@ -294,7 +294,7 @@ int gt::Core::loadSession(std::string folder)
 	while(std::getline(feeds, tmp))
 		sData += tmp;
 
-	m_feeds = gt::FeedGroup::fromString(sData);
+	m_feeds = gt::FeedGroup::fromString(sData, this);
 
 	for(auto f : m_feeds)
 	{

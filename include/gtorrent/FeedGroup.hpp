@@ -1,6 +1,7 @@
 #pragma once
 
 #include <string>
+#include <vector>
 #include <memory>
 #include <Core.hpp>
 #include <Torrent.hpp>
@@ -29,7 +30,7 @@ namespace gt
 
 		std::vector<libtorrent::feed_item> getFilteredItems(std::function<bool(std::string)> filterFun);
 		std::vector<libtorrent::feed_item> getFilteredItems();
-		static std::vector<std::shared_ptr<gt::FeedGroup>> fromString(std::string sData);
+		static std::vector<std::shared_ptr<gt::FeedGroup>> fromString(std::string sData, gt::Core *m_core);
 
 		typedef std::function<void(std::shared_ptr<gt::Feed>)> feedCallback;
 		typedef std::function<void(const libtorrent::feed_item&, std::shared_ptr<gt::Feed>)> itemCallback;

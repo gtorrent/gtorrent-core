@@ -13,7 +13,7 @@ namespace gt
 	class FeedGroup;
 	class Core
 	{
-		friend class Feed;
+		friend class FeedGroup;
 	private:
 		std::vector<std::shared_ptr<gt::Torrent>> m_torrents;
 		std::vector<std::shared_ptr<gt::FeedGroup>> m_feeds;
