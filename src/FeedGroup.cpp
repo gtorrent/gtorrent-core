@@ -2,6 +2,8 @@
 #include <Log.hpp>
 #include <Feed.hpp>
 #include <regex>
+#include <boost/tokenizer.hpp>
+#include <boost/algorithm/string/trim.hpp>
 
 using namespace std;
 
@@ -140,91 +142,65 @@ std::set<std::string> &gt::FeedGroup::getFunctions()
 
 std::vector<std::shared_ptr<gt::FeedGroup>> gt::FeedGroup::fromString(std::string sData, gt::Core *m_core)
 {
+	using namespace boost;
+	typedef boost::tokenizer<boost::char_separator<char>> tokenizer;
+
 	std::vector<std::shared_ptr<gt::FeedGroup>> ret;
-	auto i = sData.begin();
-
-	// maybe it'd be better to separate opening tokens and closing tokens
-	std::string tokens = "[]{},|";
-	while(*i++ == '[')
+	char_separator<char> sep("", "[]{},|");
+	tokenizer tokens(sData, sep);
+	for(auto tokenIt = tokens.begin(); tokenIt != tokens.end() && *tokenIt == "[";)
 	{
-		auto feedg = std::make_shared<gt::FeedGroup>();
-		//parse groupname
-		auto j = std::find_first_of(i, sData.end(), tokens.begin(), tokens.end());
-		feedg->name = string(i, j);
-		if(*j != ']')
+		auto feedg = make_shared<gt::FeedGroup>();
+
+		// group name
+		feedg->name = *(++tokenIt);
+		trim(feedg->name);
+
+		// Feed URLs
+		while(*tokenIt != "{" && ++tokenIt != tokens.end());
+		do
 		{
-			gt::Log::Debug(string("Expected token ] instead of token ") + *j);
-			return std::vector<std::shared_ptr<gt::FeedGroup>>();
-		}
-		i = std::find_first_of(j + 1, sData.end(), tokens.begin(), tokens.end());;
+			++tokenIt;
+			string str = *tokenIt;
+			trim(str);
+			feedg->m_feeds.push_back(m_core->addFeed(str));
+		} while (*(++tokenIt) == ",");
 
-		//parse feed urls
-		j = std::find_first_of(i, sData.end(), tokens.begin(), tokens.end());
-		if(*j != '{')
+		// filters
+		while(*tokenIt != "{" && ++tokenIt != tokens.end());
+		do
 		{
-			gt::Log::Debug(std::string("Expected token { instead of token ") + *j);
-			return std::vector<std::shared_ptr<gt::FeedGroup>>();
-		}
-		i = std::find_first_of(j + 1, sData.end(), tokens.begin(), tokens.end());;
+			string fname, regex;
+			++tokenIt;
+			fname = *tokenIt++;
+			trim(fname);
+			while(*tokenIt != "," || *tokenIt != "}")
+			{
+				regex += *tokenIt++;
+				trim(regex);
+				if(*tokenIt == "," || *tokenIt == "}") break;
+			}
+			feedg->filters[fname] = regex;
+		} while (*tokenIt == ",");
 
-
-		// can maybe convert to following to do{}while();
-		std::string feedurl;
-		j = std::find_first_of(i, sData.end(), tokens.begin(), tokens.end());
-		feedurl = std::string(i, j);
-		auto feed = m_core->addFeed(feedurl);
-		feed->owners.push_back(feedg);
-		feedg->m_feeds.push_back(feed);
+		//fun
+		while(*tokenIt != "{" && ++tokenIt != tokens.end());
+		do
+		{
+			string function;
+			++tokenIt;
+			function = *tokenIt++;
+			trim(function);
+			feedg->functions.insert(function);
+		} while (*tokenIt == ",");
+		// we're done with this feed 
+		ret.push_back(feedg);
+		while(tokenIt != tokens.end() && *tokenIt != "[") ++tokenIt; // skip shitty whitespace
 		
-		j = std::find_first_of(i, sData.end(), tokens.begin(), tokens.end());
-		while(*j == ',')
-		{
-			i = std::find_first_of(j + 1, sData.end(), tokens.begin(), tokens.end());;
-			j = std::find_first_of(i, sData.end(), tokens.begin(), tokens.end());
-			feedurl = std::string(i, j);
-			auto feed = m_core->addFeed(feedurl);
-			feed->owners.push_back(feedg);
-			feedg->m_feeds.push_back(feed);
-			i = std::find_first_of(j + 1, sData.end(), tokens.begin(), tokens.end());;
-			j = std::find_first_of(i, sData.end(), tokens.begin(), tokens.end());
-		}
-
-		if(*j != '}')
-		{
-			gt::Log::Debug(std::string("Expected token } instead of token ") + *j);
-			return std::vector<std::shared_ptr<gt::FeedGroup>>();
-		}
-		i = std::find_first_of(j + 1, sData.end(), tokens.begin(), tokens.end());;
-
-		// parse filters
-		string filter;
-		j = std::find_first_of(i, sData.end(), tokens.begin(), tokens.end());
-		std::string filtername = std::string(i, j);
-		if(*j != '|')
-		{
-			gt::Log::Debug(std::string("Expected token | instead of token ") + *j + " in filter expression");
-			return std::vector<std::shared_ptr<gt::FeedGroup>>();
-		}
-		i = j + 1;
-		j = std::find_first_of(i, sData.end(), tokens.begin(), tokens.end());
-		std::string regex = std::string(i, j);
-		feedg->filters[filtername] = regex;
-
-		// TODO: finish from here
-		while(*j == ',')
-		{
-		}
-
-		if(*j != '}')
-		{
-			gt::Log::Debug(std::string("Expected token } instead of token ") + *j + " in filter expression");
-			return std::vector<std::shared_ptr<gt::FeedGroup>>();
-		}
-
 	}
-
 	return ret;
 }
+
 bool gt::FeedGroup::contains(libtorrent::feed_handle fh)
 {
 	for(auto f : m_feeds)
@@ -272,6 +248,8 @@ gt::FeedGroup::operator string()
 		str += ",\n\t";
 	}
 	str += "\n}\n\n";
+
+	
 
 	return str;
 }
