@@ -82,6 +82,7 @@ vector<libtorrent::feed_item> gt::FeedGroup::getFilteredItems()
 			}
 		}
 	}
+
 	return ret;
 }
 
@@ -248,8 +249,6 @@ gt::FeedGroup::operator string()
 		str += ",\n\t";
 	}
 	str += "\n}\n\n";
-
-	
 
 	return str;
 }

@@ -676,3 +676,13 @@ void gt::Core::removeFeed(std::shared_ptr<gt::Feed> feed)
 		if(feed == m_feeds[i]) m_session.remove_feed(*feed);
 		m_feeds.erase(m_feeds.begin() + i);*/
 }
+
+std::shared_ptr<gt::FeedGroup> gt::Core::addFeedGroup(std::string name)
+{
+	for(auto fg : m_feeds)
+		if(fg->name == name)
+			return fg;
+	auto fg = std::make_shared<gt::FeedGroup>();
+	fg->name = name;
+	return fg;
+}
