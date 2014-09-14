@@ -164,7 +164,10 @@ std::vector<std::shared_ptr<gt::FeedGroup>> gt::FeedGroup::fromString(std::strin
 			++tokenIt;
 			string str = *tokenIt;
 			trim(str);
-			feedg->m_feeds.push_back(m_core->addFeed(str));
+			if(str.empty()) continue;
+			auto f = m_core->addFeed(str);
+			f->owners.insert(feedg);
+			feedg->m_feeds.insert(f);
 		} while (*(++tokenIt) == ",");
 
 		// filters
@@ -175,6 +178,7 @@ std::vector<std::shared_ptr<gt::FeedGroup>> gt::FeedGroup::fromString(std::strin
 			++tokenIt;
 			fname = *tokenIt++;
 			trim(fname);
+			if(fname.empty()) continue;
 			while(*tokenIt != "," || *tokenIt != "}")
 			{
 				regex += *tokenIt++;
@@ -192,6 +196,7 @@ std::vector<std::shared_ptr<gt::FeedGroup>> gt::FeedGroup::fromString(std::strin
 			++tokenIt;
 			function = *tokenIt++;
 			trim(function);
+			if(function.empty()) continue;
 			feedg->functions.insert(function);
 		} while (*tokenIt == ",");
 		// we're done with this feed 
@@ -231,7 +236,7 @@ gt::FeedGroup::operator string()
 	//filters
 	auto pair = filters.begin();
 	str += "{\n\t";
-	while(1)
+	while(pair != filters.end())
 	{
 		str += pair->first + "|" + pair->second;
 		if(++pair == filters.end()) break;
@@ -242,7 +247,7 @@ gt::FeedGroup::operator string()
 	//functions
 	auto fun = functions.begin();
 	str += "{\n\t";
-	while(1)
+	while(fun != functions.begin())
 	{
 		str += *fun;
 		if(++fun == functions.end()) break;

@@ -16,11 +16,11 @@ namespace gt
 	{
 
 	public:
-		std::vector<std::shared_ptr<gt::FeedGroup>> owners;
+		std::set<std::shared_ptr<gt::FeedGroup>> owners;
 
 		// When a feed changes state, all of its groups are informed
 		Feed(const libtorrent::feed_handle &fe);
 
-		bool operator==(const libtorrent::feed_handle& rhs) { return rhs.settings().url == settings().url; }
+		bool operator==(const libtorrent::feed_handle& rhs) { return rhs.get_feed_status().url == get_feed_status().url; }
 	};
 }

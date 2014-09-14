@@ -2,6 +2,7 @@
 
 #include <string>
 #include <vector>
+#include <set>
 #include <memory>
 #include <Core.hpp>
 #include <Torrent.hpp>
@@ -16,7 +17,7 @@ namespace gt
 	public:
 		std::string name;
 		gt::Core *core;
-		std::vector<std::shared_ptr<gt::Feed>> m_feeds;
+		std::set<std::shared_ptr<gt::Feed>> m_feeds;
 		int updating;
 		std::set<std::string> functions;
 		std::map<std::string, std::string> filters;

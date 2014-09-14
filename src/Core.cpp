@@ -141,6 +141,11 @@ bool gt::Core::isRunning() const
 int gt::Core::saveSession(std::string folder)
 {
 	libtorrent::entry ent;
+
+	for(auto f : m_feedhandles)
+		if(f->owners.empty())
+			m_session.remove_feed(*f);
+
 	m_session.pause();
 	m_session.save_state(ent);
 
@@ -398,15 +403,17 @@ std::shared_ptr<gt::Torrent> gt::Core::update()
 			} // should fix the incorrect values passed to onStateChanged
 			libtorrent::rss_alert *rssal = static_cast<libtorrent::rss_alert *>(al);
 			for(auto feed : m_feeds)
+			{
 				if(feed->contains(rssal->handle))
 				{
-					assert(alerts.size() != 0);
-					alerts.pop_front();
 					if(!feed->onStateChanged) continue; //why does this pass the check
 					for(auto f : feed->m_feeds)
 						if(*f == rssal->handle)
 							try{feed->onStateChanged(rssal->state, f);} catch(...){}
 				}
+			}
+			assert(alerts.size() != 0);
+			alerts.pop_front();
 		}
 
 		alerts = unhandledAlerts;
@@ -420,12 +427,12 @@ std::shared_ptr<gt::Torrent> gt::Core::update()
 			for(auto feed : m_feeds)
 				if(feed->contains(rssal->handle))
 				{
-					assert(alerts.size() != 0);
-					alerts.pop_front();
 					for(auto f : feed->m_feeds)
 						if(*f == rssal->handle)
 							feed->onNewItemAvailable(rssal->item, f);					
 				}
+			assert(alerts.size() != 0);
+			alerts.pop_front();
 		}
 
 		while(!alerts.empty())
