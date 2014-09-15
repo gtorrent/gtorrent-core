@@ -181,6 +181,7 @@ std::vector<std::shared_ptr<gt::FeedGroup>> gt::FeedGroup::fromString(std::strin
 			if(fname.empty()) continue;
 			while(*tokenIt != "," || *tokenIt != "}")
 			{
+				tokenIt++;
 				regex += *tokenIt++;
 				trim(regex);
 				if(*tokenIt == "," || *tokenIt == "}") break;
