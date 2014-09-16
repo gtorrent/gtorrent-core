@@ -18,6 +18,7 @@ namespace gt
 		std::string name;
 		gt::Core *core;
 		std::set<std::shared_ptr<gt::Feed>> m_feeds;
+		bool autoAddNewItem;
 		int updating;
 		std::set<std::string> functions;
 		std::map<std::string, std::string> filters;
@@ -31,6 +32,7 @@ namespace gt
 
 		std::vector<libtorrent::feed_item> getFilteredItems(std::function<bool(std::string)> filterFun);
 		std::vector<libtorrent::feed_item> getFilteredItems();
+		bool passFilters(const libtorrent::feed_item&);
 		static std::vector<std::shared_ptr<gt::FeedGroup>> fromString(std::string sData, gt::Core *m_core);
 
 		typedef std::function<void(std::shared_ptr<gt::Feed>)> feedCallback;

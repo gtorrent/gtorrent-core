@@ -28,6 +28,25 @@ vector<libtorrent::feed_item> gt::FeedGroup::getFilteredItems(std::function<bool
 
 vector<libtorrent::feed_item> gt::FeedGroup::getFilteredItems()
 {
+	vector<libtorrent::feed_item> ret;
+	if(filters.empty()) 
+		for(auto f : m_feeds)
+			for(auto item : f->get_feed_status().items)
+				ret.push_back(item);
+
+	for(auto f : m_feeds)
+	{
+		auto fs = f->get_feed_status();
+		for(auto item : fs.items)
+			if(passFilters(item))
+				ret.push_back(item);
+	}
+
+	return ret;
+}
+
+bool gt::FeedGroup::passFilters(const libtorrent::feed_item &fi)
+{
 	std::function<bool(string&, string&)> bcomp = [](string &a, string &b)
 		{
 			if(a.empty() || b.empty()) return false;
@@ -48,42 +67,29 @@ vector<libtorrent::feed_item> gt::FeedGroup::getFilteredItems()
 		[bcomp](string a, string b) { return !bcomp(b, a) || !bcomp(a, b); }  // !
 	};
 
-	vector<libtorrent::feed_item> ret;
-	if(filters.empty()) 
-		for(auto f : m_feeds)
-			for(auto item : f->get_feed_status().items)
-				ret.push_back(item);
-
-	for(auto f : m_feeds)
+	for(auto function : functions)
 	{
-		auto fs = f->get_feed_status();
-		for(auto function : functions)
-		{
-			string comparisonOps = "<>=! ";
-			string columnName = string(function.begin(),
-									   std::find_first_of(function.begin(), function.end(), comparisonOps.begin(), comparisonOps.end())); // yup
-			std::regex reg(filters[columnName]);
+		string comparisonOps = "<>=! ";
+		string columnName = string(function.begin(),
+								   std::find_first_of(function.begin(), function.end(), comparisonOps.begin(), comparisonOps.end())); // yup
+		if(filters.find(columnName) == filters.end()) continue; //filter specified in function doesn't exist
+		std::regex reg(filters[columnName]);
+		std::smatch s;
+		char op = *std::find_first_of(function.begin(), function.end(), comparisonOps.begin(), comparisonOps.end() - 1);
+		unsigned opIndex = comparisonOps.find(op);
+		if(opIndex == std::string::npos) continue; // function is fucked
 
-			std::smatch s;
-			char op = *std::find_first_of(function.begin(), function.end(), comparisonOps.begin(), comparisonOps.end() - 1);
-			unsigned opIndex = comparisonOps.find(op);
-			if(opIndex == std::string::npos) continue; // function is fucked
+		std::function<bool(string, string)> compFun = comp[opIndex];
+		string literal = function.substr(function.find_last_of(comparisonOps) + 1);
 
-			std::function<bool(string, string)> compFun = comp[opIndex];
-			string literal = function.substr(function.find_last_of(comparisonOps) + 1);
+		std::regex_search(fi.title, s, reg); // only one group should be matched here;
 
-			for(auto item : fs.items)
-			{
-				std::regex_search(item.title, s, reg); // only one group should be matched here;
-
-				for(auto m : s)
-					if(compFun(m, literal))
-						ret.push_back(item);
-			}
-		}
+		for(auto m : s)
+			if(compFun(m, literal))
+				return true;
 	}
 
-	return ret;
+	return false;
 }
 
 vector<shared_ptr<gt::Torrent>> gt::FeedGroup::addFilteredItems(std::function<bool(std::string)> filterFun)
@@ -147,7 +153,7 @@ std::vector<std::shared_ptr<gt::FeedGroup>> gt::FeedGroup::fromString(std::strin
 	typedef boost::tokenizer<boost::char_separator<char>> tokenizer;
 
 	std::vector<std::shared_ptr<gt::FeedGroup>> ret;
-	char_separator<char> sep("", "[]{},|");
+	char_separator<char> sep("", "[]{},||");
 	tokenizer tokens(sData, sep);
 	for(auto tokenIt = tokens.begin(); tokenIt != tokens.end() && *tokenIt == "[";)
 	{
@@ -156,7 +162,7 @@ std::vector<std::shared_ptr<gt::FeedGroup>> gt::FeedGroup::fromString(std::strin
 		// group name
 		feedg->name = *(++tokenIt);
 		trim(feedg->name);
-
+		if(*tokenIt++ == "|") feedg->autoAddNewItem = std::stoi(*tokenIt);
 		// Feed URLs
 		while(*tokenIt != "{" && ++tokenIt != tokens.end());
 		do
@@ -221,7 +227,7 @@ gt::FeedGroup::operator string()
 	// TODO: check if it works
 	std::string str;
 	// group name
-	str += "[" + name + "]\n";
+	str += "[" + name + ':' + std::to_string(autoAddNewItem) + "]\n";
 	auto i = m_feeds.begin();
 
 	// feed urls
