@@ -160,9 +160,9 @@ std::vector<std::shared_ptr<gt::FeedGroup>> gt::FeedGroup::fromString(std::strin
 		auto feedg = make_shared<gt::FeedGroup>();
 
 		// group name
-		feedg->name = *(++tokenIt);
+		feedg->name = *++tokenIt;
 		trim(feedg->name);
-		if(*tokenIt++ == "|") feedg->autoAddNewItem = std::stoi(*tokenIt);
+		if(*++tokenIt == "|") feedg->autoAddNewItem = std::stoi(*++tokenIt);
 		// Feed URLs
 		while(*tokenIt != "{" && ++tokenIt != tokens.end());
 		do
@@ -227,7 +227,7 @@ gt::FeedGroup::operator string()
 	// TODO: check if it works
 	std::string str;
 	// group name
-	str += "[" + name + ':' + std::to_string(autoAddNewItem) + "]\n";
+	str += "[" + name + '|' + std::to_string(autoAddNewItem) + "]\n";
 	auto i = m_feeds.begin();
 
 	// feed urls
@@ -254,7 +254,7 @@ gt::FeedGroup::operator string()
 	//functions
 	auto fun = functions.begin();
 	str += "{\n\t";
-	while(fun != functions.begin())
+	while(fun != functions.end())
 	{
 		str += *fun;
 		if(++fun == functions.end()) break;
