@@ -72,9 +72,6 @@ namespace gt
 		// Returns the ratio (uploaded/downloaded) for this torrent
 		float getTotalRatio();
 
-		//Returns the URL of the last working tracker
-		std::string getCurrentTrackerURL(); // is it implemented ?
-
 		// Returns a friendly string for the torrent state
 		std::string getTextState();
 
