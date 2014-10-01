@@ -159,7 +159,7 @@ std::string gt::Torrent::getTextActiveTime()
 // Returns number of seconds eta for the torrent
 int64_t gt::Torrent::getEta()
 {
-        return (status().total_wanted - status().total_wanted_done) / getDownloadRate();
+        return getDownloadRate() ? (status().total_wanted - status().total_wanted_done) / getDownloadRate() : -1;
 }
 
 // Returns formatted eta as string
