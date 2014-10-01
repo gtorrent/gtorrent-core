@@ -83,6 +83,7 @@ bool gt::FeedGroup::passFilters(const libtorrent::feed_item &fi)
 		string literal = function.substr(function.find_last_of(comparisonOps) + 1);
 
 		std::regex_search(fi.title, s, reg); // only one group should be matched here;
+		if(s.size() <= 1) continue; // you must use capture groups in your regex
 
 		for(auto m : s)
 			if(compFun(m, literal))
@@ -124,7 +125,7 @@ std::set<std::string> &gt::FeedGroup::getFunctions()
 // TODO: For this to work as shown below, make the tokenizer skip leading/trailing whitespace around tokens []{},|
 /*
  *  //compact
- *  [group name]
+ *  [group name|autodownload]
  *  { feedurl1, feedurl2 }
  *  { filter1|regex1, filter2|regex2 }
  *  { function1, function2 }
@@ -162,7 +163,8 @@ std::vector<std::shared_ptr<gt::FeedGroup>> gt::FeedGroup::fromString(std::strin
 		// group name
 		feedg->name = *++tokenIt;
 		trim(feedg->name);
-		if(*++tokenIt == "|") feedg->autoAddNewItem = std::stoi(*++tokenIt);
+		++tokenIt;
+		if(*tokenIt++ == "|") feedg->autoAddNewItem = std::stoi(*tokenIt);
 		// Feed URLs
 		while(*tokenIt != "{" && ++tokenIt != tokens.end());
 		do
