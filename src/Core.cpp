@@ -4,11 +4,78 @@
 #include <libtorrent/create_torrent.hpp>
 
 #include "Core.hpp"
-#include "Torrent.hpp"
+#include "Feed.hpp"
 #include "Log.hpp"
 #include "Platform.hpp"
 #include "Settings.hpp"
-#include <Feed.hpp>
+#include "Torrent.hpp"
+
+gt::TorrentGroup::TorrentGroup()
+{
+}
+
+void gt::TorrentGroup::add(std::shared_ptr<gt::Torrent> t)
+{
+        m_torrents_all.push_back(t);
+        std::cout << m_torrents_all.size();
+}
+
+// This function is pretty shitty. There has to be a better way in sepples to
+// delete elements of a vector.  I'm also of the opinion that a vector is the
+// wrong container to use, because this function's complexity is linear on the
+// number of elements. Imagine dealing with thousands of torrents.
+void gt::TorrentGroup::remove(std::shared_ptr<gt::Torrent> t)
+{
+        for (size_t i = 0; i < m_torrents_all.size(); i++)
+                if (m_torrents_all[i] == t)
+                        m_torrents_all.erase(m_torrents_all.begin() + i);
+}
+
+int gt::TorrentGroup::update()
+{
+        // TODO Think of anything TorrentGroup MIGHT have to do that Core::update() doesn't
+        updateStatus();
+        return 0;
+}
+
+int gt::TorrentGroup::updateStatus()
+{
+	m_torrents_downloading .clear();
+	m_torrents_seeding     .clear();
+	m_torrents_checking    .clear();
+	m_torrents_stopped     .clear();
+	m_torrents_finished    .clear();
+
+        for(auto i : m_torrents_all)
+	{
+		if(i->isPaused())
+		{
+			m_torrents_paused.push_back(i);
+			continue;
+		}
+
+		switch(i->status().state)
+		{
+		case libtorrent::torrent_status::state_t::downloading:
+			m_torrents_downloading.push_back(i);
+			continue;
+		case libtorrent::torrent_status::state_t::seeding:
+			m_torrents_seeding.push_back(i);
+			continue;
+		case libtorrent::torrent_status::state_t::checking_files:
+		case libtorrent::torrent_status::state_t::checking_resume_data:
+			m_torrents_checking.push_back(i);
+			continue;
+		case libtorrent::torrent_status::state_t::finished:
+			m_torrents_finished.push_back(i);
+			continue;
+		default:
+			m_torrents_stopped.push_back(i);
+		}
+	}
+
+	return 1; // Why even fucking bother, then.
+}
 
 // -----DONE------- //
 // TODO: Restore RSS feeds on load with their default signal handlers
@@ -51,12 +118,19 @@ gt::Core::Core(int argc, char **argv) :
 
 	for(int i = 1; i < argc; ++i)
 		addTorrent(std::string(argv[i]));
-	statuses.update(&m_torrents);
+
+	m_torrents.update();
 }
 
+// TODO Deprecated. Migrate all uses of this function to Core::getAllTorrents()
 std::vector<std::shared_ptr<gt::Torrent>> &gt::Core::getTorrents()
 {
-	return m_torrents;
+	return m_torrents.m_torrents_all;
+}
+
+gt::TorrentGroup* gt::Core::getAllTorrents()
+{
+	return &m_torrents;
 }
 
 bool gt::Core::isLink(std::string const& url)
@@ -65,6 +139,10 @@ bool gt::Core::isLink(std::string const& url)
 	return url.compare(0, magprefix.length(), magprefix) == 0 || url.compare(0, httpprefix.length(), httpprefix) == 0;
 }
 
+// Question: Should addTorrent be responsible for calling
+// TorrentGroup::updateStatus?  I believe it should be the responsibility of
+// the caller, or to just leave it to whatever function is involved in calling
+// update() in regular intervals.
 std::shared_ptr<gt::Torrent> gt::Core::addTorrent(std::string path, std::vector<char> *resumedata)
 {
 	if (path.empty())
@@ -105,14 +183,15 @@ std::shared_ptr<gt::Torrent> gt::Core::addTorrent(std::string path, std::vector<
 		if(gt::Settings::settings["DHTEnabled"] == "Yes")
 			h.force_dht_announce();
 
-		m_torrents.push_back(t);
+		m_torrents.add(t);
+
 		if(t->status().has_metadata && gt::Settings::settings["DefaultSequentialDownloading"] == "Yes")
 			if(t->filenames().size() == 1)
 			{
 				std::string ext = t->filenames()[0].substr(t->filenames()[0].find_last_of('.') + 1);
 				t->set_sequential_download(gt::Settings::settings["SequentialDownloadExtensions"].find(ext) != std::string::npos);
 			}
-		statuses.update(&m_torrents);
+
 		return t;
 	}
 }
@@ -122,12 +201,8 @@ void gt::Core::removeTorrent(std::shared_ptr<Torrent> t)
 	//TODO : add removal of files on request
 	//TODO : Remove fast resume data associated to file
 	m_session.remove_torrent(libtorrent::torrent_handle(*t)); //explicit cast is required to make a copy of the underlying object
-	unsigned i;
-	for(i = 0; i < m_torrents.size(); ++i)
-		if(m_torrents[i] == t)
-			break;
-	m_torrents.erase(m_torrents.begin() + i);
-	statuses.update(&m_torrents);
+        m_torrents.remove(t);
+	m_torrents.update();
 }
 
 bool gt::Core::isRunning() const
@@ -169,7 +244,7 @@ int gt::Core::saveSession(std::string folder)
 
 	int count = 0;
 
-	for(auto tor : m_torrents)
+	for(auto tor : m_torrents.m_torrents_all)
 	{
 		if(!tor->is_valid()) continue;
 		if(!tor->status().has_metadata) continue;
@@ -327,21 +402,25 @@ int gt::Core::loadSession(std::string folder)
 	return 0;
 }
 
+// "update()" is a misnomer, a large amount of this function really handles
+// alerts. If update() has to do multiple things, make separate functions that
+// are called together by update()
 std::shared_ptr<gt::Torrent> gt::Core::update()
 {
 	std::string str = gt::Platform::readSharedData();
 	if(!str.empty()) gt::Log::Debug(str.c_str());
 
 	std::deque<libtorrent::alert*> alerts;
-	std::deque<libtorrent::alert*> unhandledAlerts;
+	std::deque<libtorrent::alert*> unhandledAlerts; // >unhandleAlerts
 
+        // Handle alerts
 	m_session.pop_alerts(&alerts);
 	while(!alerts.empty())
 	{
 		libtorrent::alert *al = alerts[0];
 		if(al->type() != libtorrent::state_changed_alert::alert_type) { alerts.pop_front(); unhandledAlerts.push_front(al); continue; } // should fix the incorrect values passed to onStateChanged
 		libtorrent::state_changed_alert *scal = static_cast<libtorrent::state_changed_alert *>(al);
-		for(auto tor : m_torrents)
+		for(auto tor : m_torrents.m_torrents_all)
 			if(*tor == scal->handle)
 			{
 				if(tor->onStateChanged) tor->onStateChanged(scal->prev_state, tor);
@@ -358,9 +437,11 @@ std::shared_ptr<gt::Torrent> gt::Core::update()
 			}
 	}
 
+        // Nigga, you serious?
 	alerts = unhandledAlerts;
 	unhandledAlerts = std::deque<libtorrent::alert*>();
 
+        // Handle remaining alerts related to DHT
 	if(m_session.is_dht_running() && gt::Settings::settings["DHTEnabled"] == "Yes")
 	{
 		while(!alerts.empty())
@@ -442,21 +523,27 @@ std::shared_ptr<gt::Torrent> gt::Core::update()
 			alerts.pop_front();
 		}
 	}
+
+        // Handle Feed stuff?
 	if(str.find("update_feeds") != std::string::npos)
 		for(auto feeds : m_feeds)
 			for(auto f : feeds->m_feeds)
 				gt::Log::Debug(std::to_string(f->get_feed_status().next_update) + " remaining before update");
 
+        // Why the fuck is the remainder of this code here? This shouldn't be
+        // handled in fucking update(), this should be hanlded by another
+        // fucking function.
 	if(m_pendingTorrents.size() != 0)
 	{
 		auto tmp = m_pendingTorrents[0];
 		m_pendingTorrents.pop_front();
 		return tmp;
 	}
+
 	return addTorrent(str);
 }
 
-//TODO: Catch some signals to make sure this function is called
+// TODO: Catch some signals to make sure this function is called
 void gt::Core::shutdown()
 {
 	gt::Log::Debug("Shutting down core library...");
@@ -610,47 +697,6 @@ void gt::Core::setSessionParameters()
 	se.auto_manage_interval = 1;
 	if(Settings::settings["ReportTrueDownloaded"] == "Yes") se.report_redundant_bytes = true;
 	m_session.set_settings(se);
-}
-
-int gt::Core::statusList::update(std::vector<std::shared_ptr<Torrent>> *tl)
-{
-	downloading.clear();
-	seeding.clear();
-	checking.clear();
-	stopped.clear();
-	finished.clear();
-	for(unsigned i = 0; i < tl->size(); i++)
-	{
-		if(tl->at(i)->isPaused())
-		{
-			paused.push_back(tl->at(i));
-			continue;
-		}
-		switch(tl->at(i)->status().state)
-		{
-		case libtorrent::torrent_status::state_t::downloading:
-			downloading.push_back(tl->at(i));
-			continue;
-		case libtorrent::torrent_status::state_t::seeding:
-			seeding.push_back(tl->at(i));
-			continue;
-		case libtorrent::torrent_status::state_t::checking_files:
-		case libtorrent::torrent_status::state_t::checking_resume_data:
-			checking.push_back(tl->at(i));
-			continue;
-		case libtorrent::torrent_status::state_t::finished:
-			finished.push_back(tl->at(i));
-			continue;
-		default:
-			stopped.push_back(tl->at(i));
-		}
-	}
-	return 1;
-}
-
-gt::Core::statusList* gt::Core::getStatuses()
-{
-	return &statuses;
 }
 
 std::shared_ptr<gt::Feed> gt::Core::addFeed(std::string Url)
