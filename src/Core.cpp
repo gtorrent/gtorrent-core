@@ -10,6 +10,17 @@
 #include "Settings.hpp"
 #include "Torrent.hpp"
 
+/*
+ * RSS todos
+ * DONE: Restore RSS feeds on load with their default signal handlers
+ * DONE: Save And reload rss filters
+ * TODO: Rerun the filter/add when a filter/function change
+ * TODO: Add unary function
+ * TODO: Better file parsing
+ * TODO: Create RSS specific settings
+ * TODO: Add a blocking method in Feed to block control until feed is up to date ?
+ */
+
 gt::TorrentGroup::TorrentGroup()
 {
 }
@@ -74,19 +85,8 @@ int gt::TorrentGroup::updateStatus()
 		}
 	}
 
-	return 1; // Why even fucking bother, then.
+	return 1;
 }
-
-// -----DONE------- //
-// TODO: Restore RSS feeds on load with their default signal handlers
-// TODO: Save And reload rss filters
-
-// -----NOT DONE------- //
-// TODO: Rerun the filter/add when a filter/function change
-// TODO: Add unary function
-// TODO: Better file parsing
-// TODO: Create RSS specific settings
-// TODO: Add a blocking method in Feed to block control until feed is up to date ?
 
 gt::Core::Core(int argc, char **argv) :
 	m_session(libtorrent::fingerprint("GT", 0, 0, 2, 0), 3, 0x7FFFFFFF),
@@ -531,7 +531,7 @@ std::shared_ptr<gt::Torrent> gt::Core::update()
 				gt::Log::Debug(std::to_string(f->get_feed_status().next_update) + " remaining before update");
 
         // Why the fuck is the remainder of this code here? This shouldn't be
-        // handled in fucking update(), this should be hanlded by another
+        // handled in fucking update(), this should be handled by another
         // fucking function.
 	if(m_pendingTorrents.size() != 0)
 	{
@@ -559,7 +559,6 @@ void gt::Core::shutdown()
 	}
 	m_running = false;
 }
-
 
 void gt::Core::setSessionParameters()
 {

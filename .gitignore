@@ -20,13 +20,13 @@
 *.out
 *.app
 
-# cmake 
+# Cmake
 Makefile
 CMakeFiles
 CMakeCache.txt
 cmake_install.cmake
 
-# binaries
+# Binaries
 bin/*
 build/*
 gTorrent
@@ -36,3 +36,6 @@ gTorrent
 
 # ctag files
 tags
+
+# For fags using jetbrain IDEs
+.idea/
