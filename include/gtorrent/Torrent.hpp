@@ -44,14 +44,7 @@ namespace gt
 		// Getters
 		libtorrent::add_torrent_params getTorrentParams();
 
-		__attribute__((deprecated("use the Torrent class directly")))
-		libtorrent::torrent_handle& getHandle() const;
-
 		std::string& getPath();
-
-		// Returns number of seconds the torrent has been active
-		__attribute__((deprecated("use Torrent::status::active.time instead")))
-		int64_t getActiveTime();
 
 		// Returns formatted active time as string
 		std::string getTextActiveTime();
@@ -74,51 +67,8 @@ namespace gt
 		// Returns the current download rate of the torrent
 		unsigned int getDownloadRate();
 
-		// Returns the progress in PPM of all files downloading in this torrent
-		__attribute__((deprecated("use Torrent::status::progress_ppm instead")))
-		unsigned int getPPMProgress();
-
-		// Returns the current number of seeders attached to the file
-		__attribute__((deprecated("use Torrent::status::num_seeds instead")))
-		unsigned int getTotalSeeders();
-
-		// Returns the current number of peers attached to the file
-		__attribute__((deprecated("use Torrent::status::num_peers instead")))
-		unsigned int getTotalPeers();
-
-		// Returns the current number of leechers attached to the file
-		__attribute__((deprecated("compute it yourself you lazy fuck")))
-		unsigned int getTotalLeechers();
-
-		// Returns the current amount of data uploaded for this torrent
-		__attribute__((deprecated("use Torrent::status::total_upload instead")))
-		int64_t getTotalUploaded();
-
-		// Returns the current amount of data downloaded for this torrent
-		__attribute__((deprecated("use Torrent::status::total_download instead")))
-		int64_t getTotalDownloaded();
-
-		// Returns the total size of files in this torrent
-		__attribute__((deprecated("use Torrent::status::total_wanted instead")))
-		int64_t getSize();
-
-		//Returns the elapsed time remaining in seconds
-		__attribute__((deprecated("compute it yourself you lazy fuck")))
-		int64_t getTimeRemaining();
-
 		// Returns the ratio (uploaded/downloaded) for this torrent
 		float getTotalRatio();
-
-		// Returns the current torrent state (downloading, queueing, seeding, etc)
-		__attribute__((deprecated("use instead Torrent::status::state instead")))
-		libtorrent::torrent_status::state_t getState();
-
-		//Returns the URL of the last working tracker
-		std::string getCurrentTrackerURL(); // is it implemented ?
-
-		//Force a recheck of the torrent
-		__attribute__((deprecated("use instead")))
-		void torrentForceRecheck(); //is it even implemented ?
 
 		// Returns a friendly string for the torrent state
 		std::string getTextState();
@@ -138,10 +88,6 @@ namespace gt
 		// Returns a friendly string for the total size of files in torrent
 		std::string getTextSize();
 
-		// Returns a the total size of files remain
-		__attribute__((deprecated("compute it yourself you lazy fuck")))
-		int64_t getRemaining();
-
 		// Returns a friendly string for the total size of files remaining to download in torrent
 		std::string getTextRemaining();
 
@@ -154,18 +100,9 @@ namespace gt
 		bool isPaused();
 
 		// Setters
-		__attribute__((deprecated("setHandle IS BROKEN, assign to a handle directly")))
-		void setHandle(libtorrent::torrent_handle &h);
-
 		void setSavePath(std::string savepath);
 
 		void setPaused(bool isPaused);
-
-		__attribute__((deprecated("use Torrent::status::name instead")))
-		std::string getName();
-
-		__attribute__((deprecated("use Torrent::status::has_metadata instead")))
-		bool hasMetadata();
 
 		std::string getSavePath();
 
@@ -175,11 +112,6 @@ namespace gt
 		//Using decltype allows us to make it compatible with both versions.
 		typedef decltype(boost::const_pointer_cast<const libtorrent::torrent_info>(m_torrent_params.ti)) getInfoReturnType;
 
-		__attribute__((deprecated("use torrent_file() instead")))
-		getInfoReturnType getInfo();
-
-		__attribute__((deprecated("use set_sequential_download instead")))
-		void setSequentialDownload(bool seq);
 		bool SequentialDownloadEnabled();
 		std::vector<std::string> filenames();
 
