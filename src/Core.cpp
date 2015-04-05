@@ -224,10 +224,10 @@ int gt::Core::saveSession(std::string folder)
 	m_session.pause();
 	m_session.save_state(ent);
 
-	if(!gt::Platform::checkDirExist(folder))
+	if(!gt::Platform::dirExist(folder))
 		gt::Platform::makeDir(folder, 0755);
 
-	if(!gt::Platform::checkDirExist(folder + "meta/"))
+	if(!gt::Platform::dirExist(folder + "meta/"))
 		gt::Platform::makeDir(folder + "meta/", 0755);
 
 	std::ofstream state(folder + "state.gts");
@@ -303,10 +303,10 @@ int gt::Core::loadSession(std::string folder)
 
 	gt::Settings::parse("config");
 
-	if (!gt::Platform::checkDirExist(folder)                   ||
-		!gt::Platform::checkDirExist(folder + "state.gts") ||
-		!gt::Platform::checkDirExist(folder +  "list.gts") ||
-		!gt::Platform::checkDirExist(folder + "feeds.gts"))
+	if (!gt::Platform::dirExist(folder)                   ||
+		!gt::Platform::dirExist(folder + "state.gts") ||
+		!gt::Platform::dirExist(folder + "list.gts") ||
+		!gt::Platform::dirExist(folder + "feeds.gts"))
 	{
 		// Also creates an empty session.
 		gt::Log::Debug(std::string("Creating new session folder in: " + gt::Platform::getDefaultConfigPath()).c_str());
@@ -351,7 +351,7 @@ int gt::Core::loadSession(std::string folder)
 
 	while(getline(list, tmp))
 	{
-		if(!gt::Platform::checkDirExist(folder + "meta/" + tmp + ".torrent")) continue; //eventually delete the associated .fasteresume
+		if(!gt::Platform::dirExist(folder + "meta/" + tmp + ".torrent")) continue; //eventually delete the associated .fasteresume
 		libtorrent::add_torrent_params params;
 		std::vector<char> resumebuff;
 		std::ifstream resumedata(folder + "meta/" + tmp + ".fastresume");
@@ -512,7 +512,7 @@ std::shared_ptr<gt::Torrent> gt::Core::update()
 				{
 					for(auto f : feed->m_feeds)
 						if(*f == rssal->handle)
-							feed->onNewItemAvailable(rssal->item, f);					
+							feed->onNewItemAvailable(rssal->item, f);
 				}
 			assert(alerts.size() != 0);
 			alerts.pop_front();

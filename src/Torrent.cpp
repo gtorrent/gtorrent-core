@@ -4,6 +4,7 @@
 #include "Platform.hpp"
 #include "Settings.hpp"
 #include "Torrent.hpp"
+
 #include <cmath>
 #include <libtorrent.hpp>
 #include <libtorrent/bencode.hpp>
@@ -64,7 +65,7 @@ gt::Torrent::Torrent(std::string path)
 {
 	if(path[0] == '~')
 	{
-		path = gt::Platform::getHomeDir() + path.substr(1, path.size() - 1);
+		path = gt::Platform::getHomeDir() + "/" + path.substr(1, path.size() - 1);
 	}
 	m_path = path;
 
@@ -121,8 +122,8 @@ void gt::Torrent::setSavePath(std::string savepath)
 	{
 		if(gt::Settings::optionExists(SAVEPATH_OPTION_KEY))
 			savepath = gt::Settings::settings[SAVEPATH_OPTION_KEY];
-		else if(!gt::Platform::getDefaultSavePath().empty())
-			savepath = gt::Platform::getDefaultSavePath();
+		else if(!gt::Platform::getXdgSavePath().empty())
+			savepath = gt::Platform::getXdgSavePath();
 		else
 			savepath = "./"; //Fall back to ./ if $HOME is not set
 	}

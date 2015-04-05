@@ -65,7 +65,7 @@ void gt::Settings::setDefaults()
 {
 	// these will be overwritten if the keys are found in the config file
 
-	settings["SavePath"] = gt::Platform::getDefaultSavePath();
+	settings["SavePath"] = gt::Platform::getXdgSavePath();
 	settings["FileAssociation"] = "-1";
 
 	settings["CacheSize"] = "0"; // Multiple of 16KB blocks // defaults a 1/8 of total RAM !!!
