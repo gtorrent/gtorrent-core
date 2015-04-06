@@ -17,4 +17,4 @@ This branch contains a small executable which loads the core to test basic funct
 
 ## Windows Users
 
-Refer [here](https://github.com/gtorrent/gTorrent/wiki/Building-on-Windows)
+Refer [here](https://github.com/gtorrent/gtorrent-core/wiki/Building-on-Windows)
