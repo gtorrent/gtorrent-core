@@ -39,3 +39,6 @@ tags
 
 # For fags using jetbrain IDEs
 .idea/
+
+# Version.hpp
+Version.hpp
