@@ -1,4 +1,5 @@
 #include <libtorrent/session.hpp>
+#include <libtorrent/lazy_entry.hpp>
 #include <libtorrent/alert.hpp>
 #include <libtorrent/alert_types.hpp>
 #include <libtorrent/create_torrent.hpp>
