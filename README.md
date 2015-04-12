@@ -10,7 +10,7 @@ Core library of gTorrent which handles everything but UI/UX
 
 - cmake
 - boost
-- libtorrent-rasterbar
+- libtorrent-rasterbar 1.0.4
 
 Example usage: https://gist.github.com/truNEET/5ace7c2503fe516150b7.
 This branch contains a small executable which loads the core to test basic functionality
