@@ -11,7 +11,10 @@
 
 namespace gt
 {
-	// Is used to manage a feed group and serialization/deserialization
+	/**
+	 * Is used to manage a feed group and serialization/deserialization
+	 * Deprecated; Use the vector of Feeds instead
+	 */
 	class FeedGroup
 	{
 	public:
@@ -22,6 +25,7 @@ namespace gt
 		int updating;
 		std::set<std::string> functions;
 		std::map<std::string, std::string> filters;
+
 		void addFunction(std::string);
 		void addItem(const libtorrent::feed_item &fi);
 		operator std::string();

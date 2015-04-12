@@ -135,7 +135,7 @@ std::set<std::string> &gt::FeedGroup::getFunctions()
  *  {
  *      feedurl1,
  *      feedurl2
- *	}
+ *  }
  *  {
  *      filter1|regex1,
  *      filter2|regex2
@@ -158,7 +158,7 @@ std::vector<std::shared_ptr<gt::FeedGroup>> gt::FeedGroup::fromString(std::strin
 	tokenizer tokens(sData, sep);
 	for(auto tokenIt = tokens.begin(); tokenIt != tokens.end() && *tokenIt == "[";)
 	{
-		auto feedg = make_shared<gt::FeedGroup>();
+		auto feedg = std::make_shared<gt::FeedGroup>();
 
 		// group name
 		feedg->name = *++tokenIt;
@@ -224,7 +224,7 @@ bool gt::FeedGroup::contains(libtorrent::feed_handle fh)
 	return false;
 }
 
-gt::FeedGroup::operator string()
+gt::FeedGroup::operator std::string()
 {
 	// TODO: check if it works
 	std::string str;

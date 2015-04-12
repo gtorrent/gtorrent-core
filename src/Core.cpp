@@ -405,9 +405,11 @@ int gt::Core::loadSession(std::string folder)
 	return 0;
 }
 
-// "update()" is a misnomer, a large amount of this function really handles
-// alerts. If update() has to do multiple things, make separate functions that
-// are called together by update()
+/**
+ * "update()" is a misnomer, a large amount of this function really handles
+ * alerts. If update() has to do multiple things, make separate functions that
+ * are called together by update()
+ */
 std::shared_ptr<gt::Torrent> gt::Core::update()
 {
 	std::string str = gt::Platform::readSharedData();
@@ -452,14 +454,14 @@ std::shared_ptr<gt::Torrent> gt::Core::update()
 			libtorrent::alert *al = alerts[0];
 			switch(al->type())
 			{
-			case libtorrent::dht_reply_alert         ::alert_type:
-			case libtorrent::dht_announce_alert      ::alert_type:
-			case libtorrent::dht_get_peers_alert     ::alert_type:
-			case libtorrent::dht_bootstrap_alert     ::alert_type:
-			case libtorrent::dht_error_alert         ::alert_type:
+			case libtorrent::dht_reply_alert::alert_type:
+			case libtorrent::dht_announce_alert::alert_type:
+			case libtorrent::dht_get_peers_alert::alert_type:
+			case libtorrent::dht_bootstrap_alert::alert_type:
+			case libtorrent::dht_error_alert::alert_type:
 			case libtorrent::dht_immutable_item_alert::alert_type:
-			case libtorrent::dht_mutable_item_alert  ::alert_type:
-			case libtorrent::dht_put_alert           ::alert_type:
+			case libtorrent::dht_mutable_item_alert::alert_type:
+			case libtorrent::dht_put_alert::alert_type:
 				assert(alerts.size() != 0);
 				alerts.pop_front();
 				break;
@@ -513,7 +515,7 @@ std::shared_ptr<gt::Torrent> gt::Core::update()
 				{
 					for(auto f : feed->m_feeds)
 						if(*f == rssal->handle)
-							feed->onNewItemAvailable(rssal->item, f);					
+							feed->onNewItemAvailable(rssal->item, f);
 				}
 			assert(alerts.size() != 0);
 			alerts.pop_front();
@@ -703,23 +705,21 @@ void gt::Core::setSessionParameters()
 	m_session.set_settings(se);
 }
 
-std::shared_ptr<gt::Feed> gt::Core::addFeed(std::string Url)
+std::shared_ptr<gt::Feed> gt::Core::addFeed(std::string url)
 {
 	for(auto feeds : m_feeds)
 		for(auto f : feeds->m_feeds)
-			if(f->get_feed_status().url == Url)
+			if(f->get_feed_status().url == url)
 				return f;
 
 	using namespace libtorrent;
 	feed_settings fs;
-	fs.url = Url;
+	fs.url = url;
 	fs.auto_download = false;
 	fs.auto_map_handles = true;
 	fs.default_ttl = 1;
 
 	auto f = std::make_shared<gt::Feed>(m_session.add_feed(fs));
-	// default handler
-
 	m_feedhandles.push_back(f);
 	return f;
 }

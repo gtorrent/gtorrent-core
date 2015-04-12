@@ -59,9 +59,10 @@ namespace gt
 		TorrentGroup *getAllTorrents();
 
 		std::vector<TorrentGroup> getAllGroups(); // TODO implement
+
 		std::shared_ptr<gt::Torrent> addTorrent(std::string path, std::vector<char> *resumedata = nullptr);
 
-		std::shared_ptr<gt::Feed> addFeed(std::string Url);
+		std::shared_ptr<gt::Feed> addFeed(std::string url);
 
 		std::shared_ptr<gt::FeedGroup> addFeedGroup(std::string Name);
 
