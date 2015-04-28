@@ -140,7 +140,7 @@ bool gt::Core::isLink(std::string const& url)
 	return url.compare(0, magprefix.length(), magprefix) == 0 || url.compare(0, httpprefix.length(), httpprefix) == 0;
 }
 
-// Question: Should addTorrent be responsible for calling
+// Question: Should torrentAdd be responsible for calling
 // TorrentGroup::updateStatus?  I believe it should be the responsibility of
 // the caller, or to just leave it to whatever function is involved in calling
 // update() in regular intervals.
