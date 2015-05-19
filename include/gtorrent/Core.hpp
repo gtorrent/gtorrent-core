@@ -41,7 +41,8 @@ namespace gt
 		friend class FeedGroup;
 
 		TorrentGroup m_torrents;
-		std::deque<std::shared_ptr<gt::Torrent>> m_pendingTorrents; //Contains torrent that have been added to the session but that haven't been reported to the UI
+		//Contains torrent that have been added to the session but that haven't been reported to the UI
+		std::deque<std::shared_ptr<gt::Torrent>> m_pendingTorrents;
 		// TODO add a TorrentGroup vector once group functionality has been tested with m_torrents
 
 	public:

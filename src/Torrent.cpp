@@ -97,7 +97,7 @@ gt::Torrent::Torrent(std::string path)
 	}
 
 //	onStateChanged = [](int i, shared_ptr<Torrent> j) { std::cout << "State Changed ! Old state was " << i << ", new state is " << j->status().state << std::endl; }; // default handler
-	onStateChanged = std::bind(&gt::Torrent::defaultCallback, this, std::placeholders::_1, std::placeholders::_2);
+	onStateChanged = &defaultCallback;
 	/*
 	 * To use, for example in GtkMainWindow, let's say tor is a shared_ptr, you would write
 	 * tor->onStateChanged = [](int oldstate, shared_ptr<gt::Torrent> sender) {...}
@@ -110,7 +110,7 @@ gt::Torrent::Torrent(std::string path)
 	 */
 }
 
-void gt::Torrent::defaultCallback(int i, std::shared_ptr<gt::Torrent> j)
+void gt::Torrent::defaultCallback(int i, gt::Torrent *j)
 {
 	/* Do something */
 }

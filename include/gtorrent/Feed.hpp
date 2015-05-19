@@ -18,8 +18,12 @@ namespace gt
 	public:
 		std::set<std::shared_ptr<gt::FeedGroup>> owners;
 
+		// Question: Does this really need a reference to itself? See how it's being used so far and determine if the args can be simplified.
+		// Should move this to a pure virtual class/interface
+		std::function<void(int, gt::Feed*)> onStateChanged; // why does this remind me of kirby <('_')>
+
 		// When a feed changes state, all of its groups are informed
-		Feed(const libtorrent::feed_handle &fe);
+		Feed(libtorrent::feed_handle fe);
 
 		bool operator==(const libtorrent::feed_handle& rhs) { return rhs.get_feed_status().url == get_feed_status().url; }
 	};

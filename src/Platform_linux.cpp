@@ -147,7 +147,10 @@ void gt::Platform::associate(bool magnet, bool torrent)
 	if(magnet)  system("xdg-mime default gtorrentm.desktop x-scheme-handler/magnet");
 }
 
-int fd = -1, ld = -2;
+/**
+ * Deprecated
+ * Let GtkApplication handle this
+ */
 bool gt::Platform::processIsUnique()
 {
 	if(ld < -1)
@@ -169,12 +172,15 @@ bool gt::Platform::processIsUnique()
 	return state == 0;
 }
 
+int fd = -1, ld = -2;
 void gt::Platform::makeSharedFile()
 {
 	if(processIsUnique() && !checkDirExist("/tmp/gfeed")) //If the pipe already exists we'll just use it
 		if(mkfifo("/tmp/gfeed", 0755) == -1)
 			throw std::runtime_error("Couldn't create pipe! Check your permissions or if /tmp/gfeed exists");
-	fd = open("/tmp/gfeed", O_RDONLY | O_NONBLOCK); // TODO: use streams
+	// TODO DON'T USE A GLOBAL VAR
+	// TODO use streams
+	fd = open("/tmp/gfeed", O_RDONLY | O_NONBLOCK);
 	if(fd == -1)
 		throw std::runtime_error("Couldn't open pipe");
 	if(ld == -1)
