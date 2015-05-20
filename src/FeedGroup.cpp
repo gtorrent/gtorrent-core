@@ -13,7 +13,7 @@ void gt::FeedGroup::addItem(const libtorrent::feed_item &fi)
 	std::string str(fi.url); // We remove some html escape codes
 	unsigned i;
 	if((i = str.find("amp;")) != str.size()) str.erase(i, 4);
-	core->m_pendingTorrents.push_front(core->addTorrent(str));
+	core->m_pending_torrents.push_back(core->addTorrent(str));
 }
 
 vector<libtorrent::feed_item> gt::FeedGroup::getFilteredItems(std::function<bool(std::string)> filterFun)

@@ -42,7 +42,7 @@ namespace gt
 
 		TorrentGroup m_torrents;
 		//Contains torrent that have been added to the session but that haven't been reported to the UI
-		std::deque<std::shared_ptr<gt::Torrent>> m_pendingTorrents;
+		std::vector<std::shared_ptr<gt::Torrent>> m_pending_torrents;
 		// TODO add a TorrentGroup vector once group functionality has been tested with m_torrents
 
 	public:
@@ -82,5 +82,7 @@ namespace gt
 		void shutdown();
 
 		std::shared_ptr<gt::Torrent> update();
+
+		std::vector<std::shared_ptr<gt::Torrent>> getPendingTorrents();
 	};
 }

@@ -151,6 +151,7 @@ void gt::Platform::associate(bool magnet, bool torrent)
  * Deprecated
  * Let GtkApplication handle this
  */
+int fd = -1, ld = -2;
 bool gt::Platform::processIsUnique()
 {
 	if(ld < -1)
@@ -172,7 +173,6 @@ bool gt::Platform::processIsUnique()
 	return state == 0;
 }
 
-int fd = -1, ld = -2;
 void gt::Platform::makeSharedFile()
 {
 	if(processIsUnique() && !checkDirExist("/tmp/gfeed")) //If the pipe already exists we'll just use it

@@ -425,11 +425,11 @@ std::shared_ptr<gt::Torrent> gt::Core::update()
 			for(auto f : feeds->m_feeds)
 				gt::Log::Debug(std::to_string(f->get_feed_status().next_update) + " remaining before update");
 
-	std::deque<libtorrent::alert*> alerts;
-
 	// * Handle alerts *
-	// Pop all pending alerts in a single call
+	// Pop all pending alerts available
+	std::deque<libtorrent::alert*> alerts;
 	m_session.pop_alerts(&alerts);
+
 	while(!alerts.empty())
 	{
 		libtorrent::alert *al = alerts.front();
@@ -442,8 +442,7 @@ std::shared_ptr<gt::Torrent> gt::Core::update()
 				if (tor->onStateChanged)
 					tor->onStateChanged(scal->prev_state, tor);
 				// Don't think what this part does is right.
-				if (gt::Settings::settings["DefaultSequentialDownloading"] == "Yes" &&
-				    tor->status().has_metadata) {
+				if (gt::Settings::settings["DefaultSequentialDownloading"] == "Yes" && tor->status().has_metadata) {
 					if (tor->filenames().size() == 1) {
 						std::string ext = tor->filenames()[0].substr(
 							tor->filenames()[0].find_last_of('.') + 1);
@@ -474,7 +473,14 @@ std::shared_ptr<gt::Torrent> gt::Core::update()
 				libtorrent::rss_alert *rssal = static_cast<libtorrent::rss_alert *>(al);
 				gt::Feed *feed = (gt::Feed *) &rssal->handle;
 				if (feed->onStateChanged)
-					try { feed->onStateChanged(rssal->state, feed); } catch (...) { }
+					feed->onStateChanged(rssal->state, feed);
+				break;
+			}
+			case libtorrent::rss_item_alert::alert_type: {
+				libtorrent::rss_item_alert *rssal = static_cast<libtorrent::rss_item_alert *>(al);
+				gt::Feed *feed = (gt::Feed *) &rssal->handle;
+				if (feed->onItemAlert)
+					feed->onItemAlert(rssal);
 				break;
 			}
 			default:
@@ -482,21 +488,17 @@ std::shared_ptr<gt::Torrent> gt::Core::update()
 		}
 	}
 
-	// Why the fuck is the remainder of this code here? This shouldn't be
-	// handled in fucking update(), this should be handled by another
-	// fucking function.
-	// This should be return as an entire deque, not one by one.
-	// Return pending torrents that have to be updated on the UI
-	if(m_pendingTorrents.size() != 0) {
-		auto tmp = m_pendingTorrents[0];
-		m_pendingTorrents.pop_front();
-		return tmp;
-	}
-
 	// what the fuck?
 	return addTorrent(sharedData);
 }
 
+/**
+ * Returns a vector of torrents that has had a state changed.
+ * I don't think this is actually used anymore, in favour of gt::Torrent.onStateChanged etc.
+ */
+std::vector<std::shared_ptr<gt::Torrent>> gt::Core::getPendingTorrents() {
+	return m_pending_torrents;
+}
 // TODO: Catch some signals to make sure this function is called
 void gt::Core::shutdown()
 {
@@ -661,8 +663,7 @@ std::shared_ptr<gt::Feed> gt::Core::addFeed(std::string url)
 			if(f->get_feed_status().url == url)
 				return f;
 
-	using namespace libtorrent;
-	feed_settings fs;
+	libtorrent::feed_settings fs;
 	fs.url = url;
 	fs.auto_download = false;
 	fs.auto_map_handles = true;
