@@ -46,8 +46,8 @@ namespace gt
 		// TODO add a TorrentGroup vector once group functionality has been tested with m_torrents
 
 	public:
-		std::vector<std::shared_ptr<gt::FeedGroup>> m_feeds;
-		std::vector<std::shared_ptr<gt::Feed>> m_feedhandles;
+		std::vector<std::shared_ptr<gt::Feed>> m_feeds;
+//		std::vector<std::shared_ptr<gt::Feed>> m_feedhandles;
 		libtorrent::session m_session;
 		bool m_running;
 

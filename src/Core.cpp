@@ -213,16 +213,12 @@ bool gt::Core::isRunning() const
 	return m_running;
 }
 
-/*
- * Where path is relative to the executable
+/**
+ * param folder path is relative to the executable unless absolute
  */
 int gt::Core::saveSession(std::string folder)
 {
 	libtorrent::entry ent;
-
-	for(auto f : m_feedhandles)
-		if(f->owners.empty())
-			m_session.remove_feed(*f);
 
 	m_session.pause();
 	m_session.save_state(ent);
@@ -233,14 +229,14 @@ int gt::Core::saveSession(std::string folder)
 	if(!gt::Platform::checkDirExist(folder + "meta/"))
 		gt::Platform::makeDir(folder + "meta/", 0755);
 
+	// Shouldn't be magic strings
 	std::ofstream state(folder + "state.gts");
 	std::ofstream list(folder + "list.gts");
+	std::ofstream feedfile(folder + "feeds.gts");
 
-	if(!state)
-		throw std::runtime_error("Couldn't open state.gts");
-
-	if(!list)
-		throw std::runtime_error("Couldn't open list.gts");
+	if(!state) throw std::runtime_error("Couldn't open state.gts");
+	if(!list) throw std::runtime_error("Couldn't open list.gts");
+	if(!feedfile) throw std::runtime_error("Couldn't open feeds.gts");
 
 	bencode(std::ostream_iterator<char>(state), ent);
 	state.close();
@@ -287,11 +283,15 @@ int gt::Core::saveSession(std::string folder)
 		--count;
 	}
 
+//	for(auto f : m_feedhandles)
+//		if(f->owners.empty())
+//			m_session.remove_feed(*f);
+
+	// TODO Better serialisation for feeds
 	std::string fbuf;
 	for(auto feed : m_feeds)
-		fbuf += (std::string)*feed;
+		fbuf += feed->get_feed_status().url;
 
-	std::ofstream feedfile(folder + "feeds.gts");
 	feedfile << fbuf;
 	feedfile.close();
 	list.close();
@@ -330,31 +330,24 @@ int gt::Core::loadSession(std::string folder)
 	list .open(folder + "list.gts");
 	feeds.open(folder + "feeds.gts");
 
-	if(!state.is_open())
-		throw "Couldn't open state.gts";
-
-	if(!list.is_open())
-		throw "Couldn't open list.gts";
-
-	if(!feeds.is_open())
-		throw "Couldn't open feeds.gts";
+	if(!state.is_open()) throw "Couldn't open state.gts";
+	if(!list.is_open()) throw "Couldn't open list.gts";
+	if(!feeds.is_open()) throw "Couldn't open feeds.gts";
 
 	std::string benfile, tmp;
 
-	do
-	{
+	do {
 		getline(state, tmp);
 		benfile += tmp;
-	}
-	while(state);
+	} while(state);
 
 	lazy_bdecode(benfile.c_str(), benfile.c_str() + benfile.size(), ent, ec);
 	m_session.load_state(ent);
 	setSessionParameters();
 
-	while(getline(list, tmp))
-	{
-		if(!gt::Platform::checkDirExist(folder + "meta/" + tmp + ".torrent")) continue; //eventually delete the associated .fasteresume
+	while(getline(list, tmp)) {
+		//eventually delete the associated .fasteresume
+		if(!gt::Platform::checkDirExist(folder + "meta/" + tmp + ".torrent")) continue;
 		libtorrent::add_torrent_params params;
 		std::vector<char> resumebuff;
 		std::ifstream resumedata(folder + "meta/" + tmp + ".fastresume");
@@ -364,46 +357,43 @@ int gt::Core::loadSession(std::string folder)
 	}
 
 	// describes the layout of info save in the file
-	struct feedinfo
-	{
+	struct feedinfo {
 		std::string url;
 		std::map<std::string, std::string> filters;
 		std::set<std::string> functions;
 	} fi;
 
-	// TODO: Fix this
-
-	std::string sData; 
-	while(std::getline(feeds, tmp))
-		sData += tmp;
-
-	m_feeds = gt::FeedGroup::fromString(sData, this);
-
-	for(auto f : m_feeds)
-	{
-		f->onStateChanged = [f](int state, std::shared_ptr<gt::Feed> feed)
-			{
-				switch(state)
-				{
-				case 0:  if(f->onUpdateStarted) f->onUpdateStarted (feed); break;
-				case 1:  if(f->onUpdateFinished)f->onUpdateFinished(feed); break;
-				default: if(f->onUpdateErrored) f->onUpdateErrored (feed);
-				}
-			};
-
-		f->onNewItemAvailable = [f](const libtorrent::feed_item &item, std::shared_ptr<gt::Feed> feed)
-			{
-				if(!f) return;
-				auto items = f->getFilteredItems();
-				if(std::find_if(items.begin(), items.end(), [item](libtorrent::feed_item &arg){ if(item.title == arg.title) {std::cout << item.title << " Matched with " << arg.title << std::endl; return true;} return false; }) != items.end())
-					f->addItem(item);
-			};
-	}
+	// TODO Implement rss feed deserialization
+//	std::string sData;
+//	while(std::getline(feeds, tmp)) {
+//		std::make_shared(gt::Feed::fromString(tmp));
+//	}
+//	for(auto f : m_feeds)
+//	{
+//		f->onStateChanged = [f](int state, std::shared_ptr<gt::Feed> feed)
+//			{
+//				switch(state)
+//				{
+//				case 0:  if(f->onUpdateStarted) f->onUpdateStarted (feed); break;
+//				case 1:  if(f->onUpdateFinished)f->onUpdateFinished(feed); break;
+//				default: if(f->onUpdateErrored) f->onUpdateErrored (feed);
+//				}
+//			};
+//
+//		f->onNewItemAvailable = [f](const libtorrent::feed_item &item, std::shared_ptr<gt::Feed> feed)
+//			{
+//				if(!f) return;
+//				auto items = f->getFilteredItems();
+//				if(std::find_if(items.begin(), items.end(), [item](libtorrent::feed_item &arg){ if(item.title == arg.title) {std::cout << item.title << " Matched with " << arg.title << std::endl; return true;} return false; }) != items.end())
+//					f->addItem(item);
+//			};
+//	}
 
 	m_session.resume();
-	std::deque<libtorrent::alert*> alerts;
 	m_session.set_alert_mask(0x7FFFFFFF);
+	std::deque<libtorrent::alert*> alerts;
 	m_session.pop_alerts(&alerts); // empty possible alerts here
+
 	return 0;
 }
 
@@ -419,19 +409,15 @@ std::shared_ptr<gt::Torrent> gt::Core::update()
 	std::string sharedData = gt::Platform::readSharedData();
 	if(!sharedData.empty()) gt::Log::Debug(sharedData.c_str());
 
-	// Handle Feed stuff?
-	if(sharedData.find("update_feeds") != std::string::npos)
-		for(auto feeds : m_feeds)
-			for(auto f : feeds->m_feeds)
-				gt::Log::Debug(std::to_string(f->get_feed_status().next_update) + " remaining before update");
+	for(auto feeds : m_feeds)
+		gt::Log::Debug(std::to_string(feeds->get_feed_status().next_update) + " remaining before update");
 
 	// * Handle alerts *
 	// Pop all pending alerts available
 	std::deque<libtorrent::alert*> alerts;
 	m_session.pop_alerts(&alerts);
 
-	while(!alerts.empty())
-	{
+	while(!alerts.empty()) {
 		libtorrent::alert *al = alerts.front();
 		alerts.pop_front();
 		switch (al->type()) {
@@ -470,6 +456,7 @@ std::shared_ptr<gt::Torrent> gt::Core::update()
 			}
 			// RSS Alerts
 			case libtorrent::rss_alert::alert_type: {
+				gt::Log::Debug(al->message());
 				libtorrent::rss_alert *rssal = static_cast<libtorrent::rss_alert *>(al);
 				gt::Feed *feed = (gt::Feed *) &rssal->handle;
 				if (feed->onStateChanged)
@@ -477,6 +464,7 @@ std::shared_ptr<gt::Torrent> gt::Core::update()
 				break;
 			}
 			case libtorrent::rss_item_alert::alert_type: {
+				gt::Log::Debug(al->message());
 				libtorrent::rss_item_alert *rssal = static_cast<libtorrent::rss_item_alert *>(al);
 				gt::Feed *feed = (gt::Feed *) &rssal->handle;
 				if (feed->onItemAlert)
@@ -484,7 +472,8 @@ std::shared_ptr<gt::Torrent> gt::Core::update()
 				break;
 			}
 			default:
-				gt::Log::Debug(al->message());
+//				gt::Log::Debug(al->message());
+				break;
 		}
 	}
 
@@ -658,10 +647,9 @@ void gt::Core::setSessionParameters()
 
 std::shared_ptr<gt::Feed> gt::Core::addFeed(std::string url)
 {
-	for(auto feeds : m_feeds)
-		for(auto f : feeds->m_feeds)
-			if(f->get_feed_status().url == url)
-				return f;
+	for(auto feed : m_feeds)
+		if(feed->get_feed_status().url == url)
+			return feed;
 
 	libtorrent::feed_settings fs;
 	fs.url = url;
@@ -670,7 +658,7 @@ std::shared_ptr<gt::Feed> gt::Core::addFeed(std::string url)
 	fs.default_ttl = 1;
 
 	auto f = std::make_shared<gt::Feed>(m_session.add_feed(fs));
-	m_feedhandles.push_back(f);
+	m_feeds.push_back(f);
 	return f;
 }
 
@@ -684,12 +672,12 @@ void gt::Core::removeFeed(std::shared_ptr<gt::Feed> feed)
 		m_feeds.erase(m_feeds.begin() + i);*/
 }
 
-std::shared_ptr<gt::FeedGroup> gt::Core::addFeedGroup(std::string name)
-{
-	for(auto fg : m_feeds)
-		if(fg->name == name)
-			return fg;
-	auto fg = std::make_shared<gt::FeedGroup>();
-	fg->name = name;
-	return fg;
-}
+//std::shared_ptr<gt::FeedGroup> gt::Core::addFeedGroup(std::string name)
+//{
+//	for(auto fg : m_feeds)
+//		if(fg->name == name)
+//			return fg;
+//	auto fg = std::make_shared<gt::FeedGroup>();
+//	fg->name = name;
+//	return fg;
+//}

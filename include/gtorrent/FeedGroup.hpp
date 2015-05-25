@@ -43,11 +43,11 @@ namespace gt
 		typedef std::function<void(const libtorrent::feed_item&, std::shared_ptr<gt::Feed>)> itemCallback;
 		typedef std::function<void(int, std::shared_ptr<gt::Feed>)> stateCallback;
 
-		stateCallback onStateChanged    ;
-		feedCallback  onUpdateFinished  ;
-		feedCallback  onUpdateErrored   ;
+		stateCallback onStateChanged;
+		feedCallback  onUpdateFinished;
+		feedCallback  onUpdateErrored;
 		itemCallback  onNewItemAvailable;
-		feedCallback  onUpdateStarted   ;
+		feedCallback  onUpdateStarted;
 
 	};
 }

@@ -23,7 +23,11 @@ namespace gt
 		// Should move this to a pure virtual class/interface
 		std::function<void(int, gt::Feed*)> onStateChanged; // why does this remind me of kirby <('_')>
 
+		typedef std::function<void(libtorrent::rss_item_alert*)> itemCallback;
+		typedef std::function<void(int)> stateCallback;
+
 		std::function<void(libtorrent::rss_item_alert*)> onItemAlert;
+		std::function<void(libtorrent::feed_item&, std::shared_ptr<gt::Feed>)> onNewItemAvailable;
 
 		// When a feed changes state, all of its groups are informed
 		Feed(libtorrent::feed_handle fe);
