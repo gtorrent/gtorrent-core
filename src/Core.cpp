@@ -409,6 +409,7 @@ std::shared_ptr<gt::Torrent> gt::Core::update()
 	std::string sharedData = gt::Platform::readSharedData();
 	if(!sharedData.empty()) gt::Log::Debug(sharedData.c_str());
 
+	// TODO Debug remove
 	for(auto feeds : m_feeds)
 		gt::Log::Debug(std::to_string(feeds->get_feed_status().next_update) + " remaining before update");
 
@@ -419,6 +420,7 @@ std::shared_ptr<gt::Torrent> gt::Core::update()
 
 	while(!alerts.empty()) {
 		libtorrent::alert *al = alerts.front();
+		gt::Log::Debug(al->message());
 		alerts.pop_front();
 		switch (al->type()) {
 			// Torrent state change alerts
@@ -448,6 +450,7 @@ std::shared_ptr<gt::Torrent> gt::Core::update()
 			case libtorrent::dht_mutable_item_alert::alert_type:
 			case libtorrent::dht_put_alert::alert_type:
 			case libtorrent::dht_reply_alert::alert_type: {
+				gt::Log::Debug(al->message());
 				if (m_session.is_dht_running() && gt::Settings::settings["DHTEnabled"] == "Yes") {
 					// This wasn't written at time of refactoring. I'm just leaving it in
 					// case someone knows what to do with dht alerts.
@@ -456,23 +459,20 @@ std::shared_ptr<gt::Torrent> gt::Core::update()
 			}
 			// RSS Alerts
 			case libtorrent::rss_alert::alert_type: {
-				gt::Log::Debug(al->message());
 				libtorrent::rss_alert *rssal = static_cast<libtorrent::rss_alert *>(al);
-				gt::Feed *feed = (gt::Feed *) &rssal->handle;
-				if (feed->onStateChanged)
+				gt::Feed *feed = getFeedWithHandle(rssal->handle);
+				if (feed->onStateChanged != nullptr)
 					feed->onStateChanged(rssal->state, feed);
 				break;
 			}
 			case libtorrent::rss_item_alert::alert_type: {
-				gt::Log::Debug(al->message());
 				libtorrent::rss_item_alert *rssal = static_cast<libtorrent::rss_item_alert *>(al);
-				gt::Feed *feed = (gt::Feed *) &rssal->handle;
+				gt::Feed *feed = getFeedWithHandle(rssal->handle);
 				if (feed->onItemAlert)
 					feed->onItemAlert(rssal);
 				break;
 			}
 			default:
-//				gt::Log::Debug(al->message());
 				break;
 		}
 	}
@@ -653,7 +653,7 @@ std::shared_ptr<gt::Feed> gt::Core::addFeed(std::string url)
 
 	libtorrent::feed_settings fs;
 	fs.url = url;
-	fs.auto_download = false;
+	fs.auto_download = true;
 	fs.auto_map_handles = true;
 	fs.default_ttl = 1;
 
@@ -681,3 +681,12 @@ void gt::Core::removeFeed(std::shared_ptr<gt::Feed> feed)
 //	fg->name = name;
 //	return fg;
 //}
+gt::Feed *gt::Core::getFeedWithHandle(libtorrent::feed_handle handle)
+{
+	for (auto f : m_feeds) {
+		if (*f == handle)
+			return f.get();
+	}
+
+	return nullptr;
+}

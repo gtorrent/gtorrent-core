@@ -4,12 +4,13 @@
 #include <memory>
 #include <vector>
 #include <set>
+
 #include <libtorrent/rss.hpp>
 #include <libtorrent/alert_types.hpp>
+
 #include <Torrent.hpp>
 #include <Core.hpp>
-#include <alert_types.hpp>
-#include "FeedGroup.hpp"
+#include <FeedGroup.hpp>
 
 namespace gt
 {
@@ -21,7 +22,7 @@ namespace gt
 
 		// Question: Does this really need a reference to itself? See how it's being used so far and determine if the args can be simplified.
 		// Should move this to a pure virtual class/interface
-		std::function<void(int, gt::Feed*)> onStateChanged; // why does this remind me of kirby <('_')>
+		std::function<void(int, gt::Feed*)> onStateChanged;
 
 		typedef std::function<void(libtorrent::rss_item_alert*)> itemCallback;
 		typedef std::function<void(int)> stateCallback;

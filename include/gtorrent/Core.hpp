@@ -84,5 +84,7 @@ namespace gt
 		std::shared_ptr<gt::Torrent> update();
 
 		std::vector<std::shared_ptr<gt::Torrent>> getPendingTorrents();
+
+		Feed *getFeedWithHandle(libtorrent::feed_handle handle);
 	};
 }
