@@ -36,10 +36,12 @@ namespace gt
 	public:
 		Torrent(libtorrent::torrent_handle h) : libtorrent::torrent_handle(h) {  };
 		Torrent(std::string path);
-		std::function<void(int, std::shared_ptr<Torrent>)> onStateChanged; // why does this remind me of kirby <('_')>
+		// Question: Does this really need a reference to itself? See how it's being used so far and determine if the args can be simplified.
+		// Should move this to a pure virtual class/interface
+		std::function<void(int, Torrent*)> onStateChanged; // why does this remind me of kirby <('_')>
 
 		bool pollEvent(gt::Event &event);
-		void defaultCallback(int, std::shared_ptr<Torrent>);
+		static void defaultCallback(int, Torrent*);
 		/* Think twice next time before mixing const correctness with inline */
 		// Getters
 		libtorrent::add_torrent_params getTorrentParams();

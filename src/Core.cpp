@@ -93,6 +93,7 @@ gt::Core::Core(int argc, char **argv) :
 	m_session(libtorrent::fingerprint("GT", 0, 0, 2, 0), 3, 0x7FFFFFFF),
 	m_running(true)
 {
+	// TODO Resolving this without exiting like that. It should be done gracefully, call the appropriate exit/cleanup functions. i.e gt::Core::shutedown()
 	if(!gt::Platform::processIsUnique())
 	{
 		gt::Log::Debug("An instance is already running");
@@ -134,13 +135,14 @@ gt::TorrentGroup* gt::Core::getAllTorrents()
 	return &m_torrents;
 }
 
+// TODO Move to Utilities (if it exists) or Platform
 bool gt::Core::isLink(std::string const& url)
 {
 	const std::string magprefix = "magnet:", httpprefix = "http:";
 	return url.compare(0, magprefix.length(), magprefix) == 0 || url.compare(0, httpprefix.length(), httpprefix) == 0;
 }
 
-// Question: Should addTorrent be responsible for calling
+// Question: Should torrentAdd be responsible for calling
 // TorrentGroup::updateStatus?  I believe it should be the responsibility of
 // the caller, or to just leave it to whatever function is involved in calling
 // update() in regular intervals.
@@ -211,16 +213,12 @@ bool gt::Core::isRunning() const
 	return m_running;
 }
 
-/*
- * Where path is relative to the executable
+/**
+ * param folder path is relative to the executable unless absolute
  */
 int gt::Core::saveSession(std::string folder)
 {
 	libtorrent::entry ent;
-
-	for(auto f : m_feedhandles)
-		if(f->owners.empty())
-			m_session.remove_feed(*f);
 
 	m_session.pause();
 	m_session.save_state(ent);
@@ -231,14 +229,14 @@ int gt::Core::saveSession(std::string folder)
 	if(!gt::Platform::checkDirExist(folder + "meta/"))
 		gt::Platform::makeDir(folder + "meta/", 0755);
 
+	// Shouldn't be magic strings
 	std::ofstream state(folder + "state.gts");
 	std::ofstream list(folder + "list.gts");
+	std::ofstream feedfile(folder + "feeds.gts");
 
-	if(!state)
-		throw std::runtime_error("Couldn't open state.gts");
-
-	if(!list)
-		throw std::runtime_error("Couldn't open list.gts");
+	if(!state) throw std::runtime_error("Couldn't open state.gts");
+	if(!list) throw std::runtime_error("Couldn't open list.gts");
+	if(!feedfile) throw std::runtime_error("Couldn't open feeds.gts");
 
 	bencode(std::ostream_iterator<char>(state), ent);
 	state.close();
@@ -285,11 +283,15 @@ int gt::Core::saveSession(std::string folder)
 		--count;
 	}
 
+//	for(auto f : m_feedhandles)
+//		if(f->owners.empty())
+//			m_session.remove_feed(*f);
+
+	// TODO Better serialisation for feeds
 	std::string fbuf;
 	for(auto feed : m_feeds)
-		fbuf += (std::string)*feed;
+		fbuf += feed->get_feed_status().url;
 
-	std::ofstream feedfile(folder + "feeds.gts");
 	feedfile << fbuf;
 	feedfile.close();
 	list.close();
@@ -328,31 +330,24 @@ int gt::Core::loadSession(std::string folder)
 	list .open(folder + "list.gts");
 	feeds.open(folder + "feeds.gts");
 
-	if(!state.is_open())
-		throw "Couldn't open state.gts";
-
-	if(!list.is_open())
-		throw "Couldn't open list.gts";
-
-	if(!feeds.is_open())
-		throw "Couldn't open feeds.gts";
+	if(!state.is_open()) throw "Couldn't open state.gts";
+	if(!list.is_open()) throw "Couldn't open list.gts";
+	if(!feeds.is_open()) throw "Couldn't open feeds.gts";
 
 	std::string benfile, tmp;
 
-	do
-	{
+	do {
 		getline(state, tmp);
 		benfile += tmp;
-	}
-	while(state);
+	} while(state);
 
 	lazy_bdecode(benfile.c_str(), benfile.c_str() + benfile.size(), ent, ec);
 	m_session.load_state(ent);
 	setSessionParameters();
 
-	while(getline(list, tmp))
-	{
-		if(!gt::Platform::checkDirExist(folder + "meta/" + tmp + ".torrent")) continue; //eventually delete the associated .fasteresume
+	while(getline(list, tmp)) {
+		//eventually delete the associated .fasteresume
+		if(!gt::Platform::checkDirExist(folder + "meta/" + tmp + ".torrent")) continue;
 		libtorrent::add_torrent_params params;
 		std::vector<char> resumebuff;
 		std::ifstream resumedata(folder + "meta/" + tmp + ".fastresume");
@@ -362,190 +357,137 @@ int gt::Core::loadSession(std::string folder)
 	}
 
 	// describes the layout of info save in the file
-	struct feedinfo
-	{
+	struct feedinfo {
 		std::string url;
 		std::map<std::string, std::string> filters;
 		std::set<std::string> functions;
 	} fi;
 
-	// TODO: Fix this
-
-	std::string sData; 
-	while(std::getline(feeds, tmp))
-		sData += tmp;
-
-	m_feeds = gt::FeedGroup::fromString(sData, this);
-
-	for(auto f : m_feeds)
-	{
-		f->onStateChanged = [f](int state, std::shared_ptr<gt::Feed> feed)
-			{
-				switch(state)
-				{
-				case 0:  if(f->onUpdateStarted) f->onUpdateStarted (feed); break;
-				case 1:  if(f->onUpdateFinished)f->onUpdateFinished(feed); break;
-				default: if(f->onUpdateErrored) f->onUpdateErrored (feed);
-				}
-			};
-
-		f->onNewItemAvailable = [f](const libtorrent::feed_item &item, std::shared_ptr<gt::Feed> feed)
-			{
-				if(!f) return;
-				auto items = f->getFilteredItems();
-				if(std::find_if(items.begin(), items.end(), [item](libtorrent::feed_item &arg){ if(item.title == arg.title) {std::cout << item.title << " Matched with " << arg.title << std::endl; return true;} return false; }) != items.end())
-					f->addItem(item);
-			};
-	}
+	// TODO Implement rss feed deserialization
+//	std::string sData;
+//	while(std::getline(feeds, tmp)) {
+//		std::make_shared(gt::Feed::fromString(tmp));
+//	}
+//	for(auto f : m_feeds)
+//	{
+//		f->onStateChanged = [f](int state, std::shared_ptr<gt::Feed> feed)
+//			{
+//				switch(state)
+//				{
+//				case 0:  if(f->onUpdateStarted) f->onUpdateStarted (feed); break;
+//				case 1:  if(f->onUpdateFinished)f->onUpdateFinished(feed); break;
+//				default: if(f->onUpdateErrored) f->onUpdateErrored (feed);
+//				}
+//			};
+//
+//		f->onNewItemAvailable = [f](const libtorrent::feed_item &item, std::shared_ptr<gt::Feed> feed)
+//			{
+//				if(!f) return;
+//				auto items = f->getFilteredItems();
+//				if(std::find_if(items.begin(), items.end(), [item](libtorrent::feed_item &arg){ if(item.title == arg.title) {std::cout << item.title << " Matched with " << arg.title << std::endl; return true;} return false; }) != items.end())
+//					f->addItem(item);
+//			};
+//	}
 
 	m_session.resume();
-	std::deque<libtorrent::alert*> alerts;
 	m_session.set_alert_mask(0x7FFFFFFF);
+	std::deque<libtorrent::alert*> alerts;
 	m_session.pop_alerts(&alerts); // empty possible alerts here
+
 	return 0;
 }
 
-// "update()" is a misnomer, a large amount of this function really handles
-// alerts. If update() has to do multiple things, make separate functions that
-// are called together by update()
+/**
+ * "update()" is a misnomer, a large amount of this function really handles
+ * alerts. If update() has to do multiple things, make separate functions that
+ * are called together by update()
+ * TODO gt::Core::update is too large and should broken down
+ */
 std::shared_ptr<gt::Torrent> gt::Core::update()
 {
-	std::string str = gt::Platform::readSharedData();
-	if(!str.empty()) gt::Log::Debug(str.c_str());
+	// * Why is this here *
+	std::string sharedData = gt::Platform::readSharedData();
+	if(!sharedData.empty()) gt::Log::Debug(sharedData.c_str());
 
+	// TODO Debug remove
+	for(auto feeds : m_feeds)
+		gt::Log::Debug(std::to_string(feeds->get_feed_status().next_update) + " remaining before update");
+
+	// * Handle alerts *
+	// Pop all pending alerts available
 	std::deque<libtorrent::alert*> alerts;
-	std::deque<libtorrent::alert*> unhandledAlerts; // >unhandleAlerts
-
-        // Handle alerts
 	m_session.pop_alerts(&alerts);
-	while(!alerts.empty())
-	{
-		libtorrent::alert *al = alerts[0];
-		if(al->type() != libtorrent::state_changed_alert::alert_type) { alerts.pop_front(); unhandledAlerts.push_front(al); continue; } // should fix the incorrect values passed to onStateChanged
-		libtorrent::state_changed_alert *scal = static_cast<libtorrent::state_changed_alert *>(al);
-		for(auto tor : m_torrents.m_torrents_all)
-			if(*tor == scal->handle)
-			{
-				if(tor->onStateChanged) tor->onStateChanged(scal->prev_state, tor);
-				if(tor->status().has_metadata && gt::Settings::settings["DefaultSequentialDownloading"] == "Yes")
-					if(tor->filenames().size() == 1)
-					{
-						std::string ext = tor->filenames()[0].substr(tor->filenames()[0].find_last_of('.') + 1);
-						tor->set_sequential_download(gt::Settings::settings["SequentialDownloadExtensions"].find(ext) != std::string::npos);
+
+	while(!alerts.empty()) {
+		libtorrent::alert *al = alerts.front();
+		gt::Log::Debug(al->message());
+		alerts.pop_front();
+		switch (al->type()) {
+			// Torrent state change alerts
+			case libtorrent::state_changed_alert::alert_type: {
+				auto scal = (libtorrent::state_changed_alert *) (al);
+				gt::Torrent *tor = (gt::Torrent *) &scal->handle;
+				if (tor->onStateChanged)
+					tor->onStateChanged(scal->prev_state, tor);
+				// Don't think what this part does is right.
+				if (gt::Settings::settings["DefaultSequentialDownloading"] == "Yes" && tor->status().has_metadata) {
+					if (tor->filenames().size() == 1) {
+						std::string ext = tor->filenames()[0].substr(
+							tor->filenames()[0].find_last_of('.') + 1);
+						tor->set_sequential_download(
+							gt::Settings::settings["SequentialDownloadExtensions"].find(
+								ext) != std::string::npos);
 					}
-
-				assert(alerts.size() != 0);
-				alerts.pop_front();
+				}
 				break;
 			}
-	}
-
-        // Nigga, you serious?
-	alerts = unhandledAlerts;
-	unhandledAlerts = std::deque<libtorrent::alert*>();
-
-        // Handle remaining alerts related to DHT
-	if(m_session.is_dht_running() && gt::Settings::settings["DHTEnabled"] == "Yes")
-	{
-		while(!alerts.empty())
-		{
-			libtorrent::alert *al = alerts[0];
-			switch(al->type())
-			{
-			case libtorrent::dht_reply_alert         ::alert_type:
-			case libtorrent::dht_announce_alert      ::alert_type:
-			case libtorrent::dht_get_peers_alert     ::alert_type:
-			case libtorrent::dht_bootstrap_alert     ::alert_type:
-			case libtorrent::dht_error_alert         ::alert_type:
+			// DHT Alerts
+			case libtorrent::dht_announce_alert::alert_type:
+			case libtorrent::dht_bootstrap_alert::alert_type:
+			case libtorrent::dht_error_alert::alert_type:
+			case libtorrent::dht_get_peers_alert::alert_type:
 			case libtorrent::dht_immutable_item_alert::alert_type:
-			case libtorrent::dht_mutable_item_alert  ::alert_type:
-			case libtorrent::dht_put_alert           ::alert_type:
-				assert(alerts.size() != 0);
-				alerts.pop_front();
+			case libtorrent::dht_mutable_item_alert::alert_type:
+			case libtorrent::dht_put_alert::alert_type:
+			case libtorrent::dht_reply_alert::alert_type: {
+				gt::Log::Debug(al->message());
+				if (m_session.is_dht_running() && gt::Settings::settings["DHTEnabled"] == "Yes") {
+					// This wasn't written at time of refactoring. I'm just leaving it in
+					// case someone knows what to do with dht alerts.
+				}
 				break;
+			}
+			// RSS Alerts
+			case libtorrent::rss_alert::alert_type: {
+				libtorrent::rss_alert *rssal = static_cast<libtorrent::rss_alert *>(al);
+				gt::Feed *feed = getFeedWithHandle(rssal->handle);
+				if (feed->onStateChanged != nullptr)
+					feed->onStateChanged(rssal->state, feed);
+				break;
+			}
+			case libtorrent::rss_item_alert::alert_type: {
+				libtorrent::rss_item_alert *rssal = static_cast<libtorrent::rss_item_alert *>(al);
+				gt::Feed *feed = getFeedWithHandle(rssal->handle);
+				if (feed->onItemAlert)
+					feed->onItemAlert(rssal);
+				break;
+			}
 			default:
-				assert(alerts.size() != 0);
-				alerts.pop_front();
-				unhandledAlerts.push_front(al);//we won't handle this alert
-			}
-		}
-
-		alerts = unhandledAlerts;
-		unhandledAlerts = std::deque<libtorrent::alert*>();
-
-		while(!alerts.empty())
-		{
-			libtorrent::alert *al = alerts[0];
-			if(!al) { alerts.pop_front(); continue; }
-			//something triggers a crash in the if block below
-			if(al->type() != libtorrent::rss_alert::alert_type)
-			{
-				assert(alerts.size() != 0);
-				alerts.pop_front();
-				unhandledAlerts.push_front(al);
-				continue;
-			} // should fix the incorrect values passed to onStateChanged
-			libtorrent::rss_alert *rssal = static_cast<libtorrent::rss_alert *>(al);
-			for(auto feed : m_feeds)
-			{
-				if(feed->contains(rssal->handle))
-				{
-					if(!feed->onStateChanged) continue; //why does this pass the check
-					for(auto f : feed->m_feeds)
-						if(*f == rssal->handle)
-							try{feed->onStateChanged(rssal->state, f);} catch(...){}
-				}
-			}
-			assert(alerts.size() != 0);
-			alerts.pop_front();
-		}
-
-		alerts = unhandledAlerts;
-		unhandledAlerts = std::deque<libtorrent::alert*>();
-
-		while(!alerts.empty())
-		{
-			libtorrent::alert *al = alerts[0];
-			if(al->type() != libtorrent::rss_item_alert::alert_type) { alerts.pop_front(); unhandledAlerts.push_front(al); continue; } // should fix the incorrect values passed to onStateChanged
-			libtorrent::rss_item_alert *rssal = static_cast<libtorrent::rss_item_alert *>(al);
-			for(auto feed : m_feeds)
-				if(feed->contains(rssal->handle))
-				{
-					for(auto f : feed->m_feeds)
-						if(*f == rssal->handle)
-							feed->onNewItemAvailable(rssal->item, f);					
-				}
-			assert(alerts.size() != 0);
-			alerts.pop_front();
-		}
-
-		while(!alerts.empty())
-		{
-			gt::Log::Debug(alerts[0]->message());
-			assert(alerts.size() != 0);
-			alerts.pop_front();
+				break;
 		}
 	}
 
-        // Handle Feed stuff?
-	if(str.find("update_feeds") != std::string::npos)
-		for(auto feeds : m_feeds)
-			for(auto f : feeds->m_feeds)
-				gt::Log::Debug(std::to_string(f->get_feed_status().next_update) + " remaining before update");
-
-        // Why the fuck is the remainder of this code here? This shouldn't be
-        // handled in fucking update(), this should be handled by another
-        // fucking function.
-	if(m_pendingTorrents.size() != 0)
-	{
-		auto tmp = m_pendingTorrents[0];
-		m_pendingTorrents.pop_front();
-		return tmp;
-	}
-
-	return addTorrent(str);
+	// what the fuck?
+	return addTorrent(sharedData);
 }
 
+/**
+ * Returns a vector of torrents that has had a state changed.
+ * I don't think this is actually used anymore, in favour of gt::Torrent.onStateChanged etc.
+ */
+std::vector<std::shared_ptr<gt::Torrent>> gt::Core::getPendingTorrents() {
+	return m_pending_torrents;
+}
 // TODO: Catch some signals to make sure this function is called
 void gt::Core::shutdown()
 {
@@ -703,24 +645,20 @@ void gt::Core::setSessionParameters()
 	m_session.set_settings(se);
 }
 
-std::shared_ptr<gt::Feed> gt::Core::addFeed(std::string Url)
+std::shared_ptr<gt::Feed> gt::Core::addFeed(std::string url)
 {
-	for(auto feeds : m_feeds)
-		for(auto f : feeds->m_feeds)
-			if(f->get_feed_status().url == Url)
-				return f;
+	for(auto feed : m_feeds)
+		if(feed->get_feed_status().url == url)
+			return feed;
 
-	using namespace libtorrent;
-	feed_settings fs;
-	fs.url = Url;
-	fs.auto_download = false;
+	libtorrent::feed_settings fs;
+	fs.url = url;
+	fs.auto_download = true;
 	fs.auto_map_handles = true;
 	fs.default_ttl = 1;
 
 	auto f = std::make_shared<gt::Feed>(m_session.add_feed(fs));
-	// default handler
-
-	m_feedhandles.push_back(f);
+	m_feeds.push_back(f);
 	return f;
 }
 
@@ -734,12 +672,21 @@ void gt::Core::removeFeed(std::shared_ptr<gt::Feed> feed)
 		m_feeds.erase(m_feeds.begin() + i);*/
 }
 
-std::shared_ptr<gt::FeedGroup> gt::Core::addFeedGroup(std::string name)
+//std::shared_ptr<gt::FeedGroup> gt::Core::addFeedGroup(std::string name)
+//{
+//	for(auto fg : m_feeds)
+//		if(fg->name == name)
+//			return fg;
+//	auto fg = std::make_shared<gt::FeedGroup>();
+//	fg->name = name;
+//	return fg;
+//}
+gt::Feed *gt::Core::getFeedWithHandle(libtorrent::feed_handle handle)
 {
-	for(auto fg : m_feeds)
-		if(fg->name == name)
-			return fg;
-	auto fg = std::make_shared<gt::FeedGroup>();
-	fg->name = name;
-	return fg;
+	for (auto f : m_feeds) {
+		if (*f == handle)
+			return f.get();
+	}
+
+	return nullptr;
 }

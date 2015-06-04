@@ -13,7 +13,7 @@ void gt::FeedGroup::addItem(const libtorrent::feed_item &fi)
 	std::string str(fi.url); // We remove some html escape codes
 	unsigned i;
 	if((i = str.find("amp;")) != str.size()) str.erase(i, 4);
-	core->m_pendingTorrents.push_front(core->addTorrent(str));
+	core->m_pending_torrents.push_back(core->addTorrent(str));
 }
 
 vector<libtorrent::feed_item> gt::FeedGroup::getFilteredItems(std::function<bool(std::string)> filterFun)
@@ -135,7 +135,7 @@ std::set<std::string> &gt::FeedGroup::getFunctions()
  *  {
  *      feedurl1,
  *      feedurl2
- *	}
+ *  }
  *  {
  *      filter1|regex1,
  *      filter2|regex2
@@ -158,7 +158,7 @@ std::vector<std::shared_ptr<gt::FeedGroup>> gt::FeedGroup::fromString(std::strin
 	tokenizer tokens(sData, sep);
 	for(auto tokenIt = tokens.begin(); tokenIt != tokens.end() && *tokenIt == "[";)
 	{
-		auto feedg = make_shared<gt::FeedGroup>();
+		auto feedg = std::make_shared<gt::FeedGroup>();
 
 		// group name
 		feedg->name = *++tokenIt;
@@ -224,7 +224,7 @@ bool gt::FeedGroup::contains(libtorrent::feed_handle fh)
 	return false;
 }
 
-gt::FeedGroup::operator string()
+gt::FeedGroup::operator std::string()
 {
 	// TODO: check if it works
 	std::string str;

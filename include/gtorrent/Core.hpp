@@ -41,12 +41,13 @@ namespace gt
 		friend class FeedGroup;
 
 		TorrentGroup m_torrents;
-		std::deque<std::shared_ptr<gt::Torrent>> m_pendingTorrents; //Contains torrent that have been added to the session but that haven't been reported to the UI
+		//Contains torrent that have been added to the session but that haven't been reported to the UI
+		std::vector<std::shared_ptr<gt::Torrent>> m_pending_torrents;
 		// TODO add a TorrentGroup vector once group functionality has been tested with m_torrents
 
 	public:
-		std::vector<std::shared_ptr<gt::FeedGroup>> m_feeds;
-		std::vector<std::shared_ptr<gt::Feed>> m_feedhandles;
+		std::vector<std::shared_ptr<gt::Feed>> m_feeds;
+//		std::vector<std::shared_ptr<gt::Feed>> m_feedhandles;
 		libtorrent::session m_session;
 		bool m_running;
 
@@ -59,9 +60,10 @@ namespace gt
 		TorrentGroup *getAllTorrents();
 
 		std::vector<TorrentGroup> getAllGroups(); // TODO implement
+
 		std::shared_ptr<gt::Torrent> addTorrent(std::string path, std::vector<char> *resumedata = nullptr);
 
-		std::shared_ptr<gt::Feed> addFeed(std::string Url);
+		std::shared_ptr<gt::Feed> addFeed(std::string url);
 
 		std::shared_ptr<gt::FeedGroup> addFeedGroup(std::string Name);
 
@@ -80,5 +82,9 @@ namespace gt
 		void shutdown();
 
 		std::shared_ptr<gt::Torrent> update();
+
+		std::vector<std::shared_ptr<gt::Torrent>> getPendingTorrents();
+
+		Feed *getFeedWithHandle(libtorrent::feed_handle handle);
 	};
 }
